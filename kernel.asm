@@ -1,28 +1,18 @@
+; kernel.asm
+
 bits 32
-section .text
+
+section .boot
 	; multyboot specific
-	;align 4
-	;dd	0x1BADB002		; magic number
-	;dd	0x00			; flags
-	;dd	-(0x1BADB002 + 0x00)	; checksum
-header_start:
-	dd 0xe85250d6                ; magic number (multiboot 2)
-	dd 0                         ; architecture 0 (protected mode i386)
-	dd header_end - header_start ; header length
-	; checksum
-	dd -(0xe85250d6 + 0 + (header_end - header_start))
+	align 4
+	dd	0x1BADB002		; magic number
+	dd	0x00			; flags
+	dd	-(0x1BADB002 + 0x00)	; checksum
 
-	; insert optional multiboot tags here
+section .text
 
-	; required end tag
-	dw 0    ; type
-	dw 0    ; flags
-	dd 8    ; size
-header_end:
-
-
-global start
-extern kernelFunc
+global	start
+extern	kernelFunc
 
 start:
 	cli				; turn off interrupts
