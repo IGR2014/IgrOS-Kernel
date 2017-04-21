@@ -1,26 +1,37 @@
 ; kernel.asm
 
+; Some constants which are reqired
+; by multiboot specification
+MAGIC		equ	0x1BADB002
+MBALIGN		equ	1<<0
+MEMINFO		equ	1<<1
+FLAGS		equ	MBALIGN | MEMINFO
+CHECKSUM	equ	-(MAGIC + FLAGS)
+
 bits 32
 
 section .boot
-	; multyboot specific
-	align 4
-	dd	0x1BADB002		; magic number
-	dd	0x00			; flags
-	dd	-(0x1BADB002 + 0x00)	; checksum
+	; Multyboot header
+	align	4
+	dd	MAGIC				; Magic number
+	dd	FLAGS				; Flags
+	dd	CHECKSUM			; Checksum
 
 section .text
+global	kernelStart
+extern	kernelFunc				; Extern kernel C-function
 
-global	start
-extern	kernelFunc
-
-start:
-	cli				; turn off interrupts
-	mov	ESP, stackTop		; set stack
-	call	kernelFunc		; call main func
-	hlt				; stop
+kernelStart:
+	cli					; Turn off interrupts
+	mov	ESP, stackTop			; Set stack
+	call	kernelFunc			; Call main func
+haltLoop:
+	hlt					; Stop CPU
+	jmp	haltLoop			; Hang CPU
 
 section .bss
-	resb 8192			; 8 kB stack
-	stackTop:
+	align	4
+	stackBottom:				; End of stack
+	resb	16384				; 16 kB stack
+	stackTop:				; Stack pointer
 
