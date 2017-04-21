@@ -3,7 +3,7 @@
 
 
 // Video memory colors enumeration
-enum videoMemColor {
+enum videoMemColor: unsigned char {
 
         black   	= 0x00,
         blue		= 0x01,
