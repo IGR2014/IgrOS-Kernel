@@ -40,18 +40,23 @@ struct videoMemCursor {
 
 };
 
-static const unsigned short	videoMemWidth	= 80;
-static const unsigned short	videoMemHeight	= 25;
-static const unsigned short	videoMemSize	= 2000;
+static const unsigned short	videoMemWidth		= 80;
+static const unsigned short	videoMemHeight		= 25;
+static const unsigned short	videoMemSize		= 2000;
 
-static unsigned short		videoMemX	= 0;
-static unsigned short		videoMemY	= 0;
+static unsigned short		videoMemX		= 0;
+static unsigned short		videoMemY		= 0;
+
+static unsigned char		videoMemSymbolColor	= 0x0002;
 
 // Video memory start pointer
 static videoMemSymbol*		videoMemPtr	= (videoMemSymbol*)0xb8000;
 
-// Clear wideo memory
+// Clear video memory
 void videoMemClear();
+
+// Set color
+void videoMemSetColor(unsigned char&);
 
 // Set cursor position to X, Y
 void videoMemSetCursor(const unsigned int&, const unsigned int&);

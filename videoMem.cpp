@@ -16,6 +16,13 @@ void videoMemClear() {
 
 };
 
+// Set color
+void videoMemSetColor(unsigned char &color) {
+
+	videoMemSymbolColor = color;
+
+};
+
 // Set cursor position to x, y
 void videoMemSetCursor(const unsigned int &x, const unsigned int &y) {
 
@@ -58,7 +65,7 @@ void videoMemWriteSymbol(const char &symbol) {
 
 		unsigned short pos = videoMemY * videoMemWidth + videoMemX;
 		videoMemPtr[pos].symbol	= symbol;
-		videoMemPtr[pos].color	= videoMemColor::black << 4 | videoMemColor::lightGreen;
+		videoMemPtr[pos].color	= videoMemSymbolColor;
 		++videoMemX;
 
 	}
