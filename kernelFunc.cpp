@@ -10,4 +10,19 @@ extern "C" void kernelFunc(void) {
 	// Print message on screen
 	videoMemWriteLine(message);
 
+	unsigned char i = 0;
+	do {
+
+		videoMemSetColor(i);
+		videoMemWriteSymbol('0');
+
+		if ((i++ % 16) == 15) {
+
+			videoMemWriteSymbol('\r');
+			videoMemWriteSymbol('\n');
+
+		}
+
+	} while (i != 0);
+
 }
