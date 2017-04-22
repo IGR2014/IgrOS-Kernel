@@ -1,4 +1,4 @@
 *.o
 *.ld
-kernel
+*.bin
 Makefile
