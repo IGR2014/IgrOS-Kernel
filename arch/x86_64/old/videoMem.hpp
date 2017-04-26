@@ -76,4 +76,6 @@ void videoMemWriteLine(const char*, const unsigned int&);
 // Write line to video memory (overloaded)
 void videoMemWriteLine(const char*);
 
+
 #endif	// VIDEO_MEMORY_H
+
