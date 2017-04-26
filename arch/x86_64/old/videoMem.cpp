@@ -1,5 +1,5 @@
-#include "videoMem.hpp"
-#include "port.hpp"
+#include <videoMem.hpp>
+#include <include/io.hpp>
 
 
 // Clear wideo memory
@@ -31,10 +31,10 @@ void videoMemSetCursor(const unsigned int &x, const unsigned int &y) {
 
 	unsigned char position = y * videoMemWidth + x;
 
-	portWrite(0x03D4, 0x0F);
-	portWrite(0x03D5, position & 0xFF);
-	portWrite(0x03D4, 0x0E);
-	portWrite(0x03D5, (position >> 8) & 0xFF);
+	portWByte(0x03D4, 0x0F);
+	portWByte(0x03D5, position & 0xFF);
+	portWByte(0x03D4, 0x0E);
+	portWByte(0x03D5, (position >> 8) & 0xFF);
 
 };
 
@@ -134,3 +134,4 @@ void videoMemWriteLine(const char* message) {
 	videoMemWriteSymbol('\n');
 
 };
+
