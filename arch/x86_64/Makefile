@@ -3,7 +3,7 @@ CXXFLAGS	= -O2 -Wall -m32 -std=c++11 -Wextra -w -pedantic -Werror -ffreestanding
 CXXINCLUDE	= -I ${CURDIR} -I include -I ../../
 RM		= rm -rf
 BIN		?= kernel.bin
-OBJ		= boot/multiboot.o boot/gdt.o boot/longMode.o boot/boot.o boot/io.o boot.o gdt.o
+OBJ		= boot/multiboot.o boot/gdt.o boot/longMode.o boot/boot.o boot/port.o boot.o gdt.o
 LINKER		= ld
 LINKERSCRIPT	= link.ld
 

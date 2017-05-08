@@ -2,16 +2,6 @@
 #define GDT_H
 
 
-#define GDT_LIMIT_MASK_HIGH	0x0F0000
-#define GDT_LIMIT_MASK_LOW	0x00FFFF
-
-#define GDT_BASE_MASK_HIGH	0xFF000000
-#define GDT_BASE_MASK_LOW	0x00FFFFFF
-
-#define GDT_FLAGS_MASK_HIGH	0x0F00
-#define GDT_FLAGS_MASK_LOW	0x00FF
-
-
 #define	GDT_SEG_TYPE_ACCESS	0x01
 
 #define	GDT_SEG_TYPE_RODATA	0x00
@@ -66,26 +56,31 @@
 // Arch-dependent code zone
 namespace arch {
 
-	#pragma pack(push, 1)
-	struct gdtPtr {
+#pragma pack(push, 1)
+	struct gdtEntry {
 
-		t_u16	size;
-		t_u32	pointer;
+		t_u16		limitLow;
+		t_u16		baseLow;
+		t_u8		baseMid;
+		t_u8		access;
+		t_u8		limitFlags;
+		t_u8		baseHigh;
+
+	};
+
+	struct gdtPointer {
+
+		t_u16		size;
+		gdtEntry*	pointer;
 	
 	};
-	#pragma pop
+#pragma pop
 
-	// Create GDT entry
-	t_u64 gdtCreateEntry(t_u32, t_u32, t_u16);
+	// Set GDT entry
+	gdtEntry gdtSetEntry(const t_u32&, const t_u32&, const t_u16&);
 
-	// Set entry to GDT table
-	//void gdtSetEntry(t_u16);
-
-	// Get entry data from GDT
-	//void gdtGetEntry(t_u16);
-
-	// Set GDT
-	extern "C" void gdtLoad(t_u32);
+	// Load GDT
+	extern "C" void gdtLoad(const gdtPointer*);
 
 }	// arch
 

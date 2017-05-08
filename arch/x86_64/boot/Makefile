@@ -1,6 +1,6 @@
 ASM		?= as
 RM		= rm -rf
-OBJ		= multiboot.o gdt.o longMode.o boot.o io.o
+OBJ		= multiboot.o gdt.o longMode.o boot.o port.o
 
 all: $(OBJ)
 
