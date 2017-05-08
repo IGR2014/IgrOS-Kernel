@@ -3,7 +3,7 @@ CXXFLAGS	= -O2 -Wall -m32 -std=c++11 -Wextra -w -pedantic -Werror -ffreestanding
 CXXINCLUDE	= -I ${CURDIR} -I include -I ../../
 RM		= rm -rf
 BIN		?= kernel.bin
-OBJ		= boot/multiboot.o boot/gdt.o boot/longMode.o boot/boot.o boot/io.o boot.o gdt.o
+OBJ		= boot/multiboot.o boot/boot.o boot/idt.o boot.o idt.o
 LINKER		= ld
 LINKERSCRIPT	= link.ld
 
@@ -16,16 +16,13 @@ clean:
 	${RM} $(OBJ) $(BIN)
 
 run: $(BIN)
-	qemu-system-x86_64 -kernel $(BIN) -enable-kvm -cpu host
+	qemu-system-i386 -kernel $(BIN)
 
 $(BIN): $(OBJ)
 	$(LINKER) -n $(OBJ) -o $(BIN) -T $(LINKERSCRIPT) -m elf_i386
 
 boot.o: boot.cpp
 	$(CXX) -c boot.cpp -o boot.o $(CXXFLAGS) $(CXXINCLUDE)
-
-gdt.o: gdt.cpp
-	$(CXX) -c gdt.cpp -o gdt.o $(CXXFLAGS) $(CXXINCLUDE)
 
 # videoMem.o: videoMem.cpp include/io.hpp
 #	$(CXX) -c videoMem.cpp -o videoMem.o $(CXXFLAGS) -I ${CURDIR}
