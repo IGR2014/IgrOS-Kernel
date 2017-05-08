@@ -41,7 +41,7 @@ extern "C" void kernelFunc() {
 	idt.size	= 0;
 	idt.pointer	= idtTable;
 
-	arch::idtLoad(idt);
+	//arch::idtLoad(idt);
 
 	*(t_u16*)0xb8000 = (t_u16)0x2f4f;
 	*(t_u16*)0xb8002 = (t_u16)0x2f4b;
