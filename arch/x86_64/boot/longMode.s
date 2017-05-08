@@ -1,4 +1,4 @@
-# kernel.s
+# longMode.s
 
 .code32
 
@@ -11,31 +11,20 @@
 
 .section .text
 .balign	4
-.global	kernelStart			# Kernel main function
-.extern	kernelFunc			# Extern kernel C-function
+.global	checkMultiboot
+.global	checkCPUID
+.global	checkLongMode
 
-kernelStart:				# Kernel starts here
-	cli				# Turn off interrupts
-	movl	$stackTop, %esp		# Set stack
-
-	call	checkMultiboot
-	call	checkCPUID
-	call	checkLongMode
-
-	call	pageTableSetup
-	call	enablePaging
-
-	lgdt	(GDTPointer)
-
-	call	kernelFunc		# Call main func
-
-.haltLoop:
-	hlt				# Stop CPU
-	jmp	.haltLoop		# Hang CPU
+.global	setupPageTables
+.global	enablePaging
 
 checkMultiboot:
 	cmp	$EAXMAGIC, %eax
-	jne	.haltLoop
+	jne	1f
+	movb	$0x01, %al
+	ret
+1:
+	movb	$0x00, %al
 	ret
 
 checkCPUID:
@@ -50,21 +39,29 @@ checkCPUID:
 	push	%ecx
 	popfl
 	cmp	%ecx, %eax
-	je	.haltLoop
+	je	1f
+	movb	$0x01, %al
+	ret
+1:
+	movb	$0x00, %al
 	ret
 
 checkLongMode:
 	movl	$CPUIDMAGIC, %eax
 	cpuid
 	cmp	$CPUIDEXTENDED, %eax
-	jl	.haltLoop
+	jl	1f
 	movl	$CPUIDEXTENDED, %eax
 	cpuid
 	test	$LONGMODEBIT, %edx
-	jz	.haltLoop
+	jz	1f
+	movb	$0x01, %al
+	ret
+1:
+	movb	$0x00, %al
 	ret
 
-pageTableSetup:
+setupPageTables:
 	movl	$PDPTable, %eax
 	or	$0b11, %eax
 	movl	%eax, (PML4Table)
@@ -72,14 +69,14 @@ pageTableSetup:
 	or	$0b11, %eax
 	movl	%eax, (PDPTable)
 	movl	$0, %ecx
-.mapPDTable:
+1:
 	movl	$0x200000, %eax
 	mul	%ecx
 	or	$0b10000011, %eax
 	movl	%eax, PDTable(, %ecx, 8)
 	inc	%ecx
 	cmp	$512, %ecx
-	jne	.mapPDTable
+	jne	1b
 	ret
 
 enablePaging:
@@ -95,28 +92,7 @@ enablePaging:
 	movl	%cr0, %eax
 	or	$1<<31, %eax
 	movl	%eax, %cr0
-	ret	
-
-.section .rodata
-GDT:
-	.word	0
-	.word	0
-	.byte	0
-	.byte	0
-	.byte	0
-	.byte	0
-code:
-	.word	0
-	.word	0
-	.byte	0
-	.byte	0b10011010
-	.byte	0b00100000
-	.byte	0
-GDTEnd:
-
-GDTPointer:
-	.word	GDTPointer - GDT - 1
-	.long	GDT
+	ret
 
 .section .bss
 	.balign	4096
@@ -128,7 +104,4 @@ PDTable:
 	.skip	4096
 PTable:
 	.skip	4096
-stackBottom:				# End of stack
-	.skip	16384			# Stack size of 16kB
-stackTop:				# Stack pointer
 

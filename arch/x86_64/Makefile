@@ -3,14 +3,14 @@ CXXFLAGS	= -O2 -Wall -m32 -std=c++11 -Wextra -w -pedantic -Werror -ffreestanding
 CXXINCLUDE	= -I ${CURDIR} -I include -I ../../
 RM		= rm -rf
 BIN		?= kernel.bin
-OBJ		= asm/multiboot.o asm/kernel.o asm/io.o asm/gdt.o kernelFunc.o gdt.o
+OBJ		= boot/multiboot.o boot/gdt.o boot/longMode.o boot/boot.o boot/io.o boot.o gdt.o
 LINKER		= ld
 LINKERSCRIPT	= link.ld
 
 all: all-before $(BIN)
 
 all-before:
-	$(MAKE) -C asm
+	$(MAKE) -C boot
 
 clean:
 	${RM} $(OBJ) $(BIN)
@@ -19,10 +19,10 @@ run: $(BIN)
 	qemu-system-x86_64 -kernel $(BIN) -enable-kvm -cpu host
 
 $(BIN): $(OBJ)
-	$(LINKER) $(OBJ) -o $(BIN) -T $(LINKERSCRIPT) -m elf_i386
+	$(LINKER) -n $(OBJ) -o $(BIN) -T $(LINKERSCRIPT) -m elf_i386
 
-kernelFunc.o: kernelFunc.cpp
-	$(CXX) -c kernelFunc.cpp -o kernelFunc.o $(CXXFLAGS) $(CXXINCLUDE)
+boot.o: boot.cpp
+	$(CXX) -c boot.cpp -o boot.o $(CXXFLAGS) $(CXXINCLUDE)
 
 gdt.o: gdt.cpp
 	$(CXX) -c gdt.cpp -o gdt.o $(CXXFLAGS) $(CXXINCLUDE)
