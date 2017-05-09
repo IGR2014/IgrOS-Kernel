@@ -1,5 +1,6 @@
 #include <include/types.hpp>
 #include <include/idt.hpp>
+#include <include/port.hpp>
 
 
 extern "C" void kernelFunc() {
@@ -41,7 +42,22 @@ extern "C" void kernelFunc() {
 	idt.size	= 0;
 	idt.pointer	= idtTable;
 
-	//arch::idtLoad(idt);
+	arch::outPortB(0x20 , 0x11);
+	arch::outPortB(0xA0 , 0x11);
+
+	arch::outPortB(0x21 , 0x20);
+	arch::outPortB(0xA1 , 0x28);
+
+	arch::outPortB(0x21 , 0x00);  
+	arch::outPortB(0xA1 , 0x00);  
+
+	arch::outPortB(0x21 , 0x01);
+	arch::outPortB(0xA1 , 0x01);
+
+	arch::outPortB(0x21 , 0xff);
+	arch::outPortB(0xA1 , 0xff);
+
+	arch::idtLoad(idt);
 
 	*(t_u16*)0xb8000 = (t_u16)0x2f4f;
 	*(t_u16*)0xb8002 = (t_u16)0x2f4b;

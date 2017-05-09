@@ -11,4 +11,3 @@ idtLoad:
 	lidt	(%eax)			# Load IDT from pointer
 	sti				# Enable interrupts
 	ret				# Done here
-
