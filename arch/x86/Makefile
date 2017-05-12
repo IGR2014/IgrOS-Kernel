@@ -1,9 +1,9 @@
 CXX		?= g++
-CXXFLAGS	= -O2 -Wall -m32 -std=c++11 -Wextra -w -pedantic -Werror -ffreestanding -fno-exceptions -fno-rtti -nostdlib
+CXXFLAGS	= -Wall -m32 -std=c++11 -Wextra -w -pedantic -Werror -ffreestanding -fno-exceptions -fno-rtti -nostdlib
 CXXINCLUDE	= -I ${CURDIR} -I include -I ../../
 RM		= rm -rf
 BIN		?= kernel.bin
-OBJ		= boot/multiboot.o boot/boot.o boot/idt.o boot/port.o boot.o idt.o
+OBJ		= boot/multiboot.o boot/boot.o boot/idt.o boot/port.o boot/exception.o boot.o idt.o exception.o
 LINKER		= ld
 LINKERSCRIPT	= link.ld
 
@@ -26,6 +26,9 @@ boot.o: boot.cpp
 
 idt.o: idt.cpp
 	$(CXX) -c idt.cpp -o idt.o $(CXXFLAGS) $(CXXINCLUDE)
+
+exception.o: exception.cpp
+	$(CXX) -c exception.cpp -o exception.o $(CXXFLAGS) $(CXXINCLUDE)
 
 # videoMem.o: videoMem.cpp include/io.hpp
 #	$(CXX) -c videoMem.cpp -o videoMem.o $(CXXFLAGS) -I ${CURDIR}
