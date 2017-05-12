@@ -33,7 +33,7 @@ namespace arch {
 	idtEntry idtSetEntry(const t_u32&, const t_u16&, const t_u8&);
 
 	// Load IDT
-	extern "C" void idtLoad(const idtPointer&);
+	extern "C" void idtLoad(const idtPointer*);
 
 }	// arch
 
