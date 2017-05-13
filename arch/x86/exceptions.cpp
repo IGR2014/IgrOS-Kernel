@@ -1,3 +1,4 @@
+#include <include/taskRegs.hpp>
 #include <include/exceptions.hpp>
 
 
@@ -39,7 +40,7 @@ namespace arch {
 					 "Reserved"};				// 31
 
 	// Exception handler function
-	void exHandler(tsRegs* regs) {
+	void exHandler(const taskRegs* regs) {
 
 		*(t_u16*)0xb8008 = (t_u16)0x2f4f;
 		*(t_u16*)0xb800A = (t_u16)0x2f4b;
