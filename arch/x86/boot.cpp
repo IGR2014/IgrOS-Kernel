@@ -1,6 +1,7 @@
 #include <include/types.hpp>
 #include <include/idt.hpp>
 #include <include/exceptions.hpp>
+#include <include/interrupts.hpp>
 #include <include/port.hpp>
 
 
@@ -36,8 +37,10 @@ extern "C" void kernelFunc() {
 	} while (i != 0);
 	*/
 
+	// Exceptions and IRQ descriptors table (IDT)
 	arch::idtEntry idtTable[256];
 
+	// Exceptions setup
 	idtTable[0x00]	= arch::idtSetEntry((t_u32)arch::exHandler0, 0x08, 0x8E);
 	idtTable[0x01]	= arch::idtSetEntry((t_u32)arch::exHandler1, 0x08, 0x8E);
 	idtTable[0x02]	= arch::idtSetEntry((t_u32)arch::exHandler2, 0x08, 0x8E);
@@ -71,27 +74,50 @@ extern "C" void kernelFunc() {
 	idtTable[0x1E]	= arch::idtSetEntry((t_u32)arch::exHandler30, 0x08, 0x8E);
 	idtTable[0x1F]	= arch::idtSetEntry((t_u32)arch::exHandler31, 0x08, 0x8E);
 
-	//idtTable[0x21]	= arch::idtSetEntry(0x00, 0x08, 0x8E);
+	// IRQs setup
+	idtTable[0x20]	= arch::idtSetEntry((t_u32)arch::irqHandler0, 0x08, 0x8E);
+	idtTable[0x21]	= arch::idtSetEntry((t_u32)arch::irqHandler1, 0x08, 0x8E);
+	idtTable[0x22]	= arch::idtSetEntry((t_u32)arch::irqHandler2, 0x08, 0x8E);
+	idtTable[0x23]	= arch::idtSetEntry((t_u32)arch::irqHandler3, 0x08, 0x8E);
+	idtTable[0x24]	= arch::idtSetEntry((t_u32)arch::irqHandler4, 0x08, 0x8E);
+	idtTable[0x25]	= arch::idtSetEntry((t_u32)arch::irqHandler5, 0x08, 0x8E);
+	idtTable[0x26]	= arch::idtSetEntry((t_u32)arch::irqHandler6, 0x08, 0x8E);
+	idtTable[0x27]	= arch::idtSetEntry((t_u32)arch::irqHandler7, 0x08, 0x8E);
+	idtTable[0x28]	= arch::idtSetEntry((t_u32)arch::irqHandler8, 0x08, 0x8E);
+	idtTable[0x29]	= arch::idtSetEntry((t_u32)arch::irqHandler9, 0x08, 0x8E);
+	idtTable[0x2A]	= arch::idtSetEntry((t_u32)arch::irqHandler10, 0x08, 0x8E);
+	idtTable[0x2B]	= arch::idtSetEntry((t_u32)arch::irqHandler11, 0x08, 0x8E);
+	idtTable[0x2C]	= arch::idtSetEntry((t_u32)arch::irqHandler12, 0x08, 0x8E);
+	idtTable[0x2D]	= arch::idtSetEntry((t_u32)arch::irqHandler13, 0x08, 0x8E);
+	idtTable[0x2E]	= arch::idtSetEntry((t_u32)arch::irqHandler14, 0x08, 0x8E);
+	idtTable[0x2F]	= arch::idtSetEntry((t_u32)arch::irqHandler15, 0x08, 0x8E);
 
+	// Pointer to IDT
 	arch::idtPointer idt;
 	idt.size	= sizeof(arch::idtEntry) * 256 - 1;
 	idt.pointer	= idtTable;
 
+	// ICW 1 for PIC
 	arch::outPortB(0x20, 0x11);
 	arch::outPortB(0xA0, 0x11);
 
+	// ICW 2 for PIC
 	arch::outPortB(0x21, 0x20);
 	arch::outPortB(0xA1, 0x28);
 
-	arch::outPortB(0x21, 0x00);
-	arch::outPortB(0xA1, 0x00);
+	// ICW 3 for PIC
+	arch::outPortB(0x21, 0x04);
+	arch::outPortB(0xA1, 0x02);
 
+	// ICW 4 for PIC
 	arch::outPortB(0x21, 0x01);
 	arch::outPortB(0xA1, 0x01);
 
-	arch::outPortB(0x21, 0xff);
+	// Mask interrupts
+	arch::outPortB(0x21, 0xfd);
 	arch::outPortB(0xA1, 0xff);
 
+	// Load new IDT
 	arch::idtLoad(&idt);
 
 	*(t_u16*)0xb8000 = (t_u16)0x2f4f;
@@ -100,8 +126,10 @@ extern "C" void kernelFunc() {
 	*(t_u16*)0xb8006 = (t_u16)0x2f59;
 
 	// Divide by Zero Exception Test
+	/*
 	int x = 10;
 	int y = 0;
 	int z = x / y;
+	*/
 
 }
