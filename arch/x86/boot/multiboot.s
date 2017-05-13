@@ -10,9 +10,8 @@
 .set	FLAGS,		MBALIGN | MEMINFO
 .set	CHECKSUM,	-(MAGIC + FLAGS)
 
-.section .boot				# Multyboot header
-.balign	4
+.section .multiboot				# Multyboot header
+	.balign	4
 	.long	MAGIC			# Multiboot magic value
 	.long	FLAGS			# Multiboot flags
 	.long	CHECKSUM		# Multiboot checksum
-

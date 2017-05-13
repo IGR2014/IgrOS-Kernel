@@ -3,14 +3,14 @@
 .code32
 
 .section .text
-.balign 4
-.global	inPortB				# Read byte from port
-.global	inPortW				# Read word from port
-.global	inPortL				# Read long from port
+	.balign 4
+	.global	inPortB			# Read byte from port
+	.global	inPortW			# Read word from port
+	.global	inPortL			# Read long from port
 
-.global	outPortB			# Write byte to port
-.global	outPortW			# Write word to port
-.global	outPortL			# Write long to port
+	.global	outPortB		# Write byte to port
+	.global	outPortW		# Write word to port
+	.global	outPortL		# Write long to port
 
 
 inPortB:				# Read byte from port function
@@ -46,4 +46,3 @@ outPortL:				# Write long to port function
 	movl	8(%esp), %eax		# Data to write
 	outl	%eax, %dx		# Write data
 	ret				# Return
-

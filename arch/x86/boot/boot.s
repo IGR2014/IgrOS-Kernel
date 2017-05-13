@@ -3,9 +3,9 @@
 .code32
 
 .section .text
-.balign	4
-.global	kernelStart			# Kernel main function
-.extern	kernelFunc			# Extern kernel C-function
+	.balign	4
+	.global	kernelStart		# Kernel main function
+	.extern	kernelFunc		# Extern kernel C-function
 
 kernelStart:				# Kernel starts here
 	cli				# Turn off interrupts
@@ -20,4 +20,3 @@ haltCPU:
 stackBottom:				# End of stack
 	.skip	16384			# Stack size of 16kB
 stackTop:				# Stack pointer
-

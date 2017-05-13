@@ -3,8 +3,8 @@
 .code32
 
 .section .text
-.balign	4
-.global	idtLoad				# Load IDT
+	.balign	4
+	.global	idtLoad			# Load IDT
 
 idtLoad:
 	movl	4(%esp), %eax		# Get pointer from stack
