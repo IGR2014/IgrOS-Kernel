@@ -1,6 +1,6 @@
 ASM		?= as
 RM		= rm -rf
-OBJ		= multiboot.o boot.o idt.o port.o exception.o
+OBJ		= multiboot.o boot.o idt.o port.o exceptions.o
 
 all: $(OBJ)
 
@@ -9,4 +9,3 @@ clean:
 
 %.o: %.s
 	$(ASM) --32 -o $@ $<
-
