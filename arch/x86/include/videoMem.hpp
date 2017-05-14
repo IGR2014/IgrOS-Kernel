@@ -11,22 +11,22 @@ namespace arch {
 	// Video memory colors enumeration
 	enum videoMemColor: unsigned char {
 
-	        black   	= 0x00,
-	        blue		= 0x01,
-		green		= 0x02,
-		cyan		= 0x03,
-		red		= 0x04,
-		magenta		= 0x05,
-		brown		= 0x06,
-		lightGray	= 0x07,
-		darkGray	= 0x08,
-		lightBlue	= 0x09,
-		lightGreen	= 0x0A,
-		lightCyan	= 0x0B,
-		lightRed	= 0x0C,
-		lightMagenta	= 0x0D,
-		yellow		= 0x0E,
-		white		= 0x0F
+	        VGABlack   	= 0x00,			// Black VGA color
+	        VGABlue		= 0x01,			// Blue VGA color
+		VGAGreen	= 0x02,			// Green VGA color
+		VGACyan		= 0x03,			// Cyan VGA color
+		VGARed		= 0x04,			// Red VGA color
+		VGAMagenta	= 0x05,			// Magenta VGA color
+		VGABrown	= 0x06,			// Brown VGA color
+		VGALightGray	= 0x07,			// Light gray VGA color
+		VGADarkGray	= 0x08,			// Dark gray VGA color
+		VGALightBlue	= 0x09,			// Light blue VGA color
+		VGALightGreen	= 0x0A,			// Light green VGA color
+		VGALightCyan	= 0x0B,			// Light cyan VGA color
+		VGALightRed	= 0x0C,			// Light red VGA color
+		VGALightMagenta	= 0x0D,			// Light magenta VGA color
+		VGAYellow	= 0x0E,			// Yellow VGA color
+		VGAWhite	= 0x0F			// White VGA color
 
 	};
 
@@ -49,7 +49,7 @@ namespace arch {
 	static const t_u16		videoMemSize		= videoMemWidth * videoMemHeight;
 
 	// Video memory background symbol
-	static t_u8			videoMemBkgColor	= 0x1F;
+	static t_u8			videoMemBkgColor	= 0x02;
 
 	// Video memory cursor struct
 	struct videoMemCursor {

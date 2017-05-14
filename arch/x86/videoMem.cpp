@@ -175,8 +175,6 @@ namespace arch {
 	// Init video memory
 	void videoMemInit() {
 
-		// Setup colors
-		videoMemSetColor(videoMemColor::black, videoMemColor::green);
 		// Clear screen
 		videoMemClear();
 		// Place cursor at (0, 0)
