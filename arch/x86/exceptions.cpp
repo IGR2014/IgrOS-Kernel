@@ -1,12 +1,13 @@
 #include <include/taskRegs.hpp>
 #include <include/exceptions.hpp>
+#include <include/videoMem.hpp>
 
 
 // Arch-dependent code zone
 namespace arch {
 
 	// Exceptions names
-	const char* exceptionName[32] = {"Divide by Zero",			// 0
+	const t_i8p exceptionName[32] = {"Divide by Zero",			// 0
 					 "Debug",				// 1
 					 "Non-Maskable Interrupt",		// 2
 					 "Breakpoint",				// 3
@@ -42,10 +43,11 @@ namespace arch {
 	// Exception handler function
 	void exHandler(const taskRegs* regs) {
 
-		*(t_u16*)0xb8008 = (t_u16)0x2f4f;
-		*(t_u16*)0xb800A = (t_u16)0x2f4b;
-		*(t_u16*)0xb800C = (t_u16)0x2f41;
-		*(t_u16*)0xb800E = (t_u16)0x2f59;
+		// Write text to screen
+		videoMemWriteMessage(exceptionName[regs->number]);
+		videoMemWriteMessage(" Exception. CPU halted.");
+
+		while (true) {};
 
 	}
 
