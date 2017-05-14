@@ -19,6 +19,10 @@ namespace arch {
 		// Notify master PIC
 		outPortB(0x20, 0x20);
 
+		// Read keyboard data port
+		if (inPortB(0x60) > 0x7F)
+			return;
+
 		// Write text to screen
 		videoMemWriteMessage("IRQ");
 		videoMemWriteSymbol('0' + regs->number - 32);
