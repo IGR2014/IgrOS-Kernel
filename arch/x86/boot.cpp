@@ -3,39 +3,14 @@
 #include <include/exceptions.hpp>
 #include <include/interrupts.hpp>
 #include <include/port.hpp>
+#include <include/videoMem.hpp>
 
 
+// Kernel main function
 extern "C" void kernelFunc() {
 
-	//const char* message = "Hello world, Kernel! :)";
-
-	//unsigned char color = 0x0A;
-
-	// Set color
-	//videoMemSetColor(color);
-
-	// Clear screen
-	//videoMemClear();
-
-	// Print message on screen
-	//videoMemWriteLine(message);
-
-	/*
-	unsigned char i = 0;
-	do {
-
-		videoMemSetColor(i);
-		videoMemWriteSymbol('0');
-
-		if ((i++ % 16) == 15) {
-
-			videoMemWriteSymbol('\r');
-			videoMemWriteSymbol('\n');
-
-		}
-
-	} while (i != 0);
-	*/
+	// Init video memory
+	arch::videoMemInit();
 
 	// Exceptions and IRQ descriptors table (IDT)
 	arch::idtEntry idtTable[256];
@@ -120,10 +95,8 @@ extern "C" void kernelFunc() {
 	// Load new IDT
 	arch::idtLoad(&idt);
 
-	*(t_u16*)0xb8000 = (t_u16)0x2f4f;
-	*(t_u16*)0xb8002 = (t_u16)0x2f4b;
-	*(t_u16*)0xb8004 = (t_u16)0x2f41;
-	*(t_u16*)0xb8006 = (t_u16)0x2f59;
+	// Write "Hello World" message
+	arch::videoMemWriteLine("Hello World from kernel!");
 
 	// Divide by Zero Exception Test
 	/*
