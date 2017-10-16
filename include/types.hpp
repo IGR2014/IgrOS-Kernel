@@ -36,8 +36,9 @@ typedef	double	t_f64;
 typedef	float*	t_f32p;
 typedef	double*	t_f64p;
 
+
 // Common pointer type
-typedef void* t_ptr;
+typedef void*   t_ptr;
 
 
 #endif	// TYPES_H
