@@ -1,4 +1,14 @@
-# interrupts.s
+################################################################
+#
+#	IRQ low-level handlers
+#
+#	File:	interrupts.s
+#	Date:	20 Nov. 2017
+#
+#	Copyright (c) 2017, Igor Baklykov
+#	All rights reserved.
+#
+
 
 .code32
 
@@ -15,12 +25,12 @@
 	.global irqHandler7		# 7
 	.global irqHandler8		# 8
 	.global irqHandler9		# 9
-	.global irqHandler10		# 10
-	.global irqHandler11		# 11
-	.global irqHandler12		# 12
-	.global irqHandler13		# 13
-	.global irqHandler14		# 14
-	.global irqHandler15		# 15
+	.global irqHandlerA		# 10
+	.global irqHandlerB		# 11
+	.global irqHandlerC		# 12
+	.global irqHandlerD		# 13
+	.global irqHandlerE		# 14
+	.global irqHandlerF		# 15
 
 # IRQ 0
 irqHandler0:
@@ -93,42 +103,42 @@ irqHandler9:
 	jmp	interruptRoutine	# Handle IRQ
 
 # IRQ 10
-irqHandler10:
+irqHandlerA:
 	cli				# Disable interrupts
 	pushl	$0x00			# Fake parameter
 	pushl	$0x2A			# IRQ number
 	jmp	interruptRoutine	# Handle IRQ
 
 # IRQ 11
-irqHandler11:
+irqHandlerB:
 	cli				# Disable interrupts
 	pushl	$0x00			# Fake parameter
 	pushl	$0x2B			# IRQ number
 	jmp	interruptRoutine	# Handle IRQ
 
 # IRQ 12
-irqHandler12:
+irqHandlerC:
 	cli				# Disable interrupts
 	pushl	$0x00			# Fake parameter
 	pushl	$0x2C			# IRQ number
 	jmp	interruptRoutine	# Handle IRQ
 
 # IRQ 13
-irqHandler13:
+irqHandlerD:
 	cli				# Disable interrupts
 	pushl	$0x00			# Fake parameter
 	pushl	$0x2D			# IRQ number
 	jmp	interruptRoutine	# Handle IRQ
 
 # IRQ 14
-irqHandler14:
+irqHandlerE:
 	cli				# Disable interrupts
 	pushl	$0x00			# Fake parameter
 	pushl	$0x2E			# IRQ number
 	jmp	interruptRoutine	# Handle IRQ
 
 # IRQ 15
-irqHandler15:
+irqHandlerF:
 	cli				# Disable interrupts
 	pushl	$0x00			# Fake parameter
 	pushl	$0x2F			# IRQ number

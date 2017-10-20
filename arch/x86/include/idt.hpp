@@ -1,5 +1,17 @@
-#ifndef IDT_H
-#define IDT_H
+////////////////////////////////////////////////////////////////
+//
+//	Interrupt descriptor table low-level operations
+//
+//	File:	idt.hpp
+//	Date:	20 Nov. 2017
+//
+//	Copyright (c) 2017, Igor Baklykov
+//	All rights reserved.
+//
+
+
+#ifndef IGROS_ARCH_IDT_HPP
+#define IGROS_ARCH_IDT_HPP
 
 
 #include <include/types.hpp>
@@ -8,7 +20,9 @@
 // Arch-dependent code zone
 namespace arch {
 
+
 #pragma pack(push, 1)
+
 	// IDT entry
 	struct idtEntry {
 
@@ -20,14 +34,16 @@ namespace arch {
 	
 	};
 
-	// IDT table pointer
+	// IDT pointer
 	struct idtPointer {
 
 		t_u16		size;			// IDT size
 		idtEntry*	pointer;		// IDT pointer
 	
 	};
+
 #pragma pop
+
 
 	// Create IDT entry
 	idtEntry idtSetEntry(const t_u32&, const t_u16&, const t_u8&);
@@ -35,7 +51,9 @@ namespace arch {
 	// Load IDT
 	extern "C" void idtLoad(const idtPointer*);
 
-}	// arch
 
-#endif	// IDT_H
+}	// namespace arch
+
+
+#endif	// IGROS_ARCH_IDT_HPP
 

@@ -1,4 +1,14 @@
-# multiboot.s
+################################################################
+#
+#	Multiboot v1.0 header
+#
+#	File:	multiboot.s
+#	Date:	20 Nov. 2017
+#
+#	Copyright (c) 2017, Igor Baklykov
+#	All rights reserved.
+#
+
 
 .code32
 

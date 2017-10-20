@@ -1,7 +1,20 @@
+////////////////////////////////////////////////////////////////
+//
+//	Interrupt descriptor table low-level operations
+//
+//	File:	idt.cpp
+//	Date:	20 Nov. 2017
+//
+//	Copyright (c) 2017, Igor Baklykov
+//	All rights reserved.
+//
+
+
 #include <include/idt.hpp>
 
 
 namespace arch {
+
 
 	// Create IDT entry
 	idtEntry idtSetEntry(const t_u32 &offset, const t_u16 &selector, const t_u8 &type) {
@@ -17,6 +30,7 @@ namespace arch {
 		return entry;
 
 	}
+
 
 }	// arch
 

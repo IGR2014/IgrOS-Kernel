@@ -1,3 +1,15 @@
+////////////////////////////////////////////////////////////////
+//
+//	Exceptions low-level operations
+//
+//	File:	exceptions.cpp
+//	Date:	20 Nov. 2017
+//
+//	Copyright (c) 2017, Igor Baklykov
+//	All rights reserved.
+//
+
+
 #include <include/taskRegs.hpp>
 #include <include/exceptions.hpp>
 #include <include/videoMem.hpp>
@@ -5,6 +17,7 @@
 
 // Arch-dependent code zone
 namespace arch {
+
 
 	// Exceptions names
 	const t_i8p exceptionName[32] = {"Divide by Zero",			// 0
@@ -50,5 +63,6 @@ namespace arch {
 		while (true) {};
 
 	}
+
 
 }	// arch

@@ -1,11 +1,24 @@
-#ifndef PORT_H
-#define PORT_H
+////////////////////////////////////////////////////////////////
+//
+//	IO low-level port operations
+//
+//	File:	port.hpp
+//	Date:	20 Nov. 2017
+//
+//	Copyright (c) 2017, Igor Baklykov
+//	All rights reserved.
+//
+
+
+#ifndef IGROS_ARCH_PORT_HPP
+#define IGROS_ARCH_PORT_HPP
 
 
 #include <include/types.hpp>
 
 
 namespace arch {
+
 
 	// Read byte from port
 	extern "C" t_u8		inPortB(t_u16);
@@ -21,7 +34,8 @@ namespace arch {
 	// Write long to port
 	extern "C" void		outPortL(t_u16, t_u32);
 
-}	// namespacearch
 
-#endif	// PORT_H
+}	// namespace arch
 
+
+#endif	// IGROS_ARCH_PORT_HPP

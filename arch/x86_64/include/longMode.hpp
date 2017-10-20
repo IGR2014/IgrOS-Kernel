@@ -1,5 +1,17 @@
-#ifndef LONG_MODE_H
-#define LONG_MODE_H
+////////////////////////////////////////////////////////////////
+//
+//	Long mode low-level preparation operations
+//
+//	File:	longMode.hpp
+//	Date:	20 Nov. 2017
+//
+//	Copyright (c) 2017, Igor Baklykov
+//	All rights reserved.
+//
+
+
+#ifndef IGROS_ARCH_LONG_MODE_HPP
+#define IGROS_ARCH_LONG_MODE_HPP
 
 
 #include <include/types.hpp>
@@ -7,6 +19,7 @@
 
 // Arch-dependent code zone
 namespace arch {
+
 
 	// Set GDT
 	extern "C" {
@@ -25,7 +38,8 @@ namespace arch {
 
 	}
 
-}	// arch
 
-#endif	// GDT_H
+}	// namespace arch
 
+
+#endif	// IGROS_ARCH_LONG_MODE_HPP

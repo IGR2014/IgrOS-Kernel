@@ -1,3 +1,15 @@
+################################################################
+#
+#	Boot folder Make script
+#
+#	File:	Makefile
+#	Date:	20 Nov. 2017
+#
+#	Copyright (c) 2017, Igor Baklykov
+#	All rights reserved.
+#
+
+
 ASM		?= as
 RM		= rm -rf
 OBJ		= multiboot.o gdt.o longMode.o boot.o port.o
@@ -9,4 +21,3 @@ clean:
 
 %.o: %.s
 	$(ASM) --32 -o $@ $<
-

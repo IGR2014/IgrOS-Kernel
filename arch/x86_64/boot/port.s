@@ -1,4 +1,14 @@
-# port.s
+################################################################
+#
+#	IO low-level port operations
+#
+#	File:	port.s
+#	Date:	20 Nov. 2017
+#
+#	Copyright (c) 2017, Igor Baklykov
+#	All rights reserved.
+#
+
 
 .code32
 

@@ -1,3 +1,15 @@
+////////////////////////////////////////////////////////////////
+//
+//	Common C++ types redefinition
+//
+//	File:	types.hpp
+//	Date:	20 Nov. 2017
+//
+//	Copyright (c) 2017, Igor Baklykov
+//	All rights reserved.
+//
+
+
 #ifndef TYPES_H
 #define TYPES_H
 

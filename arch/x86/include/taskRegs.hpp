@@ -1,5 +1,17 @@
-#ifndef	TASK_REGS_H
-#define	TASK_REGS_H
+////////////////////////////////////////////////////////////////
+//
+//	Task switch registers data structure
+//
+//	File:	taskRegs.hpp
+//	Date:	20 Nov. 2017
+//
+//	Copyright (c) 2017, Igor Baklykov
+//	All rights reserved.
+//
+
+
+#ifndef	IGROS_ARCH_TASK_REGS_HPP
+#define	IGROS_ARCH_TASK_REGS_HPP
 
 
 #include <include/types.hpp>
@@ -8,7 +20,9 @@
 // Arch-dependent code zone
 namespace arch {
 
-	#pragma pack(push, 1)
+
+#pragma pack(push, 1)
+
 	// x86 task switch registers save
 	struct taskRegs {
 
@@ -37,9 +51,12 @@ namespace arch {
 		t_u32	userEsp;	// User stack pointer register
 		t_u32	ss;		// Stack segment register
 
-	};	// tsRegs
-	#pragma pack(pop)
+	};	// taskRegs
 
-}	// arch
+#pragma pack(pop)
 
-#endif	// TASK_REGS_H
+
+}	// namespace arch
+
+
+#endif	// IGROS_ARCH_TASK_REGS_HPP

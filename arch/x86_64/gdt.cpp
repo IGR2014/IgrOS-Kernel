@@ -1,8 +1,21 @@
+////////////////////////////////////////////////////////////////
+//
+//	Global descriptor table low-level operations
+//
+//	File:	boot.cpp
+//	Date:	20 Nov. 2017
+//
+//	Copyright (c) 2017, Igor Baklykov
+//	All rights reserved.
+//
+
+
 #include <include/gdt.hpp>
 
 
 // Arch-dependent code zone
 namespace arch {
+
 
 	// Create GDT entry
 	gdtEntry gdtSetEntry(const t_u32 &base, const t_u32 &limit, const t_u16 &flags) {
@@ -21,5 +34,5 @@ namespace arch {
 
 	}
 
-}	// namespace arch
 
+}	// namespace arch
