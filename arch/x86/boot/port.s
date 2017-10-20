@@ -56,3 +56,4 @@ outPortL:				# Write long to port function
 	movl	8(%esp), %eax		# Data to write
 	outl	%eax, %dx		# Write data
 	ret				# Return
+

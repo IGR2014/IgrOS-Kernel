@@ -35,3 +35,4 @@ $(BIN): $(OBJ)
 
 %.o: %.cpp
 	$(CXX) -c $< -o $@ $(CXXFLAGS) $(CXXINCLUDE)
+

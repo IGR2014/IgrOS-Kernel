@@ -120,3 +120,4 @@ namespace arch {
 
 
 #endif	// IGROS_ARCH_VIDEO_MEMORY_HPP
+

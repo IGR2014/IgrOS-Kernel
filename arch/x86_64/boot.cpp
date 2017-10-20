@@ -87,3 +87,4 @@ extern "C" void kernelFunc() {
 	*(t_u16*)0xb8006 = (t_u16)0x2f59;
 
 }
+

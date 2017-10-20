@@ -202,4 +202,5 @@ namespace arch {
 	}
 
 
-}	// arch
+}	// namespace arch
+
