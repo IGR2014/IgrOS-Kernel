@@ -1,5 +1,17 @@
-#ifndef INTERRUPTS_H
-#define INTERRUPTS_H
+////////////////////////////////////////////////////////////////
+//
+//	Interrupts low-level operations
+//
+//	File:	interrupts.hpp
+//	Date:	20 Nov. 2017
+//
+//	Copyright (c) 2017, Igor Baklykov
+//	All rights reserved.
+//
+
+
+#ifndef IGROS_ARCH_INTERRUPTS_HPP
+#define IGROS_ARCH_INTERRUPTS_HPP
 
 
 #include <include/types.hpp>
@@ -8,6 +20,7 @@
 
 // Arch-dependent code zone
 namespace arch {
+
 
 	extern "C" {
 
@@ -32,23 +45,25 @@ namespace arch {
 		// Interrupt 9 handler
 		extern void irqHandler9();
 		// Interrupt 10 handler
-		extern void irqHandler10();
+		extern void irqHandlerA();
 		// Interrupt 11 handler
-		extern void irqHandler11();
+		extern void irqHandlerB();
 		// Interrupt 12 handler
-		extern void irqHandler12();
+		extern void irqHandlerC();
 		// Interrupt 13 handler
-		extern void irqHandler13();
+		extern void irqHandlerD();
 		// Interrupt 14 handler
-		extern void irqHandler14();
+		extern void irqHandlerE();
 		// Interrupt 15 handler
-		extern void irqHandler15();
+		extern void irqHandlerF();
 
 		// Interrupts handler function
 		void irqHandler(const taskRegs*);
 
 	}	// extern "C"
 
-}	// arch
 
-#endif	// INTERRUPTS_H
+}	// namespace arch
+
+
+#endif	// IGROS_ARCH_INTERRUPTS_HPP

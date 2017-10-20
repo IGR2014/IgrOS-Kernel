@@ -1,4 +1,14 @@
-# longMode.s
+################################################################
+#
+#	Long mode low-level preparation operations
+#
+#	File:	longMode.s
+#	Date:	20 Nov. 2017
+#
+#	Copyright (c) 2017, Igor Baklykov
+#	All rights reserved.
+#
+
 
 .code32
 

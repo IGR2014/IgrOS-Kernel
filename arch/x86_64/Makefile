@@ -1,3 +1,15 @@
+################################################################
+#
+#	x86-64 folder Make script
+#
+#	File:	Makefile
+#	Date:	20 Nov. 2017
+#
+#	Copyright (c) 2017, Igor Baklykov
+#	All rights reserved.
+#
+
+
 CXX		?= g++
 CXXFLAGS	= -O2 -Wall -m32 -std=c++11 -Wextra -w -pedantic -Werror -ffreestanding -fno-exceptions -fno-rtti -nostdlib
 CXXINCLUDE	= -I ${CURDIR} -I include -I ../../

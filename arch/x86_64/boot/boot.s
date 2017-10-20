@@ -1,4 +1,14 @@
-# kernel.s
+################################################################
+#
+#	Low-level boot setup function
+#
+#	File:	boot.s
+#	Date:	20 Nov. 2017
+#
+#	Copyright (c) 2017, Igor Baklykov
+#	All rights reserved.
+#
+
 
 .code32
 

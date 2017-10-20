@@ -1,7 +1,20 @@
+////////////////////////////////////////////////////////////////
+//
+//	Boot low-level main setup function
+//
+//	File:	boot.cpp
+//	Date:	20 Nov. 2017
+//
+//	Copyright (c) 2017, Igor Baklykov
+//	All rights reserved.
+//
+
+
 //#include <videoMem.hpp>
 #include <include/types.hpp>
 #include <include/gdt.hpp>
 #include <include/longMode.hpp>
+
 
 extern "C" void kernelFunc() {
 
@@ -74,4 +87,3 @@ extern "C" void kernelFunc() {
 	*(t_u16*)0xb8006 = (t_u16)0x2f59;
 
 }
-

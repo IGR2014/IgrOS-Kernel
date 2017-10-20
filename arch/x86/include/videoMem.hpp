@@ -1,12 +1,44 @@
-#ifndef VIDEO_MEMORY_H
-#define VIDEO_MEMORY_H
+////////////////////////////////////////////////////////////////
+//
+//	Video memory low-level operations
+//
+//	File:	videoMem.hpp
+//	Date:	20 Nov. 2017
+//
+//	Copyright (c) 2017, Igor Baklykov
+//	All rights reserved.
+//
 
+
+#ifndef IGROS_ARCH_VIDEO_MEMORY_HPP
+#define IGROS_ARCH_VIDEO_MEMORY_HPP
+
+
+// Video memory max width
+#define	VIDEO_MEM_WIDTH			80
+// Video memory max height
+#define	VIDEO_MEM_HEIGHT		25
+// Video memory size
+#define	VIDEO_MEM_SIZE			(VIDEO_MEM_WIDTH * VIDEO_MEM_HEIGHT)
+
+// TAB size
+#define	VIDEO_MEM_TAB_SIZE		8
+
+// VGA CRTC index register
+#define VIDEO_MEM_CRTC_INDEX		0x3D4
+// VGA CRTC data register
+#define	VIDEO_MEM_CRTC_DATA		0x3D5
+// VGA CRTC cursor high byte command
+#define	VIDEO_MEM_CRTC_CURSOR_HIGH	0x0E
+// VGA CRTC cursor low byte command
+#define	VIDEO_MEM_CRTC_CURSOR_LOW	0x0F
 
 #include <include/types.hpp>
 
 
 // Arch-dependent code zone
 namespace arch {
+
 
 	// Video memory colors enumeration
 	enum videoMemColor: unsigned char {
@@ -39,14 +71,7 @@ namespace arch {
 	};
 
 	// Video memory base address
-	static videoMemSymbol* const	videoMemBase		= (videoMemSymbol*)0xb8000;
-
-	// Video memory max width
-	static const t_u8		videoMemWidth		= 80;
-	// Video memory max height
-	static const t_u8		videoMemHeight		= 25;
-	// Video memory size
-	static const t_u16		videoMemSize		= videoMemWidth * videoMemHeight;
+	static videoMemSymbol* const	videoMemBase		= (videoMemSymbol*)0xB8000;
 
 	// Video memory background symbol
 	static t_u8			videoMemBkgColor	= 0x02;
@@ -76,13 +101,13 @@ namespace arch {
 	void videoMemWriteMessage(const t_i8p);
 
 	// Write fixed-width string to video memory
-	void videoMemWriteMessage(const t_i8p, const t_u64&);
+	void videoMemWriteMessage(const t_i8p, const t_u32&);
 
 	// Write string to video memory with \r \n
 	void videoMemWriteLine(const t_i8p);
 
 	// Write fixed-width string to video memory with \r \n
-	void videoMemWriteLine(const t_i8p, const t_u64&);
+	void videoMemWriteLine(const t_i8p, const t_u32&);
 
 	// Clear video memory
 	void videoMemClear();
@@ -90,6 +115,8 @@ namespace arch {
 	// Init video memory
 	void videoMemInit();
 
-}	// arch
 
-#endif	// VIDEO_MEMORY_H
+}	// namespace arch
+
+
+#endif	// IGROS_ARCH_VIDEO_MEMORY_HPP

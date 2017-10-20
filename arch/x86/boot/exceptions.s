@@ -1,256 +1,266 @@
-# exceptions.s
+################################################################
+#
+#	Exception low-level handlers
+#
+#	File:	exceptions.s
+#	Date:	20 Nov. 2017
+#
+#	Copyright (c) 2017, Igor Baklykov
+#	All rights reserved.
+#
+
 
 .code32
 
 .section .text
 	.balign	4
 	.extern	exHandler		# Extenral main exception handler
-	.global exHandler0		# 0
-	.global exHandler1		# 1
-	.global exHandler2		# 2
-	.global exHandler3		# 3
-	.global exHandler4		# 4
-	.global exHandler5		# 5
-	.global exHandler6		# 6
-	.global exHandler7		# 7
-	.global exHandler8		# 8
-	.global exHandler9		# 9
-	.global exHandler10		# 10
-	.global exHandler11		# 11
-	.global exHandler12		# 12
-	.global exHandler13		# 13
-	.global exHandler14		# 14
-	.global exHandler15		# 15
-	.global exHandler16		# 16
-	.global exHandler17		# 17
-	.global exHandler18		# 18
-	.global exHandler19		# 19
-	.global exHandler20		# 20
-	.global exHandler21		# 21
-	.global exHandler22		# 22
-	.global exHandler23		# 23
-	.global exHandler24		# 24
-	.global exHandler25		# 25
-	.global exHandler26		# 26
-	.global exHandler27		# 27
-	.global exHandler28		# 28
-	.global exHandler29		# 29
-	.global exHandler30		# 30
-	.global exHandler31		# 31
+	.global exHandler00		# 0
+	.global exHandler01		# 1
+	.global exHandler02		# 2
+	.global exHandler03		# 3
+	.global exHandler04		# 4
+	.global exHandler05		# 5
+	.global exHandler06		# 6
+	.global exHandler07		# 7
+	.global exHandler08		# 8
+	.global exHandler09		# 9
+	.global exHandler0A		# 10
+	.global exHandler0B		# 11
+	.global exHandler0C		# 12
+	.global exHandler0D		# 13
+	.global exHandler0E		# 14
+	.global exHandler0F		# 15
+	.global exHandler10		# 16
+	.global exHandler11		# 17
+	.global exHandler12		# 18
+	.global exHandler13		# 19
+	.global exHandler14		# 20
+	.global exHandler15		# 21
+	.global exHandler16		# 22
+	.global exHandler17		# 23
+	.global exHandler18		# 24
+	.global exHandler19		# 25
+	.global exHandler1A		# 26
+	.global exHandler1B		# 27
+	.global exHandler1C		# 28
+	.global exHandler1D		# 29
+	.global exHandler1E		# 30
+	.global exHandler1F		# 31
 
 # 0 Division By Zero Exception
-exHandler0:
+exHandler00:
 	cli				# Disable interrupts
 	pushl	$0x00			# Fake parameter
 	pushl	$0x00			# Exception number
 	jmp	exceptionRoutine	# Handle exception
 
 # 1 Debug Exception
-exHandler1:
+exHandler01:
 	cli				# Disable interrupts
 	pushl	$0x00			# Fake parameter
 	pushl	$0x01			# Exception number
 	jmp	exceptionRoutine	# Handle exception
 
 # 2 Non-Maskable Interrupt Exception
-exHandler2:
+exHandler02:
 	cli				# Disable interrupts
 	pushl	$0x00			# Fake parameter
 	pushl	$0x02			# Exception number
 	jmp	exceptionRoutine	# Handle exception
 
 # 3 Breakpoint Exception
-exHandler3:
+exHandler03:
 	cli				# Disable interrupts
 	pushl	$0x00			# Fake parameter
 	pushl	$0x03			# Exception number
 	jmp	exceptionRoutine	# Handle exception
 
 # 4 Into Detected Overflow Exception
-exHandler4:
+exHandler04:
 	cli				# Disable interrupts
 	pushl	$0x00			# Fake parameter
 	pushl	$0x04			# Exception number
 	jmp	exceptionRoutine	# Handle exception
 
 # 5 Out of Bounds Exception
-exHandler5:
+exHandler05:
 	cli				# Disable interrupts
 	pushl	$0x00			# Fake parameter
 	pushl	$0x05			# Exception number
 	jmp	exceptionRoutine	# Handle exception
 
 # 6 Invalid Opcode Exception
-exHandler6:
+exHandler06:
 	cli				# Disable interrupts
 	pushl	$0x00			# Fake parameter
 	pushl	$0x06			# Exception number
 	jmp	exceptionRoutine	# Handle exception
 
 # 7 No Coprocessor Exception
-exHandler7:
+exHandler07:
 	cli				# Disable interrupts
 	pushl	$0x00			# Fake parameter
 	pushl	$0x07			# Exception number
 	jmp	exceptionRoutine	# Handle exception
 
 # 8 Double Fault Exception
-exHandler8:
+exHandler08:
 	cli				# Disable interrupts
 	pushl	$0x08			# Exception number
 	jmp	exceptionRoutine	# Handle exception
 
 # 9 Coprocessor Segment Overrun Exception
-exHandler9:
+exHandler09:
 	cli				# Disable interrupts
 	pushl	$0x00			# Fake parameter
 	pushl	$0x09			# Exception number
 	jmp	exceptionRoutine	# Handle exception
 
 # 10 Bad TSS Exception
-exHandler10:
+exHandler0A:
 	cli				# Disable interrupts
 	pushl	$0x0A			# Exception number
 	jmp	exceptionRoutine	# Handle exception
 
 # 11 Segment Not Present Exception
-exHandler11:
+exHandler0B:
 	cli				# Disable interrupts
 	pushl	$0x0B			# Exception number
 	jmp	exceptionRoutine	# Handle exception
 
 # 12 Stack Fault Exception
-exHandler12:
+exHandler0C:
 	cli				# Disable interrupts
 	pushl	$0x0C			# Exception number
 	jmp	exceptionRoutine	# Handle exception
 
 # 13 General Protection Fault Exception
-exHandler13:
+exHandler0D:
 	cli				# Disable interrupts
 	pushl	$0x0D			# Exception number
 	jmp	exceptionRoutine	# Handle exception
 
 # 14 Page Fault Exception
-exHandler14:
+exHandler0E:
 	cli				# Disable interrupts
 	pushl	$0x0E			# Exception number
 	jmp	exceptionRoutine	# Handle exception
 
 # 15 Unknown Interrupt Exception
-exHandler15:
+exHandler0F:
 	cli				# Disable interrupts
 	pushl	$0x00			# Fake parameter
 	pushl	$0x0F			# Exception number
 	jmp	exceptionRoutine	# Handle exception
 
 # 16 Coprocessor Fault Exception
-exHandler16:
+exHandler10:
 	cli				# Disable interrupts
 	pushl	$0x00			# Fake parameter
 	pushl	$0x10			# Exception number
 	jmp	exceptionRoutine	# Handle exception
 
 # 17 Alignment Check Exception
-exHandler17:
+exHandler11:
 	cli				# Disable interrupts
 	pushl	$0x00			# Fake parameter
 	pushl	$0x11			# Exception number
 	jmp	exceptionRoutine	# Handle exception
 
 # 18 Machine Check Exception
-exHandler18:
+exHandler12:
 	cli				# Disable interrupts
 	pushl	$0x00			# Fake parameter
 	pushl	$0x12			# Exception number
 	jmp	exceptionRoutine	# Handle exception
 
 # 19 Reserved Exception
-exHandler19:
+exHandler13:
 	cli				# Disable interrupts
 	pushl	$0x00			# Fake parameter
 	pushl	$0x13			# Exception number
 	jmp	exceptionRoutine	# Handle exception
 
 # 20 Reserved Exception
-exHandler20:
+exHandler14:
 	cli				# Disable interrupts
 	pushl	$0x00			# Fake parameter
 	pushl	$0x14			# Exception number
 	jmp	exceptionRoutine	# Handle exception
 
 # 21 Reserved Exception
-exHandler21:
+exHandler15:
 	cli				# Disable interrupts
 	pushl	$0x00			# Fake parameter
 	pushl	$0x15			# Exception number
 	jmp	exceptionRoutine	# Handle exception
 
 # 22 Reserved Exception
-exHandler22:
+exHandler16:
 	cli				# Disable interrupts
 	pushl	$0x00			# Fake parameter
 	pushl	$0x16			# Exception number
 	jmp	exceptionRoutine	# Handle exception
 
 # 23 Reserved Exception
-exHandler23:
+exHandler17:
 	cli				# Disable interrupts
 	pushl	$0x00			# Fake parameter
 	pushl	$0x17			# Exception number
 	jmp	exceptionRoutine	# Handle exception
 
 # 24 Reserved Exception
-exHandler24:
+exHandler18:
 	cli				# Disable interrupts
 	pushl	$0x00			# Fake parameter
 	pushl	$0x18			# Exception number
 	jmp	exceptionRoutine	# Handle exception
 
 # 25 Reserved Exception
-exHandler25:
+exHandler19:
 	cli				# Disable interrupts
 	pushl	$0x00			# Fake parameter
 	pushl	$0x19			# Exception number
 	jmp	exceptionRoutine	# Handle exception
 
 # 26 Reserved Exception
-exHandler26:
+exHandler1A:
 	cli				# Disable interrupts
 	pushl	$0x00			# Fake parameter
 	pushl	$0x1A			# Exception number
 	jmp	exceptionRoutine	# Handle exception
 
 # 27 Reserved Exception
-exHandler27:
+exHandler1B:
 	cli				# Disable interrupts
 	pushl	$0x00			# Fake parameter
 	pushl	$0x1B			# Exception number
 	jmp	exceptionRoutine	# Handle exception
 
 # 28 Reserved Exception
-exHandler28:
+exHandler1C:
 	cli				# Disable interrupts
 	pushl	$0x00			# Fake parameter
 	pushl	$0x1C			# Exception number
 	jmp	exceptionRoutine	# Handle exception
 
 # 29 Reserved Exception
-exHandler29:
+exHandler1D:
 	cli				# Disable interrupts
 	pushl	$0x00			# Fake parameter
 	pushl	$0x1D			# Exception number
 	jmp	exceptionRoutine	# Handle exception
 
 # 30 Reserved Exception
-exHandler30:
+exHandler1E:
 	cli				# Disable interrupts
 	pushl	$0x00			# Fake parameter
 	pushl	$0x1E			# Exception number
 	jmp	exceptionRoutine	# Handle exception
 
 # 31 Reserved Exception
-exHandler31:
+exHandler1F:
 	cli				# Disable interrupts
 	pushl	$0x00			# Fake parameter
 	pushl	$0x1F			# Exception number
