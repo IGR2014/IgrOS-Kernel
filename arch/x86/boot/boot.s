@@ -30,3 +30,4 @@ haltCPU:
 stackBottom:				# End of stack
 	.skip	16384			# Stack size of 16kB
 stackTop:				# Stack pointer
+

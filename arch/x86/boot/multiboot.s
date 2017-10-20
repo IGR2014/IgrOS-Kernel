@@ -25,3 +25,4 @@
 	.long	MAGIC			# Multiboot magic value
 	.long	FLAGS			# Multiboot flags
 	.long	CHECKSUM		# Multiboot checksum
+

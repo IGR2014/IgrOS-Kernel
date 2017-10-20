@@ -10,8 +10,8 @@
 //
 
 
-#ifndef TYPES_H
-#define TYPES_H
+#ifndef IGROS_TYPES_HPP
+#define IGROS_TYPES_HPP
 
 
 // Unsigned integer types
@@ -53,5 +53,5 @@ typedef	double*	t_f64p;
 typedef void*   t_ptr;
 
 
-#endif	// TYPES_H
+#endif	// IGROS_TYPES_HPP
 
