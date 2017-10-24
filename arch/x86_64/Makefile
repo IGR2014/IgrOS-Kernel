@@ -28,7 +28,7 @@ clean:
 	${RM} $(OBJ) $(BIN)
 
 run: $(BIN)
-	qemu-system-x86_64 -kernel $(BIN) -enable-kvm -cpu host
+	qemu-system-x86_64 -kernel $(BIN)
 
 $(BIN): $(OBJ)
 	$(LINKER) -n $(OBJ) -o $(BIN) -T $(LINKERSCRIPT) -m elf_i386
