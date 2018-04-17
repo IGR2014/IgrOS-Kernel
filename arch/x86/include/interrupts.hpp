@@ -25,37 +25,37 @@ namespace arch {
 	extern "C" {
 
 		// Interrupt 0 handler
-		extern void irqHandler0();
+		void irqHandler0();
 		// Interrupt 1 handler
-		extern void irqHandler1();
+		void irqHandler1();
 		// Interrupt 2 handler
-		extern void irqHandler2();
+		void irqHandler2();
 		// Interrupt 3 handler
-		extern void irqHandler3();
+		void irqHandler3();
 		// Interrupt 4 handler
-		extern void irqHandler4();
+		void irqHandler4();
 		// Interrupt 5 handler
-		extern void irqHandler5();
+		void irqHandler5();
 		// Interrupt 6 handler
-		extern void irqHandler6();
+		void irqHandler6();
 		// Interrupt 7 handler
-		extern void irqHandler7();
+		void irqHandler7();
 		// Interrupt 8 handler
-		extern void irqHandler8();
+		void irqHandler8();
 		// Interrupt 9 handler
-		extern void irqHandler9();
+		void irqHandler9();
 		// Interrupt 10 handler
-		extern void irqHandlerA();
+		void irqHandlerA();
 		// Interrupt 11 handler
-		extern void irqHandlerB();
+		void irqHandlerB();
 		// Interrupt 12 handler
-		extern void irqHandlerC();
+		void irqHandlerC();
 		// Interrupt 13 handler
-		extern void irqHandlerD();
+		void irqHandlerD();
 		// Interrupt 14 handler
-		extern void irqHandlerE();
+		void irqHandlerE();
 		// Interrupt 15 handler
-		extern void irqHandlerF();
+		void irqHandlerF();
 
 		// Interrupts handler function
 		void irqHandler(const taskRegs*);

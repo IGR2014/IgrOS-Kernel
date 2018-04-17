@@ -34,8 +34,11 @@ namespace arch {
 		outPortB(0x20, 0x20);
 
 		// Read keyboard data port
-		if (inPortB(0x60) > 0x7F)
+		if (inPortB(0x60) > 0x7F) {
+
 			return;
+
+		}
 
 		// Write text to screen
 		videoMemWriteMessage("IRQ");

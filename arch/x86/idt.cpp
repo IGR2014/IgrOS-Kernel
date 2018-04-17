@@ -3,9 +3,9 @@
 //	Interrupt descriptor table low-level operations
 //
 //	File:	idt.cpp
-//	Date:	20 Nov. 2017
+//	Date:	17 Apr. 2018
 //
-//	Copyright (c) 2017, Igor Baklykov
+//	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
 //
 
@@ -28,6 +28,13 @@ namespace arch {
 		entry.offsetHigh	= (offset & 0xFFFF0000) >> 16;
 
 		return entry;
+
+	}
+
+	// Calculate IDT size
+	t_u32 idtCalcTableSize(const t_u32 &numOfEntries) {
+
+		return (numOfEntries * sizeof(idtEntry)) - 1;
 
 	}
 
