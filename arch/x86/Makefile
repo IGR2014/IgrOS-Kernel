@@ -3,19 +3,19 @@
 #	x86 folder Make script
 #
 #	File:	Makefile
-#	Date:	20 Nov. 2017
+#	Date:	17 Apr. 2018
 #
-#	Copyright (c) 2017, Igor Baklykov
+#	Copyright (c) 2018, Igor Baklykov
 #	All rights reserved.
 #
 
 
 CXX		?= g++
-CXXFLAGS	= -Wall -m32 -std=c++11 -Wextra -w -pedantic -Werror -ffreestanding -fno-exceptions -fno-rtti -nostdlib
+CXXFLAGS	= -Wall -m32 -g -std=c++11 -Wextra -w -pedantic -Werror -ffreestanding -fno-exceptions -fno-rtti -nostdlib -Os -s
 CXXINCLUDE	= -I ${CURDIR} -I include -I ../../
 RM		= rm -rf
 BIN		?= kernel.bin
-OBJ		= boot/multiboot.o boot/boot.o boot/idt.o boot/port.o boot/exceptions.o boot/interrupts.o boot.o idt.o exceptions.o interrupts.o videoMem.o
+OBJ		= boot/multiboot.o boot/boot.o boot/idt.o boot/gdt.o boot/port.o boot/exceptions.o boot/interrupts.o boot.o idt.o gdt.o exceptions.o interrupts.o videoMem.o
 LINKER		= ld
 LINKERSCRIPT	= link.ld
 

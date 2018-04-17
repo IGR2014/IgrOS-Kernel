@@ -3,9 +3,9 @@
 //	Interrupt descriptor table low-level operations
 //
 //	File:	idt.hpp
-//	Date:	20 Nov. 2017
+//	Date:	17 Apr. 2018
 //
-//	Copyright (c) 2017, Igor Baklykov
+//	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
 //
 
@@ -50,6 +50,9 @@ namespace arch {
 
 	// Load IDT
 	extern "C" void idtLoad(const idtPointer*);
+
+	// Calculate IDT size
+	t_u32 idtCalcTableSize(const t_u32&);
 
 
 }	// namespace arch

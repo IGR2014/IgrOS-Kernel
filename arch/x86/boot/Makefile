@@ -3,16 +3,16 @@
 #	Boot folder Make script
 #
 #	File:	Makefile
-#	Date:	20 Nov. 2017
+#	Date:	17 Apr. 2018
 #
-#	Copyright (c) 2017, Igor Baklykov
+#	Copyright (c) 2018, Igor Baklykov
 #	All rights reserved.
 #
 
 
 ASM		?= as
 RM		= rm -rf
-OBJ		= multiboot.o boot.o idt.o port.o exceptions.o interrupts.o
+OBJ		= multiboot.o boot.o idt.o gdt.o port.o exceptions.o interrupts.o
 
 all: $(OBJ)
 

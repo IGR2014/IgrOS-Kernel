@@ -3,14 +3,15 @@
 //	Boot low-level main setup function
 //
 //	File:	boot.cpp
-//	Date:	20 Nov. 2017
+//	Date:	17 Apr. 2018
 //
-//	Copyright (c) 2017, Igor Baklykov
+//	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
 //
 
 
 #include <include/types.hpp>
+#include <include/gdt.hpp>
 #include <include/idt.hpp>
 #include <include/exceptions.hpp>
 #include <include/interrupts.hpp>
@@ -18,14 +19,34 @@
 #include <include/videoMem.hpp>
 
 
+// Exceptions and IRQ descriptors table (IDT)
+arch::idtEntry idtTable[256];
+// Pointer to IDT
+arch::idtPointer idt;
+
+// Global descriptors table (GDT)
+arch::gdtEntry gdtTable[3];
+// Pointer to GDT
+arch::gdtPointer gdt;
+
 // Kernel main function
 extern "C" void kernelFunc() {
 
-	// Init video memory
-	arch::videoMemInit();
+	//arch::setupPageTables();
+	//arch::enablePaging();
 
-	// Exceptions and IRQ descriptors table (IDT)
-	arch::idtEntry idtTable[256];
+	// GDT setup
+	gdtTable[0x00]	= arch::gdtSetEntry(0x00000000, 0x00000000, 0x0000);
+	gdtTable[0x01]	= arch::gdtSetEntry(0x00000000, 0xFFFFFFFF, GDT_CODE_RING0);
+	gdtTable[0x02]	= arch::gdtSetEntry(0x00000000, 0xFFFFFFFF, GDT_DATA_RING0);
+
+	// Set GDT size and data pointer
+	gdt.size	= arch::gdtCalcTableSize(3);
+	gdt.pointer	= gdtTable;
+
+	// Load new GDT
+	arch::gdtLoad(&gdt);
+	//arch::reloadCS();
 
 	// Exceptions setup
 	idtTable[0x00]	= arch::idtSetEntry((t_u32)arch::exHandler00, 0x08, 0x8E);
@@ -79,10 +100,8 @@ extern "C" void kernelFunc() {
 	idtTable[0x2E]	= arch::idtSetEntry((t_u32)arch::irqHandlerE, 0x08, 0x8E);
 	idtTable[0x2F]	= arch::idtSetEntry((t_u32)arch::irqHandlerF, 0x08, 0x8E);
 
-	// Pointer to IDT
-	arch::idtPointer idt;
-	// Set idt size and data pointer
-	idt.size	= sizeof(arch::idtEntry) * 256 - 1;
+	// Set IDT size and data pointer
+	idt.size	= arch::idtCalcTableSize(256);
 	idt.pointer	= idtTable;
 
 	// ICW 1 for PIC
@@ -108,15 +127,20 @@ extern "C" void kernelFunc() {
 	// Load new IDT
 	arch::idtLoad(&idt);
 
+	// Init video memory
+	arch::videoMemInit();
+
 	// Write "Hello World" message
 	arch::videoMemWriteLine("Hello World from kernel!");
 
 	// Divide by Zero Exception Test
-	/*
+	/*	
 	int x = 10;
 	int y = 0;
 	int z = x / y;
 	*/
+
+	while(true) {};
 
 }
 
