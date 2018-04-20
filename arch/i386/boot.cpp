@@ -3,7 +3,7 @@
 //	Boot low-level main setup function
 //
 //	File:	boot.cpp
-//	Date:	17 Apr. 2018
+//	Date:	18 Apr. 2018
 //
 //	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
@@ -25,23 +25,22 @@ arch::idtEntry idtTable[256];
 arch::idtPointer idt;
 
 // Global descriptors table (GDT)
-arch::gdtEntry gdtTable[3];
+arch::gdtEntry gdtTable[5];
 // Pointer to GDT
 arch::gdtPointer gdt;
 
 // Kernel main function
 extern "C" void kernelFunc() {
 
-	//arch::setupPageTables();
-	//arch::enablePaging();
-
 	// GDT setup
 	gdtTable[0x00]	= arch::gdtSetEntry(0x00000000, 0x00000000, 0x0000);
 	gdtTable[0x01]	= arch::gdtSetEntry(0x00000000, 0xFFFFFFFF, GDT_CODE_RING0);
 	gdtTable[0x02]	= arch::gdtSetEntry(0x00000000, 0xFFFFFFFF, GDT_DATA_RING0);
+	gdtTable[0x03]	= arch::gdtSetEntry(0x00000000, 0xFFFFFFFF, GDT_CODE_RING3);
+	gdtTable[0x04]	= arch::gdtSetEntry(0x00000000, 0xFFFFFFFF, GDT_DATA_RING3);
 
 	// Set GDT size and data pointer
-	gdt.size	= arch::gdtCalcTableSize(3);
+	gdt.size	= arch::gdtCalcTableSize(5);
 	gdt.pointer	= gdtTable;
 
 	// Load new GDT
@@ -131,13 +130,23 @@ extern "C" void kernelFunc() {
 	arch::videoMemInit();
 
 	// Write "Hello World" message
-	arch::videoMemWriteLine("Hello World from kernel!");
+	arch::videoMemWriteLine("IgrOS kernel");
+	arch::videoMemWriteLine("");
+	arch::videoMemWriteMessage("Build:\t\t");
+	arch::videoMemWriteMessage(__DATE__);
+	arch::videoMemWriteMessage(" ");
+	arch::videoMemWriteLine(__TIME__);
+	arch::videoMemWriteMessage("Version:\t");
+	arch::videoMemWriteLine("v0.00.150 (alpha)");
+	arch::videoMemWriteMessage("Author:\t\t");
+	arch::videoMemWriteLine("Igor Baklykov (c) 2018");
+	arch::videoMemWriteLine("");
 
 	// Divide by Zero Exception Test
-	/*	
-	int x = 10;
-	int y = 0;
-	int z = x / y;
+	/*
+	volatile int x = 10;
+	volatile int y = 0;
+	volatile int z = x / y;
 	*/
 
 	while(true) {};

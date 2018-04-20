@@ -3,9 +3,9 @@
 //	Global descriptor table low-level operations
 //
 //	File:	boot.cpp
-//	Date:	20 Nov. 2017
+//	Date:	17 Apr. 2018
 //
-//	Copyright (c) 2017, Igor Baklykov
+//	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
 //
 
@@ -26,14 +26,19 @@ namespace arch {
 		entry.baseLow		= base & 0xFFFF;
 		entry.baseMid		= (base & 0xFF0000) >> 16;
 		entry.access		= flags & 0xFF;
-		entry.limitFlags	= (limit & 0xF0000) >> 16;
-		entry.limitFlags	|= (flags & 0x0F00) >> 4;
+		entry.limitFlags	= ((limit & 0xF0000) >> 16) | ((flags & 0x0F00) >> 4);
 		entry.baseHigh		= (base & 0xFF000000) >> 24;
 
 		return entry;
 
 	}
 
+	// Calculate GDT size
+	t_u32 gdtCalcTableSize(const t_u32 &numOfEntries) {
+
+		return (numOfEntries * sizeof(gdtEntry)) - 1;
+
+	}
 
 }	// namespace arch
 

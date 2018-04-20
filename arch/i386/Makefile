@@ -1,6 +1,6 @@
 ################################################################
 #
-#	x86_64 folder Make script
+#	i386 folder Make script
 #
 #	File:	Makefile
 #	Date:	20 Apr. 2018
@@ -10,30 +10,33 @@
 #
 
 
-export IGROS_TARGET			= x86_64
+export IGROS_TARGET			= i386
 
 export IGROS_DIR_TARGET_BUILD		= $(IGROS_DIR_BUILD)/$(IGROS_TARGET)
 export IGROS_DIR_TARGET_RELEASE		= $(IGROS_DIR_RELEASE)/$(IGROS_TARGET)
 
 CXX		= g++
-CXXFLAGS	= -Wall -m64 -std=c++11 -Wextra -w -pedantic -Werror -ffreestanding -fno-exceptions -fno-rtti -nostdlib -Os -s -mno-red-zone -mno-3dnow -mno-sse -mno-sse2 -mno-sse3
+CXXFLAGS	= -Wall -m32 -std=c++11 -Wextra -w -pedantic -Werror -ffreestanding -fno-exceptions -fno-rtti -nostdlib -Os -s -mno-red-zone -mno-3dnow -mno-sse -mno-sse2 -mno-sse3 -mno-mmx
 CXXINCLUDE	= -I $(CURDIR) -I include -I ../../
 RM		= rm -rf
 BIN		= kernel.bin
 LINKER		= ld
 LINKERSCRIPT	= link.ld
 OBJ		= $(IGROS_DIR_TARGET_BUILD)/boot/multiboot.o \
-		  $(IGROS_DIR_TARGET_BUILD)/boot/gdt.o \
-		  $(IGROS_DIR_TARGET_BUILD)/boot/longMode.o \
 		  $(IGROS_DIR_TARGET_BUILD)/boot/boot.o \
+		  $(IGROS_DIR_TARGET_BUILD)/boot/idt.o \
+		  $(IGROS_DIR_TARGET_BUILD)/boot/gdt.o \
 		  $(IGROS_DIR_TARGET_BUILD)/boot/port.o \
+		  $(IGROS_DIR_TARGET_BUILD)/boot/exceptions.o \
+		  $(IGROS_DIR_TARGET_BUILD)/boot/interrupts.o \
 		  $(IGROS_DIR_TARGET_BUILD)/boot.o \
+		  $(IGROS_DIR_TARGET_BUILD)/idt.o \
 		  $(IGROS_DIR_TARGET_BUILD)/gdt.o \
-		  $(IGROS_DIR_TARGET_BUILD)/longMode.o
+		  $(IGROS_DIR_TARGET_BUILD)/exceptions.o \
+		  $(IGROS_DIR_TARGET_BUILD)/interrupts.o \
+		  $(IGROS_DIR_TARGET_BUILD)/videoMem.o
 
-.PHONY: all-before all clean rebuild run
-
-all: all-before $(OBJ) $(IGROS_DIR_TARGET_RELEASE)/$(BIN)
+all: all-before $(IGROS_DIR_TARGET_RELEASE)/$(BIN)
 
 all-before:
 	@mkdir -p $(IGROS_DIR_TARGET_BUILD)
@@ -47,7 +50,7 @@ clean:
 
 run: $(IGROS_DIR_TARGET_RELEASE)/$(BIN)
 	@echo "	RUN	$(BIN)"
-	@qemu-system-x86_64 -kernel $(IGROS_DIR_TARGET_RELEASE)/$(BIN)
+	@qemu-system-i386 -kernel $(IGROS_DIR_TARGET_RELEASE)/$(BIN)
 
 $(IGROS_DIR_TARGET_BUILD)/%.o: %.cpp
 	@echo "	C++	$<"
@@ -55,5 +58,5 @@ $(IGROS_DIR_TARGET_BUILD)/%.o: %.cpp
 
 $(IGROS_DIR_TARGET_RELEASE)/$(BIN): $(OBJ)
 	@echo "	LD	$(BIN)"
-	@$(LINKER) -n $(OBJ) -o $(IGROS_DIR_TARGET_RELEASE)/$(BIN) -T $(LINKERSCRIPT) -m elf_x86_64 -z max-page-size=0x1000
+	@$(LINKER) -n $(OBJ) -o $(IGROS_DIR_TARGET_RELEASE)/$(BIN) -T $(LINKERSCRIPT) -m elf_i386 -z max-page-size=0x1000
 

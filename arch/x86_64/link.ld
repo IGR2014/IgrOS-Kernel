@@ -1,10 +1,16 @@
-OUTPUT_FORMAT(elf32-i386)
+OUTPUT_FORMAT(elf64-x86-64)
 
 ENTRY(kernelStart)
 
 SECTIONS {
 
 	. = 1M;
+
+	.multiboot : {
+
+		*(.multiboot)
+
+	}
 
 	.text : {
 
