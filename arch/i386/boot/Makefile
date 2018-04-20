@@ -12,26 +12,28 @@
 
 IGROS_DIR_PREFIX	= boot
 
-ASM		?= as
+IGROS_DIR_PATH		= $(IGROS_DIR_TARGET_BUILD)/$(IGROS_DIR_PREFIX)
+
+ASM		= as
 RM		= rm -rf
-OBJ		= $(IGROS_DIR_TARGET_BUILD)/$(IGROS_DIR_PREFIX)/multiboot.o \
-		  $(IGROS_DIR_TARGET_BUILD)/$(IGROS_DIR_PREFIX)/boot.o \
-		  $(IGROS_DIR_TARGET_BUILD)/$(IGROS_DIR_PREFIX)/idt.o \
-		  $(IGROS_DIR_TARGET_BUILD)/$(IGROS_DIR_PREFIX)/gdt.o \
-		  $(IGROS_DIR_TARGET_BUILD)/$(IGROS_DIR_PREFIX)/port.o \
-		  $(IGROS_DIR_TARGET_BUILD)/$(IGROS_DIR_PREFIX)/exceptions.o \
-		  $(IGROS_DIR_TARGET_BUILD)/$(IGROS_DIR_PREFIX)/interrupts.o
+OBJ		= $(IGROS_DIR_PATH)/multiboot.o \
+		  $(IGROS_DIR_PATH)/boot.o \
+		  $(IGROS_DIR_PATH)/idt.o \
+		  $(IGROS_DIR_PATH)/gdt.o \
+		  $(IGROS_DIR_PATH)/port.o \
+		  $(IGROS_DIR_PATH)/exceptions.o \
+		  $(IGROS_DIR_PATH)/interrupts.o
 
 
 all: all-before $(OBJ)
 
 all-before:
-	@mkdir -p $(IGROS_DIR_TARGET_BUILD)/$(IGROS_DIR_PREFIX)
+	@mkdir -p $(IGROS_DIR_PATH)
 
 clean:
 	@$(RM) $(OBJ)
 
-$(IGROS_DIR_TARGET_BUILD)/$(IGROS_DIR_PREFIX)/%.o: %.s
+$(IGROS_DIR_PATH)/%.o: %.s
 	@echo "	AS	$<"
 	@$(ASM) --32 -o $@ $<
 
