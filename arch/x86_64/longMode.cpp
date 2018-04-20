@@ -10,7 +10,9 @@
 //
 
 
-void kernelFuncX64() {
+extern "C" void kernelFuncX64() {
+
+	while(true) {};
 
 	return;
 

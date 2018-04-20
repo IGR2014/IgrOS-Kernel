@@ -3,9 +3,9 @@
 //	Global descriptor table low-level operations
 //
 //	File:	gdt.hpp
-//	Date:	20 Nov. 2017
+//	Date:	17 Apr. 2018
 //
-//	Copyright (c) 2017, Igor Baklykov
+//	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
 //
 
@@ -15,17 +15,17 @@
 
 
 // GDT access page
-#define	GDT_SEG_TYPE_ACCESS	0x01
+#define	GDT_SEG_TYPE_ACCESS	0x0001
 
 // GDT page types
-#define	GDT_SEG_TYPE_RODATA	0x00
-#define	GDT_SEG_TYPE_DATA	0x02
-#define	GDT_SEG_TYPE_ROSTACK	0x04
-#define	GDT_SEG_TYPE_STACK	0x06
-#define	GDT_SEG_TYPE_EXCODE	0x08
-#define	GDT_SEG_TYPE_CODE	0x0A
-#define	GDT_SEG_TYPE_EXCONF	0x0C
-#define	GDT_SEG_TYPE_CONF	0x0E
+#define	GDT_SEG_TYPE_RODATA	0x0000
+#define	GDT_SEG_TYPE_DATA	0x0002
+#define	GDT_SEG_TYPE_ROSTACK	0x0004
+#define	GDT_SEG_TYPE_STACK	0x0006
+#define	GDT_SEG_TYPE_EXCODE	0x0008
+#define	GDT_SEG_TYPE_CODE	0x000A
+#define	GDT_SEG_TYPE_EXCONF	0x000C
+#define	GDT_SEG_TYPE_CONF	0x000E
 
 // GDT rings
 #define GDT_SEG_RING0		0x0010
@@ -43,28 +43,28 @@
 
 
 // Kernel code page
-#define	GDT_CODE_RING0		(GDT_SEG_G |\
+#define	GDT_CODE_RING0		(GDT_SEG_G | \
 				 GDT_SEG_L | \
 				 GDT_SEG_RING_USE | \
 				 GDT_SEG_RING0 | \
 				 GDT_SEG_TYPE_CODE)
 
 // Kernel data page
-#define	GDT_DATA_RING0		(GDT_SEG_G |\
+#define	GDT_DATA_RING0		(GDT_SEG_G | \
 				 GDT_SEG_L | \
 				 GDT_SEG_RING_USE | \
 				 GDT_SEG_RING0 | \
 				 GDT_SEG_TYPE_DATA)
 
 // User code page
-#define	GDT_CODE_RING3		(GDT_SEG_G |\
+#define	GDT_CODE_RING3		(GDT_SEG_G | \
 				 GDT_SEG_L | \
 				 GDT_SEG_RING_USE | \
 				 GDT_SEG_RING3 | \
 				 GDT_SEG_TYPE_CODE)
 
 // User data page
-#define	GDT_DATA_RING3		(GDT_SEG_G |\
+#define	GDT_DATA_RING3		(GDT_SEG_G | \
 				 GDT_SEG_L | \
 				 GDT_SEG_RING_USE | \
 				 GDT_SEG_RING3 | \
@@ -106,8 +106,20 @@ namespace arch {
 	// Set GDT entry
 	gdtEntry gdtSetEntry(const t_u32&, const t_u32&, const t_u16&);
 
-	// Load GDT
-	extern "C" void gdtLoad(const gdtPointer*);
+	extern "C" {
+
+		// Load GDT
+		void	gdtLoad(const gdtPointer*);
+
+		// Setup page tables
+		void	setupPageTables();
+		// Enable paging
+		void	enablePaging();
+
+	}
+
+	// Calculate GDT size
+	t_u32 gdtCalcTableSize(const t_u32&);
 
 
 }	// namespace arch

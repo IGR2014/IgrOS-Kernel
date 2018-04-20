@@ -28,6 +28,9 @@
 .global	setupPageTables
 .global	enablePaging
 
+.extern kernelFuncX64
+.global jumpToLongMode
+
 checkMultiboot:
 	cmp	$EAXMAGIC, %eax
 	jne	1f
@@ -103,6 +106,10 @@ enablePaging:
 	or	$1<<31, %eax
 	movl	%eax, %cr0
 	ret
+
+jumpToLongMode:
+	ljmp	$0x08, $kernelFuncX64
+
 
 .section .bss
 	.balign	4096
