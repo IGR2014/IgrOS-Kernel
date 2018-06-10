@@ -52,8 +52,6 @@ extern "C" void kernelFunc() {
 	} while (i != 0);
 	*/
 
-	*(t_u16*)0xb8000 = (t_u16)0x2f4f;
-
 	if (arch::checkMultiboot() == 0x00) {
 
 		return;
@@ -70,6 +68,7 @@ extern "C" void kernelFunc() {
 	
 	}
 
+	*(t_u16*)0xb8000 = (t_u16)0x2f4f;
 	*(t_u16*)0xb8002 = (t_u16)0x2f4b;
 
 	arch::setupPageTables();

@@ -28,12 +28,12 @@ CXXFLAGS	= -m64 \
 		  -fno-rtti \
 		  -nostdlib \
 		  -Os \
-		  -s \
 		  -mno-red-zone \
 		  -mno-3dnow \
 		  -mno-sse \
 		  -mno-sse2 \
-		  -mno-sse3
+		  -mno-sse3 \
+		  -g
 CXXINCLUDE	= -I $(CURDIR) \
 		  -I include -I ../../
 RM		= rm -rf
@@ -67,7 +67,7 @@ clean:
 	@$(RM) $(OBJ) $(BIN)
 
 run: $(BIN)
-	@echo "	RUN	$(BIN)"
+	@echo "	RUN	$(BIN_NAME)"
 	@qemu-system-x86_64 -kernel $(BIN)
 
 $(IGROS_DIR_TARGET_BUILD)/%.o: %.cpp

@@ -15,12 +15,38 @@
 .section .text
 .balign	4
 .global	kernelStart			# Kernel main function
+
+.extern	checkMultiboot
+.extern	checkCPUID
+.extern checkLongMode
+
+.extern	setupPageTables
+.extern	enablePaging
+
 .extern	kernelFunc			# Extern kernel C-function
 
 kernelStart:				# Kernel starts here
 	cli				# Turn off interrupts
 	movl	$stackTop, %esp		# Set stack
-	call	kernelFunc		# Call main func
+	#call	kernelFunc		# Call main func
+
+	movl	$0x4f524f45, 0xb8014
+	call	checkMultiboot
+	cmpb	$0x00, %al
+	jz	haltCPU
+	movl	$0x4f524f45, 0xb8000
+	call	checkCPUID
+	cmpb	$0x00, %al
+	jz	haltCPU
+	movl	$0x4f524f45, 0xb8004
+	call	checkLongMode
+	cmpb	$0x00, %al
+	jz	haltCPU
+	movl	$0x4f524f45, 0xb8008
+	call	setupPageTables
+	movl	$0x4f524f45, 0xb800c
+	call	enablePaging
+	movl	$0x4f524f45, 0xb8010
 
 haltCPU:
 	hlt				# Stop CPU

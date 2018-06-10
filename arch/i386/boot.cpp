@@ -31,6 +31,10 @@ arch::gdtPointer gdt;
 
 // Kernel main function
 extern "C" void kernelFunc() {
+	
+	// Init video memory
+	arch::videoMemInit();
+	arch::videoMemWriteLine("IgrOS kernel");
 
 	// GDT setup
 	gdtTable[0x00]	= arch::gdtSetEntry(0x00000000, 0x00000000, 0x0000);
@@ -45,7 +49,6 @@ extern "C" void kernelFunc() {
 
 	// Load new GDT
 	arch::gdtLoad(&gdt);
-	//arch::reloadCS();
 
 	// Exceptions setup
 	idtTable[0x00]	= arch::idtSetEntry((t_u32)arch::exHandler00, 0x08, 0x8E);
@@ -127,29 +130,26 @@ extern "C" void kernelFunc() {
 	arch::idtLoad(&idt);
 
 	// Init video memory
-	arch::videoMemInit();
+	//arch::videoMemInit();
 
 	// Write "Hello World" message
-	arch::videoMemWriteLine("IgrOS kernel");
 	arch::videoMemWriteLine("");
 	arch::videoMemWriteMessage("Build:\t\t");
 	arch::videoMemWriteMessage(__DATE__);
 	arch::videoMemWriteMessage(" ");
 	arch::videoMemWriteLine(__TIME__);
 	arch::videoMemWriteMessage("Version:\t");
-	arch::videoMemWriteLine("v0.00.150 (alpha)");
+	arch::videoMemWriteLine("v0.00.220 (pre-alpha)");
 	arch::videoMemWriteMessage("Author:\t\t");
-	arch::videoMemWriteLine("Igor Baklykov (c) 2018");
+	arch::videoMemWriteLine("Igor Baklykov (c) 2017-2018");
 	arch::videoMemWriteLine("");
 
 	// Divide by Zero Exception Test
-	/*
+	/*	
 	volatile int x = 10;
 	volatile int y = 0;
 	volatile int z = x / y;
 	*/
-
-	while(true) {};
 
 }
 

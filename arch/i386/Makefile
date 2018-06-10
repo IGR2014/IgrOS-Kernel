@@ -3,7 +3,7 @@
 #	i386 folder Make script
 #
 #	File:	Makefile
-#	Date:	20 Apr. 2018
+#	Date:	04 Jun. 2018
 #
 #	Copyright (c) 2018, Igor Baklykov
 #	All rights reserved.
@@ -51,6 +51,7 @@ OBJ		= $(IGROS_DIR_TARGET_BUILD)/boot/multiboot.o \
 		  $(IGROS_DIR_TARGET_BUILD)/boot/port.o \
 		  $(IGROS_DIR_TARGET_BUILD)/boot/exceptions.o \
 		  $(IGROS_DIR_TARGET_BUILD)/boot/interrupts.o \
+		  $(IGROS_DIR_TARGET_BUILD)/memory/memset.o \
 		  $(IGROS_DIR_TARGET_BUILD)/boot.o \
 		  $(IGROS_DIR_TARGET_BUILD)/idt.o \
 		  $(IGROS_DIR_TARGET_BUILD)/gdt.o \
@@ -64,6 +65,7 @@ all-before:
 	@mkdir -p $(IGROS_DIR_TARGET_BUILD)
 	@mkdir -p $(IGROS_DIR_TARGET_RELEASE)
 	@$(MAKE) -C boot
+	@$(MAKE) -C memory
 
 rebuild: clean all
 
@@ -71,7 +73,7 @@ clean:
 	@$(RM) $(OBJ) $(BIN)
 
 run: $(BIN)
-	@echo "	RUN	$(BIN)"
+	@echo "	RUN	$(BIN_NAME)"
 	@qemu-system-i386 -kernel $(BIN)
 
 $(IGROS_DIR_TARGET_BUILD)/%.o: %.cpp

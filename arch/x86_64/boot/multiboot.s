@@ -19,14 +19,14 @@
 .set	CHECKSUM,	-(MAGIC + ARCH + (multiboot_end - multiboot_start))
 
 .section .multiboot					# Multyboot header
-.balign	4
+.balign	8
 multiboot_start:
 	.long	MAGIC					# Multiboot magic value
 	.long	ARCH					# Multiboot arch
 	.long	multiboot_end - multiboot_start		# Multiboot header size
 	.long	CHECKSUM				# Multiboot checksum
-	.int	0
-	.int	0
-	.byte	8
+	.word	0
+	.word	0
+	.long	8
 multiboot_end:
 
