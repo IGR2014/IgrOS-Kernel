@@ -3,15 +3,16 @@
 //	Video memory low-level operations
 //
 //	File:	videoMem.cpp
-//	Date:	20 Nov. 2017
+//	Date:	05 Jun. 2018
 //
-//	Copyright (c) 2017, Igor Baklykov
+//	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
 //
 
 
 #include <include/videoMem.hpp>
 #include <include/port.hpp>
+#include <include/memset.hpp>
 
 
 // Arch-dependent code zone
@@ -26,11 +27,11 @@ namespace arch {
 
 		// Send to controller low byte of offset
 		outPortB(VIDEO_MEM_CRTC_INDEX, VIDEO_MEM_CRTC_CURSOR_LOW);
-		outPortB(VIDEO_MEM_CRTC_DATA, (t_u8)position & 0xFF);
+		outPortB(VIDEO_MEM_CRTC_DATA, static_cast<t_u8>(position) & 0xFF);
 
 		// Send to controller high byte of offset
 		outPortB(VIDEO_MEM_CRTC_INDEX, VIDEO_MEM_CRTC_CURSOR_HIGH);
-		outPortB(VIDEO_MEM_CRTC_DATA, (t_u8)(position >> 8) & 0xFF);
+		outPortB(VIDEO_MEM_CRTC_DATA, static_cast<t_u8>(position >> 8) & 0xFF);
 
 		// Save cursor data
 		cursorPos.x	= x;
@@ -180,14 +181,8 @@ namespace arch {
 	// Clear video memory
 	void videoMemClear() {
 
-		// Loop through all video memory
-		for (t_u16 i = 0; i < VIDEO_MEM_SIZE; ++i) {
-
-			// Fill it with blank space
-			videoMemBase[i].symbol	= ' ';
-			videoMemBase[i].color	= videoMemBkgColor;
-
-		}
+		// Set whole screen with whitespace with default background
+		kmemset16(videoMemBase, VIDEO_MEM_SIZE, (' ' | (videoMemBkgColor << 8)));
 
 	}
 

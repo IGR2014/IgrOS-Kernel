@@ -14,7 +14,7 @@ IGROS_DIR_PREFIX	= boot
 
 IGROS_DIR_PATH		= $(IGROS_DIR_TARGET_BUILD)/$(IGROS_DIR_PREFIX)
 
-ASM	?= as
+ASM	= as
 RM	= rm -rf
 OBJ	= $(IGROS_DIR_PATH)/multiboot.o \
 	  $(IGROS_DIR_PATH)/gdt.o \
@@ -34,5 +34,5 @@ clean:
 
 $(IGROS_DIR_PATH)/%.o: %.s
 	@echo "	AS	$<"
-	@$(ASM) --64 -o $@ $<
+	@$(ASM) --64 -o $@ $< -g
 

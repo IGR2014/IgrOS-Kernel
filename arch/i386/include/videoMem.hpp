@@ -3,9 +3,9 @@
 //	Video memory low-level operations
 //
 //	File:	videoMem.hpp
-//	Date:	20 Nov. 2017
+//	Date:	05 Jun. 2018
 //
-//	Copyright (c) 2017, Igor Baklykov
+//	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
 //
 
@@ -71,10 +71,10 @@ namespace arch {
 	};
 
 	// Video memory base address
-	static videoMemSymbol* const	videoMemBase		= (videoMemSymbol*)0xB8000;
+	static videoMemSymbol* const	videoMemBase		= reinterpret_cast<videoMemSymbol*>(0xB8000);
 
 	// Video memory background symbol
-	static t_u8			videoMemBkgColor	= 0x02;
+	static t_u8			videoMemBkgColor	= VGAGreen;
 
 	// Video memory cursor struct
 	struct videoMemCursor {
