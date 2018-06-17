@@ -3,9 +3,9 @@
 #	IRQ low-level handlers
 #
 #	File:	interrupts.s
-#	Date:	20 Nov. 2017
+#	Date:	18 Jun. 2018
 #
-#	Copyright (c) 2017, Igor Baklykov
+#	Copyright (c) 2018, Igor Baklykov
 #	All rights reserved.
 #
 
@@ -13,24 +13,27 @@
 .code32
 
 .section .text
-	.balign	4
-	.extern	irqHandler		# Extenral main interrupts handler
-	.global irqHandler0		# 0
-	.global irqHandler1		# 1
-	.global irqHandler2		# 2
-	.global irqHandler3		# 3
-	.global irqHandler4		# 4
-	.global irqHandler5		# 5
-	.global irqHandler6		# 6
-	.global irqHandler7		# 7
-	.global irqHandler8		# 8
-	.global irqHandler9		# 9
-	.global irqHandlerA		# 10
-	.global irqHandlerB		# 11
-	.global irqHandlerC		# 12
-	.global irqHandlerD		# 13
-	.global irqHandlerE		# 14
-	.global irqHandlerF		# 15
+.balign	4
+.global irqHandler0			# 0
+.global irqHandler1			# 1
+.global irqHandler2			# 2
+.global irqHandler3			# 3
+.global irqHandler4			# 4
+.global irqHandler5			# 5
+.global irqHandler6			# 6
+.global irqHandler7			# 7
+.global irqHandler8			# 8
+.global irqHandler9			# 9
+.global irqHandlerA			# 10
+.global irqHandlerB			# 11
+.global irqHandlerC			# 12
+.global irqHandlerD			# 13
+.global irqHandlerE			# 14
+.global irqHandlerF			# 15
+.global irqEnable			# Interrupts
+.global irqDisable			# No interrupts
+.extern	irqHandler			# Extenral main interrupts handler
+
 
 # IRQ 0
 irqHandler0:
@@ -172,4 +175,14 @@ interruptRoutine:
 
 	addl	$0x08, %esp		# Stack cleanup
 	iretl				# Done here
+
+# Enable interrupts
+irqEnable:
+	sti				# Enable interrupts
+	ret
+
+# Disable interrupts
+irqDisable:
+	cli				# Disable interrupts
+	ret
 

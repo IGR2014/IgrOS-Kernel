@@ -3,9 +3,9 @@
 //	Exceptions low-level operations
 //
 //	File:	exceptions.cpp
-//	Date:	20 Nov. 2017
+//	Date:	18 Jun. 2018
 //
-//	Copyright (c) 2017, Igor Baklykov
+//	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
 //
 
@@ -57,8 +57,10 @@ namespace arch {
 	void exHandler(const taskRegs* regs) {
 
 		// Write text to screen
-		videoMemWriteMessage(exceptionName[regs->number]);
-		videoMemWriteMessage(" Exception. CPU halted.");
+		videoMemWriteLine("");
+		videoMemWrite(exceptionName[regs->number]);
+		videoMemWriteLine(" Exception.");
+		videoMemWriteLine("CPU halted.");
 
 		while (true) {};
 

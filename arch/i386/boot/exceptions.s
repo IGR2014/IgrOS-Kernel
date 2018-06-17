@@ -3,9 +3,9 @@
 #	Exception low-level handlers
 #
 #	File:	exceptions.s
-#	Date:	20 Nov. 2017
+#	Date:	18 Jun. 2018
 #
-#	Copyright (c) 2017, Igor Baklykov
+#	Copyright (c) 2018, Igor Baklykov
 #	All rights reserved.
 #
 
@@ -13,40 +13,41 @@
 .code32
 
 .section .text
-	.balign	4
-	.extern	exHandler		# Extenral main exception handler
-	.global exHandler00		# 0
-	.global exHandler01		# 1
-	.global exHandler02		# 2
-	.global exHandler03		# 3
-	.global exHandler04		# 4
-	.global exHandler05		# 5
-	.global exHandler06		# 6
-	.global exHandler07		# 7
-	.global exHandler08		# 8
-	.global exHandler09		# 9
-	.global exHandler0A		# 10
-	.global exHandler0B		# 11
-	.global exHandler0C		# 12
-	.global exHandler0D		# 13
-	.global exHandler0E		# 14
-	.global exHandler0F		# 15
-	.global exHandler10		# 16
-	.global exHandler11		# 17
-	.global exHandler12		# 18
-	.global exHandler13		# 19
-	.global exHandler14		# 20
-	.global exHandler15		# 21
-	.global exHandler16		# 22
-	.global exHandler17		# 23
-	.global exHandler18		# 24
-	.global exHandler19		# 25
-	.global exHandler1A		# 26
-	.global exHandler1B		# 27
-	.global exHandler1C		# 28
-	.global exHandler1D		# 29
-	.global exHandler1E		# 30
-	.global exHandler1F		# 31
+.balign	4
+.global exHandler00			# 0
+.global exHandler01			# 1
+.global exHandler02			# 2
+.global exHandler03			# 3
+.global exHandler04			# 4
+.global exHandler05			# 5
+.global exHandler06			# 6
+.global exHandler07			# 7
+.global exHandler08			# 8
+.global exHandler09			# 9
+.global exHandler0A			# 10
+.global exHandler0B			# 11
+.global exHandler0C			# 12
+.global exHandler0D			# 13
+.global exHandler0E			# 14
+.global exHandler0F			# 15
+.global exHandler10			# 16
+.global exHandler11			# 17
+.global exHandler12			# 18
+.global exHandler13			# 19
+.global exHandler14			# 20
+.global exHandler15			# 21
+.global exHandler16			# 22
+.global exHandler17			# 23
+.global exHandler18			# 24
+.global exHandler19			# 25
+.global exHandler1A			# 26
+.global exHandler1B			# 27
+.global exHandler1C			# 28
+.global exHandler1D			# 29
+.global exHandler1E			# 30
+.global exHandler1F			# 31
+.extern	exHandler			# Extenral main exception handler
+
 
 # 0 Division By Zero Exception
 exHandler00:

@@ -3,7 +3,7 @@
 //	Video memory low-level operations
 //
 //	File:	videoMem.hpp
-//	Date:	05 Jun. 2018
+//	Date:	18 Jun. 2018
 //
 //	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
@@ -71,7 +71,7 @@ namespace arch {
 	};
 
 	// Video memory base address
-	static videoMemSymbol* const	videoMemBase		= reinterpret_cast<videoMemSymbol*>(0xB8000);
+	static videoMemSymbol* const	videoMemBase		= reinterpret_cast<videoMemSymbol*>(0x000B8000);
 
 	// Video memory background symbol
 	static t_u8			videoMemBkgColor	= VGAGreen;
@@ -95,13 +95,13 @@ namespace arch {
 	void videoMemSetColor(const t_u8&, const t_u8&);
 
 	// Write symbol to video memory
-	void videoMemWriteSymbol(const t_i8&);
+	void videoMemWrite(const t_i8&);
 
 	// Write string to video memory
-	void videoMemWriteMessage(const t_i8p);
+	void videoMemWrite(const t_i8p);
 
 	// Write fixed-width string to video memory
-	void videoMemWriteMessage(const t_i8p, const t_u32&);
+	void videoMemWrite(const t_i8p, const t_u32&);
 
 	// Write string to video memory with \r \n
 	void videoMemWriteLine(const t_i8p);
@@ -114,6 +114,9 @@ namespace arch {
 
 	// Init video memory
 	void videoMemInit();
+
+	// Write decimal value to video memory
+	void videoMemWriteDec(t_i32);
 
 
 }	// namespace arch

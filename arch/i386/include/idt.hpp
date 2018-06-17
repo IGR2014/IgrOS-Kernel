@@ -3,7 +3,7 @@
 //	Interrupt descriptor table low-level operations
 //
 //	File:	idt.hpp
-//	Date:	17 Apr. 2018
+//	Date:	18 Jun. 2018
 //
 //	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
@@ -12,6 +12,10 @@
 
 #ifndef IGROS_ARCH_IDT_HPP
 #define IGROS_ARCH_IDT_HPP
+
+
+// Number of IDT entries
+#define IDT_SIZE		256
 
 
 #include <include/types.hpp>
@@ -46,13 +50,16 @@ namespace arch {
 
 
 	// Create IDT entry
-	idtEntry idtSetEntry(const t_u32&, const t_u16&, const t_u8&);
+	idtEntry		idtSetEntry(const t_u32&, const t_u16&, const t_u8&);
 
 	// Load IDT
-	extern "C" void idtLoad(const idtPointer*);
+	extern "C" void		idtLoad(const idtPointer*);
 
 	// Calculate IDT size
-	t_u32 idtCalcTableSize(const t_u32&);
+	t_u32			idtCalcTableSize(const t_u32&);
+
+	// Setup IDT
+	void			idtSetup();
 
 
 }	// namespace arch

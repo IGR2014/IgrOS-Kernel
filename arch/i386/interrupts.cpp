@@ -3,9 +3,9 @@
 //	Interrupts low-level operations
 //
 //	File:	interupts.cpp
-//	Date:	20 Nov. 2017
+//	Date:	18 Jun. 2018
 //
-//	Copyright (c) 2017, Igor Baklykov
+//	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
 //
 
@@ -41,9 +41,9 @@ namespace arch {
 		}
 
 		// Write text to screen
-		videoMemWriteMessage("IRQ");
-		videoMemWriteSymbol('0' + regs->number - 32);
-		videoMemWriteMessage("\r\n");
+		videoMemWrite("IRQ #");
+		videoMemWriteDec(regs->number - 32);
+		videoMemWriteLine("");
 
 	}
 

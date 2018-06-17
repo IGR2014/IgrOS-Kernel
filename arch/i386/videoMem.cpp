@@ -3,7 +3,7 @@
 //	Video memory low-level operations
 //
 //	File:	videoMem.cpp
-//	Date:	05 Jun. 2018
+//	Date:	18 Jun. 2018
 //
 //	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
@@ -48,7 +48,7 @@ namespace arch {
 	}
 
 	// Write symbol to video memory
-	void videoMemWriteSymbol(const t_i8 &symbol) {
+	void videoMemWrite(const t_i8 &symbol) {
 
 		// Backspace symbol
 		if (symbol == '\b') {
@@ -130,29 +130,29 @@ namespace arch {
 	}
 
 	// Write string to video memory
-	void videoMemWriteMessage(const t_i8p message) {
+	void videoMemWrite(const t_i8p message) {
 
 		// Cast const pointer to pointer
-		t_i8* data = const_cast<t_i8*>(message);
+		t_i8* data = &message[0];
 
 		// Loop through message while \0 not found
 		while (*data != '\0') {
 
 			// Write symbols one by one
-			videoMemWriteSymbol(*data++);
+			videoMemWrite(*data++);
 
 		}
 
 	}
 
 	// Write fixed-width string to video memory
-	void videoMemWriteMessage(const t_i8p message, const t_u32 &size) {
+	void videoMemWrite(const t_i8p message, const t_u32 &size) {
 
 		// Loop through message
 		for (t_u32 i = 0; i < size; ++i) {
 
 			// Write symbols one by one
-			videoMemWriteSymbol(message[i]);
+			videoMemWrite(message[i]);
 
 		}
 
@@ -162,9 +162,9 @@ namespace arch {
 	void videoMemWriteLine(const t_i8p message) {
 
 		// Write message
-		videoMemWriteMessage(message);
+		videoMemWrite(message);
 		// Add \r and \n to it
-		videoMemWriteMessage("\r\n");
+		videoMemWrite("\r\n");
 
 	}
 
@@ -172,9 +172,9 @@ namespace arch {
 	void videoMemWriteLine(const t_i8p message, const t_u32 &size) {
 
 		// Write fixed-size message
-		videoMemWriteMessage(message, size);
+		videoMemWrite(message, size);
 		// Add \r and \n to it
-		videoMemWriteMessage("\r\n");
+		videoMemWrite("\r\n");
 
 	}
 
@@ -193,6 +193,26 @@ namespace arch {
 		videoMemClear();
 		// Place cursor at (0, 0)
 		videoMemSetCursor(0, 0);
+
+	}
+
+	// Write decimal value to video memory
+	void videoMemWriteDec(t_i32 number) {
+
+		if (number < 0) {
+
+			videoMemWrite('-');
+			number = -number;
+
+		}
+
+		do {
+
+			int reminder = number % 10;
+			number /= 10;
+			videoMemWrite('0' + reminder);
+
+		} while (number != 0);
 
 	}
 
