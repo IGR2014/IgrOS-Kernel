@@ -3,9 +3,9 @@
 //	Interrupts low-level operations
 //
 //	File:	interrupts.hpp
-//	Date:	20 Nov. 2017
+//	Date:	18 Jun. 2018
 //
-//	Copyright (c) 2017, Igor Baklykov
+//	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
 //
 
@@ -24,41 +24,48 @@ namespace arch {
 
 	extern "C" {
 
+
 		// Interrupt 0 handler
-		void irqHandler0();
+		void	irqHandler0();
 		// Interrupt 1 handler
-		void irqHandler1();
+		void	irqHandler1();
 		// Interrupt 2 handler
-		void irqHandler2();
+		void	irqHandler2();
 		// Interrupt 3 handler
-		void irqHandler3();
+		void	irqHandler3();
 		// Interrupt 4 handler
-		void irqHandler4();
+		void	irqHandler4();
 		// Interrupt 5 handler
-		void irqHandler5();
+		void	irqHandler5();
 		// Interrupt 6 handler
-		void irqHandler6();
+		void	irqHandler6();
 		// Interrupt 7 handler
-		void irqHandler7();
+		void	irqHandler7();
 		// Interrupt 8 handler
-		void irqHandler8();
+		void	irqHandler8();
 		// Interrupt 9 handler
-		void irqHandler9();
+		void	irqHandler9();
 		// Interrupt 10 handler
-		void irqHandlerA();
+		void	irqHandlerA();
 		// Interrupt 11 handler
-		void irqHandlerB();
+		void	irqHandlerB();
 		// Interrupt 12 handler
-		void irqHandlerC();
+		void	irqHandlerC();
 		// Interrupt 13 handler
-		void irqHandlerD();
+		void	irqHandlerD();
 		// Interrupt 14 handler
-		void irqHandlerE();
+		void	irqHandlerE();
 		// Interrupt 15 handler
-		void irqHandlerF();
+		void	irqHandlerF();
 
 		// Interrupts handler function
-		void irqHandler(const taskRegs*);
+		void	irqHandler(const taskRegs*);
+
+		// Enable interrupts
+		void	irqEnable();
+		// Disable interrupts
+		void	irqDisable();
+
 
 	}	// extern "C"
 

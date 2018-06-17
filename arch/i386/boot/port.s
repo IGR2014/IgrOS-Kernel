@@ -3,9 +3,9 @@
 #	IO low-level port operations
 #
 #	File:	port.s
-#	Date:	20 Nov. 2017
+#	Date:	18 Jun. 2018
 #
-#	Copyright (c) 2017, Igor Baklykov
+#	Copyright (c) 2018, Igor Baklykov
 #	All rights reserved.
 #
 
@@ -13,14 +13,13 @@
 .code32
 
 .section .text
-	.balign 4
-	.global	inPortB			# Read byte from port
-	.global	inPortW			# Read word from port
-	.global	inPortL			# Read long from port
-
-	.global	outPortB		# Write byte to port
-	.global	outPortW		# Write word to port
-	.global	outPortL		# Write long to port
+.balign 4
+.global	inPortB				# Read byte from port
+.global	inPortW				# Read word from port
+.global	inPortL				# Read long from port
+.global	outPortB			# Write byte to port
+.global	outPortW			# Write word to port
+.global	outPortL			# Write long to port
 
 
 inPortB:				# Read byte from port function

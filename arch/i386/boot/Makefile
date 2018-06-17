@@ -3,7 +3,7 @@
 #	Boot folder Make script
 #
 #	File:	Makefile
-#	Date:	20 Apr. 2018
+#	Date:	18 Jun. 2018
 #
 #	Copyright (c) 2018, Igor Baklykov
 #	All rights reserved.
@@ -22,7 +22,8 @@ OBJ		= $(IGROS_DIR_PATH)/multiboot.o \
 		  $(IGROS_DIR_PATH)/gdt.o \
 		  $(IGROS_DIR_PATH)/port.o \
 		  $(IGROS_DIR_PATH)/exceptions.o \
-		  $(IGROS_DIR_PATH)/interrupts.o
+		  $(IGROS_DIR_PATH)/interrupts.o \
+		  $(IGROS_DIR_PATH)/paging.o
 
 
 all: all-before $(OBJ)

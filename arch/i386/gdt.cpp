@@ -3,7 +3,7 @@
 //	Global descriptor table low-level operations
 //
 //	File:	boot.cpp
-//	Date:	17 Apr. 2018
+//	Date:	18 Jun. 2018
 //
 //	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
@@ -15,6 +15,12 @@
 
 // Arch-dependent code zone
 namespace arch {
+
+
+	// Global descriptors table (GDT)
+	static gdtEntry		gdtTable[GDT_SIZE];
+	// Pointer to GDT
+	static gdtPointer	gdt;
 
 
 	// Create GDT entry
@@ -39,6 +45,26 @@ namespace arch {
 		return (numOfEntries * sizeof(gdtEntry)) - 1;
 
 	}
+
+	// Setup GDT
+	void gdtSetup() {
+
+		// GDT setup
+		gdtTable[0x00]	= gdtSetEntry(0x00000000, 0x00000000, 0x0000);
+		gdtTable[0x01]	= gdtSetEntry(0x00000000, 0xFFFFFFFF, GDT_CODE_RING0);
+		gdtTable[0x02]	= gdtSetEntry(0x00000000, 0xFFFFFFFF, GDT_DATA_RING0);
+		gdtTable[0x03]	= gdtSetEntry(0x00000000, 0xFFFFFFFF, GDT_CODE_RING3);
+		gdtTable[0x04]	= gdtSetEntry(0x00000000, 0xFFFFFFFF, GDT_DATA_RING3);
+
+		// Set GDT size and data pointer
+		gdt.size	= gdtCalcTableSize(GDT_SIZE);
+		gdt.pointer	= gdtTable;
+
+		// Load new GDT
+		gdtLoad(&gdt);
+	
+	}
+
 
 }	// namespace arch
 
