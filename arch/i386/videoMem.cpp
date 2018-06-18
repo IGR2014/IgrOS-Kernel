@@ -199,20 +199,75 @@ namespace arch {
 	// Write decimal value to video memory
 	void videoMemWriteDec(t_i32 number) {
 
+		// Temporary buffer for number
+		// Note that number should be 32-bit
+		char temp[11] = {0};
+
+		// Check sign
 		if (number < 0) {
 
+			// Write
 			videoMemWrite('-');
+			// Convert number to positive
 			number = -number;
 
 		}
 
+		// Setup counter to 10-th position in temp
+		int i = 9;
+
+		// Loop through all digits while number is greater than 10
+		// Digits are stored backwards from the end of the temp
 		do {
 
-			int reminder = number % 10;
-			number /= 10;
-			videoMemWrite('0' + reminder);
+			// Calculate reminder
+			int reminder	= number % 10;
+			// Devide value by base to remove current digit
+			number		/= 10;
+			// Save current digit in the temp
+			temp[i--]	= '0' + reminder;
 
 		} while (number != 0);
+
+		// Output digit in temp from i + 1 position to the end
+		videoMemWrite(&temp[++i]);
+
+	}
+
+	// Write hexidemical value to video memory
+	void videoMemWriteHex(t_u32 number) {
+
+		// Temporary buffer for number
+		// Note that number should be 32-bit
+		char temp[9] = {0};
+
+		// Write hex appendix
+		videoMemWrite("0x");
+
+		// Setup counter to 10-th position in temp
+		int i = 7;
+
+		// Loop through all digits while number is greater than 10
+		// Digits are stored backwards from the end of the temp
+		do {
+
+			// Calculate reminder
+			int reminder	= number % 16;
+			// Devide value by base to remove current digit
+			number		/= 16;
+			// Save current digit in the temp
+			temp[i--]	= (((reminder < 10) ? '0' : ('A' - 10)) + reminder);
+
+		} while (number != 0);
+
+		while (i >= 0) {
+
+			temp[i--]	= '0';
+
+		};
+
+		// Output digit in temp from i + 1 position to the end
+		videoMemWrite(temp);
 
 	}
 

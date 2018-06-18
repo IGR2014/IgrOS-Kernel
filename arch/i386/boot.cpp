@@ -97,6 +97,14 @@ extern "C" void kernelFunc() {
 	arch::videoMemWriteLine("");
 	arch::videoMemWriteLine("");
 
+	// Numbers print test
+	/*
+	arch::videoMemWriteDec(0x7FFFFFFF);
+	arch::videoMemWrite(" = ");
+	arch::videoMemWriteHex(0xFFFFFFFF);
+	arch::videoMemWriteLine("");
+	*/
+
 	// Page fault exception
 	/*
 	volatile t_u32* ptr = reinterpret_cast<t_u32*>(0xA0000000);
