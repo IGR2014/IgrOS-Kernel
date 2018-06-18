@@ -10,18 +10,13 @@
 //
 
 
+#include <include/version.hpp>
 #include <include/types.hpp>
 #include <include/gdt.hpp>
 #include <include/idt.hpp>
 #include <include/interrupts.hpp>
-#include <include/port.hpp>
 #include <include/videoMem.hpp>
 #include <include/paging.hpp>
-#include <include/memset.hpp>
-
-
-extern t_u32* pageDirectory;
-extern t_u32* pageTable;
 
 
 // Kernel main function
@@ -37,62 +32,31 @@ extern "C" void kernelFunc() {
 	// Setup Interrupts Descriptor Table
 	arch::idtSetup();
 
-	// ICW 1 for PIC
-	arch::outPortB(0x20, 0x11);
-	arch::outPortB(0xA0, 0x11);
-
-	// ICW 2 for PIC
-	arch::outPortB(0x21, 0x20);
-	arch::outPortB(0xA1, 0x28);
-
-	// ICW 3 for PIC
-	arch::outPortB(0x21, 0x04);
-	arch::outPortB(0xA1, 0x02);
-
-	// ICW 4 for PIC
-	arch::outPortB(0x21, 0x01);
-	arch::outPortB(0xA1, 0x01);
-
+	// Init interrupts
+	arch::irqInit();
 	// Mask interrupts
-	arch::outPortB(0x21, 0xfd);
-	arch::outPortB(0xA1, 0xff);
-
+	arch::irqMask(arch::IRQ_MASK_KEYBOARD);
 	// Enable interrupts
 	arch::irqEnable();
 
-	pageDirectory[0] = ((t_u32)pageTable) | 3;
-
-	for (unsigned int i = 1; i < 1024; ++i) {
-
-		pageDirectory[i] = 0x00000002;
-
-	}
-
-	//pageDirectory[1023] = ((t_u32)pageDirectory);
-
-	for (unsigned int j = 0; j < 1024; ++j) {
-
-		pageTable[j] = (j * 0x1000) | 3;
-
-	}
-
-	// Setup page directory
-	arch::pagingSetupPD(pageDirectory);
-	// Enable paging
-	arch::pagingEnable();
+	// Setup paging (And identity map first 4MB where kernel is)
+	arch::pagingSetup();
 
 	// Write "Hello World" message
 	arch::videoMemWriteLine("");
-	arch::videoMemWrite("Build:\t\t");
-	arch::videoMemWrite(__DATE__);
-	arch::videoMemWrite(" ");
-	arch::videoMemWriteLine(__TIME__);
-	arch::videoMemWrite("Version:\t");
-	arch::videoMemWriteLine("v0.00.220 (pre-alpha)");
-	arch::videoMemWrite("Author:\t\t");
-	arch::videoMemWrite("Igor Baklykov (c) ");
+	arch::videoMemWriteLine("Build:\t\t" __DATE__ " " __TIME__);
+	arch::videoMemWrite("Version:\tv");
+	arch::videoMemWriteDec(IGROS_VERSION_MAJOR);
+	arch::videoMemWrite(".");
+	arch::videoMemWriteDec(IGROS_VERSION_MINOR);
+	arch::videoMemWrite(".");
+	arch::videoMemWriteDec(IGROS_VERSION_BUILD);
+	arch::videoMemWrite(" (");
+	arch::videoMemWrite(IGROS_VERSION_NAME);
+	arch::videoMemWriteLine(")");
+	arch::videoMemWrite("Author:\t\tIgor Baklykov (c) ");
 	arch::videoMemWriteDec(2017);
-	arch::videoMemWrite(" - ");
+	arch::videoMemWrite("-");
 	arch::videoMemWriteDec(2018);
 	arch::videoMemWriteLine("");
 	arch::videoMemWriteLine("");
@@ -101,23 +65,22 @@ extern "C" void kernelFunc() {
 	/*
 	arch::videoMemWriteDec(0x7FFFFFFF);
 	arch::videoMemWrite(" = ");
-	arch::videoMemWriteHex(0xFFFFFFFF);
+	arch::videoMemWriteHex(0x7FFFFFFF);
 	arch::videoMemWriteLine("");
 	*/
 
 	// Page fault exception
-	/*
-	volatile t_u32* ptr = reinterpret_cast<t_u32*>(0xA0000000);
+	/*	
+	volatile t_u32p ptr = reinterpret_cast<t_u32p>(0xA0000000);
 	volatile t_u32 a = *ptr;
 	*/
 
 	// Divide by Zero Exception Test
 	/*
-	volatile int x = 10;
-	volatile int y = 0;
-	volatile int z = x / y;
+	volatile t_i32 x = 10;
+	volatile t_i32 y = 0;
+	volatile t_i32 z = x / y;
 	*/
-
 
 }
 

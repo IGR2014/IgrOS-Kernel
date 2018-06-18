@@ -41,3 +41,12 @@ pagingEnable:
 	ret
 
 
+.section .bss
+.balign 4096
+.global	pageDirectory
+.global	pageTable
+pageDirectory:
+	.skip 4096
+pageTable:
+	.skip 4096
+

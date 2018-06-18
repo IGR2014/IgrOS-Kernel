@@ -22,6 +22,17 @@
 namespace arch {
 
 
+	// Timer interrupt number
+	constexpr t_u16	IRQ_NUM_TIMER		= 2;
+	// Timer interrupt mask
+	constexpr t_u16	IRQ_MASK_TIMER		= ~(IRQ_NUM_TIMER);
+
+	// Keyboard interrupt number
+	constexpr t_u16	IRQ_NUM_KEYBOARD	= 2;
+	// Keyboard interrupt mask
+	constexpr t_u16	IRQ_MASK_KEYBOARD	= ~(IRQ_NUM_KEYBOARD);
+
+
 	extern "C" {
 
 
@@ -68,6 +79,13 @@ namespace arch {
 
 
 	}	// extern "C"
+
+
+	// Init interrupts
+	void irqInit();
+
+	// Mask interrupts
+	void irqMask(const t_u16);
 
 
 }	// namespace arch

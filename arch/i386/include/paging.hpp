@@ -34,9 +34,12 @@ namespace arch {
 	}
 
 
+	// Setup paging
+	void pagingSetup();
+
+
 }	// namespace arch
 
 
 #endif	// IGROS_ARCH_PAGING_HPP
-
 
