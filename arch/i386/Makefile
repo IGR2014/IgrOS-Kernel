@@ -59,7 +59,8 @@ OBJ		= $(IGROS_DIR_TARGET_BUILD)/boot/multiboot.o \
 		  $(IGROS_DIR_TARGET_BUILD)/gdt.o \
 		  $(IGROS_DIR_TARGET_BUILD)/exceptions.o \
 		  $(IGROS_DIR_TARGET_BUILD)/interrupts.o \
-		  $(IGROS_DIR_TARGET_BUILD)/videoMem.o
+		  $(IGROS_DIR_TARGET_BUILD)/videoMem.o \
+		  $(IGROS_DIR_TARGET_BUILD)/paging.o
 
 all: all-before $(BIN)
 

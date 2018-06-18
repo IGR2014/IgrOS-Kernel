@@ -32,13 +32,7 @@ haltCPU:
 
 .section .bss
 .balign 4096
-.global	pageDirectory
-.global	pageTable
 stackBottom:				# End of stack
 	.skip	16384			# Stack size of 16kB
 stackTop:				# Stack pointer
-pageDirectory:
-	.skip 4096
-pageTable:
-	.skip 4096
 
