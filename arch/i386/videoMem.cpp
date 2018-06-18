@@ -133,7 +133,7 @@ namespace arch {
 	void videoMemWrite(const t_i8p message) {
 
 		// Cast const pointer to pointer
-		t_i8* data = &message[0];
+		t_i8p data = &message[0];
 
 		// Loop through message while \0 not found
 		while (*data != '\0') {
@@ -201,7 +201,7 @@ namespace arch {
 
 		// Temporary buffer for number
 		// Note that number should be 32-bit
-		char temp[11] = {0};
+		t_i8 temp[11] = {0};
 
 		// Check sign
 		if (number < 0) {
@@ -214,14 +214,14 @@ namespace arch {
 		}
 
 		// Setup counter to 10-th position in temp
-		int i = 9;
+		t_i32 i = 9;
 
 		// Loop through all digits while number is greater than 10
 		// Digits are stored backwards from the end of the temp
 		do {
 
 			// Calculate reminder
-			int reminder	= number % 10;
+			t_i32 reminder	= number % 10;
 			// Devide value by base to remove current digit
 			number		/= 10;
 			// Save current digit in the temp
@@ -239,20 +239,20 @@ namespace arch {
 
 		// Temporary buffer for number
 		// Note that number should be 32-bit
-		char temp[9] = {0};
+		t_i8 temp[9] = {0};
 
 		// Write hex appendix
 		videoMemWrite("0x");
 
 		// Setup counter to 10-th position in temp
-		int i = 7;
+		t_i32 i = 7;
 
 		// Loop through all digits while number is greater than 10
 		// Digits are stored backwards from the end of the temp
 		do {
 
 			// Calculate reminder
-			int reminder	= number % 16;
+			t_i32 reminder	= number % 16;
 			// Devide value by base to remove current digit
 			number		/= 16;
 			// Save current digit in the temp
