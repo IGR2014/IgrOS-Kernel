@@ -117,6 +117,8 @@ namespace arch {
 
 	// Write decimal value to video memory
 	void videoMemWriteDec(t_i32);
+	// Write hexidemical value to video memory
+	void videoMemWriteHex(t_u32);
 
 
 }	// namespace arch
