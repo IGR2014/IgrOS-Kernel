@@ -3,7 +3,7 @@
 #	Memory paging low-level operations
 #
 #	File:	paging.s
-#	Date:	13 Jun. 2018
+#	Date:	19 Jun. 2018
 #
 #	Copyright (c) 2018, Igor Baklykov
 #	All rights reserved.
@@ -45,6 +45,8 @@ pagingEnable:
 .balign 4096
 .global	pageDirectory
 .global	pageTable
+
+
 pageDirectory:
 	.skip 4096
 pageTable:

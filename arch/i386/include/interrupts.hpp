@@ -3,7 +3,7 @@
 //	Interrupts low-level operations
 //
 //	File:	interrupts.hpp
-//	Date:	18 Jun. 2018
+//	Date:	19 Jun. 2018
 //
 //	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
@@ -14,6 +14,8 @@
 #define IGROS_ARCH_INTERRUPTS_HPP
 
 
+#include <type_traits>
+
 #include <include/types.hpp>
 #include <include/taskRegs.hpp>
 
@@ -22,15 +24,17 @@
 namespace arch {
 
 
-	// Timer interrupt number
-	constexpr t_u16	IRQ_NUM_TIMER		= 2;
-	// Timer interrupt mask
-	constexpr t_u16	IRQ_MASK_TIMER		= ~(IRQ_NUM_TIMER);
+	// Interrupt handler type
+	using irqHandler_t = std::add_pointer<void(const taskRegs* regs)>::type;
 
-	// Keyboard interrupt number
-	constexpr t_u16	IRQ_NUM_KEYBOARD	= 2;
-	// Keyboard interrupt mask
-	constexpr t_u16	IRQ_MASK_KEYBOARD	= ~(IRQ_NUM_KEYBOARD);
+
+	// Interrupts number enumeration
+	enum IRQ_NUMBER {
+
+		IRQ_NUM_TIMER		= 0,
+		IRQ_NUM_KEYBOARD	= 1
+
+	};
 
 
 	extern "C" {
@@ -85,7 +89,15 @@ namespace arch {
 	void irqInit();
 
 	// Mask interrupts
-	void irqMask(const t_u16);
+	void irqMask(const IRQ_NUMBER);
+
+	// Set interrupts mask
+	void irqMaskSet(const t_u16);
+
+	// Install handler
+	void irqHandlerInstall(IRQ_NUMBER, irqHandler_t);
+	// Uninstall handler
+	void irqHandlerUninstall(IRQ_NUMBER);
 
 
 }	// namespace arch

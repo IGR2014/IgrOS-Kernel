@@ -10,7 +10,6 @@
 //
 
 
-
 #include <include/taskRegs.hpp>
 #include <include/interrupts.hpp>
 #include <include/port.hpp>
@@ -19,6 +18,10 @@
 
 // Arch-dependent code zone
 namespace arch {
+
+
+	// Interrupt handlers
+	static irqHandler_t	isrList[224] = {0};
 
 
 	// Interrupts handler function
@@ -33,17 +36,30 @@ namespace arch {
 		// Notify master PIC
 		outPortB(0x20, 0x20);
 
-		// Read keyboard data port
-		if (inPortB(0x60) > 0x7F) {
+		// Actually it`s an exception and normaly shouldn't be there
+		if (regs->number < 32) {
 
 			return;
 
 		}
 
-		// Write text to screen
-		videoMemWrite("IRQ #");
-		videoMemWriteDec(regs->number - 32);
-		videoMemWriteLine("");
+		// Acquire irq handler from list
+		irqHandler_t isr = isrList[regs->number - 32];
+
+		// If handler exists
+		if (isr) {
+
+			// Finally handle IRQ
+			isr(regs);
+
+		} else {
+
+			// Print message about unhandled interrupt
+			videoMemWrite("IRQ #");
+			videoMemWriteDec(regs->number - 32);
+			videoMemWriteLine(" unhandled!");
+		
+		}
 
 	}
 
@@ -66,17 +82,47 @@ namespace arch {
 		// ICW 4 for PIC
 		arch::outPortB(0x21, 0x01);
 		arch::outPortB(0xA1, 0x01);
-	
+
+		// Unmask all interrupts
+		irqMaskSet(0xFFFF);
+
 	}
 
 	// Mask interrupts
-	void irqMask(const t_u16 mask) {
+	void irqMask(const IRQ_NUMBER irq) {
+
+		// Chech if it's hardware interrupt
+		if (irq < 16) {
+
+			// Set interrupts mask
+			irqMaskSet(~(1 << irq));
+
+		}
+
+	}
+
+	// Set interrupts mask
+	void irqMaskSet(const t_u16 mask) {
 
 		// Set Master controller mask
 		arch::outPortB(0x21, static_cast<t_u8>(mask & 0xFF));
 		// Set Slave controller mask
 		arch::outPortB(0xA1, static_cast<t_u8>((mask & 0xFF00) >> 8));
-	
+
+	}
+
+	// Install handler
+	void irqHandlerInstall(IRQ_NUMBER irqNumber, irqHandler_t handler) {
+
+		isrList[irqNumber] = handler;
+
+	}
+
+	// Uninstall handler
+	void irqHandlerUninstall(IRQ_NUMBER irqNumber) {
+
+		isrList[irqNumber] = nullptr;
+
 	}
 
 
