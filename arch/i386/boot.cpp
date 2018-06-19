@@ -3,7 +3,7 @@
 //	Boot low-level main setup function
 //
 //	File:	boot.cpp
-//	Date:	18 Jun. 2018
+//	Date:	20 Jun. 2018
 //
 //	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
@@ -17,6 +17,7 @@
 #include <include/interrupts.hpp>
 #include <include/videoMem.hpp>
 #include <include/paging.hpp>
+#include <include/keyboard.hpp>
 
 
 // Kernel main function
@@ -34,10 +35,13 @@ extern "C" void kernelFunc() {
 
 	// Init interrupts
 	arch::irqInit();
-	// Mask interrupts
-	arch::irqMask(arch::IRQ_MASK_KEYBOARD);
 	// Enable interrupts
 	arch::irqEnable();
+
+	// Install keyboard interrupt handler
+	arch::irqHandlerInstall(arch::IRQ_NUM_KEYBOARD, arch::keyboardInterruptHandler);
+	// Mask interrupts
+	arch::irqMask(arch::IRQ_NUM_KEYBOARD);
 
 	// Setup paging (And identity map first 4MB where kernel is)
 	arch::pagingSetup();
@@ -61,6 +65,15 @@ extern "C" void kernelFunc() {
 	arch::videoMemWriteLine("");
 	arch::videoMemWriteLine("");
 
+	// Page mapping test
+	/*
+	arch::videoMemWriteHex(reinterpret_cast<t_u32>(arch::pagingVirtToPhys(reinterpret_cast<t_ptr>(0xC00B8000))));
+	arch::videoMemWriteLine("");
+	arch::videoMemWriteLine("");
+	volatile t_u16p ptr = reinterpret_cast<t_u16p>(0xC00B8006);
+	*ptr = 0x0730;
+	*/
+
 	// Numbers print test
 	/*
 	arch::videoMemWriteDec(0x7FFFFFFF);
@@ -69,7 +82,7 @@ extern "C" void kernelFunc() {
 	arch::videoMemWriteLine("");
 	*/
 
-	// Page fault exception
+	// Page Fault Exception test
 	/*	
 	volatile t_u32p ptr = reinterpret_cast<t_u32p>(0xA0000000);
 	volatile t_u32 a = *ptr;

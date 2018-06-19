@@ -3,7 +3,7 @@
 //	Video memory low-level operations
 //
 //	File:	videoMem.cpp
-//	Date:	18 Jun. 2018
+//	Date:	19 Jun. 2018
 //
 //	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
@@ -121,6 +121,11 @@ namespace arch {
 				videoMemBase[i - VIDEO_MEM_WIDTH] = videoMemBase[i];
 
 			}
+
+			// Calculate offset in video memory
+			t_u16 pos = cursorPos.y * VIDEO_MEM_WIDTH + cursorPos.x;
+			// Clear bootom line
+			kmemset16(&videoMemBase[pos], VIDEO_MEM_WIDTH, (' ' | (videoMemBkgColor << 8)));
 
 		}
 

@@ -3,7 +3,7 @@
 **	Kernel linker script
 **
 **	File:	link.ld
-**	Date:	18 Jun. 2018
+**	Date:	19 Jun. 2018
 **
 **	Copyright (c) 2018, Igor Baklykov
 **	All rights reserved.
