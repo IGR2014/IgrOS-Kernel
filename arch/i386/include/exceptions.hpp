@@ -3,7 +3,7 @@
 //	Exceptions low-level operations
 //
 //	File:	exceptions.hpp
-//	Date:	18 Jun. 2018
+//	Date:	20 Jun. 2018
 //
 //	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
@@ -14,12 +14,44 @@
 #define IGROS_ARCH_EXCEPTIONS_HPP
 
 
+#include <type_traits>
+
 #include <include/types.hpp>
 #include <include/taskRegs.hpp>
 
 
 // Arch-dependent code zone
 namespace arch {
+
+
+	// Interrupt handler type
+	using exHandler_t = std::add_pointer<void(const taskRegs* regs)>::type;
+
+
+	// Interrupts number enumeration
+	enum EX_NUMBER : t_u8 {
+
+		EX_DIVIDE_BY_ZERO		= 0,
+		EX_DEBUG			= 1,
+		EX_NON_MASKABLE_IRQ		= 2,
+		EX_BREAKPOINT			= 3,
+		EX_INTO_DETECTED_OVERFLOW	= 4,
+		EX_BOUND_RANGE_EXCEEDED		= 5,
+		EX_INVALID_OPCODE		= 6,
+		EX_NO_COPROCESSOR		= 7,
+		EX_DOUBLE_FAULT			= 8,
+		EX_COPROCESSOR_SEGMENT_OVERRUN	= 9,
+		EX_INVALID_TSS			= 10,
+		EX_SEGMENT_NOT_PRESENT		= 11,
+		EX_STACK_FAULT			= 12,
+		EX_GENERAL_PROTECTION_FAULT	= 13,
+		EX_PAGE_FAULT			= 14,
+		EX_UNKNOWN_IRQ			= 15,
+		EX_COPROCESSOR_FAULT		= 16,
+		EX_ALIGNMENT_CHECK		= 17,
+		EX_MACHINE_CHECK		= 18
+
+	};
 
 
 	extern "C" {
@@ -95,6 +127,12 @@ namespace arch {
 
 
 	}	// extern "C"
+
+
+	// Install handler
+	void	exHandlerInstall(EX_NUMBER, exHandler_t);
+	// Uninstall handler
+	void	exHandlerUninstall(EX_NUMBER);
 
 
 }	// namespace arch

@@ -3,7 +3,7 @@
 //	Memory paging for x86
 //
 //	File:	paging.hpp
-//	Date:	19 Jun. 2018
+//	Date:	20 Jun. 2018
 //
 //	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
@@ -67,6 +67,11 @@ namespace arch {
 
 	// Convert virtual address to physical address
 	t_ptr	pagingVirtToPhys(t_ptr);
+
+	// Forward declaration
+	struct taskRegs;
+	// Page Fault Exception handler
+	void pagingFaultExceptionHandler(const taskRegs*);
 
 
 }	// namespace arch

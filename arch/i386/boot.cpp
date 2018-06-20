@@ -83,9 +83,9 @@ extern "C" void kernelFunc() {
 	*/
 
 	// Page Fault Exception test
-	/*	
+	/*
 	volatile t_u32p ptr = reinterpret_cast<t_u32p>(0xA0000000);
-	volatile t_u32 a = *ptr;
+	*ptr = 0x4000;
 	*/
 
 	// Divide by Zero Exception Test
