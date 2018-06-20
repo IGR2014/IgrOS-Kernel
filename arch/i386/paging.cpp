@@ -3,7 +3,7 @@
 //	Memory paging for x86
 //
 //	File:	paging.cpp
-//	Date:	19 Jun. 2018
+//	Date:	20 Jun. 2018
 //
 //	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
@@ -11,6 +11,8 @@
 
 
 #include <include/paging.hpp>
+#include <include/exceptions.hpp>
+#include <include/videoMem.hpp>
 
 
 // Arch-dependent code zone
@@ -173,9 +175,13 @@ namespace arch {
 		}
 
 		// Setup page directory
-		arch::pagingSetupPD(pageDirectory);
+		pagingSetupPD(pageDirectory);
+
+		// Install exception handler for page fault
+		exHandlerInstall(EX_PAGE_FAULT, pagingFaultExceptionHandler);
+
 		// Enable paging
-		arch::pagingEnable();
+		pagingEnable();
 
 	}
 
@@ -214,6 +220,22 @@ namespace arch {
 
 		// Page or table is not present
 		return nullptr;
+
+	}
+
+
+	// Page Fault Exception handler
+	void pagingFaultExceptionHandler(const taskRegs* regs) {
+
+		videoMemWrite("REASON:\t\t");
+		((regs->param & 0x10) == 0) ? videoMemWrite("") : videoMemWrite(" InstructionFetch");
+		((regs->param & 0x08) == 0) ? videoMemWrite("") : videoMemWrite(" Reserved");
+		((regs->param & 0x04) == 0) ? videoMemWrite("Kernel ") : videoMemWrite("User ");
+		((regs->param & 0x02) == 0) ? videoMemWrite("Read ") : videoMemWrite("Write ");
+		((regs->param & 0x01) == 0) ? videoMemWrite("Present ") : videoMemWrite("Violation ");
+		videoMemWriteLine("");
+
+		while (true) {};
 
 	}
 
