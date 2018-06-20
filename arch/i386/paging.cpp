@@ -3,7 +3,7 @@
 //	Memory paging for x86
 //
 //	File:	paging.cpp
-//	Date:	20 Jun. 2018
+//	Date:	21 Jun. 2018
 //
 //	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
@@ -11,6 +11,7 @@
 
 
 #include <include/paging.hpp>
+#include <include/taskRegs.hpp>
 #include <include/exceptions.hpp>
 #include <include/videoMem.hpp>
 
@@ -33,12 +34,12 @@ namespace arch {
 
 
 	// Bitwise OR operator for flags
-	PAGING_FLAGS operator|(PAGING_FLAGS l, PAGING_FLAGS r) {
+	pagingFlags_t operator|(pagingFlags_t l, pagingFlags_t r) {
 
 		// Underlying type acquisition
-		using U = std::underlying_type<PAGING_FLAGS>::type;
+		using U = std::underlying_type<pagingFlags_t>::type;
 		// OR on underlying types
-		return	static_cast<PAGING_FLAGS>(
+		return	static_cast<pagingFlags_t>(
 			static_cast<U>(l) |
 			static_cast<U>(r)
 			);
@@ -46,12 +47,12 @@ namespace arch {
 	}
 
 	// Bitwise AND operator for flags
-	PAGING_FLAGS operator&(PAGING_FLAGS l, PAGING_FLAGS r) {
+	pagingFlags_t operator&(pagingFlags_t l, pagingFlags_t r) {
 
 		// Underlying type acquisition
-		using U = std::underlying_type<PAGING_FLAGS>::type;
+		using U = std::underlying_type<pagingFlags_t>::type;
 		// AND on underlying types
-		return	static_cast<PAGING_FLAGS>(
+		return	static_cast<pagingFlags_t>(
 			static_cast<U>(l) &
 			static_cast<U>(r)
 			);
@@ -59,12 +60,12 @@ namespace arch {
 	}
 
 	// Bitwise XOR operator for flags
-	PAGING_FLAGS operator^(PAGING_FLAGS l, PAGING_FLAGS r) {
+	pagingFlags_t operator^(pagingFlags_t l, pagingFlags_t r) {
 
 		// Underlying type acquisition
-		using U = std::underlying_type<PAGING_FLAGS>::type;
+		using U = std::underlying_type<pagingFlags_t>::type;
 		// XOR on underlying types
-		return	static_cast<PAGING_FLAGS>(
+		return	static_cast<pagingFlags_t>(
 			static_cast<U>(l) ^
 			static_cast<U>(r)
 			);
@@ -72,24 +73,24 @@ namespace arch {
 	}
 
 	// Bitwise NOT operator for flags
-	PAGING_FLAGS operator~(PAGING_FLAGS l) {
+	pagingFlags_t operator~(pagingFlags_t l) {
 
 		// Underlying type acquisition
-		using U = std::underlying_type<PAGING_FLAGS>::type;
+		using U = std::underlying_type<pagingFlags_t>::type;
 		// NOT on underlying types
-		return	static_cast<PAGING_FLAGS>(
+		return	static_cast<pagingFlags_t>(
 			~static_cast<U>(l)
 			);
 
 	}
 
 	// Bitwise OR assignment operator for flags
-	PAGING_FLAGS operator|=(PAGING_FLAGS &l, PAGING_FLAGS r) {
+	pagingFlags_t operator|=(pagingFlags_t &l, pagingFlags_t r) {
 
 		// Underlying type acquisition
-		using U = std::underlying_type<PAGING_FLAGS>::type;
+		using U = std::underlying_type<pagingFlags_t>::type;
 		// OR on underlying types
-		l =	static_cast<PAGING_FLAGS>(
+		l =	static_cast<pagingFlags_t>(
 			static_cast<U>(l) |
 			static_cast<U>(r)
 			);
@@ -97,12 +98,12 @@ namespace arch {
 	}
 
 	// Bitwise AND assignment operator for flags
-	PAGING_FLAGS operator&=(PAGING_FLAGS &l, PAGING_FLAGS r) {
+	pagingFlags_t operator&=(pagingFlags_t &l, pagingFlags_t r) {
 
 		// Underlying type acquisition
-		using U = std::underlying_type<PAGING_FLAGS>::type;
+		using U = std::underlying_type<pagingFlags_t>::type;
 		// AND on underlying types
-		l =	static_cast<PAGING_FLAGS>(
+		l =	static_cast<pagingFlags_t>(
 			static_cast<U>(l) &
 			static_cast<U>(r)
 			);
@@ -110,12 +111,12 @@ namespace arch {
 	}
 
 	// Bitwise XOR assignment operator for flags
-	PAGING_FLAGS operator^=(PAGING_FLAGS &l, PAGING_FLAGS r) {
+	pagingFlags_t operator^=(pagingFlags_t &l, pagingFlags_t r) {
 
 		// Underlying type acquisition
-		using U = std::underlying_type<PAGING_FLAGS>::type;
+		using U = std::underlying_type<pagingFlags_t>::type;
 		// XOR on underlying types
-		l =	static_cast<PAGING_FLAGS>(
+		l =	static_cast<pagingFlags_t>(
 			static_cast<U>(l) ^
 			static_cast<U>(r)
 			);
@@ -124,7 +125,7 @@ namespace arch {
 
 
 	// Set page directory flags
-	void pagingSetPDFlags(t_ptr pageDirEntry, const PAGING_FLAGS flags) {
+	void pagingSetPDFlags(t_ptr pageDirEntry, const pagingFlags_t flags) {
 
 		// Page directory dirty flag does not exists
 		// It's reserved as 0
@@ -133,7 +134,7 @@ namespace arch {
 	}
 
 	// Set page table flags
-	void pagingSetPTFlags(t_ptr pageTableEntry, const PAGING_FLAGS flags) {
+	void pagingSetPTFlags(t_ptr pageTableEntry, const pagingFlags_t flags) {
 
 		// Page directory size flag does not exists
 		// It's reserved as 0
@@ -178,7 +179,7 @@ namespace arch {
 		pagingSetupPD(pageDirectory);
 
 		// Install exception handler for page fault
-		exHandlerInstall(EX_PAGE_FAULT, pagingFaultExceptionHandler);
+		exHandlerInstall(PAGE_FAULT, pagingFaultExceptionHandler);
 
 		// Enable paging
 		pagingEnable();
@@ -187,7 +188,7 @@ namespace arch {
 
 
 	// Convert virtual address to physical address
-	t_ptr pagingVirtToPhys(t_ptr virtAddr) {
+	t_ptr pagingVirtToPhys(const t_ptr virtAddr) {
 
 		// Page directory entry index from virtual address
 		t_u32 pdEntryIndex	= reinterpret_cast<t_u32>(virtAddr) >> 22;
@@ -225,14 +226,22 @@ namespace arch {
 
 
 	// Page Fault Exception handler
-	void pagingFaultExceptionHandler(const taskRegs* regs) {
+	void pagingFaultExceptionHandler(const taskRegs_t* regs) {
 
-		videoMemWrite("REASON:\t\t");
-		((regs->param & 0x10) == 0) ? videoMemWrite("") : videoMemWrite(" InstructionFetch");
-		((regs->param & 0x08) == 0) ? videoMemWrite("") : videoMemWrite(" Reserved");
-		((regs->param & 0x04) == 0) ? videoMemWrite("Kernel ") : videoMemWrite("User ");
-		((regs->param & 0x02) == 0) ? videoMemWrite("Read ") : videoMemWrite("Write ");
-		((regs->param & 0x01) == 0) ? videoMemWrite("Present ") : videoMemWrite("Violation ");
+		videoMemWrite("CAUSED BY:\t");
+		((regs->param & 0x08) == 0) ? videoMemWrite("") : videoMemWrite("RESERVED BIT SET");
+		((regs->param & 0x10) == 0) ? videoMemWrite("") : videoMemWrite("INSTRUCTION FETCH");
+		videoMemWriteLine("");
+		videoMemWrite("FROM:\t\t");
+		((regs->param & 0x04) == 0) ? videoMemWrite("KERNEL") : videoMemWrite("USER");
+		videoMemWriteLine(" space");
+		videoMemWrite("WHEN:\t\tattempting to ");
+		((regs->param & 0x02) == 0) ? videoMemWrite("READ") : videoMemWrite("WRITE");
+		videoMemWriteLine("");
+		videoMemWrite("ADDRESS:\t");
+		videoMemWriteHex(pagingGetFaultAddres());
+		videoMemWrite(" which is NON-");
+		((regs->param & 0x01) == 0) ? videoMemWrite("PRESENT") : videoMemWrite("PRIVILEGED");
 		videoMemWriteLine("");
 
 		while (true) {};

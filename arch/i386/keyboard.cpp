@@ -3,7 +3,7 @@
 //	Keyboard generic handling
 //
 //	File:	keyboard.cpp
-//	Date:	19 Jun. 2018
+//	Date:	21 Jun. 2018
 //
 //	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
@@ -20,20 +20,23 @@ namespace arch {
 
 
 	// Keyboard interrupt (#1) handler
-	void keyboardInterruptHandler(const taskRegs* regs) {
+	void keyboardInterruptHandler(const taskRegs_t* regs) {
 
-		videoMemWrite("Keyboard -> IRQ\t");
+		videoMemWriteLine("IRQ\t\t-> KEYBOARD");
+		videoMemWrite("KEY STATE:\t");
 
 		// Read keyboard data port
-		if (inPortB(0x60) > 0x7F) {
+		if (inPort8(KEYBOARD_CONTROL) > 0x7F) {
 
 			videoMemWriteLine("KEY_UP");
+			videoMemWriteLine("");
 
 			return;
 
 		}
 
 		videoMemWriteLine("KEY_DOWN");
+		videoMemWriteLine("");
 
 	}
 

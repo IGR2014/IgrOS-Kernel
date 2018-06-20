@@ -3,7 +3,7 @@
 //	Video memory low-level operations
 //
 //	File:	videoMem.hpp
-//	Date:	18 Jun. 2018
+//	Date:	20 Jun. 2018
 //
 //	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
@@ -24,14 +24,6 @@
 // TAB size
 #define	VIDEO_MEM_TAB_SIZE		8
 
-// VGA CRTC index register
-#define VIDEO_MEM_CRTC_INDEX		0x3D4
-// VGA CRTC data register
-#define	VIDEO_MEM_CRTC_DATA		0x3D5
-// VGA CRTC cursor high byte command
-#define	VIDEO_MEM_CRTC_CURSOR_HIGH	0x0E
-// VGA CRTC cursor low byte command
-#define	VIDEO_MEM_CRTC_CURSOR_LOW	0x0F
 
 #include <include/types.hpp>
 
@@ -89,7 +81,9 @@ namespace arch {
 
 
 	// Set video memory cursor position
-	void videoMemSetCursor(const t_u8&, const t_u8&);
+	void videoMemCursorSet(const t_u8&, const t_u8&);
+	// Disable video memory cursor
+	void videoMemCursorDisable();
 
 	// Set video memory color
 	void videoMemSetColor(const t_u8&, const t_u8&);

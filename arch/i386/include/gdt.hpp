@@ -3,7 +3,7 @@
 //	Global descriptor table low-level operations
 //
 //	File:	gdt.hpp
-//	Date:	18 Jun. 2018
+//	Date:	21 Jun. 2018
 //
 //	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
@@ -84,7 +84,7 @@ namespace arch {
 #pragma pack(push, 1)
 
 	// GDT entry
-	struct gdtEntry {
+	struct gdtEntry_t {
 
 		t_u16		limitLow;
 		t_u16		baseLow;
@@ -96,10 +96,10 @@ namespace arch {
 	};
 
 	// GDT pointer
-	struct gdtPointer {
+	struct gdtPointer_t {
 
 		t_u16		size;			// GDT size
-		gdtEntry*	pointer;		// GDT pointer
+		gdtEntry_t*	pointer;		// GDT pointer
 	
 	};
 
@@ -107,10 +107,10 @@ namespace arch {
 
 
 	// Set GDT entry
-	gdtEntry		gdtSetEntry(const t_u32&, const t_u32&, const t_u16&);
+	gdtEntry_t		gdtSetEntry(const t_u32&, const t_u32&, const t_u16&);
 
 	// Load GDT
-	extern "C" void		gdtLoad(const gdtPointer*);
+	extern "C" void		gdtLoad(const gdtPointer_t*);
 
 	// Calculate GDT size
 	t_u32			gdtCalcTableSize(const t_u32&);
