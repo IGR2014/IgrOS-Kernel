@@ -3,7 +3,7 @@
 //	Exceptions low-level operations
 //
 //	File:	exceptions.hpp
-//	Date:	20 Jun. 2018
+//	Date:	21 Jun. 2018
 //
 //	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
@@ -17,39 +17,41 @@
 #include <type_traits>
 
 #include <include/types.hpp>
-#include <include/taskRegs.hpp>
 
 
 // Arch-dependent code zone
 namespace arch {
 
 
+	// Forward declaration
+	struct taskRegs_t;
+
 	// Interrupt handler type
-	using exHandler_t = std::add_pointer<void(const taskRegs* regs)>::type;
+	using exHandler_t = std::add_pointer<void(const taskRegs_t* regs)>::type;
 
 
 	// Interrupts number enumeration
-	enum EX_NUMBER : t_u8 {
+	enum exNumber_t : t_u8 {
 
-		EX_DIVIDE_BY_ZERO		= 0,
-		EX_DEBUG			= 1,
-		EX_NON_MASKABLE_IRQ		= 2,
-		EX_BREAKPOINT			= 3,
-		EX_INTO_DETECTED_OVERFLOW	= 4,
-		EX_BOUND_RANGE_EXCEEDED		= 5,
-		EX_INVALID_OPCODE		= 6,
-		EX_NO_COPROCESSOR		= 7,
-		EX_DOUBLE_FAULT			= 8,
-		EX_COPROCESSOR_SEGMENT_OVERRUN	= 9,
-		EX_INVALID_TSS			= 10,
-		EX_SEGMENT_NOT_PRESENT		= 11,
-		EX_STACK_FAULT			= 12,
-		EX_GENERAL_PROTECTION_FAULT	= 13,
-		EX_PAGE_FAULT			= 14,
-		EX_UNKNOWN_IRQ			= 15,
-		EX_COPROCESSOR_FAULT		= 16,
-		EX_ALIGNMENT_CHECK		= 17,
-		EX_MACHINE_CHECK		= 18
+		DIVIDE_BY_ZERO			= 0,
+		DEBUG				= 1,
+		NON_MASKABLE_IRQ		= 2,
+		BREAKPOINT			= 3,
+		INTO_DETECTED_OVERFLOW		= 4,
+		BOUND_RANGE_EXCEEDED		= 5,
+		INVALID_OPCODE			= 6,
+		NO_COPROCESSOR			= 7,
+		DOUBLE_FAULT			= 8,
+		COPROCESSOR_SEGMENT_OVERRUN	= 9,
+		INVALID_TSS			= 10,
+		SEGMENT_NOT_PRESENT		= 11,
+		STACK_FAULT			= 12,
+		GENERAL_PROTECTION_FAULT	= 13,
+		PAGE_FAULT			= 14,
+		UNKNOWN_IRQ			= 15,
+		COPROCESSOR_FAULT		= 16,
+		ALIGNMENT_CHECK			= 17,
+		MACHINE_CHECK			= 18
 
 	};
 
@@ -123,16 +125,16 @@ namespace arch {
 		void	exHandler1F();
 
 		// Exception handler function
-		void	exHandler(const taskRegs*);
+		void	exHandler(const taskRegs_t*);
 
 
 	}	// extern "C"
 
 
 	// Install handler
-	void	exHandlerInstall(EX_NUMBER, exHandler_t);
+	void	exHandlerInstall(exNumber_t, exHandler_t);
 	// Uninstall handler
-	void	exHandlerUninstall(EX_NUMBER);
+	void	exHandlerUninstall(exNumber_t);
 
 
 }	// namespace arch

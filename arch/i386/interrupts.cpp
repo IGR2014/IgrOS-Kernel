@@ -3,7 +3,7 @@
 //	Interrupts low-level operations
 //
 //	File:	interupts.cpp
-//	Date:	18 Jun. 2018
+//	Date:	21 Jun. 2018
 //
 //	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
@@ -25,16 +25,16 @@ namespace arch {
 
 
 	// Interrupts handler function
-	void irqHandler(const taskRegs* regs) {
+	void irqHandler(const taskRegs_t* regs) {
 
 		// Notify slave PIC if needed
 		if (regs->number > 39) {
 
-			outPortB(0xA0, 0x20);
+			outPort8(PIC_SLAVE_CONTROL, 0x20);
 
 		}
 		// Notify master PIC
-		outPortB(0x20, 0x20);
+		outPort8(PIC_MASTER_CONTROL, 0x20);
 
 		// Actually it`s an exception and normaly shouldn't be there
 		if (regs->number < 32) {
@@ -55,9 +55,10 @@ namespace arch {
 		} else {
 
 			// Print message about unhandled interrupt
-			videoMemWrite("IRQ #");
+			videoMemWrite("IRQ\t\t-> #");
 			videoMemWriteDec(regs->number - 32);
-			videoMemWriteLine(" unhandled!");
+			videoMemWriteLine("");
+			videoMemWriteLine("STATE:\t\tunhandled!");
 		
 		}
 
@@ -67,21 +68,21 @@ namespace arch {
 	// Init interrupts
 	void irqInit() {
 
-		// ICW 1 for PIC
-		arch::outPortB(0x20, 0x11);
-		arch::outPortB(0xA0, 0x11);
+		// Restart PIC`s
+		outPort8(PIC_MASTER_CONTROL, 0x11);
+		outPort8(PIC_SLAVE_CONTROL, 0x11);
 
-		// ICW 2 for PIC
-		arch::outPortB(0x21, 0x20);
-		arch::outPortB(0xA1, 0x28);
+		// Remap IRQ`s because of exceptions
+		outPort8(PIC_MASTER_DATA, 0x20);
+		outPort8(PIC_SLAVE_DATA, 0x28);
 
-		// ICW 3 for PIC
-		arch::outPortB(0x21, 0x04);
-		arch::outPortB(0xA1, 0x02);
+		// Setup PIC`s cascading
+		outPort8(PIC_MASTER_DATA, 0x04);
+		outPort8(PIC_SLAVE_DATA, 0x02);
 
-		// ICW 4 for PIC
-		arch::outPortB(0x21, 0x01);
-		arch::outPortB(0xA1, 0x01);
+		// Setup done
+		outPort8(PIC_MASTER_DATA, 0x01);
+		outPort8(PIC_SLAVE_DATA, 0x01);
 
 		// Unmask all interrupts
 		irqMaskSet(0xFFFF);
@@ -89,13 +90,13 @@ namespace arch {
 	}
 
 	// Mask interrupts
-	void irqMask(const IRQ_NUMBER irq) {
+	void irqMask(const irqNumber_t irq) {
 
 		// Chech if it's hardware interrupt
 		if (irq < 16) {
 
 			// Set interrupts mask
-			irqMaskSet(~(1 << irq));
+			irqMaskSet(irqMaskGet() & ~(1 << irq));
 
 		}
 
@@ -105,21 +106,33 @@ namespace arch {
 	void irqMaskSet(const t_u16 mask) {
 
 		// Set Master controller mask
-		arch::outPortB(0x21, static_cast<t_u8>(mask & 0xFF));
+		outPort8(PIC_MASTER_DATA, static_cast<t_u8>(mask & 0xFF));
 		// Set Slave controller mask
-		arch::outPortB(0xA1, static_cast<t_u8>((mask & 0xFF00) >> 8));
+		outPort8(PIC_SLAVE_DATA, static_cast<t_u8>((mask & 0xFF00) >> 8));
+
+	}
+
+	// Get interrupts mask
+	t_u16 irqMaskGet() {
+
+		// Read slave PIC current mask
+		t_u16 mask	= static_cast<t_u16>(inPort8(PIC_SLAVE_DATA)) << 8;
+		// Read master PIC current mask
+		mask		|= inPort8(PIC_MASTER_DATA);
+
+		return mask;
 
 	}
 
 	// Install handler
-	void irqHandlerInstall(IRQ_NUMBER irqNumber, irqHandler_t handler) {
+	void irqHandlerInstall(irqNumber_t irqNumber, irqHandler_t handler) {
 
 		isrList[irqNumber] = handler;
 
 	}
 
 	// Uninstall handler
-	void irqHandlerUninstall(IRQ_NUMBER irqNumber) {
+	void irqHandlerUninstall(irqNumber_t irqNumber) {
 
 		isrList[irqNumber] = nullptr;
 

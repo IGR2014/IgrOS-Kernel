@@ -3,9 +3,9 @@
 //	Task switch registers data structure
 //
 //	File:	taskRegs.hpp
-//	Date:	20 Nov. 2017
+//	Date:	21 Jun. 2018
 //
-//	Copyright (c) 2017, Igor Baklykov
+//	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
 //
 
@@ -24,7 +24,7 @@ namespace arch {
 #pragma pack(push, 1)
 
 	// x86 task switch registers save
-	struct taskRegs {
+	struct taskRegs_t {
 
 		// Segment registers pushed by us
 		t_u32	gs;		// Extra3 segment register

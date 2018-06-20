@@ -3,7 +3,7 @@
 //	Boot low-level main setup function
 //
 //	File:	boot.cpp
-//	Date:	20 Jun. 2018
+//	Date:	21 Jun. 2018
 //
 //	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
@@ -39,9 +39,9 @@ extern "C" void kernelFunc() {
 	arch::irqEnable();
 
 	// Install keyboard interrupt handler
-	arch::irqHandlerInstall(arch::IRQ_NUM_KEYBOARD, arch::keyboardInterruptHandler);
+	arch::irqHandlerInstall(arch::KEYBOARD, arch::keyboardInterruptHandler);
 	// Mask interrupts
-	arch::irqMask(arch::IRQ_NUM_KEYBOARD);
+	arch::irqMask(arch::KEYBOARD);
 
 	// Setup paging (And identity map first 4MB where kernel is)
 	arch::pagingSetup();

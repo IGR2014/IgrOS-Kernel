@@ -3,7 +3,7 @@
 //	Interrupt descriptor table low-level operations
 //
 //	File:	idt.cpp
-//	Date:	18 Jun. 2018
+//	Date:	21 Jun. 2018
 //
 //	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
@@ -19,15 +19,15 @@ namespace arch {
 
 
 	// Exceptions and IRQ descriptors table (IDT)
-	static idtEntry		idtTable[IDT_SIZE];
+	static idtEntry_t	idtTable[IDT_SIZE];
 	// Pointer to IDT
-	static idtPointer	idt;
+	static idtPointer_t	idt;
 
 
 	// Create IDT entry
-	idtEntry idtSetEntry(const t_u32 &offset, const t_u16 &selector, const t_u8 &type) {
+	idtEntry_t idtSetEntry(const t_u32 &offset, const t_u16 &selector, const t_u8 &type) {
 
-		idtEntry entry;	
+		idtEntry_t entry;	
 
 		entry.offsetLow		= offset & 0xFFFF;
 		entry.selector		= selector;
@@ -42,7 +42,7 @@ namespace arch {
 	// Calculate IDT size
 	t_u32 idtCalcTableSize(const t_u32 &numOfEntries) {
 
-		return (numOfEntries * sizeof(idtEntry)) - 1;
+		return (numOfEntries * sizeof(idtEntry_t)) - 1;
 
 	}
 

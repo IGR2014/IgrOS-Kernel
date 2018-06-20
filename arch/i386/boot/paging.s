@@ -3,7 +3,7 @@
 #	Memory paging low-level operations
 #
 #	File:	paging.s
-#	Date:	19 Jun. 2018
+#	Date:	21 Jun. 2018
 #
 #	Copyright (c) 2018, Igor Baklykov
 #	All rights reserved.
@@ -19,6 +19,7 @@
 .global pagingSetupPD			# Setup Page directory
 .global pagingFlushPD			# Update page tables cache
 .global pagingEnable			# Enable paging
+.global pagingGetFaultAddres		# Get fault address from exception
 
 
 pagingSetupPD:
@@ -38,6 +39,10 @@ pagingEnable:
 	movl	%cr0, %eax
 	or	$PAGINGBIT, %eax
 	movl	%eax, %cr0
+	ret
+
+pagingGetFaultAddres:
+	movl	%cr2, %eax
 	ret
 
 

@@ -3,7 +3,7 @@
 //	Interrupts low-level operations
 //
 //	File:	interrupts.hpp
-//	Date:	19 Jun. 2018
+//	Date:	21 Jun. 2018
 //
 //	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
@@ -17,22 +17,25 @@
 #include <type_traits>
 
 #include <include/types.hpp>
-#include <include/taskRegs.hpp>
 
 
 // Arch-dependent code zone
 namespace arch {
 
 
+	// Forward declaration
+	struct taskRegs_t;
+
+
 	// Interrupt handler type
-	using irqHandler_t = std::add_pointer<void(const taskRegs* regs)>::type;
+	using irqHandler_t = std::add_pointer<void(const taskRegs_t* regs)>::type;
 
 
 	// Interrupts number enumeration
-	enum IRQ_NUMBER {
+	enum irqNumber_t {
 
-		IRQ_NUM_TIMER		= 0,
-		IRQ_NUM_KEYBOARD	= 1
+		TIMER		= 0,
+		KEYBOARD	= 1
 
 	};
 
@@ -74,7 +77,7 @@ namespace arch {
 		void	irqHandlerF();
 
 		// Interrupts handler function
-		void	irqHandler(const taskRegs*);
+		void	irqHandler(const taskRegs_t*);
 
 		// Enable interrupts
 		void	irqEnable();
@@ -86,18 +89,20 @@ namespace arch {
 
 
 	// Init interrupts
-	void irqInit();
+	void	irqInit();
 
 	// Mask interrupts
-	void irqMask(const IRQ_NUMBER);
+	void	irqMask(const irqNumber_t);
 
 	// Set interrupts mask
-	void irqMaskSet(const t_u16);
+	void	irqMaskSet(const t_u16);
+	// Get interrupts mask
+	t_u16	irqMaskGet();
 
 	// Install handler
-	void irqHandlerInstall(IRQ_NUMBER, irqHandler_t);
+	void	irqHandlerInstall(irqNumber_t, irqHandler_t);
 	// Uninstall handler
-	void irqHandlerUninstall(IRQ_NUMBER);
+	void	irqHandlerUninstall(irqNumber_t);
 
 
 }	// namespace arch

@@ -3,7 +3,7 @@
 //	Exceptions low-level operations
 //
 //	File:	exceptions.cpp
-//	Date:	20 Jun. 2018
+//	Date:	21 Jun. 2018
 //
 //	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
@@ -59,7 +59,7 @@ namespace arch {
 
 
 	// Exception handler function
-	void exHandler(const taskRegs* regs) {
+	void exHandler(const taskRegs_t* regs) {
 
 		// Actually it`s an interrupt and normaly shouldn't be there
 		if (regs->number > 32) {
@@ -76,7 +76,7 @@ namespace arch {
 
 			// Manage exception
 			videoMemWriteLine("");
-			videoMemWrite("EXCEPTION:\t");
+			videoMemWrite("EXCEPTION:\t-> ");
 			videoMemWriteLine(exName[regs->number]);
 			exception(regs);
 			videoMemWriteLine("");
@@ -85,7 +85,7 @@ namespace arch {
 
 			// Exception handler is not installed
 			videoMemWriteLine("");
-			videoMemWrite("EXCEPTION:\t");
+			videoMemWrite("EXCEPTION:\t-> ");
 			videoMemWrite(exName[regs->number]);
 			videoMemWriteLine(" unhandled!");
 			videoMemWriteLine("CPU halted.");
@@ -99,14 +99,14 @@ namespace arch {
 
 
 	// Install handler
-	void exHandlerInstall(EX_NUMBER exNumber, exHandler_t handler) {
+	void exHandlerInstall(exNumber_t exNumber, exHandler_t handler) {
 
 		exList[exNumber] = handler;
 
 	}
 
 	// Uninstall handler
-	void exHandlerUninstall(EX_NUMBER exNumber) {
+	void exHandlerUninstall(exNumber_t exNumber) {
 
 		exList[exNumber] = nullptr;
 

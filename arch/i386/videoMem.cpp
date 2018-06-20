@@ -3,7 +3,7 @@
 //	Video memory low-level operations
 //
 //	File:	videoMem.cpp
-//	Date:	19 Jun. 2018
+//	Date:	20 Jun. 2018
 //
 //	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
@@ -20,23 +20,28 @@ namespace arch {
 
 
 	// Set cursor position
-	void videoMemSetCursor(const t_u8 &x, const t_u8 &y) {
+	void videoMemCursorSet(const t_u8 &x, const t_u8 &y) {
 
 		// Calculate video memory offset
 		t_u16 position = (y * VIDEO_MEM_WIDTH) + x;
 
 		// Send to controller low byte of offset
-		outPortB(VIDEO_MEM_CRTC_INDEX, VIDEO_MEM_CRTC_CURSOR_LOW);
-		outPortB(VIDEO_MEM_CRTC_DATA, static_cast<t_u8>(position) & 0xFF);
-
+		outPort16(VGA_CURSOR_CONTROL, ((position & 0x00FF) << 8) | 0x0F);
 		// Send to controller high byte of offset
-		outPortB(VIDEO_MEM_CRTC_INDEX, VIDEO_MEM_CRTC_CURSOR_HIGH);
-		outPortB(VIDEO_MEM_CRTC_DATA, static_cast<t_u8>(position >> 8) & 0xFF);
+		outPort16(VGA_CURSOR_CONTROL, (position & 0xFF00) | 0x0E);
 
 		// Save cursor data
 		cursorPos.x	= x;
 		cursorPos.y	= y;
 
+	}
+
+	// Disable video memory cursor
+	void videoMemCursorDisable() {
+
+		// Send control word to disable cursor
+		outPort16(VGA_CURSOR_CONTROL, 0x200A);
+	
 	}
 
 	// Set video memory color
@@ -130,7 +135,7 @@ namespace arch {
 		}
 
 		// Set new cursor position
-		videoMemSetCursor(cursorPos.x, cursorPos.y);
+		videoMemCursorSet(cursorPos.x, cursorPos.y);
 
 	}
 
@@ -197,7 +202,9 @@ namespace arch {
 		// Clear screen
 		videoMemClear();
 		// Place cursor at (0, 0)
-		videoMemSetCursor(0, 0);
+		videoMemCursorSet(0, 0);
+		// Disable cursor
+		videoMemCursorDisable();
 
 	}
 
