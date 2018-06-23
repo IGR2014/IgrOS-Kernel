@@ -3,7 +3,7 @@
 //	Global descriptor table low-level operations
 //
 //	File:	boot.cpp
-//	Date:	21 Jun. 2018
+//	Date:	23 Jun. 2018
 //
 //	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
@@ -24,7 +24,7 @@ namespace arch {
 
 
 	// Create GDT entry
-	gdtEntry_t gdtSetEntry(const t_u32 &base, const t_u32 &limit, const t_u16 &flags) {
+	gdtEntry_t gdtSetEntry(const dword_t &base, const dword_t &limit, const word_t &flags) {
 
 		gdtEntry_t entry;
 
@@ -40,7 +40,7 @@ namespace arch {
 	}
 
 	// Calculate GDT size
-	t_u32 gdtCalcTableSize(const t_u32 &numOfEntries) {
+	dword_t gdtCalcTableSize(const dword_t &numOfEntries) {
 
 		return (numOfEntries * sizeof(gdtEntry_t)) - 1;
 

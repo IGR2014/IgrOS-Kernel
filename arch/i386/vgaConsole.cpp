@@ -1,16 +1,16 @@
 ////////////////////////////////////////////////////////////////
 //
-//	Video memory low-level operations
+//	VGA console low-level operations
 //
-//	File:	videoMem.cpp
-//	Date:	20 Jun. 2018
+//	File:	vgaConsole.cpp
+//	Date:	23 Jun. 2018
 //
 //	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
 //
 
 
-#include <include/videoMem.hpp>
+#include <include/vgaConsole.hpp>
 #include <include/port.hpp>
 #include <include/memset.hpp>
 
@@ -20,10 +20,10 @@ namespace arch {
 
 
 	// Set cursor position
-	void videoMemCursorSet(const t_u8 &x, const t_u8 &y) {
+	void vgaConsoleCursorSet(const byte_t &x, const byte_t &y) {
 
-		// Calculate video memory offset
-		t_u16 position = (y * VIDEO_MEM_WIDTH) + x;
+		// Calculate VGA console offset
+		word_t position = (y * VIDEO_MEM_WIDTH) + x;
 
 		// Send to controller low byte of offset
 		outPort16(VGA_CURSOR_CONTROL, ((position & 0x00FF) << 8) | 0x0F);
@@ -36,24 +36,24 @@ namespace arch {
 
 	}
 
-	// Disable video memory cursor
-	void videoMemCursorDisable() {
+	// Disable VGA console cursor
+	void vgaConsoleCursorDisable() {
 
 		// Send control word to disable cursor
 		outPort16(VGA_CURSOR_CONTROL, 0x200A);
 	
 	}
 
-	// Set video memory color
-	void videoMemSetColor(const t_u8 &background, const t_u8 &foreground) {
+	// Set VGA console color
+	void vgaConsoleSetColor(const byte_t &background, const byte_t &foreground) {
 
 		// Background is first 4 bits and foreground is next 4
-		videoMemBkgColor = (background << 4) | foreground;
+		vgaConsoleBkgColor = (background << 4) | foreground;
 
 	}
 
-	// Write symbol to video memory
-	void videoMemWrite(const t_i8 &symbol) {
+	// Write symbol to VGA console
+	void vgaConsoleWrite(const sbyte_t &symbol) {
 
 		// Backspace symbol
 		if (symbol == '\b') {
@@ -93,12 +93,12 @@ namespace arch {
 		// If non-control (printable) character
 		} else if (symbol >= ' ') {
 
-			// Calculate offset in video memory
-			t_u16 pos = cursorPos.y * VIDEO_MEM_WIDTH + cursorPos.x;
+			// Calculate offset in VGA console
+			word_t pos = cursorPos.y * VIDEO_MEM_WIDTH + cursorPos.x;
 
-			// Write symbol to video memory
-			videoMemBase[pos].symbol	= symbol;
-			videoMemBase[pos].color		= videoMemBkgColor;
+			// Write symbol to VGA console
+			vgaConsoleBase[pos].symbol	= symbol;
+			vgaConsoleBase[pos].color	= vgaConsoleBkgColor;
 
 			// Move cursor 1 symbol right
 			++cursorPos.x;
@@ -121,154 +121,154 @@ namespace arch {
 			cursorPos.y = VIDEO_MEM_HEIGHT - 1;
 
 			// Move screen 1 line up
-			for (t_u16 i = VIDEO_MEM_WIDTH; i < VIDEO_MEM_SIZE; ++i) {
+			for (word_t i = VIDEO_MEM_WIDTH; i < VIDEO_MEM_SIZE; ++i) {
 
-				videoMemBase[i - VIDEO_MEM_WIDTH] = videoMemBase[i];
+				vgaConsoleBase[i - VIDEO_MEM_WIDTH] = vgaConsoleBase[i];
 
 			}
 
-			// Calculate offset in video memory
-			t_u16 pos = cursorPos.y * VIDEO_MEM_WIDTH + cursorPos.x;
+			// Calculate offset in VGA console
+			word_t pos = cursorPos.y * VIDEO_MEM_WIDTH + cursorPos.x;
 			// Clear bootom line
-			kmemset16(&videoMemBase[pos], VIDEO_MEM_WIDTH, (' ' | (videoMemBkgColor << 8)));
+			kmemset16(&vgaConsoleBase[pos], VIDEO_MEM_WIDTH, (' ' | (vgaConsoleBkgColor << 8)));
 
 		}
 
 		// Set new cursor position
-		videoMemCursorSet(cursorPos.x, cursorPos.y);
+		vgaConsoleCursorSet(cursorPos.x, cursorPos.y);
 
 	}
 
-	// Write string to video memory
-	void videoMemWrite(const t_i8p message) {
+	// Write string to VGA console
+	void vgaConsoleWrite(const sbyte_t* message) {
 
 		// Cast const pointer to pointer
-		t_i8p data = &message[0];
+		sbyte_t* data = const_cast<sbyte_t*>(&message[0]);
 
 		// Loop through message while \0 not found
 		while (*data != '\0') {
 
 			// Write symbols one by one
-			videoMemWrite(*data++);
+			vgaConsoleWrite(*data++);
 
 		}
 
 	}
 
-	// Write fixed-width string to video memory
-	void videoMemWrite(const t_i8p message, const t_u32 &size) {
+	// Write fixed-width string to VGA console
+	void vgaConsoleWrite(const sbyte_t* message, const dword_t &size) {
 
 		// Loop through message
-		for (t_u32 i = 0; i < size; ++i) {
+		for (dword_t i = 0; i < size; ++i) {
 
 			// Write symbols one by one
-			videoMemWrite(message[i]);
+			vgaConsoleWrite(message[i]);
 
 		}
 
 	}
 
-	// Write string to video memory with \r \n
-	void videoMemWriteLine(const t_i8p message) {
+	// Write string to VGA console with \r \n
+	void vgaConsoleWriteLine(const sbyte_t* message) {
 
 		// Write message
-		videoMemWrite(message);
+		vgaConsoleWrite(message);
 		// Add \r and \n to it
-		videoMemWrite("\r\n");
+		vgaConsoleWrite("\r\n");
 
 	}
 
-	// Write fixed-width string to video memory with \r \n
-	void videoMemWriteLine(const t_i8p message, const t_u32 &size) {
+	// Write fixed-width string to VGA console with \r \n
+	void vgaConsoleWriteLine(const sbyte_t* message, const dword_t &size) {
 
 		// Write fixed-size message
-		videoMemWrite(message, size);
+		vgaConsoleWrite(message, size);
 		// Add \r and \n to it
-		videoMemWrite("\r\n");
+		vgaConsoleWrite("\r\n");
 
 	}
 
-	// Clear video memory
-	void videoMemClear() {
+	// Clear VGA console
+	void vgaConsoleClear() {
 
 		// Set whole screen with whitespace with default background
-		kmemset16(videoMemBase, VIDEO_MEM_SIZE, (' ' | (videoMemBkgColor << 8)));
+		kmemset16(vgaConsoleBase, VIDEO_MEM_SIZE, (' ' | (vgaConsoleBkgColor << 8)));
 
 	}
 
-	// Init video memory
-	void videoMemInit() {
+	// Init VGA console
+	void vgaConsoleInit() {
 
 		// Clear screen
-		videoMemClear();
+		vgaConsoleClear();
 		// Place cursor at (0, 0)
-		videoMemCursorSet(0, 0);
+		vgaConsoleCursorSet(0, 0);
 		// Disable cursor
-		videoMemCursorDisable();
+		vgaConsoleCursorDisable();
 
 	}
 
-	// Write decimal value to video memory
-	void videoMemWriteDec(t_i32 number) {
+	// Write decimal value to VGA console
+	void vgaConsoleWriteDec(sdword_t number) {
 
 		// Temporary buffer for number
 		// Note that number should be 32-bit
-		t_i8 temp[11] = {0};
+		sbyte_t temp[11] = {0};
 
 		// Check sign
 		if (number < 0) {
 
 			// Write
-			videoMemWrite('-');
+			vgaConsoleWrite('-');
 			// Convert number to positive
 			number = -number;
 
 		}
 
 		// Setup counter to 10-th position in temp
-		t_i32 i = 9;
+		sdword_t i = 9;
 
 		// Loop through all digits while number is greater than 10
 		// Digits are stored backwards from the end of the temp
 		do {
 
 			// Calculate reminder
-			t_i32 reminder	= number % 10;
+			sdword_t reminder	= number % 10;
 			// Devide value by base to remove current digit
-			number		/= 10;
+			number			/= 10;
 			// Save current digit in the temp
-			temp[i--]	= '0' + reminder;
+			temp[i--]		= '0' + reminder;
 
 		} while (number != 0);
 
 		// Output digit in temp from i + 1 position to the end
-		videoMemWrite(&temp[++i]);
+		vgaConsoleWrite(&temp[++i]);
 
 	}
 
-	// Write hexidemical value to video memory
-	void videoMemWriteHex(t_u32 number) {
+	// Write hexidemical value to VGA console
+	void vgaConsoleWriteHex(dword_t number) {
 
 		// Temporary buffer for number
 		// Note that number should be 32-bit
-		t_i8 temp[9] = {0};
+		sbyte_t temp[9] = {0};
 
 		// Write hex appendix
-		videoMemWrite("0x");
+		vgaConsoleWrite("0x");
 
 		// Setup counter to 10-th position in temp
-		t_i32 i = 7;
+		sdword_t i = 7;
 
 		// Loop through all digits while number is greater than 10
 		// Digits are stored backwards from the end of the temp
 		do {
 
 			// Calculate reminder
-			t_i32 reminder	= number % 16;
+			sdword_t reminder	= number % 16;
 			// Devide value by base to remove current digit
-			number		/= 16;
+			number			/= 16;
 			// Save current digit in the temp
-			temp[i--]	= (((reminder < 10) ? '0' : ('A' - 10)) + reminder);
+			temp[i--]		= (((reminder < 10) ? '0' : ('A' - 10)) + reminder);
 
 		} while (number != 0);
 
@@ -279,7 +279,7 @@ namespace arch {
 		};
 
 		// Output digit in temp from i + 1 position to the end
-		videoMemWrite(temp);
+		vgaConsoleWrite(temp);
 
 	}
 

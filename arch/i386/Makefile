@@ -3,7 +3,7 @@
 #	i386 folder Make script
 #
 #	File:	Makefile
-#	Date:	19 Jun. 2018
+#	Date:	23 Jun. 2018
 #
 #	Copyright (c) 2018, Igor Baklykov
 #	All rights reserved.
@@ -59,7 +59,7 @@ OBJ		= $(IGROS_DIR_TARGET_BUILD)/boot/multiboot.o \
 		  $(IGROS_DIR_TARGET_BUILD)/gdt.o \
 		  $(IGROS_DIR_TARGET_BUILD)/exceptions.o \
 		  $(IGROS_DIR_TARGET_BUILD)/interrupts.o \
-		  $(IGROS_DIR_TARGET_BUILD)/videoMem.o \
+		  $(IGROS_DIR_TARGET_BUILD)/vgaConsole.o \
 		  $(IGROS_DIR_TARGET_BUILD)/paging.o \
 		  $(IGROS_DIR_TARGET_BUILD)/keyboard.o
 

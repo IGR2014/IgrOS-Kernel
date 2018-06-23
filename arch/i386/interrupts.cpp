@@ -3,7 +3,7 @@
 //	Interrupts low-level operations
 //
 //	File:	interupts.cpp
-//	Date:	21 Jun. 2018
+//	Date:	23 Jun. 2018
 //
 //	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
@@ -13,7 +13,7 @@
 #include <include/taskRegs.hpp>
 #include <include/interrupts.hpp>
 #include <include/port.hpp>
-#include <include/videoMem.hpp>
+#include <include/vgaConsole.hpp>
 
 
 // Arch-dependent code zone
@@ -55,10 +55,10 @@ namespace arch {
 		} else {
 
 			// Print message about unhandled interrupt
-			videoMemWrite("IRQ\t\t-> #");
-			videoMemWriteDec(regs->number - 32);
-			videoMemWriteLine("");
-			videoMemWriteLine("STATE:\t\tunhandled!");
+			vgaConsoleWrite("IRQ\t\t-> #");
+			vgaConsoleWriteDec(regs->number - 32);
+			vgaConsoleWriteLine("");
+			vgaConsoleWriteLine("STATE:\t\tunhandled!");
 		
 		}
 
@@ -103,20 +103,20 @@ namespace arch {
 	}
 
 	// Set interrupts mask
-	void irqMaskSet(const t_u16 mask) {
+	void irqMaskSet(const word_t mask) {
 
 		// Set Master controller mask
-		outPort8(PIC_MASTER_DATA, static_cast<t_u8>(mask & 0xFF));
+		outPort8(PIC_MASTER_DATA, static_cast<byte_t>(mask & 0xFF));
 		// Set Slave controller mask
-		outPort8(PIC_SLAVE_DATA, static_cast<t_u8>((mask & 0xFF00) >> 8));
+		outPort8(PIC_SLAVE_DATA, static_cast<byte_t>((mask & 0xFF00) >> 8));
 
 	}
 
 	// Get interrupts mask
-	t_u16 irqMaskGet() {
+	word_t irqMaskGet() {
 
 		// Read slave PIC current mask
-		t_u16 mask	= static_cast<t_u16>(inPort8(PIC_SLAVE_DATA)) << 8;
+		word_t mask	= static_cast<word_t>(inPort8(PIC_SLAVE_DATA)) << 8;
 		// Read master PIC current mask
 		mask		|= inPort8(PIC_MASTER_DATA);
 

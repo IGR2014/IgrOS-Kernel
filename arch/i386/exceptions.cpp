@@ -3,16 +3,16 @@
 //	Exceptions low-level operations
 //
 //	File:	exceptions.cpp
-//	Date:	21 Jun. 2018
+//	Date:	23 Jun. 2018
 //
 //	Copyright (c) 2018, Igor Baklykov
-//	All rights reserved.
+//	All rights RESERVED.
 //
 
 
 #include <include/taskRegs.hpp>
 #include <include/exceptions.hpp>
-#include <include/videoMem.hpp>
+#include <include/vgaConsole.hpp>
 
 
 // Arch-dependent code zone
@@ -20,38 +20,38 @@ namespace arch {
 
 
 	// Exceptions names
-	const t_i8p exName[32] = {"Divide by Zero",			// 0
-				  "Debug",				// 1
-				  "Non-Maskable Interrupt",		// 2
-				  "Breakpoint",				// 3
-				  "Into Detected Overflow",		// 4
-				  "Bound Range Exceeded",		// 5
-				  "Invalid Opcode",			// 6
-				  "No Coprocessor",			// 7
-				  "Double Fault",			// 8
-				  "Coprocessor Segment Overrun",	// 9
-				  "Invalid TSS",			// 10
-				  "Segment Not Present",		// 11
-				  "Stack Fault",			// 12
-				  "General Protection Fault",		// 13
-				  "PAGE FAULT",				// 14
-				  "Unknown Interrupt",			// 15
-				  "Coprocessor Fault",			// 16
-				  "Alignment Check",			// 17
-				  "Machine Check",			// 18
-				  "Reserved",				// 19
-				  "Reserved",				// 20
-				  "Reserved",				// 21
-				  "Reserved",				// 22
-				  "Reserved",				// 23
-				  "Reserved",				// 24
-				  "Reserved",				// 25
-				  "Reserved",				// 26
-				  "Reserved",				// 27
-				  "Reserved",				// 28
-				  "Reserved",				// 29
-				  "Reserved",				// 30
-				  "Reserved"};				// 31
+	const sbyte_t* exName[32] = {"DIVIDE BY ZERO",			// 0
+				     "DEBUG",				// 1
+				     "NON-MASKABLE INTERRUPT",		// 2
+				     "BREAKPOINT",			// 3
+				     "INTO DETECTED OVERFLOW",		// 4
+				     "BOUND RANGE EXCEEDED",		// 5
+				     "INVALID OPCODE",			// 6
+				     "NO COPROCESSOR",			// 7
+				     "DOUBLE FAULT",			// 8
+				     "COPROCESSOR SEGMENT OVERRUN",	// 9
+				     "INVALID TSS",			// 10
+				     "SEGMENT NOT PPRESENT",		// 11
+				     "STACK FAULT",			// 12
+				     "GENERAL PROTECTION FAULT",	// 13
+				     "PAGE FAULT",			// 14
+				     "UNKNOWN INTERRUPT",		// 15
+				     "COPROCESSOR FAULT",		// 16
+				     "ALIGNMENT CHECK",			// 17
+				     "MACHINE CHECK",			// 18
+				     "RESERVED",			// 19
+				     "RESERVED",			// 20
+				     "RESERVED",			// 21
+				     "RESERVED",			// 22
+				     "RESERVED",			// 23
+				     "RESERVED",			// 24
+				     "RESERVED",			// 25
+				     "RESERVED",			// 26
+				     "RESERVED",			// 27
+				     "RESERVED",			// 28
+				     "RESERVED",			// 29
+				     "RESERVED",			// 30
+				     "RESERVED"};			// 31
 
 
 	// Exception handlers
@@ -75,20 +75,20 @@ namespace arch {
 		if (exception) {
 
 			// Manage exception
-			videoMemWriteLine("");
-			videoMemWrite("EXCEPTION:\t-> ");
-			videoMemWriteLine(exName[regs->number]);
+			vgaConsoleWriteLine("");
+			vgaConsoleWrite("EXCEPTION:\t-> ");
+			vgaConsoleWriteLine(exName[regs->number]);
 			exception(regs);
-			videoMemWriteLine("");
+			vgaConsoleWriteLine("");
 
 		} else {
 
 			// Exception handler is not installed
-			videoMemWriteLine("");
-			videoMemWrite("EXCEPTION:\t-> ");
-			videoMemWrite(exName[regs->number]);
-			videoMemWriteLine(" unhandled!");
-			videoMemWriteLine("CPU halted.");
+			vgaConsoleWriteLine("");
+			vgaConsoleWrite("EXCEPTION:\t-> ");
+			vgaConsoleWrite(exName[regs->number]);
+			vgaConsoleWriteLine(" unhandled!");
+			vgaConsoleWriteLine("CPU halted.");
 
 			// Hang CPU
 			while (true) {};

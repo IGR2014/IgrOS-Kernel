@@ -3,7 +3,7 @@
 //	Interrupt descriptor table low-level operations
 //
 //	File:	idt.hpp
-//	Date:	21 Jun. 2018
+//	Date:	23 Jun. 2018
 //
 //	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
@@ -30,18 +30,18 @@ namespace arch {
 	// IDT entry
 	struct idtEntry_t {
 
-		t_u16		offsetLow;		// Offset lower part (0..15)
-		t_u16		selector;		// Selectod from GDT/LDT
-		t_u8		reserved;		// Must be zero
-		t_u8		type;			// Type attributes
-		t_u16		offsetHigh;		// Offset higher part (16..31)
+		word_t		offsetLow;		// Offset lower part (0..15)
+		word_t		selector;		// Selectod from GDT/LDT
+		byte_t		reserved;		// Must be zero
+		byte_t		type;			// Type attributes
+		word_t		offsetHigh;		// Offset higher part (16..31)
 	
 	};
 
 	// IDT pointer
 	struct idtPointer_t {
 
-		t_u16		size;			// IDT size
+		word_t		size;			// IDT size
 		idtEntry_t*	pointer;		// IDT pointer
 	
 	};
@@ -50,13 +50,13 @@ namespace arch {
 
 
 	// Create IDT entry
-	idtEntry_t		idtSetEntry(const t_u32&, const t_u16&, const t_u8&);
+	idtEntry_t		idtSetEntry(const dword_t&, const word_t&, const byte_t&);
 
 	// Load IDT
 	extern "C" void		idtLoad(const idtPointer_t*);
 
 	// Calculate IDT size
-	t_u32			idtCalcTableSize(const t_u32&);
+	dword_t			idtCalcTableSize(const dword_t&);
 
 	// Setup IDT
 	void			idtSetup();

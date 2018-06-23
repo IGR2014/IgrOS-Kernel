@@ -3,7 +3,7 @@
 //	Boot low-level main setup function
 //
 //	File:	boot.cpp
-//	Date:	21 Jun. 2018
+//	Date:	23 Jun. 2018
 //
 //	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
@@ -15,7 +15,7 @@
 #include <include/gdt.hpp>
 #include <include/idt.hpp>
 #include <include/interrupts.hpp>
-#include <include/videoMem.hpp>
+#include <include/vgaConsole.hpp>
 #include <include/paging.hpp>
 #include <include/keyboard.hpp>
 
@@ -23,9 +23,9 @@
 // Kernel main function
 extern "C" void kernelFunc() {
 
-	// Init video memory
-	arch::videoMemInit();
-	arch::videoMemWriteLine("IgrOS kernel");
+	// Init VGA console
+	arch::vgaConsoleInit();
+	arch::vgaConsoleWriteLine("IgrOS kernel");
 
 	// Setup Global Descriptors Table
 	arch::gdtSetup();
@@ -47,39 +47,39 @@ extern "C" void kernelFunc() {
 	arch::pagingSetup();
 
 	// Write "Hello World" message
-	arch::videoMemWriteLine("");
-	arch::videoMemWriteLine("Build:\t\t" __DATE__ " " __TIME__);
-	arch::videoMemWrite("Version:\tv");
-	arch::videoMemWriteDec(IGROS_VERSION_MAJOR);
-	arch::videoMemWrite(".");
-	arch::videoMemWriteDec(IGROS_VERSION_MINOR);
-	arch::videoMemWrite(".");
-	arch::videoMemWriteDec(IGROS_VERSION_BUILD);
-	arch::videoMemWrite(" (");
-	arch::videoMemWrite(IGROS_VERSION_NAME);
-	arch::videoMemWriteLine(")");
-	arch::videoMemWrite("Author:\t\tIgor Baklykov (c) ");
-	arch::videoMemWriteDec(2017);
-	arch::videoMemWrite("-");
-	arch::videoMemWriteDec(2018);
-	arch::videoMemWriteLine("");
-	arch::videoMemWriteLine("");
+	arch::vgaConsoleWriteLine("");
+	arch::vgaConsoleWriteLine("Build:\t\t" __DATE__ " " __TIME__);
+	arch::vgaConsoleWrite("Version:\tv");
+	arch::vgaConsoleWriteDec(IGROS_VERSION_MAJOR);
+	arch::vgaConsoleWrite(".");
+	arch::vgaConsoleWriteDec(IGROS_VERSION_MINOR);
+	arch::vgaConsoleWrite(".");
+	arch::vgaConsoleWriteDec(IGROS_VERSION_BUILD);
+	arch::vgaConsoleWrite(" (");
+	arch::vgaConsoleWrite(IGROS_VERSION_NAME);
+	arch::vgaConsoleWriteLine(")");
+	arch::vgaConsoleWrite("Author:\t\tIgor Baklykov (c) ");
+	arch::vgaConsoleWriteDec(2017);
+	arch::vgaConsoleWrite("-");
+	arch::vgaConsoleWriteDec(2018);
+	arch::vgaConsoleWriteLine("");
+	arch::vgaConsoleWriteLine("");
 
 	// Page mapping test
 	/*
-	arch::videoMemWriteHex(reinterpret_cast<t_u32>(arch::pagingVirtToPhys(reinterpret_cast<t_ptr>(0xC00B8000))));
-	arch::videoMemWriteLine("");
-	arch::videoMemWriteLine("");
+	arch::vgaConsoleWriteHex(reinterpret_cast<dword_t>(arch::pagingVirtToPhys(reinterpret_cast<pointer_t>(0xC00B8000))));
+	arch::vgaConsoleWriteLine("");
+	arch::vgaConsoleWriteLine("");
 	volatile t_u16p ptr = reinterpret_cast<t_u16p>(0xC00B8006);
 	*ptr = 0x0730;
 	*/
 
 	// Numbers print test
 	/*
-	arch::videoMemWriteDec(0x7FFFFFFF);
-	arch::videoMemWrite(" = ");
-	arch::videoMemWriteHex(0x7FFFFFFF);
-	arch::videoMemWriteLine("");
+	arch::vgaConsoleWriteDec(0x7FFFFFFF);
+	arch::vgaConsoleWrite(" = ");
+	arch::vgaConsoleWriteHex(0x7FFFFFFF);
+	arch::vgaConsoleWriteLine("");
 	*/
 
 	// Page Fault Exception test
@@ -90,9 +90,9 @@ extern "C" void kernelFunc() {
 
 	// Divide by Zero Exception Test
 	/*
-	volatile t_i32 x = 10;
-	volatile t_i32 y = 0;
-	volatile t_i32 z = x / y;
+	volatile sdword_t x = 10;
+	volatile sdword_t y = 0;
+	volatile sdword_t z = x / y;
 	*/
 
 }

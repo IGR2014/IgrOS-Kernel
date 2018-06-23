@@ -25,11 +25,11 @@ namespace arch {
 	extern "C" {
 
 		// Check if loaded with multiboot loader
-		t_u8	checkMultiboot();
+		byte_t	checkMultiboot();
 		// Check CPUID is extended
-		t_u8	checkCPUID();
+		byte_t	checkCPUID();
 		// Check CPUID for long mode existance
-		t_u8	checkLongMode();
+		byte_t	checkLongMode();
 
 		// Setup page tables
 		void	setupPageTables();

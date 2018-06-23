@@ -3,7 +3,7 @@
 //	Exceptions low-level operations
 //
 //	File:	exceptions.hpp
-//	Date:	21 Jun. 2018
+//	Date:	23 Jun. 2018
 //
 //	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
@@ -31,7 +31,7 @@ namespace arch {
 
 
 	// Interrupts number enumeration
-	enum exNumber_t : t_u8 {
+	enum exNumber_t : byte_t {
 
 		DIVIDE_BY_ZERO			= 0,
 		DEBUG				= 1,

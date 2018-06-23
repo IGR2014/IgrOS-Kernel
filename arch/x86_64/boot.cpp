@@ -10,7 +10,7 @@
 //
 
 
-//#include <videoMem.hpp>
+//#include <vgaConsole.hpp>
 #include <include/types.hpp>
 #include <include/gdt.hpp>
 #include <include/longMode.hpp>
@@ -27,25 +27,25 @@ extern "C" void kernelFunc() {
 	//unsigned char color = 0x0A;
 
 	// Set color
-	//videoMemSetColor(color);
+	//vgaConsoleSetColor(color);
 
 	// Clear screen
-	//videoMemClear();
+	//vgaConsoleClear();
 
 	// Print message on screen
-	//videoMemWriteLine(message);
+	//vgaConsoleWriteLine(message);
 
 	/*
 	unsigned char i = 0;
 	do {
 
-		videoMemSetColor(i);
-		videoMemWriteSymbol('0');
+		vgaConsoleSetColor(i);
+		vgaConsoleWriteSymbol('0');
 
 		if ((i++ % 16) == 15) {
 
-			videoMemWriteSymbol('\r');
-			videoMemWriteSymbol('\n');
+			vgaConsoleWriteSymbol('\r');
+			vgaConsoleWriteSymbol('\n');
 
 		}
 
@@ -68,8 +68,8 @@ extern "C" void kernelFunc() {
 	
 	}
 
-	*(t_u16*)0xb8000 = (t_u16)0x2f4f;
-	*(t_u16*)0xb8002 = (t_u16)0x2f4b;
+	*(word_t*)0xb8000 = (word_t)0x2f4f;
+	*(word_t*)0xb8002 = (word_t)0x2f4b;
 
 	arch::setupPageTables();
 	arch::enablePaging();
@@ -85,8 +85,8 @@ extern "C" void kernelFunc() {
 
 	arch::gdtLoad(&gdt);
 
-	*(t_u16*)0xb8004 = (t_u16)0x2f41;
-	*(t_u16*)0xb8006 = (t_u16)0x2f59;
+	*(word_t*)0xb8004 = (word_t)0x2f41;
+	*(word_t*)0xb8006 = (word_t)0x2f59;
 
 }
 
