@@ -83,19 +83,19 @@ namespace arch {
 	// GDT entry
 	struct gdtEntry {
 
-		t_u16		limitLow;
-		t_u16		baseLow;
-		t_u8		baseMid;
-		t_u8		access;
-		t_u8		limitFlags;
-		t_u8		baseHigh;
+		word_t		limitLow;
+		word_t		baseLow;
+		byte_t		baseMid;
+		byte_t		access;
+		byte_t		limitFlags;
+		byte_t		baseHigh;
 
 	};
 
 	// GDT pointer
 	struct gdtPointer {
 
-		t_u16		size;			// GDT size
+		word_t		size;			// GDT size
 		gdtEntry*	pointer;		// GDT pointer
 	
 	};
@@ -104,7 +104,7 @@ namespace arch {
 
 
 	// Set GDT entry
-	gdtEntry gdtSetEntry(const t_u32&, const t_u32&, const t_u16&);
+	gdtEntry gdtSetEntry(const dword_t&, const dword_t&, const word_t&);
 
 	extern "C" {
 
@@ -119,7 +119,7 @@ namespace arch {
 	}
 
 	// Calculate GDT size
-	t_u32 gdtCalcTableSize(const t_u32&);
+	dword_t gdtCalcTableSize(const dword_t&);
 
 
 }	// namespace arch

@@ -3,7 +3,7 @@
 //	Memory paging for x86
 //
 //	File:	paging.hpp
-//	Date:	21 Jun. 2018
+//	Date:	23 Jun. 2018
 //
 //	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
@@ -28,7 +28,7 @@ namespace arch {
 
 
 	// Page flags
-	enum pagingFlags_t : t_u32 {
+	enum pagingFlags_t : dword_t {
 
 		PAGE_CLEAR		= 0x00000000,
 		PAGE_PRESENT		= 0x00000001,
@@ -50,7 +50,7 @@ namespace arch {
 
 
 		// Setup page directory
-		void	pagingSetupPD(const t_ptr);
+		void	pagingSetupPD(const pointer_t);
 		// Flush page directory
 		void	pagingFlushPD();
 
@@ -58,22 +58,22 @@ namespace arch {
 		void	pagingEnable();
 
 		// Get address which is caused Page Fault Exception
-		t_u32	pagingGetFaultAddres();
+		dword_t	pagingGetFaultAddres();
 
 
 	}	// extern "C"
 
 
 	// Set page directory flags
-	void	pagingSetPDFlags(t_ptr, const pagingFlags_t);
+	void	pagingSetPDFlags(pointer_t, const pagingFlags_t);
 	// Set page table flags
-	void	pagingSetPTFlags(t_ptr, const pagingFlags_t);
+	void	pagingSetPTFlags(pointer_t, const pagingFlags_t);
 
 	// Setup paging
 	void	pagingSetup();
 
 	// Convert virtual address to physical address
-	t_ptr	pagingVirtToPhys(const t_ptr);
+	pointer_t	pagingVirtToPhys(const pointer_t);
 
 	// Page Fault Exception handler
 	void pagingFaultExceptionHandler(const taskRegs_t*);

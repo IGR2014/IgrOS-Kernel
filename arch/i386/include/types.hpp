@@ -3,9 +3,9 @@
 //	Common C++ types redefinition
 //
 //	File:	types.hpp
-//	Date:	20 Nov. 2017
+//	Date:	23 Jun. 2018
 //
-//	Copyright (c) 2017, Igor Baklykov
+//	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
 //
 
@@ -15,42 +15,26 @@
 
 
 // Unsigned integer types
-typedef	unsigned char		t_u8;
-typedef	unsigned short		t_u16;
-typedef	unsigned int		t_u32;
-typedef	unsigned long long	t_u64;
-
-// Unsigned integer pointer types
-typedef	unsigned char*		t_u8p;
-typedef	unsigned short*		t_u16p;
-typedef	unsigned int*		t_u32p;
-typedef	unsigned long long*	t_u64p;
+typedef	unsigned char		byte_t;
+typedef	unsigned short		word_t;
+typedef	unsigned int		dword_t;
+typedef	unsigned long long	quad_t;
 
 
 // Signed integer types
-typedef	char		t_i8;
-typedef	short		t_i16;
-typedef	int		t_i32;
-typedef	long long	t_i64;
-
-// Signed integer pointer types
-typedef	char*		t_i8p;
-typedef	short*		t_i16p;
-typedef	int*		t_i32p;
-typedef	long long*	t_i64p;
+typedef	char			sbyte_t;
+typedef	short			sword_t;
+typedef	int			sdword_t;
+typedef	long long		squad_t;
 
 
 // Floating point types
-typedef	float	t_f32;
-typedef	double	t_f64;
-
-// Floating point pointer types
-typedef	float*	t_f32p;
-typedef	double*	t_f64p;
+typedef	float			real32_t;
+typedef	double			real64_t;
 
 
 // Common pointer type
-typedef void*   t_ptr;
+typedef void*			pointer_t;
 
 
 #endif	// IGROS_TYPES_HPP

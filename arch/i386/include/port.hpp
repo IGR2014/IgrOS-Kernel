@@ -3,7 +3,7 @@
 //	IO low-level port operations
 //
 //	File:	port.hpp
-//	Date:	21 Jun. 2018
+//	Date:	23 Jun. 2018
 //
 //	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
@@ -22,7 +22,7 @@ namespace arch {
 
 
 	// Machine ports enumeration
-	enum portAddress_t : t_u16 {
+	enum portAddress_t : word_t {
 
 		PIC_MASTER_CONTROL	= 0x0020,
 		PIC_MASTER_DATA		= 0x0021,
@@ -40,18 +40,18 @@ namespace arch {
 
 
 		// Read byte from port
-		t_u8	inPort8(const portAddress_t);
+		byte_t	inPort8(const portAddress_t);
 		// Read word from port
-		t_u16	inPort16(const portAddress_t);
+		word_t	inPort16(const portAddress_t);
 		// Read long from port
-		t_u32	inPort32(const portAddress_t);
+		dword_t	inPort32(const portAddress_t);
 
 		// Write byte to port
-		void	outPort8(const portAddress_t, const t_u8);
+		void	outPort8(const portAddress_t, const byte_t);
 		// Write word to port
-		void	outPort16(const portAddress_t, const t_u16);
+		void	outPort16(const portAddress_t, const word_t);
 		// Write long to port
-		void	outPort32(const portAddress_t, const t_u32);
+		void	outPort32(const portAddress_t, const dword_t);
 
 
 	}	// extern "C"

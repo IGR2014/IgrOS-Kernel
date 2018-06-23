@@ -21,18 +21,18 @@ namespace arch {
 
 
 	// Read byte from port
-	extern "C" t_u8		portRByte(t_u16);
+	extern "C" byte_t		portRByte(word_t);
 	// Read word from port
-	extern "C" t_u16	portRWord(t_u16);
+	extern "C" word_t	portRWord(word_t);
 	// Read long from port
-	extern "C" t_u32	portRLong(t_u16);
+	extern "C" dword_t	portRLong(word_t);
 
 	// Write byte to port
-	extern "C" void		portWByte(t_u16, t_u8);
+	extern "C" void		portWByte(word_t, byte_t);
 	// Write word to port
-	extern "C" void		portWWord(t_u16, t_u16);
+	extern "C" void		portWWord(word_t, word_t);
 	// Write long to port
-	extern "C" void		portWLong(t_u16, t_u32);
+	extern "C" void		portWLong(word_t, dword_t);
 
 
 }	// namespace arch

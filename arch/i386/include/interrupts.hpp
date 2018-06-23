@@ -3,7 +3,7 @@
 //	Interrupts low-level operations
 //
 //	File:	interrupts.hpp
-//	Date:	21 Jun. 2018
+//	Date:	23 Jun. 2018
 //
 //	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
@@ -95,9 +95,9 @@ namespace arch {
 	void	irqMask(const irqNumber_t);
 
 	// Set interrupts mask
-	void	irqMaskSet(const t_u16);
+	void	irqMaskSet(const word_t);
 	// Get interrupts mask
-	t_u16	irqMaskGet();
+	word_t	irqMaskGet();
 
 	// Install handler
 	void	irqHandlerInstall(irqNumber_t, irqHandler_t);

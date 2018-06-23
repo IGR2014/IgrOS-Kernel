@@ -3,7 +3,7 @@
 //	Kernel-space memset for x86
 //
 //	File:	memset.hpp
-//	Date:	18 Jun. 2018
+//	Date:	23 Jun. 2018
 //
 //	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
@@ -25,11 +25,11 @@ namespace arch {
 
 
 		// Set required memory with specified byte
-		t_ptr	kmemset8(const t_ptr, const t_u32, const t_u8);
+		pointer_t	kmemset8(const pointer_t, const dword_t, const byte_t);
 		// Set required memory with specified word
-		t_ptr	kmemset16(const t_ptr, const t_u32, const t_u16);
+		pointer_t	kmemset16(const pointer_t, const dword_t, const word_t);
 		// Set required memory with specified double word
-		t_ptr	kmemset32(const t_ptr, const t_u32, const t_u32);
+		pointer_t	kmemset32(const pointer_t, const dword_t, const dword_t);
 
 
 	}	// extern "C"
