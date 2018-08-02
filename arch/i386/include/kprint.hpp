@@ -3,7 +3,7 @@
 //	Kernel text print functions
 //
 //	File:	kprint.hpp
-//	Date:	20 Jun. 2018
+//	Date:	08 Aug. 2018
 //
 //	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
@@ -21,7 +21,8 @@
 namespace arch {
 
 
-	// TODO Implement
+	// TODO Implement kernel print function
+	void kprint(const byte_t*, ...);
 
 
 }	// namespace arch

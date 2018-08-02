@@ -3,7 +3,7 @@
 #	i386 folder Make script
 #
 #	File:	Makefile
-#	Date:	23 Jun. 2018
+#	Date:	08 Aug. 2018
 #
 #	Copyright (c) 2018, Igor Baklykov
 #	All rights reserved.
@@ -16,25 +16,25 @@ export IGROS_DIR_TARGET_BUILD		= $(IGROS_DIR_BUILD)/$(IGROS_TARGET)
 export IGROS_DIR_TARGET_RELEASE		= $(IGROS_DIR_RELEASE)/$(IGROS_TARGET)
 
 CXX		= g++
-CXXFLAGS	= -m32 \
-		  -std=c++11 \
-		  -Wall \
-		  -Wextra \
-		  -w \
-		  -pedantic \
-		  -Werror \
-		  -ffreestanding \
-		  -fno-exceptions \
-		  -fno-rtti \
-		  -fno-pic \
-		  -nostdlib \
-		  -Os \
-		  -s \
-		  -mno-red-zone \
-		  -mno-3dnow \
-		  -mno-sse \
-		  -mno-sse2 \
-		  -mno-sse3 \
+CXXFLAGS	= -m32			\
+		  -std=c++11		\
+		  -Wall			\
+		  -Wextra		\
+		  -w			\
+		  -pedantic		\
+		  -Werror		\
+		  -ffreestanding	\
+		  -fno-exceptions	\
+		  -fno-rtti		\
+		  -fno-pic		\
+		  -nostdlib		\
+		  -Os			\
+		  -s			\
+		  -mno-red-zone		\
+		  -mno-3dnow		\
+		  -mno-sse		\
+		  -mno-sse2		\
+		  -mno-sse3		\
 		  -mno-mmx
 CXXINCLUDE	= -I $(CURDIR) \
 		  -I include -I ../../
@@ -45,23 +45,24 @@ LINKER		= ld
 LINKERFLAGS	= -m elf_i386 \
 		  -z max-page-size=0x1000
 LINKERSCRIPT	= link.ld
-OBJ		= $(IGROS_DIR_TARGET_BUILD)/boot/multiboot.o \
-		  $(IGROS_DIR_TARGET_BUILD)/boot/boot.o \
-		  $(IGROS_DIR_TARGET_BUILD)/boot/idt.o \
-		  $(IGROS_DIR_TARGET_BUILD)/boot/gdt.o \
-		  $(IGROS_DIR_TARGET_BUILD)/boot/port.o \
-		  $(IGROS_DIR_TARGET_BUILD)/boot/exceptions.o \
-		  $(IGROS_DIR_TARGET_BUILD)/boot/interrupts.o \
-		  $(IGROS_DIR_TARGET_BUILD)/boot/paging.o \
-		  $(IGROS_DIR_TARGET_BUILD)/memory/memset.o \
-		  $(IGROS_DIR_TARGET_BUILD)/boot.o \
-		  $(IGROS_DIR_TARGET_BUILD)/idt.o \
-		  $(IGROS_DIR_TARGET_BUILD)/gdt.o \
-		  $(IGROS_DIR_TARGET_BUILD)/exceptions.o \
-		  $(IGROS_DIR_TARGET_BUILD)/interrupts.o \
-		  $(IGROS_DIR_TARGET_BUILD)/vgaConsole.o \
-		  $(IGROS_DIR_TARGET_BUILD)/paging.o \
-		  $(IGROS_DIR_TARGET_BUILD)/keyboard.o
+OBJ		= $(IGROS_DIR_TARGET_BUILD)/boot/multiboot.o	\
+		  $(IGROS_DIR_TARGET_BUILD)/boot/boot.o		\
+		  $(IGROS_DIR_TARGET_BUILD)/boot/idt.o		\
+		  $(IGROS_DIR_TARGET_BUILD)/boot/gdt.o		\
+		  $(IGROS_DIR_TARGET_BUILD)/boot/port.o		\
+		  $(IGROS_DIR_TARGET_BUILD)/boot/exceptions.o	\
+		  $(IGROS_DIR_TARGET_BUILD)/boot/interrupts.o	\
+		  $(IGROS_DIR_TARGET_BUILD)/boot/paging.o	\
+		  $(IGROS_DIR_TARGET_BUILD)/memory/memset.o	\
+		  $(IGROS_DIR_TARGET_BUILD)/boot.o		\
+		  $(IGROS_DIR_TARGET_BUILD)/idt.o		\
+		  $(IGROS_DIR_TARGET_BUILD)/gdt.o		\
+		  $(IGROS_DIR_TARGET_BUILD)/exceptions.o	\
+		  $(IGROS_DIR_TARGET_BUILD)/interrupts.o	\
+		  $(IGROS_DIR_TARGET_BUILD)/vgaConsole.o	\
+		  $(IGROS_DIR_TARGET_BUILD)/paging.o		\
+		  $(IGROS_DIR_TARGET_BUILD)/keyboard.o		\
+		  $(IGROS_DIR_TARGET_BUILD)/pit.o
 
 all: all-before $(BIN)
 

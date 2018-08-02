@@ -3,7 +3,7 @@
 //	Interrupts low-level operations
 //
 //	File:	interrupts.hpp
-//	Date:	23 Jun. 2018
+//	Date:	08 Aug. 2018
 //
 //	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
@@ -34,7 +34,7 @@ namespace arch {
 	// Interrupts number enumeration
 	enum irqNumber_t {
 
-		TIMER		= 0,
+		PIT		= 0,
 		KEYBOARD	= 1
 
 	};

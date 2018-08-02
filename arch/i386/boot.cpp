@@ -18,6 +18,7 @@
 #include <include/vgaConsole.hpp>
 #include <include/paging.hpp>
 #include <include/keyboard.hpp>
+#include <include/pit.hpp>
 
 
 // Kernel main function
@@ -38,10 +39,18 @@ extern "C" void kernelFunc() {
 	// Enable interrupts
 	arch::irqEnable();
 
+	// Setup PIT frequency to 1 HZ
+	arch::pitSetupFrequency(1);
+
 	// Install keyboard interrupt handler
 	arch::irqHandlerInstall(arch::KEYBOARD, arch::keyboardInterruptHandler);
-	// Mask interrupts
+	// Mask keyboard interrupts
 	arch::irqMask(arch::KEYBOARD);
+
+	// Install PIT interrupt handler
+	arch::irqHandlerInstall(arch::PIT, arch::pitInterruptHandler);
+	// Mask PIT interrupts
+	arch::irqMask(arch::PIT);
 
 	// Setup paging (And identity map first 4MB where kernel is)
 	arch::pagingSetup();
