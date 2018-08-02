@@ -3,7 +3,7 @@
 //	Memory paging for x86
 //
 //	File:	paging.hpp
-//	Date:	23 Jun. 2018
+//	Date:	03 Aug. 2018
 //
 //	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
@@ -65,18 +65,18 @@ namespace arch {
 
 
 	// Set page directory flags
-	void	pagingSetPDFlags(pointer_t, const pagingFlags_t);
+	void		pagingSetPDFlags(pointer_t, const pagingFlags_t);
 	// Set page table flags
-	void	pagingSetPTFlags(pointer_t, const pagingFlags_t);
+	void		pagingSetPTFlags(pointer_t, const pagingFlags_t);
 
 	// Setup paging
-	void	pagingSetup();
+	void		pagingSetup();
 
 	// Convert virtual address to physical address
 	pointer_t	pagingVirtToPhys(const pointer_t);
 
 	// Page Fault Exception handler
-	void pagingFaultExceptionHandler(const taskRegs_t*);
+	void		pagingFaultExceptionHandler(const taskRegs_t*);
 
 
 }	// namespace arch

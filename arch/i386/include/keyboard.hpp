@@ -3,7 +3,7 @@
 //	Keyboard generic handling
 //
 //	File:	keyboard.hpp
-//	Date:	21 Jun. 2018
+//	Date:	03 Aug. 2018
 //
 //	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
@@ -22,10 +22,13 @@ namespace arch {
 
 
 	// Forward declaration
-	struct taskRegs_t;
+	struct	taskRegs_t;
+
+	// Set keyboard LEDs
+	//void	keyboardSetLED();
 
 	// Keyboard interrupt (#1) handler
-	void keyboardInterruptHandler(const taskRegs_t*);
+	void	keyboardInterruptHandler(const taskRegs_t*);
 
 
 }	// namespace arch

@@ -25,18 +25,28 @@ namespace arch {
 		vgaConsoleWriteLine("IRQ\t\t-> KEYBOARD");
 		vgaConsoleWrite("KEY STATE:\t");
 
-		// Read keyboard data port
-		if (inPort8(KEYBOARD_CONTROL) > 0x7F) {
+		byte_t keyStatus = inPort8(KEYBOARD_CONTROL);
 
-			vgaConsoleWriteLine("KEY_UP");
-			vgaConsoleWriteLine("");
+		// Check keyboard data port
+		if (keyStatus & 0x01) {
 
-			return;
+			byte_t keyCode = inPort8(KEYBOARD_DATA);
+
+			if (keyCode > 0x80) {
+
+				vgaConsoleWriteLine("KEY_RELEASED");
+
+			} else {
+
+				vgaConsoleWriteLine("KEY_PRESSED");
+
+			}
+
+			vgaConsoleWrite("Key CODE: ");
+			vgaConsoleWriteHex(keyCode);
+			vgaConsoleWriteLine("\r\n");
 
 		}
-
-		vgaConsoleWriteLine("KEY_DOWN");
-		vgaConsoleWriteLine("");
 
 	}
 
