@@ -39,8 +39,8 @@ extern "C" void kernelFunc() {
 	// Enable interrupts
 	arch::irqEnable();
 
-	// Setup PIT frequency to 1 HZ
-	arch::pitSetupFrequency(1);
+	// Setup PIT frequency to 100 HZ
+	arch::pitSetupFrequency(100);
 
 	// Install keyboard interrupt handler
 	arch::irqHandlerInstall(arch::KEYBOARD, arch::keyboardInterruptHandler);
