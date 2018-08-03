@@ -25,7 +25,7 @@ namespace arch {
 	struct	taskRegs_t;
 
 
-	// PIT frequency (1.193180 MHz)
+	// PIT frequency (1.193182 MHz)
 	static const dword_t	PIT_FREQUENCY	= 1193182;
 
 	// Ticks count
@@ -38,7 +38,7 @@ namespace arch {
 	void	pitInterruptHandler(const taskRegs_t*);
 
 	// Convert expired ticks count to seconds
-	//void	pitToSeconds();
+	dword_t	pitToSeconds();
 
 
 }	// namespace arch

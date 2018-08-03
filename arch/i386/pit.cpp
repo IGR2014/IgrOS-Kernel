@@ -29,10 +29,18 @@ namespace arch {
 		// Tell pit we want to change divisor for channel 0
 		outPort8(PIT_CONTROL,	0x36);
 		// Set divisor (LOW first, then HIGH)
-		outPort8(PIT_CHANNEL_0,	divisor & 0x00FF);
-		outPort8(PIT_CHANNEL_0,	(divisor >> 8) & 0x00FF);
+		outPort8(PIT_CHANNEL_0,	divisor & 0xFF);
+		outPort8(PIT_CHANNEL_0,	divisor >> 8);
 
         }
+
+
+	// Convert expired ticks count to seconds
+	dword_t pitToSeconds() {
+
+		return PIT_TICKS / 100;
+
+	}
 
 
 	// PIT interrupt (#0) handler
@@ -42,8 +50,21 @@ namespace arch {
 
 		if ((PIT_TICKS % 100) == 0) {
 
+			dword_t elapsed = pitToSeconds();
+			dword_t seconds	= elapsed % 60;
+			dword_t minutes	= (seconds / 60) % 60;
+			dword_t hours	= (seconds / 3600) % 24;
+
 			vgaConsoleWriteLine("IRQ\t\t-> PIT");
-			vgaConsoleWriteLine("\t1000 TICKS EXPIRED");
+			vgaConsoleWriteLine("\t100 TICKS (~1 SECOND) EXPIRED");
+			vgaConsoleWriteDec(hours);
+			vgaConsoleWrite(":");
+			vgaConsoleWriteDec(minutes);
+			vgaConsoleWrite(":");
+			vgaConsoleWriteDec(seconds);
+			vgaConsoleWrite(".");
+			vgaConsoleWriteDec(0);
+			vgaConsoleWriteLine("");
 			vgaConsoleWriteLine("");
 
 		}
