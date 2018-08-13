@@ -3,7 +3,7 @@
 //	Memory paging for x86
 //
 //	File:	paging.cpp
-//	Date:	23 Jun. 2018
+//	Date:	13 Aug. 2018
 //
 //	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
@@ -14,6 +14,7 @@
 #include <include/taskRegs.hpp>
 #include <include/exceptions.hpp>
 #include <include/vgaConsole.hpp>
+#include <include/flags.hpp>
 
 
 // Arch-dependent code zone
@@ -33,103 +34,12 @@ namespace arch {
 	}	// extern "C"
 
 
-	// Bitwise OR operator for flags
-	pagingFlags_t operator|(pagingFlags_t l, pagingFlags_t r) {
-
-		// Underlying type acquisition
-		using U = std::underlying_type<pagingFlags_t>::type;
-		// OR on underlying types
-		return	static_cast<pagingFlags_t>(
-			static_cast<U>(l) |
-			static_cast<U>(r)
-			);
-
-	}
-
-	// Bitwise AND operator for flags
-	pagingFlags_t operator&(pagingFlags_t l, pagingFlags_t r) {
-
-		// Underlying type acquisition
-		using U = std::underlying_type<pagingFlags_t>::type;
-		// AND on underlying types
-		return	static_cast<pagingFlags_t>(
-			static_cast<U>(l) &
-			static_cast<U>(r)
-			);
-
-	}
-
-	// Bitwise XOR operator for flags
-	pagingFlags_t operator^(pagingFlags_t l, pagingFlags_t r) {
-
-		// Underlying type acquisition
-		using U = std::underlying_type<pagingFlags_t>::type;
-		// XOR on underlying types
-		return	static_cast<pagingFlags_t>(
-			static_cast<U>(l) ^
-			static_cast<U>(r)
-			);
-
-	}
-
-	// Bitwise NOT operator for flags
-	pagingFlags_t operator~(pagingFlags_t l) {
-
-		// Underlying type acquisition
-		using U = std::underlying_type<pagingFlags_t>::type;
-		// NOT on underlying types
-		return	static_cast<pagingFlags_t>(
-			~static_cast<U>(l)
-			);
-
-	}
-
-	// Bitwise OR assignment operator for flags
-	pagingFlags_t operator|=(pagingFlags_t &l, pagingFlags_t r) {
-
-		// Underlying type acquisition
-		using U = std::underlying_type<pagingFlags_t>::type;
-		// OR on underlying types
-		l =	static_cast<pagingFlags_t>(
-			static_cast<U>(l) |
-			static_cast<U>(r)
-			);
-
-	}
-
-	// Bitwise AND assignment operator for flags
-	pagingFlags_t operator&=(pagingFlags_t &l, pagingFlags_t r) {
-
-		// Underlying type acquisition
-		using U = std::underlying_type<pagingFlags_t>::type;
-		// AND on underlying types
-		l =	static_cast<pagingFlags_t>(
-			static_cast<U>(l) &
-			static_cast<U>(r)
-			);
-
-	}
-
-	// Bitwise XOR assignment operator for flags
-	pagingFlags_t operator^=(pagingFlags_t &l, pagingFlags_t r) {
-
-		// Underlying type acquisition
-		using U = std::underlying_type<pagingFlags_t>::type;
-		// XOR on underlying types
-		l =	static_cast<pagingFlags_t>(
-			static_cast<U>(l) ^
-			static_cast<U>(r)
-			);
-
-	}
-
-
 	// Set page directory flags
 	void pagingSetPDFlags(pointer_t pageDirEntry, const pagingFlags_t flags) {
 
 		// Page directory dirty flag does not exists
 		// It's reserved as 0
-		*static_cast<dword_t*>(pageDirEntry) |= (flags & ~(PAGE_DIRTY));
+		*static_cast<pagingFlags_t*>(pageDirEntry) |= (flags & ~(pagingFlags_t::PAGE_DIRTY));
 	
 	}
 
@@ -138,7 +48,7 @@ namespace arch {
 
 		// Page directory size flag does not exists
 		// It's reserved as 0
-		*static_cast<dword_t*>(pageTableEntry) |= (flags & ~(PAGE_SIZE));
+		*static_cast<pagingFlags_t*>(pageTableEntry) |= (flags & ~(pagingFlags_t::PAGE_SIZE));
 
 	}
 
@@ -150,28 +60,28 @@ namespace arch {
 		for (dword_t i = 0; i < 1024; ++i) {
 
 			pageDirectory[i] = 0x00000000;
-			pagingSetPDFlags(&pageDirectory[i], PAGE_CLEAR);
+			pagingSetPDFlags(&pageDirectory[i], pagingFlags_t::PAGE_CLEAR);
 
 		}
 
 		// Map first 4 MB of physical RAM to first 4 MB of virtual RAM
 		pageDirectory[0]	= reinterpret_cast<dword_t>(pageTable);
-		pagingSetPDFlags(&pageDirectory[0],	PAGE_WRITABLE | PAGE_PRESENT);
+		pagingSetPDFlags(&pageDirectory[0],	pagingFlags_t::PAGE_WRITABLE | pagingFlags_t::PAGE_PRESENT);
 
 		// Also map first 4MB of physical RAM to first 4MB after 3GB in virtual memory
 		// (This shoul be useful for higher-half kernel)
 		pageDirectory[768]	= reinterpret_cast<dword_t>(pageTable);
-		pagingSetPDFlags(&pageDirectory[768],	PAGE_WRITABLE | PAGE_PRESENT);
+		pagingSetPDFlags(&pageDirectory[768],	pagingFlags_t::PAGE_WRITABLE | pagingFlags_t::PAGE_PRESENT);
 
 		// Map page table itself to the last page of virtual memory
 		pageDirectory[1023]	= reinterpret_cast<dword_t>(pageDirectory);
-		pagingSetPDFlags(&pageDirectory[1023],	PAGE_WRITABLE | PAGE_PRESENT);
+		pagingSetPDFlags(&pageDirectory[1023],	pagingFlags_t::PAGE_WRITABLE | pagingFlags_t::PAGE_PRESENT);
 
 		// Map all pages of first 4MB to first page table
 		for (sdword_t j = 0; j < 1024; ++j) {
 
 			pageTable[j]	= (j << 12);
-			pagingSetPTFlags(&pageTable[j],	PAGE_WRITABLE | PAGE_PRESENT);
+			pagingSetPTFlags(&pageTable[j],	pagingFlags_t::PAGE_WRITABLE | pagingFlags_t::PAGE_PRESENT);
 
 		}
 
@@ -199,13 +109,13 @@ namespace arch {
 		dword_t pageTablePtr	= pageDirectory[pdEntryIndex];
 
 		// Check if page table is present or not
-		if ((pageTablePtr & PAGE_PRESENT) != PAGE_CLEAR) {
+		if ((static_cast<pagingFlags_t>(pageTablePtr) & pagingFlags_t::PAGE_PRESENT) != pagingFlags_t::PAGE_CLEAR) {
 
 			// Physical pointer to page
 			dword_t pagePtr = reinterpret_cast<dword_t*>(pageTablePtr & ~0xFFF)[ptEntryIndex];
 
 			// Check if page is present or not
-			if ((pagePtr & PAGE_PRESENT) != PAGE_CLEAR) {
+			if ((static_cast<pagingFlags_t>(pagePtr) & pagingFlags_t::PAGE_PRESENT) != pagingFlags_t::PAGE_CLEAR) {
 
 				// Get physical address of page from page table (20 MSB)
 				dword_t physPageAddr	= pagePtr & ~0xFFF;

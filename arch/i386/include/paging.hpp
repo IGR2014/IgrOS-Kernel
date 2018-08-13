@@ -3,7 +3,7 @@
 //	Memory paging for x86
 //
 //	File:	paging.hpp
-//	Date:	03 Aug. 2018
+//	Date:	13 Aug. 2018
 //
 //	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
@@ -14,7 +14,7 @@
 #define IGROS_ARCH_PAGING_HPP
 
 
-#include <type_traits>
+//#include <type_traits>
 
 #include <include/types.hpp>
 
@@ -28,7 +28,7 @@ namespace arch {
 
 
 	// Page flags
-	enum pagingFlags_t : dword_t {
+	enum class pagingFlags_t : dword_t {
 
 		PAGE_CLEAR		= 0x00000000,
 		PAGE_PRESENT		= 0x00000001,

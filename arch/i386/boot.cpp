@@ -3,7 +3,7 @@
 //	Boot low-level main setup function
 //
 //	File:	boot.cpp
-//	Date:	23 Jun. 2018
+//	Date:	13 Aug. 2018
 //
 //	Copyright (c) 2018, Igor Baklykov
 //	All rights reserved.
@@ -40,7 +40,7 @@ extern "C" void kernelFunc() {
 	arch::irqEnable();
 
 	// Setup PIT frequency to 100 HZ
-	arch::pitSetupFrequency(100);
+	arch::pitSetupFrequency(1000);
 
 	// Install keyboard interrupt handler
 	arch::irqHandlerInstall(arch::KEYBOARD, arch::keyboardInterruptHandler);
