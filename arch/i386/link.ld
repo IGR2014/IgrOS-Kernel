@@ -3,7 +3,7 @@
 **	Kernel linker script
 **
 **	File:	link.ld
-**	Date:	19 Jun. 2018
+**	Date:	13 Aug. 2018
 **
 **	Copyright (c) 2018, Igor Baklykov
 **	All rights reserved.
@@ -22,13 +22,13 @@ SECTIONS {
 
 		*(.multiboot)
 		*(.text)
+		*(.rodata*)
 
 	}
 
 	.data ALIGN(4K) : AT(ADDR(.data)) {
 
 		*(.data)
-		*(.rodata*)
 
 	}
 
