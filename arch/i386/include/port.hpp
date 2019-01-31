@@ -5,8 +5,9 @@
 //	File:	port.hpp
 //	Date:	08 Aug. 2018
 //
-//	Copyright (c) 2018, Igor Baklykov
+//	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
+//
 //
 
 
@@ -40,7 +41,11 @@ namespace arch {
 	};
 
 
+#ifdef	__cplusplus
+
 	extern "C" {
+
+#endif	// __cplusplus
 
 
 		// Read byte from port
@@ -58,7 +63,11 @@ namespace arch {
 		void	outPort32(const portAddress_t, const dword_t);
 
 
+#ifdef	__cplusplus
+
 	}	// extern "C"
+
+#endif	// __cplusplus
 
 
 }	// namespace arch

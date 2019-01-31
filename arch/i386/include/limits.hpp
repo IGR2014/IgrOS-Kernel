@@ -8,6 +8,7 @@
 //	Copyright (c) 2017, Igor Baklykov
 //	All rights reserved.
 //
+//
 
 
 #ifndef IGROS_LIMITS_HPP

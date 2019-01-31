@@ -5,8 +5,9 @@
 //	File:	pit.hpp
 //	Date:	13 Aug. 2018
 //
-//	Copyright (c) 2018, Igor Baklykov
+//	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
+//
 //
 
 
@@ -64,14 +65,8 @@ namespace arch {
 #pragma pop
 
 
-	// PIT frequency (1.193182 MHz)
-	static const dword_t	PIT_MAIN_FREQUENCY	= 1193182;
-
-	// Ticks count
-	static dword_t		PIT_TICKS		= 0;
-
-	// Current frequency
-	static word_t		PIT_FREQUENCY		= 0;
+	// PIT frequency (1.193181(3) MHz)
+	static const dword_t	PIT_MAIN_FREQUENCY	= 1193181;
 
 
 	// Setup PIT frequency
@@ -81,7 +76,7 @@ namespace arch {
 	void	pitInterruptHandler(const taskRegs_t*);
 
 	// Get expired ticks
-	dword_t	pitGetTicks();
+	quad_t	pitGetTicks();
 
 
 }	// namespace arch

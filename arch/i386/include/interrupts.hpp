@@ -3,18 +3,17 @@
 //	Interrupts low-level operations
 //
 //	File:	interrupts.hpp
-//	Date:	08 Aug. 2018
+//	Date:	01 Feb. 2019
 //
-//	Copyright (c) 2018, Igor Baklykov
+//	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
+//
 //
 
 
 #ifndef IGROS_ARCH_INTERRUPTS_HPP
 #define IGROS_ARCH_INTERRUPTS_HPP
 
-
-#include <type_traits>
 
 #include <include/types.hpp>
 
@@ -26,13 +25,12 @@ namespace arch {
 	// Forward declaration
 	struct taskRegs_t;
 
-
 	// Interrupt handler type
-	using irqHandler_t = std::add_pointer<void(const taskRegs_t* regs)>::type;
+	using irqHandler_t = void(*)(const taskRegs_t* regs);
 
 
 	// Interrupts number enumeration
-	enum irqNumber_t {
+	enum class irqNumber_t : byte_t {
 
 		PIT		= 0,
 		KEYBOARD	= 1
@@ -40,7 +38,11 @@ namespace arch {
 	};
 
 
+#ifdef	__cplusplus
+
 	extern "C" {
+
+#endif	// __cplusplus
 
 
 		// Interrupt 0 handler
@@ -85,7 +87,11 @@ namespace arch {
 		void	irqDisable();
 
 
+#ifdef	__cplusplus
+
 	}	// extern "C"
+
+#endif	// __cplusplus
 
 
 	// Init interrupts

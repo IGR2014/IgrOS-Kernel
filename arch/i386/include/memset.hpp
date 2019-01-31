@@ -5,8 +5,9 @@
 //	File:	memset.hpp
 //	Date:	23 Jun. 2018
 //
-//	Copyright (c) 2018, Igor Baklykov
+//	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
+//
 //
 
 
@@ -21,7 +22,11 @@
 namespace arch {
 
 
+#ifdef	__cplusplus
+
 	extern "C" {
+
+#endif	// __cplusplus
 
 
 		// Set required memory with specified byte
@@ -32,7 +37,11 @@ namespace arch {
 		pointer_t	kmemset32(const pointer_t, const dword_t, const dword_t);
 
 
+#ifdef	__cplusplus
+
 	}	// extern "C"
+
+#endif	// __cplusplus
 
 
 }	// namespace arch

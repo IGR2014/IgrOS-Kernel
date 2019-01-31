@@ -5,26 +5,60 @@
 #	File:	Makefile
 #	Date:	20 Apr. 2018
 #
-#	Copyright (c) 2018, Igor Baklykov
+#	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.
+#
 #
 
 
-export IGROS_DIR_BUILD		= $(CURDIR)/../build
-export IGROS_DIR_RELEASE	= $(CURDIR)/../release
+export	IGROS_DIR_BUILD		= $(CURDIR)/../build
+export	IGROS_DIR_RELEASE	= $(CURDIR)/../release
 
-IGROS_ARCH			=
+export	IGROS_ARCH		?= i386
 
-.PHONY: all clean rebuild run
+export	CXX			?= g++
 
-all:
-	@mkdir -p $(IGROS_DIR_BUILD)
-	@mkdir -p $(IGROS_DIR_RELEASE)
+export	CXXFLAGS		= -m32				\
+				  -std=c++11			\
+				  -Wall				\
+				  -Wextra			\
+				  -w				\
+				  -pedantic			\
+				  -Werror			\
+				  -ffreestanding		\
+				  -fno-exceptions		\
+				  -fno-rtti			\
+				  -fno-pic			\
+				  -fno-pie			\
+				  -nostdlib			\
+				  -Os				\
+				  -s				\
+				  -mno-red-zone			\
+				  -mno-3dnow			\
+				  -mno-sse			\
+				  -mno-sse2			\
+				  -mno-sse3			\
+				  -mno-mmx
+
+export	CXXINCLUDE		= -I $(CURDIR)/$(IGROS_ARCH)	\
+				  -I $(CURDIR)/../
+
+export	LD			= ld
+
+export	LDFLAGS			= -m elf_$(IGROS_ARCH)		\
+				  -z max-page-size=0x1000
+
+export RM			= rm -rf
+
+export BIN_NAME			= kernel.bin
+
+
+.PHONY: all clean rebuild run deploy
+
+all: $(IGROS_DIR_BUILD) $(IGROS_DIR_RELEASE)
 	@$(MAKE) -C $(IGROS_ARCH)
 
 clean:
-	@rm -rf $(IGROS_DIR_BUILD)
-	@rm -rf $(IGROS_DIR_RELEASE)
 	@$(MAKE) -C $(IGROS_ARCH) clean
 
 rebuild:
@@ -32,4 +66,21 @@ rebuild:
 
 run:
 	@$(MAKE) -C $(IGROS_ARCH) run
+
+deploy:
+	@echo "	DEPLOY	$(BIN_NAME)"
+	@mkdir -p $(IGROS_DIR_RELEASE)/iso/
+	@mkdir -p $(IGROS_DIR_RELEASE)/iso/boot/
+	@cp $(IGROS_DIR_RELEASE)/$(IGROS_ARCH)/$(BIN_NAME) $(IGROS_DIR_RELEASE)/iso/boot/
+	@mkdir -p $(IGROS_DIR_RELEASE)/iso/boot/grub/
+	@cp $(IGROS_DIR_RELEASE)/../grub.cfg $(IGROS_DIR_RELEASE)/iso/boot/grub/grub.cfg
+	@grub-mkrescue -o $(IGROS_DIR_RELEASE)/os-$(IGROS_ARCH).iso $(IGROS_DIR_RELEASE)/iso
+
+$(IGROS_DIR_BUILD):
+	@echo "	MKDIR	$(IGROS_DIR_BUILD)"
+	@mkdir -p $(IGROS_DIR_BUILD)
+
+$(IGROS_DIR_RELEASE):
+	@echo "	MKDIR	$(IGROS_DIR_RELEASE)"
+	@mkdir -p $(IGROS_DIR_RELEASE)
 

@@ -5,8 +5,9 @@
 #	File:	boot.s
 #	Date:	18 Jun. 2018
 #
-#	Copyright (c) 2018, Igor Baklykov
+#	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.
+#
 #
 
 
@@ -18,7 +19,8 @@
 .extern	kernelFunc			# Extern kernel C-function
 
 
-kernelStart:				# Kernel starts here
+# Kernel starts here
+kernelStart:
 	cli				# Turn off interrupts
 	movl	$stackTop, %esp		# Set stack
 	pushl	%eax			# Multiboot info

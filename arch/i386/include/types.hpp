@@ -5,8 +5,9 @@
 //	File:	types.hpp
 //	Date:	23 Jun. 2018
 //
-//	Copyright (c) 2018, Igor Baklykov
+//	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
+//
 //
 
 
@@ -17,7 +18,7 @@
 // Unsigned integer types
 typedef	unsigned char		byte_t;
 typedef	unsigned short		word_t;
-typedef	unsigned int		dword_t;
+typedef	unsigned long		dword_t;
 typedef	unsigned long long	quad_t;
 
 

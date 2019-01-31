@@ -3,10 +3,11 @@
 //	Global descriptor table low-level operations
 //
 //	File:	gdt.hpp
-//	Date:	13 Aug. 2018
+//	Date:	01 Feb. 2019
 //
-//	Copyright (c) 2018, Igor Baklykov
+//	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
+//
 //
 
 
@@ -15,7 +16,6 @@
 
 
 #include <include/types.hpp>
-#include <include/flags.hpp>
 
 
 // Arch-dependent code zone
@@ -23,7 +23,7 @@ namespace arch {
 
 
 	// GDT flags enum
-	enum class gdtFlags_t : word_t {
+	enum gdtFlags_t : word_t {
 
 		// GDT empty segment
 		GDT_SEG_EMPTY		= 0x0000,
@@ -129,16 +129,32 @@ namespace arch {
 
 
 	// Set GDT entry
-	gdtEntry_t		gdtSetEntry(const dword_t&, const dword_t&, const gdtFlags_t&);
+	gdtEntry_t	gdtSetEntry(const dword_t&, const dword_t&, const gdtFlags_t&);
 
-	// Load GDT
-	extern "C" void		gdtLoad(const gdtPointer_t*);
+
+#ifdef	__cplusplus
+
+	extern "C" {
+
+#endif	// __cplusplus
+
+
+		// Load GDT
+		void	gdtLoad(const gdtPointer_t*);
+
+
+#ifdef	__cplusplus
+
+	}
+
+#endif	// __cplusplus
+
 
 	// Calculate GDT size
-	dword_t			gdtCalcTableSize(const dword_t&);
+	dword_t		gdtCalcTableSize(const dword_t&);
 
 	// Setup GDT
-	void			gdtSetup();
+	void		gdtSetup();
 
 
 }	// namespace arch

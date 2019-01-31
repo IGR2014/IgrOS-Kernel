@@ -5,8 +5,9 @@
 #	File:	port.s
 #	Date:	21 Jun. 2018
 #
-#	Copyright (c) 2018, Igor Baklykov
+#	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.
+#
 #
 
 
@@ -22,35 +23,41 @@
 .global	outPort32			# Write long to port
 
 
-inPort8:				# Read byte from port function
+# Read byte from port
+inPort8:
 	movw	4(%esp), %dx		# Port address
 	inb	%dx, %al		# Read data
 	ret				# Return
 
-inPort16:				# Read word from port function
+# Read word from port
+inPort16:
 	movw	4(%esp), %dx		# Port address
 	inw	%dx, %ax		# Read data
 	ret				# Return
 
-inPort32:				# Read long from port function
+# Read long from port
+inPort32:
 	movw	4(%esp), %dx		# Port address
 	inl	%dx, %eax		# Read data
 	ret				# Return
 
 
-outPort8:				# Write byte to port function
+# Write byte to port
+outPort8:
 	movw	4(%esp), %dx		# Port address
 	movb	8(%esp), %al		# Data to write
 	outb	%al, %dx		# Write data
 	ret				# Return
 
-outPort16:				# Write word to port function
+# Write word to port
+outPort16:
 	movw	4(%esp), %dx		# Port address
 	movw	8(%esp), %ax		# Data to write
 	outw	%ax, %dx		# Write data
 	ret				# Return
 
-outPort32:				# Write long to port function
+# Write long to port
+outPort32:
 	movw	4(%esp), %dx		# Port address
 	movl	8(%esp), %eax		# Data to write
 	outl	%eax, %dx		# Write data

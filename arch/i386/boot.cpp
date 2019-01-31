@@ -5,8 +5,9 @@
 //	File:	boot.cpp
 //	Date:	13 Aug. 2018
 //
-//	Copyright (c) 2018, Igor Baklykov
+//	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
+//
 //
 
 
@@ -21,88 +22,101 @@
 #include <include/pit.hpp>
 
 
-// Kernel main function
-extern "C" void kernelFunc() {
+#ifdef	__cplusplus
 
-	// Init VGA console
-	arch::vgaConsoleInit();
-	arch::vgaConsoleWriteLine("IgrOS kernel");
+extern "C" {
 
-	// Setup Global Descriptors Table
-	arch::gdtSetup();
+#endif	// __cplusplus
 
-	// Setup Interrupts Descriptor Table
-	arch::idtSetup();
 
-	// Init interrupts
-	arch::irqInit();
-	// Enable interrupts
-	arch::irqEnable();
+	// Kernel main function
+	void kernelFunc(dword_t mBootMagic, pointer_t* mBootData) {
 
-	// Setup PIT frequency to 100 HZ
-	arch::pitSetupFrequency(1000);
+		// Init VGA console
+		arch::vgaConsoleInit();
+		arch::vgaConsoleWriteLine("IgrOS kernel");
 
-	// Install keyboard interrupt handler
-	arch::irqHandlerInstall(arch::KEYBOARD, arch::keyboardInterruptHandler);
-	// Mask keyboard interrupts
-	arch::irqMask(arch::KEYBOARD);
+		// Setup Global Descriptors Table
+		arch::gdtSetup();
 
-	// Install PIT interrupt handler
-	arch::irqHandlerInstall(arch::PIT, arch::pitInterruptHandler);
-	// Mask PIT interrupts
-	arch::irqMask(arch::PIT);
+		// Setup Interrupts Descriptor Table
+		arch::idtSetup();
 
-	// Setup paging (And identity map first 4MB where kernel is)
-	arch::pagingSetup();
+		// Init interrupts
+		arch::irqInit();
+		// Enable interrupts
+		arch::irqEnable();
 
-	// Write "Hello World" message
-	arch::vgaConsoleWriteLine("");
-	arch::vgaConsoleWriteLine("Build:\t\t" __DATE__ " " __TIME__);
-	arch::vgaConsoleWrite("Version:\tv");
-	arch::vgaConsoleWriteDec(IGROS_VERSION_MAJOR);
-	arch::vgaConsoleWrite(".");
-	arch::vgaConsoleWriteDec(IGROS_VERSION_MINOR);
-	arch::vgaConsoleWrite(".");
-	arch::vgaConsoleWriteDec(IGROS_VERSION_BUILD);
-	arch::vgaConsoleWrite(" (");
-	arch::vgaConsoleWrite(IGROS_VERSION_NAME);
-	arch::vgaConsoleWriteLine(")");
-	arch::vgaConsoleWrite("Author:\t\tIgor Baklykov (c) ");
-	arch::vgaConsoleWriteDec(2017);
-	arch::vgaConsoleWrite("-");
-	arch::vgaConsoleWriteDec(2018);
-	arch::vgaConsoleWriteLine("");
-	arch::vgaConsoleWriteLine("");
+		// Setup PIT frequency to 100 HZ
+		arch::pitSetupFrequency(100);
 
-	// Page mapping test
-	/*
-	arch::vgaConsoleWriteHex(reinterpret_cast<dword_t>(arch::pagingVirtToPhys(reinterpret_cast<pointer_t>(0xC00B8000))));
-	arch::vgaConsoleWriteLine("");
-	arch::vgaConsoleWriteLine("");
-	volatile t_u16p ptr = reinterpret_cast<t_u16p>(0xC00B8006);
-	*ptr = 0x0730;
-	*/
+		// Install keyboard interrupt handler
+		arch::irqHandlerInstall(arch::irqNumber_t::KEYBOARD, arch::keyboardInterruptHandler);
+		// Mask Keyboard interrupts
+		arch::irqMask(arch::irqNumber_t::KEYBOARD);
+		// Install PIT interrupt handler
+		arch::irqHandlerInstall(arch::irqNumber_t::PIT, arch::pitInterruptHandler);
+		// Mask PIT interrupts
+		arch::irqMask(arch::irqNumber_t::PIT);
 
-	// Numbers print test
-	/*
-	arch::vgaConsoleWriteDec(0x7FFFFFFF);
-	arch::vgaConsoleWrite(" = ");
-	arch::vgaConsoleWriteHex(0x7FFFFFFF);
-	arch::vgaConsoleWriteLine("");
-	*/
+		// Setup paging (And identity map first 4MB where kernel is)
+		arch::pagingSetup();
 
-	// Page Fault Exception test
-	/*
-	volatile t_u32p ptr = reinterpret_cast<t_u32p>(0xA0000000);
-	*ptr = 0x4000;
-	*/
+		// Write "Hello World" message
+		arch::vgaConsoleWriteLine("");
+		arch::vgaConsoleWriteLine("Build:\t\t" __DATE__ " " __TIME__);
+		arch::vgaConsoleWrite("Version:\tv");
+		arch::vgaConsoleWriteDec(IGROS_VERSION_MAJOR);
+		arch::vgaConsoleWrite(".");
+		arch::vgaConsoleWriteDec(IGROS_VERSION_MINOR);
+		arch::vgaConsoleWrite(".");
+		arch::vgaConsoleWriteDec(IGROS_VERSION_BUILD);
+		arch::vgaConsoleWrite(" (");
+		arch::vgaConsoleWrite(IGROS_VERSION_NAME);
+		arch::vgaConsoleWriteLine(")");
+		arch::vgaConsoleWrite("Author:\t\tIgor Baklykov (c) ");
+		arch::vgaConsoleWriteDec(2017);
+		arch::vgaConsoleWrite("-");
+		arch::vgaConsoleWriteDec(2018);
+		arch::vgaConsoleWriteLine("");
+		arch::vgaConsoleWriteLine("");
 
-	// Divide by Zero Exception Test
-	/*
-	volatile sdword_t x = 10;
-	volatile sdword_t y = 0;
-	volatile sdword_t z = x / y;
-	*/
+		// Page mapping test
+		/*
+		arch::vgaConsoleWriteHex(reinterpret_cast<dword_t>(arch::pagingVirtToPhys(reinterpret_cast<pointer_t>(0xC00B8000))));
+		arch::vgaConsoleWriteLine("");
+		arch::vgaConsoleWriteLine("");
+		volatile t_u16p ptr = reinterpret_cast<t_u16p>(0xC00B8006);
+		*ptr = 0x0730;
+		*/
 
-}
+		// Numbers print test
+		/*
+		arch::vgaConsoleWriteDec(0x7FFFFFFF);
+		arch::vgaConsoleWrite(" = ");
+		arch::vgaConsoleWriteHex(0x7FFFFFFF);
+		arch::vgaConsoleWriteLine("");
+		*/
+
+		// Page Fault Exception test
+		/*
+		volatile t_u32p ptr = reinterpret_cast<t_u32p>(0xA0000000);
+		*ptr = 0x4000;
+		*/
+
+		// Divide by Zero Exception Test
+		/*
+		volatile sdword_t x = 10;
+		volatile sdword_t y = 0;
+		volatile sdword_t z = x / y;
+		*/
+
+	}
+
+
+#ifdef	__cplusplus
+
+}	// extern "C"
+
+#endif	// __cplusplus
 
