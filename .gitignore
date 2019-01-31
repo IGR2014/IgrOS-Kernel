@@ -1,2 +1,12 @@
+# Build files
 *.o
+
+# Released kernel
 *.bin
+
+# ISO images of kernel
+*.iso
+
+# GRUB configs
+*.cfg
+

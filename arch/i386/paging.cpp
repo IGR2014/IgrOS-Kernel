@@ -3,26 +3,31 @@
 //	Memory paging for x86
 //
 //	File:	paging.cpp
-//	Date:	13 Aug. 2018
+//	Date:	01 Feb. 2019
 //
-//	Copyright (c) 2018, Igor Baklykov
+//	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
 //
+//
 
 
+#include <include/cr.hpp>
 #include <include/paging.hpp>
 #include <include/taskRegs.hpp>
 #include <include/exceptions.hpp>
 #include <include/vgaConsole.hpp>
-#include <include/flags.hpp>
 
 
 // Arch-dependent code zone
 namespace arch {
 
 
-	// Workaround becouse of unimplemented yet physical memory allocator
+#ifdef	__cplusplus
+
+	// Workaround because of unimplemented yet physical memory allocator
 	extern "C" {
+
+#endif	// __cplusplus
 
 
 		// Page directory
@@ -31,7 +36,52 @@ namespace arch {
 		extern dword_t	pageTable[1024];
 
 
+#ifdef	__cplusplus
+
 	}	// extern "C"
+
+#endif	// __cplusplus
+
+
+	// Setup page directory
+	void pagingSetupPD(const pointer_t pageDirAddr) {
+
+		// Write page directory address to CR3
+		inCR3(reinterpret_cast<dword_t>(pageDirAddr));
+
+	}
+
+	// Flush page directory
+	void pagingFlushPD() {
+
+		// Get current value of CR3
+		dword_t cr3 = outCR3();
+		// Rewrite it again to CR3
+		inCR3(cr3);
+
+	}
+
+
+	// Enable paging
+	void pagingEnable() {
+
+		// Get current value of CR0
+		dword_t cr0 = outCR0();
+		// Set bit 31 to "1"
+		cr0 |= (1 << 31);
+		// Rewrite CR0 with new value
+		inCR0(cr0);
+
+	}
+
+
+	// Get address which is caused Page Fault Exception
+	dword_t pagingGetFaultAddres() {
+
+		// Simply read CR2 value inside ISR
+		return outCR2();
+
+	}
 
 
 	// Set page directory flags
@@ -39,7 +89,7 @@ namespace arch {
 
 		// Page directory dirty flag does not exists
 		// It's reserved as 0
-		*static_cast<pagingFlags_t*>(pageDirEntry) |= (flags & ~(pagingFlags_t::PAGE_DIRTY));
+		*static_cast<pagingFlags_t*>(pageDirEntry) = static_cast<pagingFlags_t>(*static_cast<pagingFlags_t*>(pageDirEntry) | (flags & ~pagingFlags_t::PAGE_DIRTY));
 	
 	}
 
@@ -48,7 +98,7 @@ namespace arch {
 
 		// Page directory size flag does not exists
 		// It's reserved as 0
-		*static_cast<pagingFlags_t*>(pageTableEntry) |= (flags & ~(pagingFlags_t::PAGE_SIZE));
+		*static_cast<pagingFlags_t*>(pageTableEntry) = static_cast<pagingFlags_t>(*static_cast<pagingFlags_t*>(pageTableEntry) | (flags & ~pagingFlags_t::PAGE_SIZE));
 
 	}
 
@@ -66,22 +116,22 @@ namespace arch {
 
 		// Map first 4 MB of physical RAM to first 4 MB of virtual RAM
 		pageDirectory[0]	= reinterpret_cast<dword_t>(pageTable);
-		pagingSetPDFlags(&pageDirectory[0],	pagingFlags_t::PAGE_WRITABLE | pagingFlags_t::PAGE_PRESENT);
+		pagingSetPDFlags(&pageDirectory[0],	static_cast<pagingFlags_t>(pagingFlags_t::PAGE_WRITABLE | pagingFlags_t::PAGE_PRESENT));
 
 		// Also map first 4MB of physical RAM to first 4MB after 3GB in virtual memory
-		// (This shoul be useful for higher-half kernel)
+		// (This should be useful for higher-half kernel)
 		pageDirectory[768]	= reinterpret_cast<dword_t>(pageTable);
-		pagingSetPDFlags(&pageDirectory[768],	pagingFlags_t::PAGE_WRITABLE | pagingFlags_t::PAGE_PRESENT);
+		pagingSetPDFlags(&pageDirectory[768],	static_cast<pagingFlags_t>(pagingFlags_t::PAGE_WRITABLE | pagingFlags_t::PAGE_PRESENT));
 
 		// Map page table itself to the last page of virtual memory
 		pageDirectory[1023]	= reinterpret_cast<dword_t>(pageDirectory);
-		pagingSetPDFlags(&pageDirectory[1023],	pagingFlags_t::PAGE_WRITABLE | pagingFlags_t::PAGE_PRESENT);
+		pagingSetPDFlags(&pageDirectory[1023],	static_cast<pagingFlags_t>(pagingFlags_t::PAGE_WRITABLE | pagingFlags_t::PAGE_PRESENT));
 
 		// Map all pages of first 4MB to first page table
 		for (sdword_t j = 0; j < 1024; ++j) {
 
 			pageTable[j]	= (j << 12);
-			pagingSetPTFlags(&pageTable[j],	pagingFlags_t::PAGE_WRITABLE | pagingFlags_t::PAGE_PRESENT);
+			pagingSetPTFlags(&pageTable[j],	static_cast<pagingFlags_t>(pagingFlags_t::PAGE_WRITABLE | pagingFlags_t::PAGE_PRESENT));
 
 		}
 
@@ -154,6 +204,7 @@ namespace arch {
 		((regs->param & 0x01) == 0) ? vgaConsoleWrite("PRESENT") : vgaConsoleWrite("PRIVILEGED");
 		vgaConsoleWriteLine("");
 
+		// Hang here
 		while (true) {};
 
 	}

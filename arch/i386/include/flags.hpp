@@ -5,16 +5,15 @@
 //	File:	flags.hpp
 //	Date:	13 Aug. 2018
 //
-//	Copyright (c) 2018, Igor Baklykov
+//	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
+//
 //
 
 
 #ifndef IGROS_ARCH_FLAGS_HPP
 #define IGROS_ARCH_FLAGS_HPP
 
-
-#include <type_traits>
 
 #include <include/types.hpp>
 
@@ -53,7 +52,7 @@ namespace arch {
 
 	// Bitwise OR operator for flags
         template <typename T>
-	T operator|(const T l, const T r) {
+	T operator| (const T l, const T r) {
 
 		// Underlying type acquisition
 		using U = typename std::underlying_type<T>::type;
@@ -68,7 +67,7 @@ namespace arch {
 
 	// Bitwise AND operator for flags
         template <typename T>
-	T operator&(const T l, const T r) {
+	T operator& (const T l, const T r) {
 
 		// Underlying type acquisition
 		using U = typename std::underlying_type<T>::type;
@@ -83,7 +82,7 @@ namespace arch {
 
 	// Bitwise XOR operator for flags
         template <typename T>
-	T operator^(const T l, const T r) {
+	T operator^( const T l, const T r) {
 
 		// Underlying type acquisition
 		using U = typename std::underlying_type<T>::type;
@@ -98,7 +97,7 @@ namespace arch {
 
 	// Bitwise NOT operator for flags
         template <typename T>
-	T operator~(const T l) {
+	T operator~ (const T l) {
 
 		// Underlying type acquisition
 		using U = typename std::underlying_type<T>::type;
@@ -112,7 +111,7 @@ namespace arch {
 
 	// Bitwise OR assignment operator for flags
         template <typename T>
-	T operator|=(T &l, const T r) {
+	T operator|= (T &l, const T r) {
 
 		// Underlying type acquisition
 		using U = typename std::underlying_type<T>::type;
@@ -127,7 +126,7 @@ namespace arch {
 
 	// Bitwise AND assignment operator for flags
         template <typename T>
-	T operator&=(T &l, const T r) {
+	T operator&= (T &l, const T r) {
 
 		// Underlying type acquisition
 		using U = typename std::underlying_type<T>::type;
@@ -142,7 +141,7 @@ namespace arch {
 
 	// Bitwise XOR assignment operator for flags
         template <typename T>
-	T operator^=(T &l, const T r) {
+	T operator^= (T &l, const T r) {
 
 		// Underlying type acquisition
 		using U = typename std::underlying_type<T>::type;

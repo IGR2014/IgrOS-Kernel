@@ -3,10 +3,11 @@
 //	IgrOS version info
 //
 //	File:	version.hpp
-//	Date:	23 Jun. 2018
+//	Date:	01 Feb. 2019
 //
-//	Copyright (c) 2018, Igor Baklykov
+//	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
+//
 //
 
 
@@ -19,7 +20,7 @@
 
 static const	dword_t		IGROS_VERSION_MAJOR	= 0;
 static const	dword_t		IGROS_VERSION_MINOR	= 0;
-static const	dword_t		IGROS_VERSION_BUILD	= 451;
+static const	dword_t		IGROS_VERSION_BUILD	= 1245;
 
 static const	sbyte_t*	IGROS_VERSION_NAME	= "ALPHA";
 

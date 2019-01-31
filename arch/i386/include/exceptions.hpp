@@ -3,18 +3,17 @@
 //	Exceptions low-level operations
 //
 //	File:	exceptions.hpp
-//	Date:	23 Jun. 2018
+//	Date:	01 Feb. 2019
 //
-//	Copyright (c) 2018, Igor Baklykov
+//	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
+//
 //
 
 
 #ifndef IGROS_ARCH_EXCEPTIONS_HPP
 #define IGROS_ARCH_EXCEPTIONS_HPP
 
-
-#include <type_traits>
 
 #include <include/types.hpp>
 
@@ -27,7 +26,7 @@ namespace arch {
 	struct taskRegs_t;
 
 	// Interrupt handler type
-	using exHandler_t = std::add_pointer<void(const taskRegs_t* regs)>::type;
+	using exHandler_t = void(*)(const taskRegs_t* regs);
 
 
 	// Interrupts number enumeration
@@ -56,7 +55,11 @@ namespace arch {
 	};
 
 
+#ifdef	__cplusplus
+
 	extern "C" {
+
+#endif	// __cplusplus
 
 
 		// Exception 0 handler
@@ -128,7 +131,11 @@ namespace arch {
 		void	exHandler(const taskRegs_t*);
 
 
+#ifdef	__cplusplus
+
 	}	// extern "C"
+
+#endif	// __cplusplus
 
 
 	// Install handler

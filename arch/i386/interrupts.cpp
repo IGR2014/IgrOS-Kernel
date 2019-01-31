@@ -5,8 +5,9 @@
 //	File:	interupts.cpp
 //	Date:	23 Jun. 2018
 //
-//	Copyright (c) 2018, Igor Baklykov
+//	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
+//
 //
 
 
@@ -93,10 +94,10 @@ namespace arch {
 	void irqMask(const irqNumber_t irq) {
 
 		// Chech if it's hardware interrupt
-		if (irq < 16) {
+		if (static_cast<dword_t>(irq) < 16) {
 
 			// Set interrupts mask
-			irqMaskSet(irqMaskGet() & ~(1 << irq));
+			irqMaskSet(irqMaskGet() & ~(1 << static_cast<dword_t>(irq)));
 
 		}
 
@@ -127,14 +128,14 @@ namespace arch {
 	// Install handler
 	void irqHandlerInstall(irqNumber_t irqNumber, irqHandler_t handler) {
 
-		isrList[irqNumber] = handler;
+		isrList[static_cast<dword_t>(irqNumber)] = handler;
 
 	}
 
 	// Uninstall handler
 	void irqHandlerUninstall(irqNumber_t irqNumber) {
 
-		isrList[irqNumber] = nullptr;
+		isrList[static_cast<dword_t>(irqNumber)] = nullptr;
 
 	}
 

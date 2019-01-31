@@ -3,18 +3,17 @@
 //	Memory paging for x86
 //
 //	File:	paging.hpp
-//	Date:	13 Aug. 2018
+//	Date:	01 Feb. 2019
 //
-//	Copyright (c) 2018, Igor Baklykov
+//	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
+//
 //
 
 
 #ifndef IGROS_ARCH_PAGING_HPP
 #define IGROS_ARCH_PAGING_HPP
 
-
-//#include <type_traits>
 
 #include <include/types.hpp>
 
@@ -28,7 +27,7 @@ namespace arch {
 
 
 	// Page flags
-	enum class pagingFlags_t : dword_t {
+	enum pagingFlags_t : dword_t {
 
 		PAGE_CLEAR		= 0x00000000,
 		PAGE_PRESENT		= 0x00000001,
@@ -46,23 +45,16 @@ namespace arch {
 	};
 
 
-	extern "C" {
+	// Setup page directory
+	void		pagingSetupPD(const pointer_t);
+	// Flush page directory
+	void		pagingFlushPD();
 
+	// Enable paging
+	void		pagingEnable();
 
-		// Setup page directory
-		void	pagingSetupPD(const pointer_t);
-		// Flush page directory
-		void	pagingFlushPD();
-
-		// Enable paging
-		void	pagingEnable();
-
-		// Get address which is caused Page Fault Exception
-		dword_t	pagingGetFaultAddres();
-
-
-	}	// extern "C"
-
+	// Get address which is caused Page Fault Exception
+	dword_t		pagingGetFaultAddres();
 
 	// Set page directory flags
 	void		pagingSetPDFlags(pointer_t, const pagingFlags_t);
