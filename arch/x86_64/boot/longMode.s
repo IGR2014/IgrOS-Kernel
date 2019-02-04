@@ -8,6 +8,7 @@
 #	Copyright (c) 2017, Igor Baklykov
 #	All rights reserved.
 #
+#
 
 
 .code32
@@ -28,7 +29,7 @@
 .global	setupPageTables
 .global	enablePaging
 
-.extern kernelFuncX64
+.extern kernelFunc
 .global jumpToLongMode
 
 checkMultiboot:
@@ -108,7 +109,26 @@ enablePaging:
 	ret
 
 jumpToLongMode:
-	ljmp	$0x08, $kernelFuncX64
+	ljmp	$0x08, $kernelFuncStart
+
+.code64
+
+.global kernelFuncStart
+
+kernelFuncStart:
+	movw	$0, %ax
+        movw	%ax, %ds
+        movw	%ax, %es
+        movw	%ax, %fs
+        movw	%ax, %gs
+        movw	%ax, %ss
+
+	call	kernelFunc
+
+	cli
+        hlt
+1:
+        jmp 1b
 
 
 .section .bss

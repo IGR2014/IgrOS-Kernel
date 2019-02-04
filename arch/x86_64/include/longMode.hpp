@@ -8,6 +8,7 @@
 //	Copyright (c) 2017, Igor Baklykov
 //	All rights reserved.
 //
+//
 
 
 #ifndef IGROS_ARCH_LONG_MODE_HPP
@@ -35,6 +36,9 @@ namespace arch {
 		void	setupPageTables();
 		// Enable paging
 		void	enablePaging();
+
+		// Perform jum to long mode
+		void	jumpToLongMode();
 
 	}
 

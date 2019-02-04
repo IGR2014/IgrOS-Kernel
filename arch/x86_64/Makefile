@@ -5,8 +5,9 @@
 #	File:	Makefile
 #	Date:	20 Apr. 2018
 #
-#	Copyright (c) 2018, Igor Baklykov
+#	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.
+#
 #
 
 
@@ -50,9 +51,10 @@ OBJ		= $(IGROS_DIR_TARGET_BUILD)/boot/multiboot.o \
 		  $(IGROS_DIR_TARGET_BUILD)/boot/port.o \
 		  $(IGROS_DIR_TARGET_BUILD)/boot.o \
 		  $(IGROS_DIR_TARGET_BUILD)/gdt.o \
-		  $(IGROS_DIR_TARGET_BUILD)/longMode.o
+		  $(IGROS_DIR_TARGET_BUILD)/longMode.o \
+		  $(IGROS_DIR_TARGET_BUILD)/vgaConsole.o
 
-.PHONY: all-before all clean rebuild run
+.PHONY: all-before all clean rebuild run deploy
 
 all: all-before $(OBJ) $(BIN)
 
@@ -68,7 +70,7 @@ clean:
 
 run: $(BIN)
 	@echo "	RUN	$(BIN_NAME)"
-	@qemu-system-x86_64 -kernel $(BIN)
+	@qemu-system-x86_64 -kernel $(BIN) -machine kvmlinux
 
 $(IGROS_DIR_TARGET_BUILD)/%.o: %.cpp
 	@echo "	C++	$<"
@@ -77,4 +79,13 @@ $(IGROS_DIR_TARGET_BUILD)/%.o: %.cpp
 $(BIN): $(OBJ)
 	@echo "	LD	$(BIN_NAME)"
 	@$(LINKER) -n $(OBJ) -o $(BIN) -T $(LINKERSCRIPT) $(LINKERFLAGS)
+
+deploy: $(BIN)
+	@echo "	DEPLOY	$(BIN_NAME)"
+	@mkdir -p $(IGROS_DIR_TARGET_RELEASE)/boot
+	@cp $(BIN) $(IGROS_DIR_TARGET_RELEASE)/boot
+	@mkdir -p $(IGROS_DIR_TARGET_RELEASE)/boot/grub
+	@cp $(IGROS_DIR_RELEASE)/../grub.cfg $(IGROS_DIR_TARGET_RELEASE)/boot/grub/grub.cfg
+	@grub-mkrescue -o $(IGROS_DIR_RELEASE)/os.iso $(IGROS_DIR_TARGET_RELEASE)
+
 

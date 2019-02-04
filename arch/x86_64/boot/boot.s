@@ -8,6 +8,7 @@
 #	Copyright (c) 2017, Igor Baklykov
 #	All rights reserved.
 #
+#
 
 
 .code32
@@ -23,34 +24,38 @@
 .extern	setupPageTables
 .extern	enablePaging
 
-.extern	kernelFunc			# Extern kernel C-function
+.extern	kernelBootstrap			# Extern kernel C-function
+.extern jumpToLongMode
 
 kernelStart:				# Kernel starts here
 	cli				# Turn off interrupts
 	movl	$stackTop, %esp		# Set stack
-	#call	kernelFunc		# Call main func
+#	call	kernelFunc		# Call main func
 
-	movl	$0x4f524f45, 0xb8014
-	call	checkMultiboot
-	cmpb	$0x00, %al
-	jz	haltCPU
+#	movl	$0x4f524f45, 0xb8014
+#	call	checkMultiboot
+#	cmpb	$0x00, %al
+#	jz	1f
 	movl	$0x4f524f45, 0xb8000
 	call	checkCPUID
 	cmpb	$0x00, %al
-	jz	haltCPU
+	jz	1f
 	movl	$0x4f524f45, 0xb8004
 	call	checkLongMode
 	cmpb	$0x00, %al
-	jz	haltCPU
-	movl	$0x4f524f45, 0xb8008
-	call	setupPageTables
-	movl	$0x4f524f45, 0xb800c
-	call	enablePaging
+	jz	1f
+#	movl	$0x4f524f45, 0xb8008
+#	call	setupPageTables
+#	movl	$0x4f524f45, 0xb800c
+#	call	enablePaging
 	movl	$0x4f524f45, 0xb8010
 
-haltCPU:
+	call	jumpToLongMode
+
+1:
+	movl	$0x4f524f45, 0xb8010
 	hlt				# Stop CPU
-	jmp	haltCPU			# Hang CPU
+	jmp	1b			# Hang CPU
 
 .section .bss
 stackBottom:				# End of stack

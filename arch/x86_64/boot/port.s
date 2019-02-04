@@ -3,10 +3,11 @@
 #	IO low-level port operations
 #
 #	File:	port.s
-#	Date:	20 Nov. 2017
+#	Date:	21 Jun. 2018
 #
-#	Copyright (c) 2017, Igor Baklykov
+#	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.
+#
 #
 
 
@@ -14,44 +15,43 @@
 
 .section .text
 .balign 4
-.global	portRByte			# Read byte from port
-.global	portRWord			# Read word from port
-.global	portRLong			# Read long from port
+.global	inPort8				# Read byte from port
+.global	inPort16			# Read word from port
+.global	inPort32			# Read long from port
+.global	outPort8			# Write byte to port
+.global	outPort16			# Write word to port
+.global	outPort32			# Write long to port
 
-.global	portWByte			# Write byte to port
-.global	portWWord			# Write word to port
-.global	portWLong			# Write long to port
 
-
-portRByte:				# Read byte from port function
+inPort8:				# Read byte from port function
 	movw	4(%esp), %dx		# Port address
 	inb	%dx, %al		# Read data
 	ret				# Return
 
-portRWord:				# Read word from port function
+inPort16:				# Read word from port function
 	movw	4(%esp), %dx		# Port address
 	inw	%dx, %ax		# Read data
 	ret				# Return
 
-portRLong:				# Read long from port function
+inPort32:				# Read long from port function
 	movw	4(%esp), %dx		# Port address
 	inl	%dx, %eax		# Read data
 	ret				# Return
 
 
-portWByte:				# Write byte to port function
+outPort8:				# Write byte to port function
 	movw	4(%esp), %dx		# Port address
 	movb	8(%esp), %al		# Data to write
 	outb	%al, %dx		# Write data
 	ret				# Return
 
-portWWord:				# Write word to port function
+outPort16:				# Write word to port function
 	movw	4(%esp), %dx		# Port address
 	movw	8(%esp), %ax		# Data to write
 	outw	%ax, %dx		# Write data
 	ret				# Return
 
-portWLong:				# Write long to port function
+outPort32:				# Write long to port function
 	movw	4(%esp), %dx		# Port address
 	movl	8(%esp), %eax		# Data to write
 	outl	%eax, %dx		# Write data

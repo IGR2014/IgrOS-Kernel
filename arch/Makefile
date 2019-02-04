@@ -43,23 +43,31 @@ export	CXXFLAGS		= -m32				\
 export	CXXINCLUDE		= -I $(CURDIR)/$(IGROS_ARCH)	\
 				  -I $(CURDIR)/../
 
+export	AS			= as
+
+export	ASFLAGS			= --32
+
 export	LD			= ld
 
-export	LDFLAGS			= -m elf_$(IGROS_ARCH)		\
+export	LDFLAGS			= -n				\
+				  -m elf_$(IGROS_ARCH)		\
 				  -z max-page-size=0x1000
 
-export RM			= rm -rf
+export	RM			= rm -rf
 
-export BIN_NAME			= kernel.bin
+export	BIN_NAME		= kernel.bin
 
 
-.PHONY: all clean rebuild run deploy
+.PHONY: all clean distclean rebuild run deploy
 
 all: $(IGROS_DIR_BUILD) $(IGROS_DIR_RELEASE)
 	@$(MAKE) -C $(IGROS_ARCH)
 
 clean:
 	@$(MAKE) -C $(IGROS_ARCH) clean
+
+distclean:
+	@$(MAKE) -C $(IGROS_ARCH) distclean
 
 rebuild:
 	@$(MAKE) -C $(IGROS_ARCH) rebuild

@@ -13,7 +13,7 @@
 
 .code32
 
-.section .text
+.section .boot
 .balign	4
 .global	kernelStart			# Kernel main function
 .extern	kernelFunc			# Extern kernel C-function
@@ -27,9 +27,9 @@ kernelStart:
 	pushl	%ebx			# ---//---
 	call	kernelFunc		# Call main func
 
-haltCPU:
+1:
 	hlt				# Stop CPU
-	jmp	haltCPU			# Hang CPU
+	jmp	1b			# Hang CPU
 
 
 .section .bss

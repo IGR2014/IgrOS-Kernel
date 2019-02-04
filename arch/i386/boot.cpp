@@ -36,6 +36,25 @@ extern "C" {
 		arch::vgaConsoleInit();
 		arch::vgaConsoleWriteLine("IgrOS kernel");
 
+		// Write "Hello World" message
+		arch::vgaConsoleWriteLine("");
+		arch::vgaConsoleWriteLine("Build:\t\t" __DATE__ " " __TIME__);
+		arch::vgaConsoleWrite("Version:\tv");
+		arch::vgaConsoleWriteDec(IGROS_VERSION_MAJOR);
+		arch::vgaConsoleWrite(".");
+		arch::vgaConsoleWriteDec(IGROS_VERSION_MINOR);
+		arch::vgaConsoleWrite(".");
+		arch::vgaConsoleWriteDec(IGROS_VERSION_BUILD);
+		arch::vgaConsoleWrite(" (");
+		arch::vgaConsoleWrite(IGROS_VERSION_NAME);
+		arch::vgaConsoleWriteLine(")");
+		arch::vgaConsoleWrite("Author:\t\tIgor Baklykov (c) ");
+		arch::vgaConsoleWriteDec(2017);
+		arch::vgaConsoleWrite("-");
+		arch::vgaConsoleWriteDec(2018);
+		arch::vgaConsoleWriteLine("");
+		arch::vgaConsoleWriteLine("");
+
 		// Setup Global Descriptors Table
 		arch::gdtSetup();
 
@@ -64,30 +83,18 @@ extern "C" {
 
 		// Write "Hello World" message
 		arch::vgaConsoleWriteLine("");
-		arch::vgaConsoleWriteLine("Build:\t\t" __DATE__ " " __TIME__);
-		arch::vgaConsoleWrite("Version:\tv");
-		arch::vgaConsoleWriteDec(IGROS_VERSION_MAJOR);
-		arch::vgaConsoleWrite(".");
-		arch::vgaConsoleWriteDec(IGROS_VERSION_MINOR);
-		arch::vgaConsoleWrite(".");
-		arch::vgaConsoleWriteDec(IGROS_VERSION_BUILD);
-		arch::vgaConsoleWrite(" (");
-		arch::vgaConsoleWrite(IGROS_VERSION_NAME);
-		arch::vgaConsoleWriteLine(")");
-		arch::vgaConsoleWrite("Author:\t\tIgor Baklykov (c) ");
-		arch::vgaConsoleWriteDec(2017);
-		arch::vgaConsoleWrite("-");
-		arch::vgaConsoleWriteDec(2018);
-		arch::vgaConsoleWriteLine("");
+		arch::vgaConsoleWriteLine("Booted successfully");
 		arch::vgaConsoleWriteLine("");
 
-		// Page mapping test
 		/*
+		// Page mapping test
 		arch::vgaConsoleWriteHex(reinterpret_cast<dword_t>(arch::pagingVirtToPhys(reinterpret_cast<pointer_t>(0xC00B8000))));
 		arch::vgaConsoleWriteLine("");
 		arch::vgaConsoleWriteLine("");
-		volatile t_u16p ptr = reinterpret_cast<t_u16p>(0xC00B8006);
-		*ptr = 0x0730;
+		volatile word_t* ptr = reinterpret_cast<word_t*>(0xC00B8006);
+		*ptr = 0x0700 | 'O';
+		++ptr;
+		*ptr = 0x0700 | 'S';
 		*/
 
 		// Numbers print test
@@ -98,17 +105,17 @@ extern "C" {
 		arch::vgaConsoleWriteLine("");
 		*/
 
-		// Page Fault Exception test
 		/*
-		volatile t_u32p ptr = reinterpret_cast<t_u32p>(0xA0000000);
+		// Page Fault Exception test
+		volatile word_t* ptr = reinterpret_cast<word_t*>(0xA0000000);
 		*ptr = 0x4000;
 		*/
 
-		// Divide by Zero Exception Test
 		/*
-		volatile sdword_t x = 10;
-		volatile sdword_t y = 0;
-		volatile sdword_t z = x / y;
+		// Divide by Zero Exception Test
+		volatile dword_t x = 10;
+		volatile dword_t y = 0;
+		volatile dword_t z = x / y;
 		*/
 
 	}
