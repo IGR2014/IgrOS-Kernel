@@ -268,6 +268,7 @@ exHandler1F:
 	pushl	$0x1F			# Exception number
 	jmp	exceptionRoutine	# Handle exception
 
+
 # Exceptions servicing routine
 exceptionRoutine:
 

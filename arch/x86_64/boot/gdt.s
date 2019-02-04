@@ -5,8 +5,9 @@
 #	File:	gdt.s
 #	Date:	17 Apr. 2018
 #
-#	Copyright (c) 2018, Igor Baklykov
+#	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.
+#
 #
 
 

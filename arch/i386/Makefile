@@ -26,7 +26,7 @@ OBJ		= $(IGROS_DIR_TARGET_BUILD)/boot/multiboot.o	\
 		  $(IGROS_DIR_TARGET_BUILD)/boot/exceptions.o	\
 		  $(IGROS_DIR_TARGET_BUILD)/boot/interrupts.o	\
 		  $(IGROS_DIR_TARGET_BUILD)/boot/paging.o	\
-		  $(IGROS_DIR_TARGET_BUILD)/boot/cr.o	\
+		  $(IGROS_DIR_TARGET_BUILD)/boot/cr.o		\
 		  $(IGROS_DIR_TARGET_BUILD)/memory/memset.o	\
 		  $(IGROS_DIR_TARGET_BUILD)/boot.o		\
 		  $(IGROS_DIR_TARGET_BUILD)/idt.o		\
@@ -38,26 +38,41 @@ OBJ		= $(IGROS_DIR_TARGET_BUILD)/boot/multiboot.o	\
 		  $(IGROS_DIR_TARGET_BUILD)/keyboard.o		\
 		  $(IGROS_DIR_TARGET_BUILD)/pit.o
 
+
+.PHONY:	all-before all rebuild clean distclean run
+
 all: all-before $(BIN)
 
 all-before:
+	@echo "	MAKE	boot"
 	@$(MAKE) -C boot
+	@echo "	MAKE	memory"
 	@$(MAKE) -C memory
 
 rebuild: clean all
 
 clean:
-	@$(RM) $(OBJ) $(BIN)
+	@echo "	CLEAN	boot"
+	@$(MAKE) -C boot clean
+	@echo "	CLEAN	memory"
+	@$(MAKE) -C memory clean
+	@echo "	RM	$(OBJ)"
+	@$(RM) $(OBJ)
+
+distclean:
+	@echo "	RM	$(BIN_NAME)"
+	@$(RM) $(BIN)
 
 run: $(BIN)
 	@echo "	RUN	$(BIN_NAME)"
 	@qemu-system-i386 -kernel $(BIN)
 
+# Default build rule for all .s files
 $(IGROS_DIR_TARGET_BUILD)/%.o: %.cpp
 	@echo "	C++	$<"
 	@$(CXX) -c $< -o $@ $(CXXFLAGS) $(CXXINCLUDE)
 
 $(BIN): $(OBJ)
 	@echo "	LD	$(BIN_NAME)"
-	@$(LD) -n $(OBJ) -o $(BIN) -T $(LDSCRIPT) $(LDFLAGS)
+	@$(LD) $(OBJ) -o $(BIN) -T $(LDSCRIPT) $(LDFLAGS)
 

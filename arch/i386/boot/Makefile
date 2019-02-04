@@ -15,9 +15,6 @@ IGROS_DIR_PREFIX	= boot
 
 IGROS_DIR_PATH		= $(IGROS_DIR_TARGET_BUILD)/$(IGROS_DIR_PREFIX)
 
-ASM			= as
-RM			= rm -rf
-
 # Source files list
 SRCFILES		= $(wildcard *.s)
 # Convert sources names into object files names
@@ -35,11 +32,11 @@ all-before:
 	@mkdir -p $(IGROS_DIR_PATH)
 
 clean:
-	@echo "	RM	$(OBJ)"
+	@echo "	RM	$(OBJFILES)"
 	@$(RM) $(OBJ)
 
 # Default build rule for all .s files
 $(IGROS_DIR_PATH)/%.o: %.s
 	@echo "	AS	$<"
-	@$(ASM) --32 -o $@ $<
+	@$(AS) -o $@ $< $(ASFLAGS)
 

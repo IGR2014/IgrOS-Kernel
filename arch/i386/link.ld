@@ -14,8 +14,8 @@ OUTPUT_FORMAT(elf32-i386)
 
 ENTRY(kernelStart)
 
-KERNEL_OFFSET_PHYS	= 1M;
-KERNEL_OFFSET_VIRT	= 0xE0000000;
+KERNEL_OFFSET_PHYS	= 0x00100000;
+KERNEL_OFFSET_VIRT	= 0xC0000000;
 
 SECTIONS {
 
@@ -24,6 +24,7 @@ SECTIONS {
 	.text ALIGN(4K) : AT(ADDR(.text)) {
 
 		*(.multiboot)
+		*(.boot)
 		*(.text)
 		*(.rodata*)
 
@@ -43,12 +44,12 @@ SECTIONS {
 	}
 
 /*
-
 	. = KERNEL_OFFSET_PHYS;
 
-	.boot ALIGN(4K) : AT(ADDR(.boot)) {
+	.bootstrap ALIGN(4K) : AT(ADDR(.bootstrap)) {
 
 		*(.multiboot)
+		*(.bootstrap)
 
 	}
 
@@ -56,6 +57,8 @@ SECTIONS {
 
 	.text ALIGN(4K) : AT(ADDR(.text) - KERNEL_OFFSET_VIRT) {
 
+		*(.multiboot)
+		*(.boot)
 		*(.text)
 		*(.rodata*)
 
@@ -73,7 +76,6 @@ SECTIONS {
 		*(.bss)
 
 	}
-
 */
 
 }
