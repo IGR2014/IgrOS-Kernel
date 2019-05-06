@@ -3,7 +3,7 @@
 //	Task switch registers data structure
 //
 //	File:	taskRegs.hpp
-//	Date:	23 Jun. 2018
+//	Date:	06 May 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -15,7 +15,7 @@
 #define	IGROS_ARCH_TASK_REGS_HPP
 
 
-#include <include/types.hpp>
+#include <arch/types.hpp>
 
 
 // Arch-dependent code zone

@@ -15,7 +15,7 @@
 #define IGROS_ARCH_VIDEO_MEMORY_HPP
 
 
-#include <include/types.hpp>
+#include <arch/types.hpp>
 
 
 // Arch-dependent code zone

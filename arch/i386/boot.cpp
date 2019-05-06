@@ -12,15 +12,18 @@
 
 
 #include <include/version.hpp>
-#include <include/types.hpp>
-#include <include/gdt.hpp>
-#include <include/idt.hpp>
-#include <include/interrupts.hpp>
-#include <include/vmem.hpp>
-#include <include/paging.hpp>
-#include <include/keyboard.hpp>
-#include <include/pit.hpp>
-#include <include/multiboot.hpp>
+
+#include <arch/types.hpp>
+#include <arch/gdt.hpp>
+#include <arch/idt.hpp>
+#include <arch/interrupts.hpp>
+#include <arch/paging.hpp>
+
+#include <drivers/vmem.hpp>
+#include <drivers/keyboard.hpp>
+#include <drivers/pit.hpp>
+
+#include <arch/multiboot.hpp>
 
 
 #ifdef	__cplusplus

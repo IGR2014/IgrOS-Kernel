@@ -15,7 +15,7 @@
 #define IGROS_ARCH_GDT_HPP
 
 
-#include <include/types.hpp>
+#include <arch/types.hpp>
 
 
 // Arch-dependent code zone

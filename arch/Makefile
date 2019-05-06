@@ -18,29 +18,29 @@ export	IGROS_ARCH		?= i386
 
 export	CXX			?= g++
 
-export	CXXFLAGS		= -m32				\
-				  -std=c++11			\
-				  -Wall				\
-				  -Wextra			\
-				  -w				\
-				  -pedantic			\
-				  -Werror			\
-				  -ffreestanding		\
-				  -fno-exceptions		\
-				  -fno-rtti			\
-				  -fno-pic			\
-				  -fno-pie			\
-				  -nostdlib			\
-				  -Os				\
-				  -s				\
-				  -mno-red-zone			\
-				  -mno-3dnow			\
-				  -mno-sse			\
-				  -mno-sse2			\
-				  -mno-sse3			\
+export	CXXFLAGS		= -m32					\
+				  -std=c++11				\
+				  -Wall					\
+				  -Wextra				\
+				  -w					\
+				  -pedantic				\
+				  -Werror				\
+				  -ffreestanding			\
+				  -fno-exceptions			\
+				  -fno-rtti				\
+				  -fno-pic				\
+				  -fno-pie				\
+				  -nostdlib				\
+				  -Os					\
+				  -s					\
+				  -mno-red-zone				\
+				  -mno-3dnow				\
+				  -mno-sse				\
+				  -mno-sse2				\
+				  -mno-sse3				\
 				  -mno-mmx
 
-export	CXXINCLUDE		= -I $(CURDIR)/$(IGROS_ARCH)	\
+export	CXXINCLUDE		= -I $(CURDIR)/$(IGROS_ARCH)/include/	\
 				  -I $(CURDIR)/../
 
 export	AS			= as
@@ -49,8 +49,8 @@ export	ASFLAGS			= --32
 
 export	LD			= ld
 
-export	LDFLAGS			= -n				\
-				  -m elf_$(IGROS_ARCH)		\
+export	LDFLAGS			= -n					\
+				  -m elf_$(IGROS_ARCH)			\
 				  -z max-page-size=0x1000
 
 export	RM			= rm -rf

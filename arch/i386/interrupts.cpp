@@ -11,10 +11,11 @@
 //
 
 
-#include <include/taskRegs.hpp>
-#include <include/interrupts.hpp>
-#include <include/port.hpp>
-#include <include/vmem.hpp>
+#include <arch/taskRegs.hpp>
+#include <arch/interrupts.hpp>
+#include <arch/port.hpp>
+
+#include <drivers/vmem.hpp>
 
 
 // Arch-dependent code zone

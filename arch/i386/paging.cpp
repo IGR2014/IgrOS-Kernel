@@ -11,11 +11,12 @@
 //
 
 
-#include <include/cr.hpp>
-#include <include/paging.hpp>
-#include <include/taskRegs.hpp>
-#include <include/exceptions.hpp>
-#include <include/vmem.hpp>
+#include <arch/cr.hpp>
+#include <arch/exceptions.hpp>
+#include <arch/paging.hpp>
+#include <arch/taskRegs.hpp>
+
+#include <drivers/vmem.hpp>
 
 
 // Arch-dependent code zone

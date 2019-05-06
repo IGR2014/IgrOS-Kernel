@@ -11,7 +11,7 @@
 //
 
 
-#include <include/gdt.hpp>
+#include <arch/gdt.hpp>
 
 
 // Arch-dependent code zone

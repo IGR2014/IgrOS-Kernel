@@ -3,7 +3,7 @@
 //	Exceptions low-level operations
 //
 //	File:	exceptions.cpp
-//	Date:	06 JMay 2019
+//	Date:	06 May 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -11,9 +11,10 @@
 //
 
 
-#include <include/taskRegs.hpp>
-#include <include/exceptions.hpp>
-#include <include/vmem.hpp>
+#include <arch/taskRegs.hpp>
+#include <arch/exceptions.hpp>
+
+#include <drivers/vmem.hpp>
 
 
 // Arch-dependent code zone

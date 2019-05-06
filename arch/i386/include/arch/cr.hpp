@@ -2,8 +2,8 @@
 //
 //	CR0 - CR4 registers operations
 //
-//	File:	exceptions.hpp
-//	Date:	01 Feb. 2019
+//	File:	cr.hpp
+//	Date:	06 May 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -15,7 +15,7 @@
 #define IGROS_ARCH_CONTROL_REGISTERS_HPP
 
 
-#include <include/types.hpp>
+#include <arch/types.hpp>
 
 
 // Arch-dependent code zone

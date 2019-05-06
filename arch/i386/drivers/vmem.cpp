@@ -3,7 +3,7 @@
 //	VGA memory low-level operations
 //
 //	File:	vmem.cpp
-//	Date:	23 Jun. 2018
+//	Date:	06 May 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -11,9 +11,9 @@
 //
 
 
-#include <include/vmem.hpp>
-#include <include/port.hpp>
-#include <include/memset.hpp>
+#include <arch/port.hpp>
+#include <drivers/vmem.hpp>
+#include <klib/memset.hpp>
 
 
 // Arch-dependent code zone
