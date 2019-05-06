@@ -3,7 +3,7 @@
 //	Programmable interrupt timer
 //
 //	File:	pit.cpp
-//	Date:	01 Feb. 2019
+//	Date:	06 May 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -11,10 +11,11 @@
 //
 
 
-#include <include/port.hpp>
-#include <include/interrupts.hpp>
-#include <include/vmem.hpp>
-#include <include/pit.hpp>
+#include <arch/port.hpp>
+#include <arch/interrupts.hpp>
+
+#include <drivers/vmem.hpp>
+#include <drivers/pit.hpp>
 
 
 // Arch-dependent code zone
@@ -88,6 +89,7 @@ namespace arch {
 			dword_t minutes		= seconds / 60;
 			dword_t hours		= minutes / 60;
 
+/*
 			vmemWrite("IRQ\t\t-> PIT\r\n");
 			vmemWrite("\t100 TICKS (~1 SECOND) EXPIRED\r\n");
 			vmemWrite("\t");
@@ -99,6 +101,7 @@ namespace arch {
 			vmemWrite(".");
 			//vgaConsoleWriteDec(nanoseconds);
 			vmemWrite("\r\n\r\n");
+*/
 
 		}
 

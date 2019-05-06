@@ -1,9 +1,9 @@
 ################################################################
 #
-#	Memory folder Make script
+#	klib folder Make script
 #
 #	File:	Makefile
-#	Date:	04 Jun. 2018
+#	Date:	06 May 2019
 #
 #	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.
@@ -11,7 +11,7 @@
 #
 
 
-IGROS_DIR_PREFIX	= memory
+IGROS_DIR_PREFIX	= klib
 
 IGROS_DIR_PATH		= $(IGROS_DIR_TARGET_BUILD)/$(IGROS_DIR_PREFIX)
 

@@ -3,7 +3,7 @@
 //	Common C++ types limits
 //
 //	File:	limits.hpp
-//	Date:	23 Nov. 2017
+//	Date:	06 May 2019
 //
 //	Copyright (c) 2017, Igor Baklykov
 //	All rights reserved.

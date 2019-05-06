@@ -3,7 +3,7 @@
 #	Kernel-space memset function implementation for x86
 #
 #	File:	memset.s
-#	Date:	08 Jun. 2018
+#	Date:	06 May 2019
 #
 #	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.
@@ -16,8 +16,8 @@
 .set	ALIGNWORD,	0x00000001
 .set	ALIGNDWORD,	0x00000003
 
-.set	SIZEWORD,	ALIGNWORD + 1
-.set	SIZEDWORD,	ALIGNDWORD + 1
+.set	SIZEWORD,	ALIGNWORD	+ 1
+.set	SIZEDWORD,	ALIGNDWORD	+ 1
 
 .set	LIMITSTOSB,	0xFFFFFF80
 .set	LIMITSTOSW,	0xFFFFFFC0

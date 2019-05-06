@@ -3,7 +3,7 @@
 //	Keyboard generic handling
 //
 //	File:	keyboard.cpp
-//	Date:	23 Jun. 2018
+//	Date:	06 May 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -11,9 +11,10 @@
 //
 
 
-#include <include/port.hpp>
-#include <include/interrupts.hpp>
-#include <include/vmem.hpp>
+#include <arch/port.hpp>
+#include <arch/interrupts.hpp>
+
+#include <drivers/vmem.hpp>
 
 
 // Arch-dependent code zone

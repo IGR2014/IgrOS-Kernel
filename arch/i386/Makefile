@@ -27,7 +27,7 @@ OBJ		= $(IGROS_DIR_TARGET_BUILD)/boot/multiboot.o	\
 		  $(IGROS_DIR_TARGET_BUILD)/boot/interrupts.o	\
 		  $(IGROS_DIR_TARGET_BUILD)/boot/paging.o	\
 		  $(IGROS_DIR_TARGET_BUILD)/boot/cr.o		\
-		  $(IGROS_DIR_TARGET_BUILD)/memory/memset.o	\
+		  $(IGROS_DIR_TARGET_BUILD)/klib/memset.o	\
 		  $(IGROS_DIR_TARGET_BUILD)/drivers/vmem.o	\
 		  $(IGROS_DIR_TARGET_BUILD)/drivers/keyboard.o	\
 		  $(IGROS_DIR_TARGET_BUILD)/drivers/pit.o	\
@@ -46,8 +46,8 @@ all: all-before $(BIN)
 all-before:
 	@echo "	MAKE	boot"
 	@$(MAKE) -C boot
-	@echo "	MAKE	memory"
-	@$(MAKE) -C memory
+	@echo "	MAKE	klib"
+	@$(MAKE) -C klib
 	@echo "	MAKE	drivers"
 	@$(MAKE) -C drivers
 
@@ -56,8 +56,8 @@ rebuild: clean all
 clean:
 	@echo "	CLEAN	boot"
 	@$(MAKE) -C boot clean
-	@echo "	CLEAN	memory"
-	@$(MAKE) -C memory clean
+	@echo "	CLEAN	klib"
+	@$(MAKE) -C klib clean
 	@echo "	CLEAN	drivers"
 	@$(MAKE) -C drivers clean
 	@echo "	RM	$(OBJ)"

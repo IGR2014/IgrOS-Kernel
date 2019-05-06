@@ -16,7 +16,7 @@
 #define IGROS_ARCH_MULTIBOOT_1_HPP
 
 
-#include <include/types.hpp>
+#include <arch/types.hpp>
 
 
 // Multiboot code zone
