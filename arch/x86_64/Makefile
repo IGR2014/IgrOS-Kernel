@@ -3,7 +3,7 @@
 #	x86_64 folder Make script
 #
 #	File:	Makefile
-#	Date:	20 Apr. 2018
+#	Date:	06 May 2019
 #
 #	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.
@@ -70,7 +70,7 @@ clean:
 
 run: $(BIN)
 	@echo "	RUN	$(BIN_NAME)"
-	@qemu-system-x86_64 -kernel $(BIN) -machine kvmlinux
+	@qemu-system-x86_64 -kernel $(BIN) -enable-kvm -cpu host -machine pc,accel=kvm::tcg
 
 $(IGROS_DIR_TARGET_BUILD)/%.o: %.cpp
 	@echo "	C++	$<"

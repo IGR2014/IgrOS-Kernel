@@ -10,3 +10,8 @@
 # GRUB configs
 *.cfg
 
+# Build folder
+build
+# Release folder
+release
+

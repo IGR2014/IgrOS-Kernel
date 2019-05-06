@@ -3,7 +3,7 @@
 //	Global descriptor table low-level operations
 //
 //	File:	gdt.hpp
-//	Date:	13 Aug. 2018
+//	Date:	06 May 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -126,7 +126,7 @@ namespace arch {
 	
 	};
 
-#pragma pop
+#pragma pack(pop)
 
 
 	// Set GDT entry

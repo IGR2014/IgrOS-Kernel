@@ -3,7 +3,7 @@
 #	i386 folder Make script
 #
 #	File:	Makefile
-#	Date:	08 Aug. 2018
+#	Date:	06 May 2019
 #
 #	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.
@@ -28,15 +28,15 @@ OBJ		= $(IGROS_DIR_TARGET_BUILD)/boot/multiboot.o	\
 		  $(IGROS_DIR_TARGET_BUILD)/boot/paging.o	\
 		  $(IGROS_DIR_TARGET_BUILD)/boot/cr.o		\
 		  $(IGROS_DIR_TARGET_BUILD)/memory/memset.o	\
+		  $(IGROS_DIR_TARGET_BUILD)/drivers/vmem.o	\
+		  $(IGROS_DIR_TARGET_BUILD)/drivers/keyboard.o	\
+		  $(IGROS_DIR_TARGET_BUILD)/drivers/pit.o	\
 		  $(IGROS_DIR_TARGET_BUILD)/boot.o		\
 		  $(IGROS_DIR_TARGET_BUILD)/idt.o		\
 		  $(IGROS_DIR_TARGET_BUILD)/gdt.o		\
 		  $(IGROS_DIR_TARGET_BUILD)/exceptions.o	\
 		  $(IGROS_DIR_TARGET_BUILD)/interrupts.o	\
-		  $(IGROS_DIR_TARGET_BUILD)/vgaConsole.o	\
-		  $(IGROS_DIR_TARGET_BUILD)/paging.o		\
-		  $(IGROS_DIR_TARGET_BUILD)/keyboard.o		\
-		  $(IGROS_DIR_TARGET_BUILD)/pit.o
+		  $(IGROS_DIR_TARGET_BUILD)/paging.o
 
 
 .PHONY:	all-before all rebuild clean distclean run
@@ -48,6 +48,8 @@ all-before:
 	@$(MAKE) -C boot
 	@echo "	MAKE	memory"
 	@$(MAKE) -C memory
+	@echo "	MAKE	drivers"
+	@$(MAKE) -C drivers
 
 rebuild: clean all
 
@@ -56,6 +58,8 @@ clean:
 	@$(MAKE) -C boot clean
 	@echo "	CLEAN	memory"
 	@$(MAKE) -C memory clean
+	@echo "	CLEAN	drivers"
+	@$(MAKE) -C drivers clean
 	@echo "	RM	$(OBJ)"
 	@$(RM) $(OBJ)
 

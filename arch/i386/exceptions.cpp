@@ -3,7 +3,7 @@
 //	Exceptions low-level operations
 //
 //	File:	exceptions.cpp
-//	Date:	23 Jun. 2018
+//	Date:	06 JMay 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -13,7 +13,7 @@
 
 #include <include/taskRegs.hpp>
 #include <include/exceptions.hpp>
-#include <include/vgaConsole.hpp>
+#include <include/vmem.hpp>
 
 
 // Arch-dependent code zone
@@ -76,20 +76,18 @@ namespace arch {
 		if (exception) {
 
 			// Manage exception
-			vgaConsoleWriteLine("");
-			vgaConsoleWrite("EXCEPTION:\t-> ");
-			vgaConsoleWriteLine(exName[regs->number]);
+			vmemWrite("\r\nEXCEPTION:\t-> ");
+			vmemWrite(exName[regs->number]);
 			exception(regs);
-			vgaConsoleWriteLine("");
+			vmemWrite("\r\n");
 
 		} else {
 
 			// Exception handler is not installed
-			vgaConsoleWriteLine("");
-			vgaConsoleWrite("EXCEPTION:\t-> ");
-			vgaConsoleWrite(exName[regs->number]);
-			vgaConsoleWriteLine(" unhandled!");
-			vgaConsoleWriteLine("CPU halted.");
+			vmemWrite("\r\nEXCEPTION:\t-> ");
+			vmemWrite(exName[regs->number]);
+			vmemWrite(" unhandled!\r\n");
+			vmemWrite("CPU halted.\r\n");
 
 			// Hang CPU
 			while (true) {};
@@ -102,6 +100,7 @@ namespace arch {
 	// Install handler
 	void exHandlerInstall(exNumber_t exNumber, exHandler_t handler) {
 
+		// Set exception handler to handlers list
 		exList[exNumber] = handler;
 
 	}
@@ -109,6 +108,7 @@ namespace arch {
 	// Uninstall handler
 	void exHandlerUninstall(exNumber_t exNumber) {
 
+		// Set exception handler as nullptr to exceprions list
 		exList[exNumber] = nullptr;
 
 	}

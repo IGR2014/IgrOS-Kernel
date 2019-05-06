@@ -13,7 +13,7 @@
 
 #include <include/port.hpp>
 #include <include/interrupts.hpp>
-#include <include/vgaConsole.hpp>
+#include <include/vmem.hpp>
 
 
 // Arch-dependent code zone
@@ -23,8 +23,8 @@ namespace arch {
 	// Keyboard interrupt (#1) handler
 	void keyboardInterruptHandler(const taskRegs_t* regs) {
 
-		vgaConsoleWriteLine("IRQ\t\t-> KEYBOARD");
-		vgaConsoleWrite("KEY STATE:\t");
+		vmemWrite("IRQ\t\t-> KEYBOARD\r\n");
+		vmemWrite("KEY STATE:\t");
 
 		byte_t keyStatus = inPort8(KEYBOARD_CONTROL);
 
@@ -35,19 +35,30 @@ namespace arch {
 
 			if (keyCode > 0x80) {
 
-				vgaConsoleWriteLine("KEY_RELEASED");
+				vmemWrite("KEY_RELEASED\r\n");
 
 			} else {
 
-				vgaConsoleWriteLine("KEY_PRESSED");
+				vmemWrite("KEY_PRESSED\r\n");
 
 			}
 
-			vgaConsoleWrite("Key CODE: ");
-			vgaConsoleWriteHex(keyCode);
-			vgaConsoleWriteLine("\r\n");
+			vmemWrite("Key CODE: ");
+			//vmemWriteHex(keyCode & 0x7F);
+			vmemWrite("\r\n\r\n");
 
 		}
+
+	}
+
+
+	// Setip keyboard function
+	void keyboardSetup() {
+
+		// Install keyboard interrupt handler
+		irqHandlerInstall(arch::irqNumber_t::KEYBOARD, arch::keyboardInterruptHandler);
+		// Mask Keyboard interrupts
+		irqMask(arch::irqNumber_t::KEYBOARD);
 
 	}
 
