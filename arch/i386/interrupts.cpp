@@ -3,7 +3,7 @@
 //	Interrupts low-level operations
 //
 //	File:	interupts.cpp
-//	Date:	23 Jun. 2018
+//	Date:	06 May 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -14,7 +14,7 @@
 #include <include/taskRegs.hpp>
 #include <include/interrupts.hpp>
 #include <include/port.hpp>
-#include <include/vgaConsole.hpp>
+#include <include/vmem.hpp>
 
 
 // Arch-dependent code zone
@@ -56,10 +56,9 @@ namespace arch {
 		} else {
 
 			// Print message about unhandled interrupt
-			vgaConsoleWrite("IRQ\t\t-> #");
-			vgaConsoleWriteDec(regs->number - 32);
-			vgaConsoleWriteLine("");
-			vgaConsoleWriteLine("STATE:\t\tunhandled!");
+			vmemWrite("\r\nIRQ\t\t-> #");
+			//vmemWriteDec(regs->number - 32);
+			vmemWrite("\r\nSTATE:\t\tunhandled!\r\n");
 		
 		}
 
@@ -128,6 +127,7 @@ namespace arch {
 	// Install handler
 	void irqHandlerInstall(irqNumber_t irqNumber, irqHandler_t handler) {
 
+		// Set handler to ISR list
 		isrList[static_cast<dword_t>(irqNumber)] = handler;
 
 	}
@@ -135,6 +135,7 @@ namespace arch {
 	// Uninstall handler
 	void irqHandlerUninstall(irqNumber_t irqNumber) {
 
+		// Set nullptr as a handler to ISR list
 		isrList[static_cast<dword_t>(irqNumber)] = nullptr;
 
 	}

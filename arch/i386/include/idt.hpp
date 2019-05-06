@@ -3,7 +3,7 @@
 //	Interrupt descriptor table low-level operations
 //
 //	File:	idt.hpp
-//	Date:	01 Feb. 2019
+//	Date:	06 May 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -47,7 +47,7 @@ namespace arch {
 	
 	};
 
-#pragma pop
+#pragma pack(pop)
 
 
 	// Create IDT entry

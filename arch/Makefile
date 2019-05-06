@@ -3,7 +3,7 @@
 #	arch folder Make script
 #
 #	File:	Makefile
-#	Date:	20 Apr. 2018
+#	Date:	06 May 2019
 #
 #	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.
@@ -61,6 +61,8 @@ export	BIN_NAME		= kernel.bin
 .PHONY: all clean distclean rebuild run deploy
 
 all: $(IGROS_DIR_BUILD) $(IGROS_DIR_RELEASE)
+	@echo "	ECHO	$(IGROS_DIR_BUILD)"
+	@echo "	ECHO	$(IGROS_DIR_RELEASE)"
 	@$(MAKE) -C $(IGROS_ARCH)
 
 clean:
@@ -85,10 +87,10 @@ deploy:
 	@grub-mkrescue -o $(IGROS_DIR_RELEASE)/os-$(IGROS_ARCH).iso $(IGROS_DIR_RELEASE)/iso
 
 $(IGROS_DIR_BUILD):
-	@echo "	MKDIR	$(IGROS_DIR_BUILD)"
-	@mkdir -p $(IGROS_DIR_BUILD)
+	@echo "	MKDIR	$(IGROS_DIR_BUILD)/$(IGROS_ARCH)"
+	@mkdir -p $(IGROS_DIR_BUILD)/$(IGROS_ARCH)
 
 $(IGROS_DIR_RELEASE):
-	@echo "	MKDIR	$(IGROS_DIR_RELEASE)"
-	@mkdir -p $(IGROS_DIR_RELEASE)
+	@echo "	MKDIR	$(IGROS_DIR_RELEASE)/$(IGROS_ARCH)"
+	@mkdir -p $(IGROS_DIR_RELEASE)/$(IGROS_ARCH)
 

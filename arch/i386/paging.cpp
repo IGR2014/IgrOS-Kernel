@@ -3,7 +3,7 @@
 //	Memory paging for x86
 //
 //	File:	paging.cpp
-//	Date:	01 Feb. 2019
+//	Date:	06 May 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -15,7 +15,7 @@
 #include <include/paging.hpp>
 #include <include/taskRegs.hpp>
 #include <include/exceptions.hpp>
-#include <include/vgaConsole.hpp>
+#include <include/vmem.hpp>
 
 
 // Arch-dependent code zone
@@ -135,11 +135,11 @@ namespace arch {
 
 		}
 
-		// Setup page directory
-		pagingSetupPD(pageDirectory);
-
 		// Install exception handler for page fault
 		exHandlerInstall(PAGE_FAULT, pagingFaultExceptionHandler);
+
+		// Setup page directory
+		pagingSetupPD(pageDirectory);
 
 		// Enable paging
 		pagingEnable();
@@ -188,21 +188,19 @@ namespace arch {
 	// Page Fault Exception handler
 	void pagingFaultExceptionHandler(const taskRegs_t* regs) {
 
-		vgaConsoleWrite("CAUSED BY:\t");
-		((regs->param & 0x08) == 0) ? vgaConsoleWrite("") : vgaConsoleWrite("RESERVED BIT SET");
-		((regs->param & 0x10) == 0) ? vgaConsoleWrite("") : vgaConsoleWrite("INSTRUCTION FETCH");
-		vgaConsoleWriteLine("");
-		vgaConsoleWrite("FROM:\t\t");
-		((regs->param & 0x04) == 0) ? vgaConsoleWrite("KERNEL") : vgaConsoleWrite("USER");
-		vgaConsoleWriteLine(" space");
-		vgaConsoleWrite("WHEN:\t\tattempting to ");
-		((regs->param & 0x02) == 0) ? vgaConsoleWrite("READ") : vgaConsoleWrite("WRITE");
-		vgaConsoleWriteLine("");
-		vgaConsoleWrite("ADDRESS:\t");
-		vgaConsoleWriteHex(pagingGetFaultAddres());
-		vgaConsoleWrite(" which is NON-");
-		((regs->param & 0x01) == 0) ? vgaConsoleWrite("PRESENT") : vgaConsoleWrite("PRIVILEGED");
-		vgaConsoleWriteLine("");
+		vmemWrite("CAUSED BY:\t");
+		vmemWrite(((regs->param & 0x08) == 0) ? "" : "RESERVED BIT SET");
+		vmemWrite(((regs->param & 0x10) == 0) ? "" : "INSTRUCTION FETCH");
+		vmemWrite("\nFROM:\t\t");
+		vmemWrite(((regs->param & 0x04) == 0) ? "KERNEL" : "USER");
+		vmemWrite(" space\n");
+		vmemWrite("WHEN:\t\tattempting to ");
+		vmemWrite(((regs->param & 0x02) == 0) ? "READ" : "WRITE");
+		vmemWrite("\nADDRESS:\t");
+		//vgaConsoleWriteHex(pagingGetFaultAddres());
+		vmemWrite(" which is NON-");
+		vmemWrite(((regs->param & 0x01) == 0) ? "PRESENT" : "PRIVILEGED");
+		vmemWrite("\n");
 
 		// Hang here
 		while (true) {};

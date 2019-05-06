@@ -3,7 +3,7 @@
 #	Low-level boot setup function
 #
 #	File:	boot.s
-#	Date:	18 Jun. 2018
+#	Date:	06 May 2019
 #
 #	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.
@@ -23,8 +23,8 @@
 kernelStart:
 	cli				# Turn off interrupts
 	movl	$stackTop, %esp		# Set stack
-	pushl	%eax			# Multiboot info
-	pushl	%ebx			# ---//---
+	pushl	%eax			# Multiboot magic value
+	pushl	%ebx			# Multiboot header address
 	call	kernelFunc		# Call main func
 
 1:

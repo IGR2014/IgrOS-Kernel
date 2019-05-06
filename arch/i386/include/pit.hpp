@@ -3,7 +3,7 @@
 //	Programmable interrupt timer
 //
 //	File:	pit.hpp
-//	Date:	13 Aug. 2018
+//	Date:	06 May 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -62,7 +62,7 @@ namespace arch {
 
 	};
 
-#pragma pop
+#pragma pack(pop)
 
 
 	// PIT frequency (1.193181(3) MHz)
@@ -77,6 +77,9 @@ namespace arch {
 
 	// Get expired ticks
 	quad_t	pitGetTicks();
+
+	// Setup programmable interrupt timer
+	void	pitSetup();
 
 
 }	// namespace arch

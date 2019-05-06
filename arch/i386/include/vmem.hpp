@@ -1,9 +1,9 @@
 ////////////////////////////////////////////////////////////////
 //
-//	VGA console low-level operations
+//	VGA memory low-level operations
 //
-//	File:	vgaConsole.hpp
-//	Date:	23 Jun. 2018
+//	File:	vmem.hpp
+//	Date:	06 May 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -33,8 +33,8 @@ namespace arch {
 	static const word_t	VIDEO_MEM_TAB_SIZE	= 8;
 
 
-	// VGA console colors enumeration
-	enum vgaConsoleColor_t : byte_t {
+	// VGA memory colors enumeration
+	enum vmemColor : byte_t {
 
 	        Black   	= 0x00,			// Black VGA color
 	        Blue		= 0x01,			// Blue VGA color
@@ -55,22 +55,22 @@ namespace arch {
 
 	};
 
-	// VGA console symbol representation
-	struct vgaConsoleSymbol_t {
+	// VGA memory symbol representation
+	struct vmemSymbol {
 
 		sbyte_t	symbol;		// Symbol
 		byte_t	color;		// Color of symbol and background
 
 	};
 
-	// VGA console base address
-	static vgaConsoleSymbol_t* const	vgaConsoleBase		= reinterpret_cast<vgaConsoleSymbol_t*>(0x000B8000);
+	// VGA memory base address
+	static vmemSymbol* const	vmemBase	= reinterpret_cast<vmemSymbol*>(0x000B8000);
 
-	// VGA console background symbol
-	static byte_t				vgaConsoleBkgColor	= vgaConsoleColor_t::Green;
+	// VGA memory background symbol
+	static byte_t			vmemBkgColor	= vmemColor::Green;
 
-	// VGA console cursor struct
-	struct vgaConsoleCursor_t {
+	// VGA memory cursor struct
+	struct vmemCursor {
 
 		byte_t	x;		// Cursor X coordinate
 		byte_t	y;		// Cursor Y coordinate
@@ -78,42 +78,29 @@ namespace arch {
 	};
 
 	// Current cursor coordinates
-	static vgaConsoleCursor_t	cursorPos;
+	static vmemCursor cursorPos;
 
 
-	// Set VGA console cursor position
-	void vgaConsoleCursorSet(const byte_t&, const byte_t&);
-	// Disable VGA console cursor
-	void vgaConsoleCursorDisable();
+	// Set VGA memory cursor position
+	void vmemCursorSet(const byte_t&, const byte_t&);
+	// Disable VGA memory cursor
+	void vmemCursorDisable();
 
-	// Set VGA console color
-	void vgaConsoleSetColor(const byte_t&, const byte_t&);
+	// Set VGA memory color
+	void vmemSetColor(const byte_t&, const byte_t&);
 
-	// Write symbol to VGA console
-	void vgaConsoleWrite(const sbyte_t&);
-
-	// Write string to VGA console
-	void vgaConsoleWrite(const sbyte_t*);
-
-	// Write fixed-width string to VGA console
-	void vgaConsoleWrite(const sbyte_t*, const dword_t&);
-
-	// Write string to VGA console with \r \n
-	void vgaConsoleWriteLine(const sbyte_t*);
-
-	// Write fixed-width string to VGA console with \r \n
-	void vgaConsoleWriteLine(const sbyte_t*, const dword_t&);
+	// Write symbol to VGA memory
+	void vmemWrite(const sbyte_t&);
+	// Write string to VGA memory
+	void vmemWrite(const sbyte_t*);
+	// Write fixed-width string to VGA memory
+	void vmemWrite(const sbyte_t*, const dword_t&);
 
 	// Clear VGA console
-	void vgaConsoleClear();
+	void vmemClear();
 
 	// Init VGA console
-	void vgaConsoleInit();
-
-	// Write decimal value to VGA console
-	void vgaConsoleWriteDec(sdword_t);
-	// Write hexidemical value to VGA console
-	void vgaConsoleWriteHex(dword_t);
+	void vmemInit();
 
 
 }	// namespace arch
