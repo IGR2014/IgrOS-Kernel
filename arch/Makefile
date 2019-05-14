@@ -3,7 +3,7 @@
 #	arch folder Make script
 #
 #	File:	Makefile
-#	Date:	06 May 2019
+#	Date:	14 May 2019
 #
 #	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.
@@ -41,7 +41,7 @@ export	CXXFLAGS		= -m32					\
 				  -mno-mmx
 
 export	CXXINCLUDE		= -I $(CURDIR)/$(IGROS_ARCH)/include/	\
-				  -I $(CURDIR)/../
+				  -I $(CURDIR)/../include/
 
 export	AS			= as
 
@@ -74,10 +74,10 @@ distclean:
 rebuild:
 	@$(MAKE) -C $(IGROS_ARCH) rebuild
 
-run:
+run: all
 	@$(MAKE) -C $(IGROS_ARCH) run
 
-deploy:
+deploy: all
 	@echo "	DEPLOY	$(BIN_NAME)"
 	@mkdir -p $(IGROS_DIR_RELEASE)/iso/
 	@mkdir -p $(IGROS_DIR_RELEASE)/iso/boot/

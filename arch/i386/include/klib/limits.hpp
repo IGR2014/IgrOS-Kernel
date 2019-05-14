@@ -3,7 +3,7 @@
 //	Common C++ types limits
 //
 //	File:	limits.hpp
-//	Date:	06 May 2019
+//	Date:	15 May 2019
 //
 //	Copyright (c) 2017, Igor Baklykov
 //	All rights reserved.
@@ -11,6 +11,7 @@
 //
 
 
+#pragma once
 #ifndef IGROS_LIMITS_HPP
 #define IGROS_LIMITS_HPP
 

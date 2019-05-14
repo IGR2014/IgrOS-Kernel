@@ -3,7 +3,7 @@
 //	CR0 - CR4 registers operations
 //
 //	File:	cr.hpp
-//	Date:	06 May 2019
+//	Date:	15 May 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -11,6 +11,7 @@
 //
 
 
+#pragma once
 #ifndef IGROS_ARCH_CONTROL_REGISTERS_HPP
 #define IGROS_ARCH_CONTROL_REGISTERS_HPP
 
