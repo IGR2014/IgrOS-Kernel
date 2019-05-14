@@ -3,7 +3,7 @@
 //	Boot low-level main setup function
 //
 //	File:	boot.cpp
-//	Date:	06 May 2019
+//	Date:	14 May 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -11,7 +11,8 @@
 //
 
 
-#include <include/version.hpp>
+#include <version.hpp>
+#include <multiboot.hpp>
 
 #include <arch/types.hpp>
 #include <arch/gdt.hpp>
@@ -22,8 +23,6 @@
 #include <drivers/vmem.hpp>
 #include <drivers/keyboard.hpp>
 #include <drivers/pit.hpp>
-
-#include <arch/multiboot.hpp>
 
 
 #ifdef	__cplusplus

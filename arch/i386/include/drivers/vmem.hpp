@@ -3,7 +3,7 @@
 //	VGA memory low-level operations
 //
 //	File:	vmem.hpp
-//	Date:	06 May 2019
+//	Date:	15 May 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -11,6 +11,7 @@
 //
 
 
+#pragma once
 #ifndef IGROS_ARCH_VIDEO_MEMORY_HPP
 #define IGROS_ARCH_VIDEO_MEMORY_HPP
 

@@ -3,7 +3,7 @@
 //	Task switch registers data structure
 //
 //	File:	taskRegs.hpp
-//	Date:	06 May 2019
+//	Date:	15 May 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -11,6 +11,7 @@
 //
 
 
+#pragma once
 #ifndef	IGROS_ARCH_TASK_REGS_HPP
 #define	IGROS_ARCH_TASK_REGS_HPP
 

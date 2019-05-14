@@ -3,7 +3,7 @@
 #	i386 folder Make script
 #
 #	File:	Makefile
-#	Date:	06 May 2019
+#	Date:	15 May 2019
 #
 #	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.
@@ -71,7 +71,7 @@ run: $(BIN)
 	@echo "	RUN	$(BIN_NAME)"
 	@qemu-system-i386 -kernel $(BIN)
 
-# Default build rule for all .s files
+# Default build rule for all .cpp files
 $(IGROS_DIR_TARGET_BUILD)/%.o: %.cpp
 	@echo "	C++	$<"
 	@$(CXX) -c $< -o $@ $(CXXFLAGS) $(CXXINCLUDE)

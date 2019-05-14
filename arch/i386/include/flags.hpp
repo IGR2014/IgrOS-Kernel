@@ -11,11 +11,12 @@
 //
 
 
+#pragma once
 #ifndef IGROS_ARCH_FLAGS_HPP
 #define IGROS_ARCH_FLAGS_HPP
 
 
-#include <include/types.hpp>
+#include <arch/types.hpp>
 
 
 // Arch-dependent code zone
