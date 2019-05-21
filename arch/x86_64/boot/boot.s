@@ -3,9 +3,9 @@
 #	Low-level boot setup function
 #
 #	File:	boot.s
-#	Date:	20 Nov. 2017
+#	Date:	22 May 2019
 #
-#	Copyright (c) 2017, Igor Baklykov
+#	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.
 #
 #
@@ -44,10 +44,10 @@ kernelStart:				# Kernel starts here
 	call	checkLongMode
 	cmpb	$0x00, %al
 	jz	1f
-#	movl	$0x4f524f45, 0xb8008
-#	call	setupPageTables
-#	movl	$0x4f524f45, 0xb800c
-#	call	enablePaging
+	movl	$0x4f524f45, 0xb8008
+	call	setupPageTables
+	movl	$0x4f524f45, 0xb800c
+	call	enablePaging
 	movl	$0x4f524f45, 0xb8010
 
 	call	jumpToLongMode
