@@ -3,7 +3,7 @@
 //	Interrupts low-level operations
 //
 //	File:	interupts.cpp
-//	Date:	06 May 2019
+//	Date:	22 May 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -16,6 +16,8 @@
 #include <arch/port.hpp>
 
 #include <drivers/vmem.hpp>
+
+#include <klib/kprint.hpp>
 
 
 // Arch-dependent code zone
@@ -56,9 +58,13 @@ namespace arch {
 
 		} else {
 
+			// Print buffer
+			sbyte_t text[10];
+
 			// Print message about unhandled interrupt
 			vmemWrite("\r\nIRQ\t\t-> #");
-			//vmemWriteDec(regs->number - 32);
+			klib::kitoa(text, 10, regs->number - 32);
+			vmemWrite(text);
 			vmemWrite("\r\nSTATE:\t\tunhandled!\r\n");
 		
 		}

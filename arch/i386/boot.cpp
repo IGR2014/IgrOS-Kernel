@@ -3,7 +3,7 @@
 //	Boot low-level main setup function
 //
 //	File:	boot.cpp
-//	Date:	14 May 2019
+//	Date:	22 May 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -24,6 +24,8 @@
 #include <drivers/keyboard.hpp>
 #include <drivers/pit.hpp>
 
+#include <klib/kprint.hpp>
+
 
 #ifdef	__cplusplus
 
@@ -40,31 +42,39 @@ extern "C" {
 		arch::vmemWrite("IgrOS kernel\r\n\r\n");
 
 		// Check multiboot magic
-		if (multiboot::BOOTLOADER_MAGIC != magic) {
+		if (!multiboot::check(magic)) {
 
 			//arch::vgaConsoleWriteHex(magic);
 			arch::vmemWrite("Bad multiboot 1 bootloader magic!");
 
 			// Hang CPU
-			while (true) {}
+			while (true) {};
 
 		}
 
+		// Print buffer
+		sbyte_t text[64];
+
 		// Write "Hello World" message
-		arch::vmemWrite("Build:\t\t" __DATE__ " " __TIME__ "\r\n");
+		arch::vmemWrite("Build:\t\t" __DATE__ ", " __TIME__ "\r\n");
 		arch::vmemWrite("Version:\tv");
-		//arch::vgaConsoleWriteDec(IGROS_VERSION_MAJOR);
+		klib::kitoa(text, 20, IGROS_VERSION_MAJOR);
+		arch::vmemWrite(text);
 		arch::vmemWrite(".");
-		//arch::vmemWriteDec(IGROS_VERSION_MINOR);
+		klib::kitoa(text, 20, IGROS_VERSION_MINOR);
+		arch::vmemWrite(text);
 		arch::vmemWrite(".");
-		//arch::vgaConsoleWriteDec(IGROS_VERSION_BUILD);
+		klib::kitoa(text, 20, IGROS_VERSION_BUILD);
+		arch::vmemWrite(text);
 		arch::vmemWrite(" (");
 		arch::vmemWrite(IGROS_VERSION_NAME);
 		arch::vmemWrite(")\r\n");
 		arch::vmemWrite("Author:\t\tIgor Baklykov (c) ");
-		//arch::vgaConsoleWriteDec(2017);
-		arch::vmemWrite("-");
-		//arch::vgaConsoleWriteDec(2019);
+		klib::kitoa(text, 20, static_cast<dword_t>(2017));
+		arch::vmemWrite(text);
+		arch::vmemWrite(" - ");
+		klib::kitoa(text, 20, static_cast<dword_t>(2019));
+		arch::vmemWrite(text);
 		arch::vmemWrite("\r\n\r\n");
 
 		// Setup Interrupts Descriptor Table

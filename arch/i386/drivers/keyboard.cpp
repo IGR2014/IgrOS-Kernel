@@ -16,6 +16,8 @@
 
 #include <drivers/vmem.hpp>
 
+#include <klib/kprint.hpp>
+
 
 // Arch-dependent code zone
 namespace arch {
@@ -44,8 +46,12 @@ namespace arch {
 
 			}
 
-			vmemWrite("Key CODE: ");
-			//vmemWriteHex(keyCode & 0x7F);
+			// Print buffer
+			sbyte_t text[10];
+
+			vmemWrite("Key CODE:\t");
+			klib::kitoa(text, 10, static_cast<dword_t>(keyCode & 0x7F), klib::base::HEX);
+			vmemWrite(text);
 			vmemWrite("\r\n\r\n");
 
 		}

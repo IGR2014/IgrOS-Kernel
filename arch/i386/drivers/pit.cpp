@@ -17,6 +17,8 @@
 #include <drivers/vmem.hpp>
 #include <drivers/pit.hpp>
 
+#include <klib/kprint.hpp>
+
 
 // Arch-dependent code zone
 namespace arch {
@@ -44,8 +46,12 @@ namespace arch {
 		// Save current real frequency value
 		PIT_FREQUENCY	= PIT_MAIN_FREQUENCY / divisor;
 
+		// Print buffer
+		sbyte_t text[10];
+
 		vmemWrite("REAL frequency set to: ");
-		//vgaConsoleWriteDec(PIT_FREQUENCY);
+		klib::kitoa(text, 10, static_cast<dword_t>(PIT_FREQUENCY), klib::base::DEC);
+		vmemWrite(text);
 		vmemWrite(" Hz\r\n");
 
 		// Tell pit we want to change divisor for channel 0

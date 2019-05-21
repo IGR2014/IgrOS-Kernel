@@ -3,7 +3,7 @@
 //	KMultiboot header info
 //
 //	File:	multiboot.hpp
-//	Date:	14 May 2019
+//	Date:	22 May 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -98,7 +98,15 @@ namespace multiboot {
 #pragma pack(pop)
 
 
-}	// namespace arch
+	// Multiboot 1 header signature check function
+	inline constexpr bool check(const dword_t signature) {
+
+		return (BOOTLOADER_MAGIC == signature);
+
+	}
+
+
+}	// namespace multiboot
 
 
 #endif	// IGROS_ARCH_MULTIBOOT_1_HPP

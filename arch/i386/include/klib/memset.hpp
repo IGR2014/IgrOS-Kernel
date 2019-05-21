@@ -3,7 +3,7 @@
 //	Kernel-space memset for x86
 //
 //	File:	memset.hpp
-//	Date:	15 May 2019
+//	Date:	22 May 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -12,8 +12,8 @@
 
 
 #pragma once
-#ifndef IGROS_ARCH_MEMSET_HPP
-#define IGROS_ARCH_MEMSET_HPP
+#ifndef IGROS_ARCH_KERNEL_MEMSET_HPP
+#define IGROS_ARCH_KERNEL_MEMSET_HPP
 
 
 #include <arch/types.hpp>
@@ -48,6 +48,6 @@ namespace arch {
 }	// namespace arch
 
 
-#endif	// IGROS_ARCH_MEMSET_HPP
+#endif	// IGROS_ARCH_KERNEL_MEMSET_HPP
 
 
