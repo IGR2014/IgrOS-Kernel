@@ -3,9 +3,9 @@
 #	Long mode low-level preparation operations
 #
 #	File:	longMode.s
-#	Date:	20 Nov. 2017
+#	Date:	22 May 2019
 #
-#	Copyright (c) 2017, Igor Baklykov
+#	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.
 #
 #
@@ -116,18 +116,17 @@ jumpToLongMode:
 .global kernelFuncStart
 
 kernelFuncStart:
-	movw	$0, %ax
+	movw	$10, %ax
         movw	%ax, %ds
         movw	%ax, %es
         movw	%ax, %fs
         movw	%ax, %gs
         movw	%ax, %ss
 
-	call	kernelFunc
+#	call	kernelFunc
 
-	cli
-        hlt
 1:
+	hlt
         jmp 1b
 
 
