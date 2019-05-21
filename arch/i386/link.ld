@@ -3,14 +3,16 @@
 **	Kernel linker script
 **
 **	File:	link.ld
-**	Date:	13 Aug. 2018
+**	Date:	22 May 2019
 **
-**	Copyright (c) 2018, Igor Baklykov
+**	Copyright (c) 2017 - 2019, Igor Baklykov
 **	All rights reserved.
+**
 */
 
 
 OUTPUT_FORMAT(elf32-i386)
+OUTPUT_ARCH(i386)
 
 ENTRY(kernelStart)
 

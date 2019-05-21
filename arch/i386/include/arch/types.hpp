@@ -3,7 +3,7 @@
 //	Common C++ types redefinition
 //
 //	File:	types.hpp
-//	Date:	15 May 2019
+//	Date:	22 May 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -17,26 +17,26 @@
 
 
 // Unsigned integer types
-typedef	unsigned char		byte_t;
-typedef	unsigned short		word_t;
-typedef	unsigned long		dword_t;
-typedef	unsigned long long	quad_t;
+using   byte_t          = unsigned char;
+using	word_t          = unsigned short;
+using	dword_t         = unsigned int;
+using	quad_t          = unsigned long long;
 
 
 // Signed integer types
-typedef	char			sbyte_t;
-typedef	short			sword_t;
-typedef	int			sdword_t;
-typedef	long long		squad_t;
+using	sbyte_t         = char;
+using	sword_t         = short;
+using	sdword_t        = int;
+using	squad_t         = long long;
 
 
 // Floating point types
-typedef	float			real32_t;
-typedef	double			real64_t;
+using	real32_t        = float;
+using   real64_t        = double;
 
 
 // Common pointer type
-typedef void*			pointer_t;
+using	pointer_t       = void*;
 
 
 #endif	// IGROS_TYPES_HPP
