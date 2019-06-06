@@ -3,7 +3,7 @@
 #	Global descriptor table low-level operations
 #
 #	File:	gdt.s
-#	Date:	17 Apr. 2018
+#	Date:	06 Jun 2019
 #
 #	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.
@@ -11,24 +11,26 @@
 #
 
 
-.code32
+.code64
 
 .section .text
-.balign 4
+.balign 8
 .global	gdtLoad				# Load GDT
 
 gdtLoad:
-	movl	4(%esp), %eax		# Get pointer from stack
-	lgdt	(%eax)			# Load GDT from pointer
-	ljmp	$0x08, $1f
+	cld				# Clear direction flag
+	lgdt	(%rdi)			# Load GDT from pointer
+	movabsq	$1f, %rax
+	jmpq	*%rax
 1:
-	movw	$0x10, %ax
+	movw	$0x00, %ax
 	movw	%ax, %ds
 	movw	%ax, %es
 	movw	%ax, %fs
 	movw	%ax, %gs
 	movw	%ax, %ss
-	ret
+	retq
+
 
 .section .bss
 PML4Table:

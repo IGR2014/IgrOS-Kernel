@@ -3,7 +3,7 @@
 #	Boot folder Make script
 #
 #	File:	Makefile
-#	Date:	21 Apr. 2018
+#	Date:	06 Jun 2019
 #
 #	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.
@@ -15,25 +15,28 @@ IGROS_DIR_PREFIX	= boot
 
 IGROS_DIR_PATH		= $(IGROS_DIR_TARGET_BUILD)/$(IGROS_DIR_PREFIX)
 
-ASM	= as
-RM	= rm -rf
-OBJ	= $(IGROS_DIR_PATH)/multiboot.o \
-	  $(IGROS_DIR_PATH)/gdt.o \
-	  $(IGROS_DIR_PATH)/longMode.o \
-	  $(IGROS_DIR_PATH)/boot.o \
-	  $(IGROS_DIR_PATH)/port.o
+# Source files list
+SRCFILES		= $(wildcard *.s)
+# Convert sources names into object files names
+OBJFILES		= $(patsubst %.s, %.o, $(SRCFILES))
+# Specify path for object files
+OBJ			= $(addprefix $(IGROS_DIR_PATH)/, $(OBJFILES))
 
+# Phony targets
 .PHONY: all-before all clean
 
 all: all-before $(OBJ)
 
 all-before:
+	@echo "	MKDIR	$(IGROS_DIR_PATH)"
 	@mkdir -p $(IGROS_DIR_PATH)
 
 clean:
+	@echo "	RM	$(OBJFILES)"
 	@$(RM) $(OBJ)
 
+# Default build rule for all .s files
 $(IGROS_DIR_PATH)/%.o: %.s
 	@echo "	AS	$<"
-	@$(ASM) --64 -o $@ $< -g
+	@$(AS) -o $@ $< $(ASFLAGS)
 

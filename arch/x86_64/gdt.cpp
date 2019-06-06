@@ -3,7 +3,7 @@
 //	Global descriptor table low-level operations
 //
 //	File:	boot.cpp
-//	Date:	13 Aug. 2018
+//	Date:	06 Jun 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -11,8 +11,7 @@
 //
 
 
-#include <include/gdt.hpp>
-//#include <include/vgaConsole.hpp>
+#include <arch/gdt.hpp>
 
 
 // Arch-dependent code zone
@@ -33,8 +32,8 @@ namespace arch {
 		entry.limitLow		= limit & 0xFFFF;
 		entry.baseLow		= base & 0xFFFF;
 		entry.baseMid		= (base & 0xFF0000) >> 16;
-		entry.access		= static_cast<byte_t>(flags & static_cast<gdtFlags_t>(0x00FF));
-		entry.limitFlags	= ((limit & 0xF0000) >> 16) | (static_cast<word_t>(flags & static_cast<gdtFlags_t>(0x0F00)) >> 4);
+		entry.access		= flags & gdtFlags_t(0x00FF);
+		entry.limitFlags	= ((limit & 0xF0000) >> 16) | (word_t(flags & gdtFlags_t(0x0F00)) >> 4);
 		entry.baseHigh		= (base & 0xFF000000) >> 24;
 
 		return entry;

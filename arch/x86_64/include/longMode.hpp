@@ -3,7 +3,7 @@
 //	Long mode low-level preparation operations
 //
 //	File:	longMode.hpp
-//	Date:	20 Nov. 2017
+//	Date:	06 Jun 2019
 //
 //	Copyright (c) 2017, Igor Baklykov
 //	All rights reserved.
@@ -11,11 +11,12 @@
 //
 
 
+#pragma	once
 #ifndef IGROS_ARCH_LONG_MODE_HPP
 #define IGROS_ARCH_LONG_MODE_HPP
 
 
-#include <include/types.hpp>
+#include <arch/types.hpp>
 
 
 // Arch-dependent code zone

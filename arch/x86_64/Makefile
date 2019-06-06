@@ -1,9 +1,9 @@
 ################################################################
 #
-#	x86_64 folder Make script
+#	x86_x64 folder Make script
 #
 #	File:	Makefile
-#	Date:	06 May 2019
+#	Date:	06 Jun 2019
 #
 #	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.
@@ -11,81 +11,75 @@
 #
 
 
-export IGROS_TARGET			= x86_64
+export IGROS_DIR_TARGET_BUILD		= $(IGROS_DIR_BUILD)/$(IGROS_ARCH)
+export IGROS_DIR_TARGET_RELEASE		= $(IGROS_DIR_RELEASE)/$(IGROS_ARCH)
 
-export IGROS_DIR_TARGET_BUILD		= $(IGROS_DIR_BUILD)/$(IGROS_TARGET)
-export IGROS_DIR_TARGET_RELEASE		= $(IGROS_DIR_RELEASE)/$(IGROS_TARGET)
+BIN					= $(IGROS_DIR_TARGET_RELEASE)/$(BIN_NAME)
 
-CXX		= g++
-CXXFLAGS	= -m64 \
-		  -std=c++11 \
-		  -Wall \
-		  -Wextra \
-		  -w \
-		  -pedantic \
-		  -Werror \
-		  -ffreestanding \
-		  -fno-exceptions \
-		  -fno-rtti \
-		  -nostdlib \
-		  -Os \
-		  -mno-red-zone \
-		  -mno-3dnow \
-		  -mno-sse \
-		  -mno-sse2 \
-		  -mno-sse3 \
-		  -g
-CXXINCLUDE	= -I $(CURDIR) \
-		  -I include -I ../../
-RM		= rm -rf
-BIN_NAME	= kernel.bin
-BIN		= $(IGROS_DIR_TARGET_RELEASE)/$(BIN_NAME)
-LINKER		= ld
-LINKERFLAGS	= -m elf_x86_64 \
-		  -z max-page-size=0x1000
-LINKERSCRIPT	= link.ld
-OBJ		= $(IGROS_DIR_TARGET_BUILD)/boot/multiboot.o \
-		  $(IGROS_DIR_TARGET_BUILD)/boot/gdt.o \
-		  $(IGROS_DIR_TARGET_BUILD)/boot/longMode.o \
-		  $(IGROS_DIR_TARGET_BUILD)/boot/boot.o \
-		  $(IGROS_DIR_TARGET_BUILD)/boot/port.o \
-		  $(IGROS_DIR_TARGET_BUILD)/boot.o \
-		  $(IGROS_DIR_TARGET_BUILD)/gdt.o \
-		  $(IGROS_DIR_TARGET_BUILD)/longMode.o \
-		  $(IGROS_DIR_TARGET_BUILD)/vgaConsole.o
+LDSCRIPT				= link.ld
 
-.PHONY: all-before all clean rebuild run deploy
+OBJ		= $(IGROS_DIR_TARGET_BUILD)/boot/multiboot.o	\
+		  $(IGROS_DIR_TARGET_BUILD)/boot/boot.o		\
+		  $(IGROS_DIR_TARGET_BUILD)/boot/idt.o		\
+		  $(IGROS_DIR_TARGET_BUILD)/boot/gdt.o		\
+		  $(IGROS_DIR_TARGET_BUILD)/boot/port.o		\
+		  $(IGROS_DIR_TARGET_BUILD)/boot/exceptions.o	\
+		  $(IGROS_DIR_TARGET_BUILD)/boot/interrupts.o	\
+		  $(IGROS_DIR_TARGET_BUILD)/boot/paging.o	\
+		  $(IGROS_DIR_TARGET_BUILD)/boot/cr.o		\
+		  $(IGROS_DIR_TARGET_BUILD)/boot/longMode.o	\
+		  $(IGROS_DIR_TARGET_BUILD)/klib/memset.o	\
+		  $(IGROS_DIR_TARGET_BUILD)/../klib/kstring.o	\
+		  $(IGROS_DIR_TARGET_BUILD)/../klib/kprint.o	\
+		  $(IGROS_DIR_TARGET_BUILD)/drivers/vmem.o	\
+		  $(IGROS_DIR_TARGET_BUILD)/drivers/keyboard.o	\
+		  $(IGROS_DIR_TARGET_BUILD)/drivers/pit.o	\
+		  $(IGROS_DIR_TARGET_BUILD)/idt.o		\
+		  $(IGROS_DIR_TARGET_BUILD)/gdt.o		\
+		  $(IGROS_DIR_TARGET_BUILD)/exceptions.o	\
+		  $(IGROS_DIR_TARGET_BUILD)/interrupts.o	\
+		  $(IGROS_DIR_TARGET_BUILD)/paging.o		\
+		  $(IGROS_DIR_TARGET_BUILD)/../../kmain.o
 
-all: all-before $(OBJ) $(BIN)
+
+.PHONY:	all-before all rebuild clean distclean run
+
+all: all-before $(BIN)
 
 all-before:
-	@mkdir -p $(IGROS_DIR_TARGET_BUILD)
-	@mkdir -p $(IGROS_DIR_TARGET_RELEASE)
+	@echo "	MAKE	boot"
 	@$(MAKE) -C boot
+	@echo "	MAKE	klib"
+	@$(MAKE) -C klib
+	@echo "	MAKE	drivers"
+	@$(MAKE) -C drivers
 
 rebuild: clean all
 
 clean:
-	@$(RM) $(OBJ) $(BIN)
+	@echo "	CLEAN	boot"
+	@$(MAKE) -C boot clean
+	@echo "	CLEAN	klib"
+	@$(MAKE) -C klib clean
+	@echo "	CLEAN	drivers"
+	@$(MAKE) -C drivers clean
+	@echo "	RM	$(OBJ)"
+	@$(RM) $(OBJ)
+
+distclean:
+	@echo "	RM	$(BIN_NAME)"
+	@$(RM) $(BIN)
 
 run: $(BIN)
 	@echo "	RUN	$(BIN_NAME)"
-	@qemu-system-x86_64 -kernel $(BIN) -enable-kvm -cpu host -machine pc,accel=kvm::tcg
+	@qemu-system-x86_64 -kernel $(BIN)
 
+# Default build rule for all .cpp files
 $(IGROS_DIR_TARGET_BUILD)/%.o: %.cpp
 	@echo "	C++	$<"
 	@$(CXX) -c $< -o $@ $(CXXFLAGS) $(CXXINCLUDE)
 
 $(BIN): $(OBJ)
 	@echo "	LD	$(BIN_NAME)"
-	@$(LINKER) -n $(OBJ) -o $(BIN) -T $(LINKERSCRIPT) $(LINKERFLAGS)
-
-deploy: $(BIN)
-	@echo "	DEPLOY	$(BIN_NAME)"
-	@mkdir -p $(IGROS_DIR_TARGET_RELEASE)/boot
-	@cp $(BIN) $(IGROS_DIR_TARGET_RELEASE)/boot
-	@mkdir -p $(IGROS_DIR_TARGET_RELEASE)/boot/grub
-	@cp $(IGROS_DIR_RELEASE)/../grub.cfg $(IGROS_DIR_TARGET_RELEASE)/boot/grub/grub.cfg
-	@grub-mkrescue -o $(IGROS_DIR_RELEASE)/os.iso $(IGROS_DIR_TARGET_RELEASE)
-
+	@$(LD) $(OBJ) -o $(BIN) -T $(LDSCRIPT) $(LDFLAGS)
 

@@ -3,7 +3,7 @@
 //	Common C++ types redefinition
 //
 //	File:	types.hpp
-//	Date:	23 Jun. 2018
+//	Date:	06 Jun 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.

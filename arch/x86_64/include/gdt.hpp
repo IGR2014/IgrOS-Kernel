@@ -3,7 +3,7 @@
 //	Global descriptor table low-level operations
 //
 //	File:	gdt.hpp
-//	Date:	06 May 2019
+//	Date:	06 Jun 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -11,12 +11,12 @@
 //
 
 
+#pragma	once
 #ifndef IGROS_ARCH_GDT_HPP
 #define IGROS_ARCH_GDT_HPP
 
 
-#include <include/types.hpp>
-//#include <include/flags.hpp>
+#include <arch/types.hpp>
 
 
 // Arch-dependent code zone
@@ -61,25 +61,25 @@ namespace arch {
 					  GDT_SEG_L		| \
 					  GDT_SEG_RING_USE	| \
 					  GDT_SEG_RING0		| \
-					  GDT_SEG_TYPE_CODE,
+					  GDT_SEG_TYPE_CODE
 
 		GDT_SEG_RING0_DATA	= GDT_SEG_G		| \
 					  GDT_SEG_L		| \
 					  GDT_SEG_RING_USE	| \
 					  GDT_SEG_RING0		| \
-					  GDT_SEG_TYPE_DATA,
+					  GDT_SEG_TYPE_DATA
 
 		GDT_SEG_RING3_CODE	= GDT_SEG_G		| \
 					  GDT_SEG_L		| \
 					  GDT_SEG_RING_USE	| \
 					  GDT_SEG_RING3		| \
-					  GDT_SEG_TYPE_CODE,
+					  GDT_SEG_TYPE_CODE
 
 		GDT_SEG_RING3_DATA	= GDT_SEG_G		| \
 					  GDT_SEG_L		| \
 					  GDT_SEG_RING_USE	| \
 					  GDT_SEG_RING3		| \
-					  GDT_SEG_TYPE_DATA,
+					  GDT_SEG_TYPE_DATA
 
 	};
 
