@@ -11,10 +11,12 @@
 //
 
 
-#pragma	once
+#pragma once
 #ifndef IGROS_ARCH_GDT_HPP
 #define IGROS_ARCH_GDT_HPP
 
+
+#include <flags.hpp>
 
 #include <arch/types.hpp>
 
@@ -57,29 +59,29 @@ namespace arch {
 		GDT_SEG_G		= 0x0800,
 
 		// GDT entries
-		GDT_SEG_RING0_CODE	= GDT_SEG_G		| \
-					  GDT_SEG_L		| \
-					  GDT_SEG_RING_USE	| \
-					  GDT_SEG_RING0		| \
-					  GDT_SEG_TYPE_CODE
+		GDT_SEG_RING0_CODE	= GDT_SEG_G		|
+					  GDT_SEG_L		|
+					  GDT_SEG_RING_USE	|
+					  GDT_SEG_RING0		|
+					  GDT_SEG_TYPE_CODE,
 
-		GDT_SEG_RING0_DATA	= GDT_SEG_G		| \
-					  GDT_SEG_L		| \
-					  GDT_SEG_RING_USE	| \
-					  GDT_SEG_RING0		| \
-					  GDT_SEG_TYPE_DATA
+		GDT_SEG_RING0_DATA	= GDT_SEG_G		|
+					  GDT_SEG_L		|
+					  GDT_SEG_RING_USE	|
+					  GDT_SEG_RING0		|
+					  GDT_SEG_TYPE_DATA,
 
-		GDT_SEG_RING3_CODE	= GDT_SEG_G		| \
-					  GDT_SEG_L		| \
-					  GDT_SEG_RING_USE	| \
-					  GDT_SEG_RING3		| \
-					  GDT_SEG_TYPE_CODE
+		GDT_SEG_RING3_CODE	= GDT_SEG_G		|
+					  GDT_SEG_L		|
+					  GDT_SEG_RING_USE	|
+					  GDT_SEG_RING3		|
+					  GDT_SEG_TYPE_CODE,
 
-		GDT_SEG_RING3_DATA	= GDT_SEG_G		| \
-					  GDT_SEG_L		| \
-					  GDT_SEG_RING_USE	| \
-					  GDT_SEG_RING3		| \
-					  GDT_SEG_TYPE_DATA
+		GDT_SEG_RING3_DATA	= GDT_SEG_G		|
+					  GDT_SEG_L		|
+					  GDT_SEG_RING_USE	|
+					  GDT_SEG_RING3		|
+					  GDT_SEG_TYPE_DATA,
 
 	};
 
@@ -130,16 +132,32 @@ namespace arch {
 
 
 	// Set GDT entry
-	gdtEntry_t		gdtSetEntry(const dword_t&, const dword_t&, const gdtFlags_t&);
+	gdtEntry_t	gdtSetEntry(const dword_t&, const dword_t&, const gdtFlags_t&);
 
-	// Load GDT
-	extern "C" void		gdtLoad(const gdtPointer_t*);
+
+#ifdef	__cplusplus
+
+	extern "C" {
+
+#endif	// __cplusplus
+
+
+		// Load GDT
+		void	gdtLoad(const gdtPointer_t*);
+
+
+#ifdef	__cplusplus
+
+	}
+
+#endif	// __cplusplus
+
 
 	// Calculate GDT size
-	dword_t			gdtCalcTableSize(const dword_t&);
+	dword_t		gdtCalcTableSize(const dword_t&);
 
 	// Setup GDT
-	void			gdtSetup();
+	void		gdtSetup();
 
 
 }	// namespace arch

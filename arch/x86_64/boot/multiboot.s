@@ -1,44 +1,11 @@
 ################################################################
 #
-#	Multiboot v2.0 header
-#
-#	File:	multiboot.s
-#	Date:	20 Nov. 2017
-#
-#	Copyright (c) 2017, Igor Baklykov
-#	All rights reserved.
-#
-#
-
-
-#.code32
-
-# Some constants which are reqired
-# by multiboot specification
-#.set	MAGIC,		0xE85250D6
-#.set	ARCH,		0
-#.set	CHECKSUM,	-(MAGIC + ARCH + (multiboot_end - multiboot_start))
-
-#.section .multiboot					# Multyboot header
-#.balign	8
-#multiboot_start:
-#	.long	MAGIC					# Multiboot magic value
-#	.long	ARCH					# Multiboot arch
-#	.long	multiboot_end - multiboot_start		# Multiboot header size
-#	.long	CHECKSUM				# Multiboot checksum
-#	.word	0
-#	.word	0
-#	.long	8
-#multiboot_end:
-
-################################################################
-#
 #	Multiboot v1.0 header
 #
 #	File:	multiboot.s
-#	Date:	20 Nov. 2017
+#	Date:	06 Jun 2019
 #
-#	Copyright (c) 2017, Igor Baklykov
+#	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.
 #
 #
@@ -46,19 +13,29 @@
 
 .code32
 
-# Some constants which are reqired
-# by multiboot specification
-.set	MAGIC,		0x1BADB002
-.set	MBALIGN,	1<<0
-.set	MEMINFO,	1<<1
-.set	FLAGS,		MBALIGN | MEMINFO
-.set	CHECKSUM,	-(MAGIC + FLAGS)
+# Some constants which are reqired by multiboot specification
+.set	MULTIBOOT_MAGIC,		0x1BADB002
 
-.section .multiboot			# Multyboot header
+.set	MULTIBOOT_ALIGN,		1<<0
+.set	MULTIBOOT_MEMORY_INFO,		1<<1
+.set	MULTIBOOT_GRAPHICS,		1<<2
+
+.set	MULTIBOOT_FLAGS,		MULTIBOOT_ALIGN | MULTIBOOT_MEMORY_INFO | MULTIBOOT_GRAPHICS
+
+.set	MULTIBOOT_CHECKSUM,		-(MULTIBOOT_MAGIC + MULTIBOOT_FLAGS)
+
+.section .multiboot				# Multiboot header
 .balign	4
-	.long	MAGIC			# Multiboot magic value
-	.long	FLAGS			# Multiboot flags
-	.long	CHECKSUM		# Multiboot checksum
-
-
+	.long	MULTIBOOT_MAGIC			# Multiboot magic value
+	.long	MULTIBOOT_FLAGS			# Multiboot flags
+	.long	MULTIBOOT_CHECKSUM		# Multiboot checksum
+	.long	0				# Multiboot File header address
+	.long	0				# Multiboot File load start address
+	.long	0				# Multiboot File load end address
+	.long	0				# Multiboot File BSS end address
+	.long	0				# Multiboot File Entry point address
+	.long	1				# Multiboot Graphics mode
+	.long	0				# Multiboot Graphics width
+	.long	0				# Multiboot Graphics height
+	.long	0				# Multiboot Graphics depth
 

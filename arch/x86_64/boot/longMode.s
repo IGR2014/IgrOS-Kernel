@@ -3,7 +3,7 @@
 #	Long mode low-level preparation operations
 #
 #	File:	longMode.s
-#	Date:	22 May 2019
+#	Date:	06 Jun 2019
 #
 #	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.
@@ -109,25 +109,38 @@ enablePaging:
 	ret
 
 jumpToLongMode:
-	ljmp	$0x08, $kernelFuncStart
+	lgdt	gdt64Ptr
+	ljmp	$0x08, $1f
 
 .code64
 
-.global kernelFuncStart
-
-kernelFuncStart:
-	movw	$10, %ax
+1:
+	movw	$0x00, %ax
         movw	%ax, %ds
         movw	%ax, %es
         movw	%ax, %fs
         movw	%ax, %gs
         movw	%ax, %ss
 
-#	call	kernelFunc
+	leaq	(multibootHeader), %rdi
+	movl	multibootMagic, %esi
+	cld				# Clear direction flag	
+	callq	kernelFunc
 
-1:
+2:
 	hlt
-        jmp 1b
+        jmp 2b
+
+
+.section .rodata
+gdt64Ptr:
+	.word	(3 * 8) - 1
+	.long	gdt64
+
+gdt64:
+	.quad	0x0000000000000000
+	.quad	0x0020980000000000
+	.quad	0x0020900000000000
 
 
 .section .bss

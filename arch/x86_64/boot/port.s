@@ -3,7 +3,7 @@
 #	IO low-level port operations
 #
 #	File:	port.s
-#	Date:	21 Jun. 2018
+#	Date:	06 Jun 2019
 #
 #	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.
@@ -11,10 +11,10 @@
 #
 
 
-.code32
+.code64
 
 .section .text
-.balign 4
+.balign 8
 .global	inPort8				# Read byte from port
 .global	inPort16			# Read word from port
 .global	inPort32			# Read long from port
@@ -24,36 +24,42 @@
 
 
 inPort8:				# Read byte from port function
-	movw	4(%esp), %dx		# Port address
+	cld				# Clear direction flag
+	movw	%di, %dx		# Port address
 	inb	%dx, %al		# Read data
-	ret				# Return
+	retq				# Return
 
 inPort16:				# Read word from port function
-	movw	4(%esp), %dx		# Port address
+	cld				# Clear direction flag
+	movw	%di, %dx		# Port address
 	inw	%dx, %ax		# Read data
-	ret				# Return
+	retq				# Return
 
 inPort32:				# Read long from port function
-	movw	4(%esp), %dx		# Port address
+	cld				# Clear direction flag
+	movw	%di, %dx		# Port address
 	inl	%dx, %eax		# Read data
-	ret				# Return
+	retq				# Return
 
 
 outPort8:				# Write byte to port function
-	movw	4(%esp), %dx		# Port address
-	movb	8(%esp), %al		# Data to write
+	cld				# Clear direction flag
+	movw	%di, %dx		# Port address
+	movb	%sil, %al		# Data to write
 	outb	%al, %dx		# Write data
-	ret				# Return
+	retq				# Return
 
 outPort16:				# Write word to port function
-	movw	4(%esp), %dx		# Port address
-	movw	8(%esp), %ax		# Data to write
+	cld				# Clear direction flag
+	movw	%di, %dx		# Port address
+	movw	%si, %ax		# Data to write
 	outw	%ax, %dx		# Write data
-	ret				# Return
+	retq				# Return
 
 outPort32:				# Write long to port function
-	movw	4(%esp), %dx		# Port address
-	movl	8(%esp), %eax		# Data to write
+	cld				# Clear direction flag
+	movw	%di, %dx		# Port address
+	movl	%esi, %eax		# Data to write
 	outl	%eax, %dx		# Write data
-	ret				# Return
+	retq				# Return
 

@@ -1,6 +1,6 @@
 ################################################################
 #
-#	Boot folder Make script
+#	klib folder Make script
 #
 #	File:	Makefile
 #	Date:	06 Jun 2019
@@ -11,7 +11,7 @@
 #
 
 
-IGROS_DIR_PREFIX	= boot
+IGROS_DIR_PREFIX	= klib
 
 IGROS_DIR_PATH		= $(IGROS_DIR_TARGET_BUILD)/$(IGROS_DIR_PREFIX)
 
