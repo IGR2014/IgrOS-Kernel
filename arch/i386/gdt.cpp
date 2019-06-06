@@ -3,7 +3,7 @@
 //	Global descriptor table low-level operations
 //
 //	File:	boot.cpp
-//	Date:	06 May 2019
+//	Date:	06 Jun 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -32,8 +32,8 @@ namespace arch {
 		entry.limitLow		= limit & 0xFFFF;
 		entry.baseLow		= base & 0xFFFF;
 		entry.baseMid		= (base & 0xFF0000) >> 16;
-		entry.access		= static_cast<byte_t>(flags & static_cast<gdtFlags_t>(0x00FF));
-		entry.limitFlags	= ((limit & 0xF0000) >> 16) | (static_cast<word_t>(flags & static_cast<gdtFlags_t>(0x0F00)) >> 4);
+		entry.access		= byte_t(flags & 0x00FF);
+		entry.limitFlags	= ((limit & 0xF0000) >> 16) | (word_t(flags & 0x0F00) >> 4);
 		entry.baseHigh		= (base & 0xFF000000) >> 24;
 
 		return entry;
