@@ -3,7 +3,7 @@
 #	arch folder Make script
 #
 #	File:	Makefile
-#	Date:	14 May 2019
+#	Date:	06 Jun 2019
 #
 #	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.
@@ -14,11 +14,12 @@
 export	IGROS_DIR_BUILD		= $(CURDIR)/../build
 export	IGROS_DIR_RELEASE	= $(CURDIR)/../release
 
-export	IGROS_ARCH		?= i386
+export	IGROS_ARCH		?= x86_64
+#x86_64
 
 export	CXX			?= g++
 
-export	CXXFLAGS		= -m32					\
+export	CXXFLAGS		= -m64					\
 				  -std=c++11				\
 				  -Wall					\
 				  -Wextra				\
@@ -45,7 +46,7 @@ export	CXXINCLUDE		= -I $(CURDIR)/$(IGROS_ARCH)/include/	\
 
 export	AS			= as
 
-export	ASFLAGS			= --32
+export	ASFLAGS			= --64
 
 export	LD			= ld
 
@@ -63,15 +64,18 @@ export	BIN_NAME		= kernel.bin
 all: $(IGROS_DIR_BUILD) $(IGROS_DIR_RELEASE)
 	@echo "	ECHO	$(IGROS_DIR_BUILD)"
 	@echo "	ECHO	$(IGROS_DIR_RELEASE)"
+	@$(MAKE) -C $(CURDIR)/../klib
 	@$(MAKE) -C $(IGROS_ARCH)
 
 clean:
+	@$(MAKE) -C $(CURDIR)/../klib clean
 	@$(MAKE) -C $(IGROS_ARCH) clean
 
 distclean:
 	@$(MAKE) -C $(IGROS_ARCH) distclean
 
 rebuild:
+	@$(MAKE) -C $(CURDIR)/../klib rebuild
 	@$(MAKE) -C $(IGROS_ARCH) rebuild
 
 run: all
