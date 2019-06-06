@@ -3,7 +3,7 @@
 //	Kernel text print functions
 //
 //	File:	kprint.cpp
-//	Date:	22 May 2019
+//	Date:	06 Jun 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -123,14 +123,14 @@ namespace klib {
 	// Kernel unsigned quad word to string function
 	void kitoa(sbyte_t* buffer, dword_t size, quad_t value, const base radix) {
 
-		//kitoaHelper<quad_t>(buffer, size, value, radix);
+		kitoaHelper<quad_t>(buffer, size, value, radix);
 
 	}
 
 	// Kernel signed quad word to string function
 	void kitoa(sbyte_t* buffer, dword_t size, squad_t value, const base radix) {
 
-		//kitoaHelper<squad_t>(buffer, size, value, radix);
+		kitoaHelper<squad_t>(buffer, size, value, radix);
 
 	}
 

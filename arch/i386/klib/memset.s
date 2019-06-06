@@ -3,7 +3,7 @@
 #	Kernel-space memset function implementation for x86
 #
 #	File:	memset.s
-#	Date:	06 May 2019
+#	Date:	06 Jun 2019
 #
 #	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.
@@ -36,13 +36,9 @@
 #	Memset for bytes function
 #
 kmemset8:
-	pushl	%ebp			# Function prologue
-	movl	%esp, %ebp		# ---//---
-	pushl	%edi			# Save EDI register
-
-	movl	12(%esp), %edi		# Get pointer to the target memory
-	movl	16(%esp), %ecx		# Get size of target memory (in bytes)
-	movb	20(%esp), %al		# Get value to be set in target memory
+	movl	4(%esp), %edi		# Get pointer to the target memory
+	movl	8(%esp), %ecx		# Get size of target memory (in bytes)
+	movb	12(%esp), %al		# Get value to be set in target memory
 
 	test	%edi, %edi		# Null pointer test
 	jz	2f			# Exit if so
@@ -66,9 +62,7 @@ kmemset8:
 
 # Exit from function
 2:
-	movl	8(%esp), %eax		# Return pointer to string
-	popl	%edi			# Restore EDI register
-	leave				# Function epilogue
+	movl	4(%esp), %eax		# Return pointer to string\
 	retl
 
 
@@ -77,13 +71,9 @@ kmemset8:
 #	Memset for words function
 #
 kmemset16:
-	pushl	%ebp			# Function prologue
-	movl	%esp, %ebp		# ---//---
-	pushl	%edi			# Save EDI register
-
-	movl	12(%esp), %edi		# Get pointer to the target memory
-	movl	16(%esp), %ecx		# Get size of target memory (in words)
-	movw	20(%esp), %ax		# Get value to be set in target memory
+	movl	4(%esp), %edi		# Get pointer to the target memory
+	movl	8(%esp), %ecx		# Get size of target memory (in words)
+	movw	12(%esp), %ax		# Get value to be set in target memory
 
 	test	%edi, %edi		# Null pointer test
 	jz	3f			# Exit if so
@@ -118,9 +108,7 @@ kmemset16:
 
 # Exit from function
 3:
-	movl	8(%esp), %eax		# Return pointer to string
-	popl	%edi			# Restore EDI register
-	leave				# Function epilogue
+	movl	4(%esp), %eax		# Return pointer to string
 	retl
 
 
@@ -129,13 +117,9 @@ kmemset16:
 #	Memset for double words function
 #
 kmemset32:
-	pushl	%ebp			# Function prologue
-	movl	%esp, %ebp		# ---//---
-	pushl	%edi			# Save EDI register
-
-	movl	12(%esp), %edi		# Get pointer to the target memory
-	movl	16(%esp), %ecx		# Get size of target memory (in double words)
-	movl	20(%esp), %eax		# Get value to be set in target memory
+	movl	4(%esp), %edi		# Get pointer to the target memory
+	movl	8(%esp), %ecx		# Get size of target memory (in double words)
+	movl	12(%esp), %eax		# Get value to be set in target memory
 
 	test	%edi, %edi		# Null pointer test
 	jz	5f			# Exit if so
@@ -196,9 +180,7 @@ kmemset32:
 
 # Exit from function
 5:
-	movl	8(%esp), %eax		# Return pointer to string
-	popl	%edi			# Restore EDI register
-	leave				# Function epilogue
+	movl	4(%esp), %eax		# Return pointer to string
 	retl
 
 
