@@ -3,7 +3,7 @@
 //	CR0 - CR4 registers operations
 //
 //	File:	cr.hpp
-//	Date:	15 May 2019
+//	Date:	06 Jun 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -31,20 +31,20 @@ namespace arch {
 
 
 		// Write CR0 register
-		void	inCR0(const dword_t registerValue);
+		static inline void volatile	inCR0(const dword_t registerValue);
 		// Write CR3 register
-		void	inCR3(const dword_t registerValue);
+		static inline void volatile	inCR3(const dword_t registerValue);
 		// Write CR4 register
-		void	inCR4(const dword_t registerValue);
+		static inline void volatile	inCR4(const dword_t registerValue);
 
 		// Read CR0 register
-		dword_t	outCR0();
+		static inline dword_t volatile	outCR0();
 		// Read CR2 register
-		dword_t	outCR2();
+		static inline dword_t volatile	outCR2();
 		// Read CR3 register
-		dword_t	outCR3();
+		static inline dword_t volatile	outCR3();
 		// Read CR4 register
-		dword_t	outCR4();
+		static inline dword_t volatile	outCR4();
 
 
 #ifdef	__cplusplus
@@ -58,4 +58,3 @@ namespace arch {
 
 
 #endif	// IGROS_ARCH_CONTROL_REGISTERS_HPP
-
