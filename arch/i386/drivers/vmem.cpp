@@ -3,7 +3,7 @@
 //	VGA memory low-level operations
 //
 //	File:	vmem.cpp
-//	Date:	06 May 2019
+//	Date:	06 Jun 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -12,7 +12,9 @@
 
 
 #include <arch/port.hpp>
+
 #include <drivers/vmem.hpp>
+
 #include <klib/memset.hpp>
 
 
@@ -26,10 +28,14 @@ namespace arch {
 		// Calculate VGA console offset
 		word_t position = (y * VIDEO_MEM_WIDTH) + x;
 
-		// Send to controller low byte of offset
-		outPort16(VGA_CURSOR_CONTROL, ((position & 0x00FF) << 8) | 0x0F);
-		// Send to controller high byte of offset
-		outPort16(VGA_CURSOR_CONTROL, (position & 0xFF00) | 0x0E);
+		// Choose cursor location high register
+		outPort8(VGA_CURSOR_CONTROL, 0x0E);
+		// Write cursor position high byte
+		outPort8(VGA_CURSOR_DATA, ((position >> 8) & 0x00FF));
+		// Choose cursor location low register
+		outPort8(VGA_CURSOR_CONTROL, 0x0F);
+		// Write cursor position low byte
+		outPort8(VGA_CURSOR_DATA, (position & 0x00FF));
 
 		// Save cursor data
 		cursorPos.x	= x;
@@ -37,12 +43,57 @@ namespace arch {
 
 	}
 
+	// Set VGA memory cursor position
+	void vmemCursorSet(const vmemCursor &cursor) {
+
+		vmemCursorSet(cursor.x, cursor.y);
+
+	}
+
+	// Get VGA memory cursor position
+	vmemCursor vmemCursorGet() {
+
+		// Position holder
+		word_t position;
+
+		// Choose cursor location high register
+		outPort8(VGA_CURSOR_CONTROL, 0x0E);
+		// Write cursor position high byte
+		position = inPort8(VGA_CURSOR_DATA);
+		// Choose cursor location low register
+		outPort8(VGA_CURSOR_CONTROL, 0x0F);
+		// Write cursor position low byte
+		(position <<= 8) |= inPort8(VGA_CURSOR_DATA);
+
+		// Return cursor data
+		return	vmemCursor {
+				.x = position % VIDEO_MEM_WIDTH,
+				.y = position / VIDEO_MEM_WIDTH
+			};
+
+	}
+
+
 	// Disable VGA memory cursor
 	void vmemCursorDisable() {
 
+		// Choose cursor start register
+		outPort8(VGA_CURSOR_CONTROL, 0x0A);
 		// Send control word to disable cursor
-		outPort16(VGA_CURSOR_CONTROL, 0x200A);
-	
+		outPort8(VGA_CURSOR_DATA, 0x20);
+
+	}
+
+	// Enable VGA memory cursor
+	void vmemCursorEnable() {
+
+		// Choose cursor start register
+		outPort8(VGA_CURSOR_CONTROL, 0x0A);
+		// Get current register value
+		byte_t cursorStartReg = inPort8(VGA_CURSOR_DATA);
+		// Send control word to disable cursor
+		outPort8(VGA_CURSOR_DATA, cursorStartReg & ~0x20);
+
 	}
 
 	// Set VGA memory color
