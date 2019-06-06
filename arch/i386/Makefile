@@ -3,7 +3,7 @@
 #	i386 folder Make script
 #
 #	File:	Makefile
-#	Date:	22 May 2019
+#	Date:	06 Jun 2019
 #
 #	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.
@@ -28,17 +28,17 @@ OBJ		= $(IGROS_DIR_TARGET_BUILD)/boot/multiboot.o	\
 		  $(IGROS_DIR_TARGET_BUILD)/boot/paging.o	\
 		  $(IGROS_DIR_TARGET_BUILD)/boot/cr.o		\
 		  $(IGROS_DIR_TARGET_BUILD)/klib/memset.o	\
-		  $(IGROS_DIR_TARGET_BUILD)/klib/kstring.o	\
-		  $(IGROS_DIR_TARGET_BUILD)/klib/kprint.o	\
+		  $(IGROS_DIR_TARGET_BUILD)/../klib/kstring.o	\
+		  $(IGROS_DIR_TARGET_BUILD)/../klib/kprint.o	\
 		  $(IGROS_DIR_TARGET_BUILD)/drivers/vmem.o	\
 		  $(IGROS_DIR_TARGET_BUILD)/drivers/keyboard.o	\
 		  $(IGROS_DIR_TARGET_BUILD)/drivers/pit.o	\
-		  $(IGROS_DIR_TARGET_BUILD)/boot.o		\
 		  $(IGROS_DIR_TARGET_BUILD)/idt.o		\
 		  $(IGROS_DIR_TARGET_BUILD)/gdt.o		\
 		  $(IGROS_DIR_TARGET_BUILD)/exceptions.o	\
 		  $(IGROS_DIR_TARGET_BUILD)/interrupts.o	\
-		  $(IGROS_DIR_TARGET_BUILD)/paging.o
+		  $(IGROS_DIR_TARGET_BUILD)/paging.o		\
+		  $(IGROS_DIR_TARGET_BUILD)/../../kmain.o
 
 
 .PHONY:	all-before all rebuild clean distclean run
