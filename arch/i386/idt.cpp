@@ -3,7 +3,7 @@
 //	Interrupt descriptor table low-level operations
 //
 //	File:	idt.cpp
-//	Date:	06 May 2019
+//	Date:	06 Jun 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -26,15 +26,15 @@ namespace arch {
 
 
 	// Create IDT entry
-	idtEntry_t idtSetEntry(const dword_t &offset, const word_t &selector, const byte_t &type) {
+	idtEntry_t idtSetEntry(const idtISRPtr_t offset, const word_t &selector, const byte_t &type) {
 
 		idtEntry_t entry;	
 
-		entry.offsetLow		= offset & 0xFFFF;
+		entry.offsetLow		= dword_t(offset) & 0xFFFF;
 		entry.selector		= selector;
 		entry.reserved		= 0x00;
 		entry.type		= type;
-		entry.offsetHigh	= (offset & 0xFFFF0000) >> 16;
+		entry.offsetHigh	= (dword_t(offset) & 0xFFFF0000) >> 16;
 
 		return entry;
 
@@ -51,56 +51,56 @@ namespace arch {
 	void idtSetup() {
 
 		// Exceptions setup
-		idtTable[0x00]	= idtSetEntry((dword_t)exHandler00, 0x08, 0x8E);
-		idtTable[0x01]	= idtSetEntry((dword_t)exHandler01, 0x08, 0x8E);
-		idtTable[0x02]	= idtSetEntry((dword_t)exHandler02, 0x08, 0x8E);
-		idtTable[0x03]	= idtSetEntry((dword_t)exHandler03, 0x08, 0x8E);
-		idtTable[0x04]	= idtSetEntry((dword_t)exHandler04, 0x08, 0x8E);
-		idtTable[0x05]	= idtSetEntry((dword_t)exHandler05, 0x08, 0x8E);
-		idtTable[0x06]	= idtSetEntry((dword_t)exHandler06, 0x08, 0x8E);
-		idtTable[0x07]	= idtSetEntry((dword_t)exHandler07, 0x08, 0x8E);
-		idtTable[0x08]	= idtSetEntry((dword_t)exHandler08, 0x08, 0x8E);
-		idtTable[0x09]	= idtSetEntry((dword_t)exHandler09, 0x08, 0x8E);
-		idtTable[0x0A]	= idtSetEntry((dword_t)exHandler0A, 0x08, 0x8E);
-		idtTable[0x0B]	= idtSetEntry((dword_t)exHandler0B, 0x08, 0x8E);
-		idtTable[0x0C]	= idtSetEntry((dword_t)exHandler0C, 0x08, 0x8E);
-		idtTable[0x0D]	= idtSetEntry((dword_t)exHandler0D, 0x08, 0x8E);
-		idtTable[0x0E]	= idtSetEntry((dword_t)exHandler0E, 0x08, 0x8E);
-		idtTable[0x0F]	= idtSetEntry((dword_t)exHandler0F, 0x08, 0x8E);
-		idtTable[0x10]	= idtSetEntry((dword_t)exHandler10, 0x08, 0x8E);
-		idtTable[0x11]	= idtSetEntry((dword_t)exHandler11, 0x08, 0x8E);
-		idtTable[0x12]	= idtSetEntry((dword_t)exHandler12, 0x08, 0x8E);
-		idtTable[0x13]	= idtSetEntry((dword_t)exHandler13, 0x08, 0x8E);
-		idtTable[0x14]	= idtSetEntry((dword_t)exHandler14, 0x08, 0x8E);
-		idtTable[0x15]	= idtSetEntry((dword_t)exHandler15, 0x08, 0x8E);
-		idtTable[0x16]	= idtSetEntry((dword_t)exHandler16, 0x08, 0x8E);
-		idtTable[0x17]	= idtSetEntry((dword_t)exHandler17, 0x08, 0x8E);
-		idtTable[0x18]	= idtSetEntry((dword_t)exHandler18, 0x08, 0x8E);
-		idtTable[0x19]	= idtSetEntry((dword_t)exHandler19, 0x08, 0x8E);
-		idtTable[0x1A]	= idtSetEntry((dword_t)exHandler1A, 0x08, 0x8E);
-		idtTable[0x1B]	= idtSetEntry((dword_t)exHandler1B, 0x08, 0x8E);
-		idtTable[0x1C]	= idtSetEntry((dword_t)exHandler1C, 0x08, 0x8E);
-		idtTable[0x1D]	= idtSetEntry((dword_t)exHandler1D, 0x08, 0x8E);
-		idtTable[0x1E]	= idtSetEntry((dword_t)exHandler1E, 0x08, 0x8E);
-		idtTable[0x1F]	= idtSetEntry((dword_t)exHandler1F, 0x08, 0x8E);
+		idtTable[0x00]	= idtSetEntry(exHandler00, 0x08, 0x8E);
+		idtTable[0x01]	= idtSetEntry(exHandler01, 0x08, 0x8E);
+		idtTable[0x02]	= idtSetEntry(exHandler02, 0x08, 0x8E);
+		idtTable[0x03]	= idtSetEntry(exHandler03, 0x08, 0x8E);
+		idtTable[0x04]	= idtSetEntry(exHandler04, 0x08, 0x8E);
+		idtTable[0x05]	= idtSetEntry(exHandler05, 0x08, 0x8E);
+		idtTable[0x06]	= idtSetEntry(exHandler06, 0x08, 0x8E);
+		idtTable[0x07]	= idtSetEntry(exHandler07, 0x08, 0x8E);
+		idtTable[0x08]	= idtSetEntry(exHandler08, 0x08, 0x8E);
+		idtTable[0x09]	= idtSetEntry(exHandler09, 0x08, 0x8E);
+		idtTable[0x0A]	= idtSetEntry(exHandler0A, 0x08, 0x8E);
+		idtTable[0x0B]	= idtSetEntry(exHandler0B, 0x08, 0x8E);
+		idtTable[0x0C]	= idtSetEntry(exHandler0C, 0x08, 0x8E);
+		idtTable[0x0D]	= idtSetEntry(exHandler0D, 0x08, 0x8E);
+		idtTable[0x0E]	= idtSetEntry(exHandler0E, 0x08, 0x8E);
+		idtTable[0x0F]	= idtSetEntry(exHandler0F, 0x08, 0x8E);
+		idtTable[0x10]	= idtSetEntry(exHandler10, 0x08, 0x8E);
+		idtTable[0x11]	= idtSetEntry(exHandler11, 0x08, 0x8E);
+		idtTable[0x12]	= idtSetEntry(exHandler12, 0x08, 0x8E);
+		idtTable[0x13]	= idtSetEntry(exHandler13, 0x08, 0x8E);
+		idtTable[0x14]	= idtSetEntry(exHandler14, 0x08, 0x8E);
+		idtTable[0x15]	= idtSetEntry(exHandler15, 0x08, 0x8E);
+		idtTable[0x16]	= idtSetEntry(exHandler16, 0x08, 0x8E);
+		idtTable[0x17]	= idtSetEntry(exHandler17, 0x08, 0x8E);
+		idtTable[0x18]	= idtSetEntry(exHandler18, 0x08, 0x8E);
+		idtTable[0x19]	= idtSetEntry(exHandler19, 0x08, 0x8E);
+		idtTable[0x1A]	= idtSetEntry(exHandler1A, 0x08, 0x8E);
+		idtTable[0x1B]	= idtSetEntry(exHandler1B, 0x08, 0x8E);
+		idtTable[0x1C]	= idtSetEntry(exHandler1C, 0x08, 0x8E);
+		idtTable[0x1D]	= idtSetEntry(exHandler1D, 0x08, 0x8E);
+		idtTable[0x1E]	= idtSetEntry(exHandler1E, 0x08, 0x8E);
+		idtTable[0x1F]	= idtSetEntry(exHandler1F, 0x08, 0x8E);
 
 		// IRQs setup
-		idtTable[0x20]	= idtSetEntry((dword_t)irqHandler0, 0x08, 0x8E);
-		idtTable[0x21]	= idtSetEntry((dword_t)irqHandler1, 0x08, 0x8E);
-		idtTable[0x22]	= idtSetEntry((dword_t)irqHandler2, 0x08, 0x8E);
-		idtTable[0x23]	= idtSetEntry((dword_t)irqHandler3, 0x08, 0x8E);
-		idtTable[0x24]	= idtSetEntry((dword_t)irqHandler4, 0x08, 0x8E);
-		idtTable[0x25]	= idtSetEntry((dword_t)irqHandler5, 0x08, 0x8E);
-		idtTable[0x26]	= idtSetEntry((dword_t)irqHandler6, 0x08, 0x8E);
-		idtTable[0x27]	= idtSetEntry((dword_t)irqHandler7, 0x08, 0x8E);
-		idtTable[0x28]	= idtSetEntry((dword_t)irqHandler8, 0x08, 0x8E);
-		idtTable[0x29]	= idtSetEntry((dword_t)irqHandler9, 0x08, 0x8E);
-		idtTable[0x2A]	= idtSetEntry((dword_t)irqHandlerA, 0x08, 0x8E);
-		idtTable[0x2B]	= idtSetEntry((dword_t)irqHandlerB, 0x08, 0x8E);
-		idtTable[0x2C]	= idtSetEntry((dword_t)irqHandlerC, 0x08, 0x8E);
-		idtTable[0x2D]	= idtSetEntry((dword_t)irqHandlerD, 0x08, 0x8E);
-		idtTable[0x2E]	= idtSetEntry((dword_t)irqHandlerE, 0x08, 0x8E);
-		idtTable[0x2F]	= idtSetEntry((dword_t)irqHandlerF, 0x08, 0x8E);
+		idtTable[0x20]	= idtSetEntry(irqHandler0, 0x08, 0x8E);
+		idtTable[0x21]	= idtSetEntry(irqHandler1, 0x08, 0x8E);
+		idtTable[0x22]	= idtSetEntry(irqHandler2, 0x08, 0x8E);
+		idtTable[0x23]	= idtSetEntry(irqHandler3, 0x08, 0x8E);
+		idtTable[0x24]	= idtSetEntry(irqHandler4, 0x08, 0x8E);
+		idtTable[0x25]	= idtSetEntry(irqHandler5, 0x08, 0x8E);
+		idtTable[0x26]	= idtSetEntry(irqHandler6, 0x08, 0x8E);
+		idtTable[0x27]	= idtSetEntry(irqHandler7, 0x08, 0x8E);
+		idtTable[0x28]	= idtSetEntry(irqHandler8, 0x08, 0x8E);
+		idtTable[0x29]	= idtSetEntry(irqHandler9, 0x08, 0x8E);
+		idtTable[0x2A]	= idtSetEntry(irqHandlerA, 0x08, 0x8E);
+		idtTable[0x2B]	= idtSetEntry(irqHandlerB, 0x08, 0x8E);
+		idtTable[0x2C]	= idtSetEntry(irqHandlerC, 0x08, 0x8E);
+		idtTable[0x2D]	= idtSetEntry(irqHandlerD, 0x08, 0x8E);
+		idtTable[0x2E]	= idtSetEntry(irqHandlerE, 0x08, 0x8E);
+		idtTable[0x2F]	= idtSetEntry(irqHandlerF, 0x08, 0x8E);
 
 		// Set IDT size and data pointer
 		idt.size	= idtCalcTableSize(IDT_SIZE);

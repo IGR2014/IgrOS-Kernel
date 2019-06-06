@@ -3,7 +3,7 @@
 //	Interrupt descriptor table low-level operations
 //
 //	File:	idt.hpp
-//	Date:	15 May 2019
+//	Date:	06 Jun 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -16,11 +16,17 @@
 #define IGROS_ARCH_IDT_HPP
 
 
+#include <type_traits>
+
 #include <arch/types.hpp>
 
 
 // Arch-dependent code zone
 namespace arch {
+
+
+	// IDT ISR pointer
+	using idtISRPtr_t = std::add_pointer<void()>::type;
 
 
 	// Number of IDT entries
@@ -52,7 +58,7 @@ namespace arch {
 
 
 	// Create IDT entry
-	idtEntry_t	idtSetEntry(const dword_t&, const word_t&, const byte_t&);
+	idtEntry_t	idtSetEntry(const idtISRPtr_t, const word_t&, const byte_t&);
 
 
 #ifdef	__cplusplus
