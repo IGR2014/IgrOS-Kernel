@@ -3,7 +3,7 @@
 //	Memory paging for x86
 //
 //	File:	paging.hpp
-//	Date:	15 May 2019
+//	Date:	06 Jun 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -15,6 +15,8 @@
 #ifndef IGROS_ARCH_PAGING_HPP
 #define IGROS_ARCH_PAGING_HPP
 
+
+#include <flags.hpp>
 
 #include <arch/types.hpp>
 
@@ -28,20 +30,20 @@ namespace arch {
 
 
 	// Page flags
-	enum pagingFlags_t : dword_t {
+	enum class pagingFlags_t : dword_t {
 
-		PAGE_CLEAR		= 0x00000000,
-		PAGE_PRESENT		= 0x00000001,
-		PAGE_WRITABLE		= 0x00000002,
-		PAGE_USER_ACCESSIBLE	= 0x00000004,
-		PAGE_WRITE_THROUGH	= 0x00000008,
-		PAGE_CACHE_DISABLED	= 0x00000010,
-		PAGE_ACCESSED		= 0x00000020,
-		PAGE_DIRTY		= 0x00000040,
-		PAGE_SIZE		= 0x00000080,
-		PAGE_GLOBAL		= 0x00000100,
-		PAGE_USER_DEFINED	= 0x00000E00,
-		PAGE_PHYSICAL_ADDR	= 0xFFFFF000
+		CLEAR			= 0x00000000,
+		PRESENT			= 0x00000001,
+		WRITABLE		= 0x00000002,
+		USER_ACCESSIBLE		= 0x00000004,
+		WRITE_THROUGH		= 0x00000008,
+		NON_CACHED		= 0x00000010,
+		ACCESSED		= 0x00000020,
+		DIRTY			= 0x00000040,
+		HUGE			= 0x00000080,
+		GLOBAL			= 0x00000100,
+		USER_DEFINED		= 0x00000E00,
+		PHYSICAL_ADDR		= 0xFFFFF000
 
 	};
 
@@ -56,11 +58,6 @@ namespace arch {
 
 	// Get address which is caused Page Fault Exception
 	dword_t		pagingGetFaultAddres();
-
-	// Set page directory flags
-	void		pagingSetPDFlags(pointer_t, const pagingFlags_t);
-	// Set page table flags
-	void		pagingSetPTFlags(pointer_t, const pagingFlags_t);
 
 	// Setup paging
 	void		pagingSetup();

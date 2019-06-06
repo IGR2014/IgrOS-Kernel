@@ -3,7 +3,7 @@
 //	Memory paging for x86
 //
 //	File:	paging.cpp
-//	Date:	06 May 2019
+//	Date:	06 Jun 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -17,6 +17,8 @@
 #include <arch/taskRegs.hpp>
 
 #include <drivers/vmem.hpp>
+
+#include <klib/kprint.hpp>
 
 
 // Arch-dependent code zone
@@ -85,56 +87,39 @@ namespace arch {
 	}
 
 
-	// Set page directory flags
-	void pagingSetPDFlags(pointer_t pageDirEntry, const pagingFlags_t flags) {
-
-		// Page directory dirty flag does not exists
-		// It's reserved as 0
-		*static_cast<pagingFlags_t*>(pageDirEntry) = static_cast<pagingFlags_t>(*static_cast<pagingFlags_t*>(pageDirEntry) | (flags & ~pagingFlags_t::PAGE_DIRTY));
-	
-	}
-
-	// Set page table flags
-	void pagingSetPTFlags(pointer_t pageTableEntry, const pagingFlags_t flags) {
-
-		// Page directory size flag does not exists
-		// It's reserved as 0
-		*static_cast<pagingFlags_t*>(pageTableEntry) = static_cast<pagingFlags_t>(*static_cast<pagingFlags_t*>(pageTableEntry) | (flags & ~pagingFlags_t::PAGE_SIZE));
-
-	}
-
-
 	// Setup paging
 	void pagingSetup() {
 
 		// Other page directories are unused
 		for (dword_t i = 0; i < 1024; ++i) {
 
-			pageDirectory[i] = 0x00000000;
-			pagingSetPDFlags(&pageDirectory[i], pagingFlags_t::PAGE_CLEAR);
+			// Pages marked as clear
+			pageDirectory[i] = dword_t(pagingFlags_t::CLEAR);
 
 		}
 
 		// Map first 4 MB of physical RAM to first 4 MB of virtual RAM
-		pageDirectory[0]	= reinterpret_cast<dword_t>(pageTable);
-		pagingSetPDFlags(&pageDirectory[0],	static_cast<pagingFlags_t>(pagingFlags_t::PAGE_WRITABLE | pagingFlags_t::PAGE_PRESENT));
-
-		// Also map first 4MB of physical RAM to first 4MB after 3GB in virtual memory
-		// (This should be useful for higher-half kernel)
-		pageDirectory[768]	= reinterpret_cast<dword_t>(pageTable);
-		pagingSetPDFlags(&pageDirectory[768],	static_cast<pagingFlags_t>(pagingFlags_t::PAGE_WRITABLE | pagingFlags_t::PAGE_PRESENT));
-
-		// Map page table itself to the last page of virtual memory
-		pageDirectory[1023]	= reinterpret_cast<dword_t>(pageDirectory);
-		pagingSetPDFlags(&pageDirectory[1023],	static_cast<pagingFlags_t>(pagingFlags_t::PAGE_WRITABLE | pagingFlags_t::PAGE_PRESENT));
+		pageDirectory[0]	 = dword_t(pageTable);
+		pageDirectory[0]	|= dword_t(pagingFlags_t::WRITABLE | pagingFlags_t::PRESENT);
 
 		// Map all pages of first 4MB to first page table
 		for (sdword_t j = 0; j < 1024; ++j) {
 
-			pageTable[j]	= (j << 12);
-			pagingSetPTFlags(&pageTable[j],	static_cast<pagingFlags_t>(pagingFlags_t::PAGE_WRITABLE | pagingFlags_t::PAGE_PRESENT));
+			pageTable[j]	 = (j << 12);
+			pageTable[j]	|= dword_t(pagingFlags_t::WRITABLE | pagingFlags_t::PRESENT);
 
 		}
+
+		// Also map first 4MB of physical RAM to first 4MB after 3GB in virtual memory
+		// (This should be useful for higher-half kernel)
+		pageDirectory[768]	 = dword_t(pageTable);
+		// Page marked as present and writable
+		pageDirectory[768]	|= dword_t(pagingFlags_t::WRITABLE | pagingFlags_t::PRESENT);
+
+		// Map page table itself to the last page of virtual memory
+		pageDirectory[1023]	 = dword_t(pageDirectory);
+		// Page marked as present and writable
+		pageDirectory[1023]	|= dword_t(pagingFlags_t::WRITABLE | pagingFlags_t::PRESENT);
 
 		// Install exception handler for page fault
 		exHandlerInstall(PAGE_FAULT, pagingFaultExceptionHandler);
@@ -152,36 +137,41 @@ namespace arch {
 	pointer_t pagingVirtToPhys(const pointer_t virtAddr) {
 
 		// Page directory entry index from virtual address
-		dword_t pdEntryIndex	= reinterpret_cast<dword_t>(virtAddr) >> 22;
+		dword_t pdEntryIndex	= (dword_t(virtAddr) & 0xFFC00000) >> 22;
 		// Page table entry index from virtual address
-		dword_t ptEntryIndex	= (reinterpret_cast<dword_t>(virtAddr) >> 12) & 0x3FF;
+		dword_t ptEntryIndex	= (dword_t(virtAddr) & 0x3FF000) >> 12;
 
 		// Physical pointer to page table
-		dword_t pageTablePtr	= pageDirectory[pdEntryIndex];
+		dword_t		pageTablePtr	= pageDirectory[pdEntryIndex];
+		pagingFlags_t	pageFlags	= pagingFlags_t(pageTablePtr);
 
 		// Check if page table is present or not
-		if ((static_cast<pagingFlags_t>(pageTablePtr) & pagingFlags_t::PAGE_PRESENT) != pagingFlags_t::PAGE_CLEAR) {
+		if ((pageFlags & pagingFlags_t::PRESENT) == pagingFlags_t::CLEAR) {
 
-			// Physical pointer to page
-			dword_t pagePtr = reinterpret_cast<dword_t*>(pageTablePtr & ~0xFFF)[ptEntryIndex];
-
-			// Check if page is present or not
-			if ((static_cast<pagingFlags_t>(pagePtr) & pagingFlags_t::PAGE_PRESENT) != pagingFlags_t::PAGE_CLEAR) {
-
-				// Get physical address of page from page table (20 MSB)
-				dword_t physPageAddr	= pagePtr & ~0xFFF;
-				// Get physical offset from virtual address`s (12 LSB)
-				dword_t physPageOffset	= reinterpret_cast<dword_t>(virtAddr) & 0xFFF;
-
-				// Return physical address
-				return reinterpret_cast<pointer_t>(physPageAddr | physPageOffset);
-
-			}
+			// Page or table is not present
+			return nullptr;
 
 		}
 
-		// Page or table is not present
-		return nullptr;
+		// Physical pointer to page
+		dword_t pagePtr	= reinterpret_cast<dword_t*>(pageTablePtr & ~0xFFF)[ptEntryIndex];
+		pageFlags	= pagingFlags_t(pagePtr);
+
+		// Check if page is present or not
+		if ((pageFlags & pagingFlags_t::PRESENT) == pagingFlags_t::CLEAR) {
+
+			// Page or table is not present
+			return nullptr;
+
+		}
+
+		// Get physical address of page from page table (20 MSB)
+		dword_t physPageAddr	= pagePtr & ~0xFFF;
+		// Get physical offset from virtual address`s (12 LSB)
+		dword_t physPageOffset	= dword_t(virtAddr) & 0xFFF;
+
+		// Return physical address
+		return pointer_t(physPageAddr | physPageOffset);
 
 	}
 
@@ -189,19 +179,25 @@ namespace arch {
 	// Page Fault Exception handler
 	void pagingFaultExceptionHandler(const taskRegs_t* regs) {
 
+		// Print buffer
+		sbyte_t text[64];
+
+		// Exception info
 		vmemWrite("CAUSED BY:\t");
-		vmemWrite(((regs->param & 0x08) == 0) ? "" : "RESERVED BIT SET");
+		vmemWrite(((regs->param & 0x18) == 0) ? "ACCESS VIOLATION" : "");
 		vmemWrite(((regs->param & 0x10) == 0) ? "" : "INSTRUCTION FETCH");
-		vmemWrite("\nFROM:\t\t");
+		vmemWrite(((regs->param & 0x08) == 0) ? "" : "RESERVED BIT SET");
+		vmemWrite("\r\nFROM:\t\t");
 		vmemWrite(((regs->param & 0x04) == 0) ? "KERNEL" : "USER");
-		vmemWrite(" space\n");
+		vmemWrite(" space\r\n");
 		vmemWrite("WHEN:\t\tattempting to ");
 		vmemWrite(((regs->param & 0x02) == 0) ? "READ" : "WRITE");
-		vmemWrite("\nADDRESS:\t");
-		//vgaConsoleWriteHex(pagingGetFaultAddres());
-		vmemWrite(" which is NON-");
-		vmemWrite(((regs->param & 0x01) == 0) ? "PRESENT" : "PRIVILEGED");
-		vmemWrite("\n");
+		vmemWrite("\r\nADDRESS:\t0x");
+		klib::kitoa(text, 64, static_cast<dword_t>(pagingGetFaultAddres()), klib::base::HEX);
+		vmemWrite(text);
+		vmemWrite("\r\nWHICH IS:\tNON-");
+		vmemWrite(((regs->param & 0x01) == 0) ? "PRESENT\r\n" : "PRIVILEGED\r\n");
+		vmemWrite("\r\n");
 
 		// Hang here
 		while (true) {};
