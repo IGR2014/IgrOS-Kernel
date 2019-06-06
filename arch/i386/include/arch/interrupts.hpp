@@ -3,7 +3,7 @@
 //	Interrupts low-level operations
 //
 //	File:	interrupts.hpp
-//	Date:	15 May 2019
+//	Date:	06 Jun 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -16,6 +16,8 @@
 #define IGROS_ARCH_INTERRUPTS_HPP
 
 
+#include <type_traits>
+
 #include <arch/types.hpp>
 
 
@@ -27,7 +29,7 @@ namespace arch {
 	struct taskRegs_t;
 
 	// Interrupt handler type
-	using irqHandler_t = void(*)(const taskRegs_t* regs);
+	using irqHandler_t = std::add_pointer<void(const taskRegs_t* regs)>::type;
 
 
 	// Interrupts number enumeration
