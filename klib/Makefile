@@ -13,12 +13,12 @@
 
 IGROS_DIR_PREFIX	= klib
 
-IGROS_DIR_PATH		= $(IGROS_DIR_TARGET_BUILD)/$(IGROS_DIR_PREFIX)
+IGROS_DIR_PATH		= $(IGROS_DIR_BUILD)/$(IGROS_DIR_PREFIX)
 
 # Source files list
-SRCFILES		= $(wildcard *.s)
+SRCFILES		= $(wildcard *.cpp)
 # Convert sources names into object files names
-OBJFILES		= $(patsubst %.s, %.o, $(SRCFILES))
+OBJFILES		= $(patsubst %.cpp, %.o, $(SRCFILES))
 # Specify path for object files
 OBJ			= $(addprefix $(IGROS_DIR_PATH)/, $(OBJFILES))
 
@@ -35,8 +35,8 @@ clean:
 	@echo "	RM	$(OBJFILES)"
 	@$(RM) $(OBJ)
 
-# Default build rule for all .s files
-$(IGROS_DIR_PATH)/%.o: %.s
-	@echo "	AS	$<"
-	@$(AS) -o $@ $< $(ASFLAGS)
+# Default build rule for all .cpp files
+$(IGROS_DIR_PATH)/%.o: %.cpp
+	@echo "	C++	$<"
+	@$(CXX) -c $< -o $@ $(CXXFLAGS) $(CXXINCLUDE)
 

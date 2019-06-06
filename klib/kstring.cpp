@@ -3,7 +3,7 @@
 //	Kernel string functions
 //
 //	File:	string.cpp
-//	Date:	22 May 2019
+//	Date:	06 Jun 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
