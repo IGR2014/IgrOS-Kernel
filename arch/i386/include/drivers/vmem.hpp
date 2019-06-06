@@ -3,7 +3,7 @@
 //	VGA memory low-level operations
 //
 //	File:	vmem.hpp
-//	Date:	15 May 2019
+//	Date:	06 Jun 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -32,6 +32,9 @@ namespace arch {
 
 	// TAB size
 	static const word_t	VIDEO_MEM_TAB_SIZE	= 8;
+
+	// VGA cursor start register
+	static const byte_t	VIDEO_MEM_CURSOR_START	= 0x0A;
 
 
 	// VGA memory colors enumeration
@@ -83,25 +86,33 @@ namespace arch {
 
 
 	// Set VGA memory cursor position
-	void vmemCursorSet(const byte_t&, const byte_t&);
+	void		vmemCursorSet(const byte_t&, const byte_t&);
+	// Set VGA memory cursor position
+	void		vmemCursorSet(const vmemCursor&);
+
+	// Get VGA memory cursor position
+	vmemCursor	vmemCursorGet();
+
 	// Disable VGA memory cursor
-	void vmemCursorDisable();
+	void		vmemCursorDisable();
+	// Enable VGA memory cursor
+	void		vmemCursorEnable();
 
 	// Set VGA memory color
-	void vmemSetColor(const byte_t&, const byte_t&);
+	void		vmemSetColor(const byte_t&, const byte_t&);
 
 	// Write symbol to VGA memory
-	void vmemWrite(const sbyte_t&);
+	void		vmemWrite(const sbyte_t&);
 	// Write string to VGA memory
-	void vmemWrite(const sbyte_t*);
+	void		vmemWrite(const sbyte_t*);
 	// Write fixed-width string to VGA memory
-	void vmemWrite(const sbyte_t*, const dword_t&);
+	void		vmemWrite(const sbyte_t*, const dword_t&);
 
 	// Clear VGA console
-	void vmemClear();
+	void		vmemClear();
 
 	// Init VGA console
-	void vmemInit();
+	void		vmemInit();
 
 
 }	// namespace arch
