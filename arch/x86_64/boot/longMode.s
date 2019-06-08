@@ -29,7 +29,7 @@
 .global	setupPageTables
 .global	enablePaging
 
-.extern kernelFunc
+.extern kmain
 .global jumpToLongMode
 
 checkMultiboot:
@@ -125,7 +125,7 @@ jumpToLongMode:
 	leaq	(multibootHeader), %rdi
 	movl	multibootMagic, %esi
 	cld				# Clear direction flag	
-	callq	kernelFunc
+	callq	kmain
 
 2:
 	hlt

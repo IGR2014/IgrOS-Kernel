@@ -39,7 +39,7 @@ extern "C" {
 
 
 	// Kernel main function
-	void kernelFunc(multiboot::info* multiboot, dword_t magic) {
+	void kmain(multiboot::info* multiboot, dword_t magic) {
 
 		// Init VGA memory
 		arch::vmemInit();
@@ -49,7 +49,7 @@ extern "C" {
 		if (!multiboot::check(magic)) {
 
 			//arch::vgaConsoleWriteHex(magic);
-			arch::vmemWrite("Bad multiboot 1 bootloader magic!");
+			arch::vmemWrite("Bad multiboot 1 bootloader magic!\r\n");
 
 			// Hang CPU
 			while (true) {};

@@ -16,7 +16,7 @@
 .section .boot
 .balign	4
 .global	kernelStart			# Kernel main function
-.extern	kernelFunc			# Extern kernel C-function
+.extern	kmain				# Extern kernel C-function
 
 
 # Kernel starts here
@@ -25,7 +25,7 @@ kernelStart:
 	movl	$stackTop, %esp		# Set stack
 	pushl	%eax			# Multiboot magic value
 	pushl	%ebx			# Multiboot header address
-	call	kernelFunc		# Call main func
+	call	kmain			# Call main func
 
 1:
 	hlt				# Stop CPU

@@ -24,7 +24,6 @@
 .extern	setupPageTables
 .extern	enablePaging
 
-.extern	kernelBootstrap				# Extern kernel C-function
 .extern jumpToLongMode
 
 kernelStart:					# Kernel starts here

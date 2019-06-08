@@ -14,12 +14,12 @@
 export	IGROS_DIR_BUILD		= $(CURDIR)/../build
 export	IGROS_DIR_RELEASE	= $(CURDIR)/../release
 
-export	IGROS_ARCH		?= x86_64
+export	IGROS_ARCH		?= i386
 #x86_64
 
 export	CXX			?= g++
 
-export	CXXFLAGS		= -m64					\
+export	CXXFLAGS		= -m32					\
 				  -std=c++11				\
 				  -Wall					\
 				  -Wextra				\
@@ -46,7 +46,7 @@ export	CXXINCLUDE		= -I $(CURDIR)/$(IGROS_ARCH)/include/	\
 
 export	AS			= as
 
-export	ASFLAGS			= --64
+export	ASFLAGS			= --32
 
 export	LD			= ld
 
