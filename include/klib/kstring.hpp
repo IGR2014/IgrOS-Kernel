@@ -27,7 +27,7 @@ namespace klib {
 	dword_t	kstrlen(const sbyte_t* src);
 
 	// Copy string from one to other
-	void	kstrcpy(const sbyte_t* src, sbyte_t* dst, const dword_t size);
+	void	kstrcpy(const sbyte_t* src, sbyte_t* dst, dword_t size);
 
 
 }	// namespace arch

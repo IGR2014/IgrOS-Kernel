@@ -34,10 +34,10 @@ namespace klib {
         }
 
 	// Copy string from one to other
-	void kstrcpy(const sbyte_t* src, sbyte_t* dst, const dword_t size) {
+	void kstrcpy(const sbyte_t* src, sbyte_t* dst, dword_t size) {
 
                 // Copy string
-                for (dword_t i = 0; i < size; ++i) {
+                while (--size > 0) {
 
                         // Copy string byte by byte
                         *dst++ = *src++;
