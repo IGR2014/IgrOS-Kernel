@@ -3,7 +3,7 @@
 //	Global descriptor table low-level operations
 //
 //	File:	gdt.hpp
-//	Date:	06 Jun 2019
+//	Date:	12 Jun 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -142,8 +142,11 @@ namespace arch {
 #endif	// __cplusplus
 
 
+		// Reset segments to apply new GDT
+		static inline void	gdtResetSegments();
+
 		// Load GDT
-		void	gdtLoad(const gdtPointer_t*);
+		static inline void	gdtLoad(const gdtPointer_t*);
 
 
 #ifdef	__cplusplus

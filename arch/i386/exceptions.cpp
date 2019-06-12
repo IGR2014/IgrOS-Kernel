@@ -3,7 +3,7 @@
 //	Exceptions low-level operations
 //
 //	File:	exceptions.cpp
-//	Date:	06 May 2019
+//	Date:	12 Jun 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -79,6 +79,7 @@ namespace arch {
 			// Manage exception
 			vmemWrite("\r\nEXCEPTION:\t-> ");
 			vmemWrite(exName[regs->number]);
+			vmemWrite("\r\n");
 			exception(regs);
 			vmemWrite("\r\n");
 

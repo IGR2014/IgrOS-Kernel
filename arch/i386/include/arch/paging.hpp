@@ -3,7 +3,7 @@
 //	Memory paging for x86
 //
 //	File:	paging.hpp
-//	Date:	06 Jun 2019
+//	Date:	12 Jun 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -47,17 +47,6 @@ namespace arch {
 
 	};
 
-
-	// Setup page directory
-	void		pagingSetupPD(const pointer_t);
-	// Flush page directory
-	void		pagingFlushPD();
-
-	// Enable paging
-	void		pagingEnable();
-
-	// Get address which is caused Page Fault Exception
-	dword_t		pagingGetFaultAddres();
 
 	// Setup paging
 	void		pagingSetup();

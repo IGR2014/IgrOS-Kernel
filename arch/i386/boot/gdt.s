@@ -3,7 +3,7 @@
 #	Global descriptor table low-level operations
 #
 #	File:	gdt.s
-#	Date:	18 Jun. 2018
+#	Date:	12 Jun 2019
 #
 #	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.
@@ -11,24 +11,33 @@
 #
 
 
+.set	KERNEL_SEGMENT_CODE,	0x08		# Kernel code segment
+.set	KERNEL_SEGMENT_DATA,	0x10		# Kernel data segment
+
+
 .code32
 
 .section .text
 .balign 4
-.global	gdtLoad				# Load GDT
+.global	gdtResetSegments			# Reset segments
+.global	gdtLoad					# Load GDT
 
+# Reset segments
+gdtResetSegments:
+	ljmp	$KERNEL_SEGMENT_CODE, $1f	# Long jump for CS changes to take affect
+1:
+	movw	$KERNEL_SEGMENT_DATA, %ax	# Set proper segment registers
+	movw	%ax, %ds			# --//--
+	movw	%ax, %es			# --//--
+	movw	%ax, %fs			# --//--
+	movw	%ax, %gs			# --//--
+	movw	%ax, %ss			# --//--
+	ret
 
 # Load GDT
 gdtLoad:
-	movl	4(%esp), %eax		# Get pointer from stack
-	lgdt	(%eax)			# Load GDT from pointer
-	ljmp	$0x08, $1f		# Long jump for GDT changes to take affect
-1:
-	movw	$0x10, %ax		# Set proper segment registers
-	movw	%ax, %ds		# --//--
-	movw	%ax, %es		# --//--
-	movw	%ax, %fs		# --//--
-	movw	%ax, %gs		# --//--
-	movw	%ax, %ss		# --//--
+	movl	4(%esp), %eax			# Get pointer from stack
+	lgdt	(%eax)				# Load GDT from pointer
+	call	gdtResetSegments		# Reset segments after GDT change
 	ret
 
