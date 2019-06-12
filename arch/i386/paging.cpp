@@ -3,7 +3,7 @@
 //	Memory paging for x86
 //
 //	File:	paging.cpp
-//	Date:	06 Jun 2019
+//	Date:	12 Jun 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -46,47 +46,6 @@ namespace arch {
 #endif	// __cplusplus
 
 
-	// Setup page directory
-	void pagingSetupPD(const pointer_t pageDirAddr) {
-
-		// Write page directory address to CR3
-		inCR3(reinterpret_cast<dword_t>(pageDirAddr));
-
-	}
-
-	// Flush page directory
-	void pagingFlushPD() {
-
-		// Get current value of CR3
-		dword_t cr3 = outCR3();
-		// Rewrite it again to CR3
-		inCR3(cr3);
-
-	}
-
-
-	// Enable paging
-	void pagingEnable() {
-
-		// Get current value of CR0
-		dword_t cr0 = outCR0();
-		// Set bit 31 to "1"
-		cr0 |= (1 << 31);
-		// Rewrite CR0 with new value
-		inCR0(cr0);
-
-	}
-
-
-	// Get address which is caused Page Fault Exception
-	dword_t pagingGetFaultAddres() {
-
-		// Simply read CR2 value inside ISR
-		return outCR2();
-
-	}
-
-
 	// Setup paging
 	void pagingSetup() {
 
@@ -99,7 +58,7 @@ namespace arch {
 		}
 
 		// Map first 4 MB of physical RAM to first 4 MB of virtual RAM
-		pageDirectory[0]	 = dword_t(pageTable);
+		pageDirectory[0]	 = dword_t(pageTable) & 0x3FFFFFFF;
 		pageDirectory[0]	|= dword_t(pagingFlags_t::WRITABLE | pagingFlags_t::PRESENT);
 
 		// Map all pages of first 4MB to first page table
@@ -112,12 +71,12 @@ namespace arch {
 
 		// Also map first 4MB of physical RAM to first 4MB after 3GB in virtual memory
 		// (This should be useful for higher-half kernel)
-		pageDirectory[768]	 = dword_t(pageTable);
+		pageDirectory[768]	 = dword_t(pageTable) & 0x3FFFFFFF;
 		// Page marked as present and writable
 		pageDirectory[768]	|= dword_t(pagingFlags_t::WRITABLE | pagingFlags_t::PRESENT);
 
 		// Map page table itself to the last page of virtual memory
-		pageDirectory[1023]	 = dword_t(pageDirectory);
+		pageDirectory[1023]	 = dword_t(pageDirectory) & 0x3FFFFFFF;
 		// Page marked as present and writable
 		pageDirectory[1023]	|= dword_t(pagingFlags_t::WRITABLE | pagingFlags_t::PRESENT);
 
@@ -125,10 +84,16 @@ namespace arch {
 		exHandlerInstall(PAGE_FAULT, pagingFaultExceptionHandler);
 
 		// Setup page directory
-		pagingSetupPD(pageDirectory);
+		// PD address bits ([0 .. 31] in cr3)
+		inCR3(dword_t(pageDirectory) & 0x3FFFFFFF);
+
+		// Disable Page Size Extension
+		// Clear PSE bit ([4] in cr4)
+		inCR4(outCR4() & 0xFFFFFFEF);
 
 		// Enable paging
-		pagingEnable();
+		// Set PE bit ([31] in cr0)
+		inCR0(outCR0() | 0x80000000);
 
 	}
 
@@ -142,8 +107,8 @@ namespace arch {
 		dword_t ptEntryIndex	= (dword_t(virtAddr) & 0x3FF000) >> 12;
 
 		// Physical pointer to page table
-		dword_t		pageTablePtr	= pageDirectory[pdEntryIndex];
-		pagingFlags_t	pageFlags	= pagingFlags_t(pageTablePtr);
+		dword_t	pageTablePtr	= pageDirectory[pdEntryIndex];
+		auto	pageFlags	= pagingFlags_t(pageTablePtr & 0xFFF);
 
 		// Check if page table is present or not
 		if ((pageFlags & pagingFlags_t::PRESENT) == pagingFlags_t::CLEAR) {
@@ -155,7 +120,7 @@ namespace arch {
 
 		// Physical pointer to page
 		dword_t pagePtr	= reinterpret_cast<dword_t*>(pageTablePtr & ~0xFFF)[ptEntryIndex];
-		pageFlags	= pagingFlags_t(pagePtr);
+		pageFlags	= pagingFlags_t(pagePtr & 0xFFF);
 
 		// Check if page is present or not
 		if ((pageFlags & pagingFlags_t::PRESENT) == pagingFlags_t::CLEAR) {
@@ -193,7 +158,7 @@ namespace arch {
 		vmemWrite("WHEN:\t\tattempting to ");
 		vmemWrite(((regs->param & 0x02) == 0) ? "READ" : "WRITE");
 		vmemWrite("\r\nADDRESS:\t0x");
-		klib::kitoa(text, 64, static_cast<dword_t>(pagingGetFaultAddres()), klib::base::HEX);
+		klib::kitoa(text, 64, dword_t(outCR2()), klib::base::HEX);
 		vmemWrite(text);
 		vmemWrite("\r\nWHICH IS:\tNON-");
 		vmemWrite(((regs->param & 0x01) == 0) ? "PRESENT\r\n" : "PRIVILEGED\r\n");

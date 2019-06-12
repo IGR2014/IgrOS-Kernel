@@ -20,8 +20,8 @@
 
 
 static const	dword_t		IGROS_VERSION_MAJOR	= 0;
-static const	dword_t		IGROS_VERSION_MINOR	= 0;
-static const	dword_t		IGROS_VERSION_BUILD	= 1245;
+static const	dword_t		IGROS_VERSION_MINOR	= 1;
+static const	dword_t		IGROS_VERSION_BUILD	= 0;
 
 static const	sbyte_t*	IGROS_VERSION_NAME	= "ALPHA";
 

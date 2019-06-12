@@ -3,7 +3,7 @@
 //	Boot low-level main setup function
 //
 //	File:	boot.cpp
-//	Date:	06 Jun 2019
+//	Date:	12 Jun 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -74,19 +74,19 @@ extern "C" {
 		arch::vmemWrite(IGROS_VERSION_NAME);
 		arch::vmemWrite(")\r\n");
 		arch::vmemWrite("Author:\t\tIgor Baklykov (c) ");
-		klib::kitoa(text, 20, static_cast<dword_t>(2017));
+		klib::kitoa(text, 20, dword_t(2017));
 		arch::vmemWrite(text);
 		arch::vmemWrite(" - ");
-		klib::kitoa(text, 20, static_cast<dword_t>(2019));
+		klib::kitoa(text, 20, dword_t(2019));
 		arch::vmemWrite(text);
 		arch::vmemWrite("\r\n\r\n");
-
 
 		// Setup Interrupts Descriptor Table
 		arch::idtSetup();
 
 		// Init interrupts
 		arch::irqInit();
+
 		// Enable interrupts
 		arch::irqEnable();
 
@@ -105,15 +105,16 @@ extern "C" {
 		arch::vmemWrite("\r\nBooted successfully\r\n\r\n");
 
 		/*
-		// Page mapping test
-		volatile word_t* ptr = reinterpret_cast<word_t*>(0x000B8006);
+		// Page mapping test (higher half test)
+		volatile word_t* ptr = reinterpret_cast<word_t*>(0xC00B8006);
 		arch::vmemWrite("0x");
-		klib::kitoa(text, 20, reinterpret_cast<quad_t>(arch::pagingVirtToPhys((pointer_t)ptr)), klib::base::HEX);
+		klib::kitoa(text, 20, dword_t(ptr), klib::base::HEX);
 		arch::vmemWrite(text);
 		arch::vmemWrite(" = 0x");
-		klib::kitoa(text, 20, reinterpret_cast<quad_t>(ptr), klib::base::HEX);
+		klib::kitoa(text, 20, dword_t(arch::pagingVirtToPhys(pointer_t(ptr))), klib::base::HEX);
 		arch::vmemWrite(text);
 		arch::vmemWrite("\r\n\r\n");
+		// Rewrite 'IgrOS' text 'O' and 'S' green symbols with white ones
 		*ptr = 0x0700 | 'O';
 		++ptr;
 		*ptr = 0x0700 | 'S';
@@ -121,19 +122,19 @@ extern "C" {
 
 		/*
 		// Numbers print test
-		klib::kitoa(text, 20, static_cast<dword_t>(0x7FFFFFFF), klib::base::HEX);
+		klib::kitoa(text, 20, dword_t(0x7FFFFFFF), klib::base::HEX);
 		arch::vmemWrite("0x");
 		arch::vmemWrite(text);
 		arch::vmemWrite(" = ");
-		klib::kitoa(text, 20, static_cast<dword_t>(0x7FFFFFFF), klib::base::DEC);
+		klib::kitoa(text, 20, dword_t(0x7FFFFFFF), klib::base::DEC);
 		arch::vmemWrite(text);
 		arch::vmemWrite("\r\n");
 		*/
 
 		/*
 		// Page Fault Exception test
-		volatile word_t* ptr = reinterpret_cast<word_t*>(0xA0000000);
-		*ptr = 0x4000;
+		volatile word_t* ptr2 = reinterpret_cast<word_t*>(0xA0000000);
+		*ptr2 = 0x4000;
 		*/
 
 		/*
