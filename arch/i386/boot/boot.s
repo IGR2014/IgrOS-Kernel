@@ -24,7 +24,7 @@
 
 .code32
 
-.section .text
+.section .boot
 .balign	4
 .global	kernelStart					# Kernel main function
 .extern	kmain						# Extern kernel C-function
