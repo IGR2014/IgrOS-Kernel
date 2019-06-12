@@ -73,11 +73,11 @@ kernelStart:
 
 # Temporary boot page directory
 bootPageDirectory:
-	# Entry 0 - identyty mapped
+	# Entry 0 = 1Mb offset (identity) mapped
 	.int	PAGE_ENTRY_VALID
 	# Zeroes
 	.fill	(PAGE_TEMP_KERNEL - 1), 4, PAGE_ENTRY_INVALID
-	# Entry 227 - 3Gb + 1Mb mapped
+	# Entry 227 = 3Gb + 1Mb offset (higher half) mapped
 	.int	PAGE_ENTRY_VALID
 	# Zeroes
 	.fill	(1024 - PAGE_TEMP_KERNEL - 1), 4, PAGE_ENTRY_INVALID
