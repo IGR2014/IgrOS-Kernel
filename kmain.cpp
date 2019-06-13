@@ -3,7 +3,7 @@
 //	Boot low-level main setup function
 //
 //	File:	boot.cpp
-//	Date:	12 Jun 2019
+//	Date:	13 Jun 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -29,8 +29,6 @@
 #include <klib/kprint.hpp>
 
 
-extern dword_t multibootMagic;
-
 #ifdef	__cplusplus
 
 extern "C" {
@@ -45,19 +43,25 @@ extern "C" {
 		arch::vmemInit();
 		arch::vmemWrite("IgrOS kernel\r\n\r\n");
 
+		// Print buffer
+		sbyte_t text[64];
+
 		// Check multiboot magic
 		if (!multiboot::check(magic)) {
 
 			//arch::vgaConsoleWriteHex(magic);
 			arch::vmemWrite("Bad multiboot 1 bootloader magic!\r\n");
+			arch::vmemWrite("\tMAGIC:\t\t0x");
+			klib::kitoa(text, 20, magic, klib::base::HEX);
+			arch::vmemWrite(text);
+			arch::vmemWrite("\r\n\tADDRESS:\t0x");
+			klib::kitoa(text, 20, quad_t(multiboot), klib::base::HEX);
+			arch::vmemWrite(text);
 
 			// Hang CPU
 			while (true) {};
 
 		}
-
-		// Print buffer
-		sbyte_t text[64];
 
 		// Write "Hello World" message
 		arch::vmemWrite("Build:\t\t" __DATE__ ", " __TIME__ "\r\n");
