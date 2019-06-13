@@ -3,7 +3,7 @@
 //	Interrupts low-level operations
 //
 //	File:	interupts.cpp
-//	Date:	22 May 2019
+//	Date:	13 Jun 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -36,9 +36,12 @@ namespace arch {
 
 			outPort8(PIC_SLAVE_CONTROL, 0x20);
 
+		} else {
+
+			// Notify master PIC
+			outPort8(PIC_MASTER_CONTROL, 0x20);
+
 		}
-		// Notify master PIC
-		outPort8(PIC_MASTER_CONTROL, 0x20);
 
 		// Actually it`s an exception and normaly shouldn't be there
 		if (regs->number < 32) {
@@ -59,14 +62,14 @@ namespace arch {
 		} else {
 
 			// Print buffer
-			sbyte_t text[10];
+			sbyte_t text[64];
 
 			// Print message about unhandled interrupt
 			vmemWrite("\r\nIRQ\t\t-> #");
-			klib::kitoa(text, 10, regs->number - 32);
+			klib::kitoa(text, 64, dword_t(regs->number - 32));
 			vmemWrite(text);
 			vmemWrite("\r\nSTATE:\t\tunhandled!\r\n");
-		
+
 		}
 
 	}
@@ -100,10 +103,10 @@ namespace arch {
 	void irqMask(const irqNumber_t irq) {
 
 		// Chech if it's hardware interrupt
-		if (static_cast<dword_t>(irq) < 16) {
+		if (dword_t(irq) < 16) {
 
 			// Set interrupts mask
-			irqMaskSet(irqMaskGet() & ~(1 << static_cast<dword_t>(irq)));
+			irqMaskSet(irqMaskGet() & ~(1 << dword_t(irq)));
 
 		}
 
@@ -113,9 +116,9 @@ namespace arch {
 	void irqMaskSet(const word_t mask) {
 
 		// Set Master controller mask
-		outPort8(PIC_MASTER_DATA, static_cast<byte_t>(mask & 0xFF));
+		outPort8(PIC_MASTER_DATA, byte_t(mask & 0xFF));
 		// Set Slave controller mask
-		outPort8(PIC_SLAVE_DATA, static_cast<byte_t>((mask & 0xFF00) >> 8));
+		outPort8(PIC_SLAVE_DATA, byte_t((mask & 0xFF00) >> 8));
 
 	}
 
@@ -123,7 +126,7 @@ namespace arch {
 	word_t irqMaskGet() {
 
 		// Read slave PIC current mask
-		word_t mask	= static_cast<word_t>(inPort8(PIC_SLAVE_DATA)) << 8;
+		word_t mask	= word_t(inPort8(PIC_SLAVE_DATA)) << 8;
 		// Read master PIC current mask
 		mask		|= inPort8(PIC_MASTER_DATA);
 
@@ -135,7 +138,7 @@ namespace arch {
 	void irqHandlerInstall(irqNumber_t irqNumber, irqHandler_t handler) {
 
 		// Set handler to ISR list
-		isrList[static_cast<dword_t>(irqNumber)] = handler;
+		isrList[dword_t(irqNumber)] = handler;
 
 	}
 
@@ -143,7 +146,7 @@ namespace arch {
 	void irqHandlerUninstall(irqNumber_t irqNumber) {
 
 		// Set nullptr as a handler to ISR list
-		isrList[static_cast<dword_t>(irqNumber)] = nullptr;
+		isrList[dword_t(irqNumber)] = nullptr;
 
 	}
 

@@ -3,7 +3,7 @@
 //	Global descriptor table low-level operations
 //
 //	File:	gdt.hpp
-//	Date:	12 Jun 2019
+//	Date:	13 Jun 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -59,28 +59,28 @@ namespace arch {
 		GDT_SEG_G		= 0x0800,
 
 		// GDT entries
-		GDT_SEG_RING0_CODE	= GDT_SEG_G		| \
-					  GDT_SEG_SZ		| \
-					  GDT_SEG_RING_USE	| \
-					  GDT_SEG_RING0		| \
+		GDT_SEG_RING0_CODE	= GDT_SEG_G		|
+					  GDT_SEG_SZ		|
+					  GDT_SEG_RING_USE	|
+					  GDT_SEG_RING0		|
 					  GDT_SEG_TYPE_CODE,
 
-		GDT_SEG_RING0_DATA	= GDT_SEG_G		| \
-					  GDT_SEG_SZ		| \
-					  GDT_SEG_RING_USE	| \
-					  GDT_SEG_RING0		| \
+		GDT_SEG_RING0_DATA	= GDT_SEG_G		|
+					  GDT_SEG_SZ		|
+					  GDT_SEG_RING_USE	|
+					  GDT_SEG_RING0		|
 					  GDT_SEG_TYPE_DATA,
 
-		GDT_SEG_RING3_CODE	= GDT_SEG_G		| \
-					  GDT_SEG_SZ		| \
-					  GDT_SEG_RING_USE	| \
-					  GDT_SEG_RING3		| \
+		GDT_SEG_RING3_CODE	= GDT_SEG_G		|
+					  GDT_SEG_SZ		|
+					  GDT_SEG_RING_USE	|
+					  GDT_SEG_RING3		|
 					  GDT_SEG_TYPE_CODE,
 
-		GDT_SEG_RING3_DATA	= GDT_SEG_G		| \
-					  GDT_SEG_SZ		| \
-					  GDT_SEG_RING_USE	| \
-					  GDT_SEG_RING3		| \
+		GDT_SEG_RING3_DATA	= GDT_SEG_G		|
+					  GDT_SEG_SZ		|
+					  GDT_SEG_RING_USE	|
+					  GDT_SEG_RING3		|
 					  GDT_SEG_TYPE_DATA,
 
 	};
@@ -132,7 +132,13 @@ namespace arch {
 
 
 	// Set GDT entry
-	gdtEntry_t	gdtSetEntry(const dword_t&, const dword_t&, const gdtFlags_t&);
+	constexpr gdtEntry_t	gdtSetEntry(const dword_t&, const dword_t&, const gdtFlags_t&);
+
+	// Calculate GDT size
+	constexpr dword_t	gdtCalcTableSize(const dword_t&);
+
+	// Setup GDT
+	void			gdtSetup();
 
 
 #ifdef	__cplusplus
@@ -154,13 +160,6 @@ namespace arch {
 	}
 
 #endif	// __cplusplus
-
-
-	// Calculate GDT size
-	dword_t		gdtCalcTableSize(const dword_t&);
-
-	// Setup GDT
-	void		gdtSetup();
 
 
 }	// namespace arch

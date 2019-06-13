@@ -3,7 +3,7 @@
 //	Interrupt descriptor table low-level operations
 //
 //	File:	idt.hpp
-//	Date:	06 Jun 2019
+//	Date:	13 Jun 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -58,7 +58,13 @@ namespace arch {
 
 
 	// Create IDT entry
-	idtEntry_t	idtSetEntry(const idtISRPtr_t, const word_t&, const byte_t&);
+	constexpr idtEntry_t	idtSetEntry(const idtISRPtr_t, const word_t&, const byte_t&);
+
+	// Calculate IDT size
+	constexpr dword_t	idtCalcTableSize(const dword_t&);
+
+	// Setup IDT
+	void			idtSetup();
 
 
 #ifdef	__cplusplus
@@ -77,13 +83,6 @@ namespace arch {
 	}
 
 #endif	// __cplusplus
-
-
-	// Calculate IDT size
-	dword_t		idtCalcTableSize(const dword_t&);
-
-	// Setup IDT
-	void		idtSetup();
 
 
 }	// namespace arch
