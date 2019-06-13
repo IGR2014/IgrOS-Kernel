@@ -3,7 +3,7 @@
 #	IRQ low-level handlers
 #
 #	File:	interrupts.s
-#	Date:	06 Jun 2019
+#	Date:	13 Jun 2019
 #
 #	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.
@@ -15,6 +15,7 @@
 
 .section .text
 .balign	8
+
 .global irqHandler0			# 0
 .global irqHandler1			# 1
 .global irqHandler2			# 2
@@ -31,9 +32,11 @@
 .global irqHandlerD			# 13
 .global irqHandlerE			# 14
 .global irqHandlerF			# 15
+
+.extern	irqHandler			# Extenral main interrupts handler
+
 .global irqEnable			# Interrupts
 .global irqDisable			# No interrupts
-.extern	irqHandler			# Extenral main interrupts handler
 
 
 # IRQ 0

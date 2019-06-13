@@ -15,8 +15,10 @@
 
 .section .text
 .balign	8
+
 .global	idtLoad				# Load IDT
 
+# Load IDT
 idtLoad:
 	cld				# Clear direction flag
 	lidt	(%rdi)			# Load IDT from pointer
