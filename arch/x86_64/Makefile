@@ -1,9 +1,9 @@
 ################################################################
 #
-#	x86_x64 folder Make script
+#	x86_64 folder Make script
 #
 #	File:	Makefile
-#	Date:	06 Jun 2019
+#	Date:	12 Jun 2019
 #
 #	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.

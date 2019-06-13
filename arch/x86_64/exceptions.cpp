@@ -3,7 +3,7 @@
 //	Exceptions low-level operations
 //
 //	File:	exceptions.cpp
-//	Date:	06 Jun 2019
+//	Date:	13 Jun 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -82,9 +82,9 @@ namespace arch {
 
 			// Manage exception
 			vmemWrite("\r\nEXCEPTION:\t-> ");
-			klib::kitoa(text, 64, static_cast<dword_t>(regs->number));
+			klib::kitoa(text, 64, dword_t(regs->number));
 			vmemWrite(text);
-			vmemWrite("\r\n");
+			vmemWrite("\r\n\r\n");
 			exception(regs);
 			vmemWrite("\r\n");
 
@@ -92,7 +92,7 @@ namespace arch {
 
 			// Exception handler is not installed
 			vmemWrite("\r\nEXCEPTION:\t-> ");
-			klib::kitoa(text, 64, static_cast<dword_t>(regs->number));
+			klib::kitoa(text, 64, dword_t(regs->number));
 			vmemWrite(text);
 			vmemWrite("\r\n\t\t");
 			vmemWrite(exName[regs->number]);
