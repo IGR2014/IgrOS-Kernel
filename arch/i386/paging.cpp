@@ -3,7 +3,7 @@
 //	Memory paging for x86
 //
 //	File:	paging.cpp
-//	Date:	12 Jun 2019
+//	Date:	13 Jun 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -158,7 +158,7 @@ namespace arch {
 		vmemWrite("WHEN:\t\tattempting to ");
 		vmemWrite(((regs->param & 0x02) == 0) ? "READ" : "WRITE");
 		vmemWrite("\r\nADDRESS:\t0x");
-		klib::kitoa(text, 64, dword_t(outCR2()), klib::base::HEX);
+		klib::kitoa(text, 64, outCR2(), klib::base::HEX);
 		vmemWrite(text);
 		vmemWrite("\r\nWHICH IS:\tNON-");
 		vmemWrite(((regs->param & 0x01) == 0) ? "PRESENT\r\n" : "PRIVILEGED\r\n");

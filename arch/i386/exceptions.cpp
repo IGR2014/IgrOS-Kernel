@@ -3,7 +3,7 @@
 //	Exceptions low-level operations
 //
 //	File:	exceptions.cpp
-//	Date:	12 Jun 2019
+//	Date:	13 Jun 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -15,6 +15,8 @@
 #include <arch/exceptions.hpp>
 
 #include <drivers/vmem.hpp>
+
+#include <klib/kprint.hpp>
 
 
 // Arch-dependent code zone
@@ -73,13 +75,16 @@ namespace arch {
 		// Acquire irq handler from list
 		exHandler_t exception = exList[regs->number];
 
+		sbyte_t text[64];
+
 		// Check if exception handler installed
 		if (exception) {
 
 			// Manage exception
 			vmemWrite("\r\nEXCEPTION:\t-> ");
-			vmemWrite(exName[regs->number]);
-			vmemWrite("\r\n");
+			klib::kitoa(text, 64, dword_t(regs->number));
+			vmemWrite(text);
+			vmemWrite("\r\n\r\n");
 			exception(regs);
 			vmemWrite("\r\n");
 
@@ -87,6 +92,9 @@ namespace arch {
 
 			// Exception handler is not installed
 			vmemWrite("\r\nEXCEPTION:\t-> ");
+			klib::kitoa(text, 64, dword_t(regs->number));
+			vmemWrite(text);
+			vmemWrite("\r\n\t\t");
 			vmemWrite(exName[regs->number]);
 			vmemWrite(" unhandled!\r\n");
 			vmemWrite("CPU halted.\r\n");

@@ -3,7 +3,7 @@
 #	IRQ low-level handlers
 #
 #	File:	interrupts.s
-#	Date:	18 Jun. 2018
+#	Date:	13 Jun 2019
 #
 #	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.
@@ -15,6 +15,7 @@
 
 .section .text
 .balign	4
+
 .global irqHandler0			# 0
 .global irqHandler1			# 1
 .global irqHandler2			# 2
@@ -31,7 +32,9 @@
 .global irqHandlerD			# 13
 .global irqHandlerE			# 14
 .global irqHandlerF			# 15
+
 .global irqEnable			# Interrupts
+
 .global irqDisable			# No interrupts
 .extern	irqHandler			# Extenral main interrupts handler
 
@@ -175,6 +178,7 @@ interruptRoutine:
 	popal				# Restore "all" registers
 
 	addl	$0x08, %esp		# Stack cleanup
+
 	iretl				# Done here
 
 # Enable interrupts

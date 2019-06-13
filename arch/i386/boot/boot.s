@@ -26,40 +26,43 @@
 
 .section .boot
 .balign	4
+
 .global	kernelStart					# Kernel main function
+
 .extern	kmain						# Extern kernel C-function
 
 # Kernel starts here
 kernelStart:
 	cli						# Turn off interrupts
 
-	# Set new page directory (phys address)
-	movl	$bootPageDirectory - KERNEL_VMA, %ecx	# Load temporary boot page directory phys address
-	movl	%ecx, %cr3				# Set new CR3 value
-
-	# Enable Page Size Extension (4 Mb pages)
-	movl	%cr4, %ecx				# Get CR4 value
-	orl	$PAGE_BIT_PSE, %ecx			# Set PSE bit
-	movl	%ecx, %cr4				# Set new CR4 value
-
-	# Enable paging
-	movl	%cr0, %ecx				# Get CR0 value
-	orl	$PAGE_BIT_PE, %ecx			# Set PE bit
-	movl	%ecx, %cr0				# Set new CR0 value
-
-	# Reload CS
-	leal	1f, %ecx				# Load new CS related address
-	jmp	*%ecx					# Long jump to it
-1:
-	# Unmap first entry (disable identity mapping)
-	movl	$bootPageDirectory, PAGE_ENTRY_INVALID	# Make identity entry invalid
-	movl	%cr3, %ecx				# Reset page directory
-	movl	%ecx, %cr3				# ---//---
-
 	# Start kernel code
-	movl	$stackTop, %esp				# Set stack
+	leal	stackTop - KERNEL_VMA, %esp		# Set stack
 	pushl	%eax					# Multiboot magic value
 	pushl	%ebx					# Multiboot header address
+
+	# Set new page directory (phys address)
+	leal	bootPageDirectory - KERNEL_VMA, %eax	# Load temporary boot page directory phys address
+	movl	%eax, %cr3				# Set new CR3 value
+
+	# Enable Page Size Extension (4 Mb pages)
+	movl	%cr4, %eax				# Get CR4 value
+	orl	$PAGE_BIT_PSE, %eax			# Set PSE bit
+	movl	%eax, %cr4				# Set new CR4 value
+
+	# Enable paging
+	movl	%cr0, %eax				# Get CR0 value
+	orl	$PAGE_BIT_PE, %eax			# Set PE bit
+	movl	%eax, %cr0				# Set new CR0 value
+
+	# Reload CS
+	leal	1f, %eax				# Load new CS related address
+	jmp	*%eax					# Long jump to it
+
+1:
+	# Adjust stack to higher half
+	addl	$KERNEL_VMA, %esp			# Add virtual memory offset to ESP
+
+	# Go to C++
 	calll	kmain					# Call main func
 
 	# Hang on fail

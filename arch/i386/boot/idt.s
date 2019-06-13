@@ -15,12 +15,12 @@
 
 .section .text
 .balign	4
-.global	idtLoad				# Load IDT
 
+.global	idtLoad				# Load IDT
 
 # Load IDT
 idtLoad:
 	movl	4(%esp), %eax		# Get pointer from stack
 	lidt	(%eax)			# Load IDT from pointer
-	ret				# Done here
+	retl				# Done here
 

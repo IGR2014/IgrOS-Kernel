@@ -3,7 +3,7 @@
 #	Global descriptor table low-level operations
 #
 #	File:	gdt.s
-#	Date:	12 Jun 2019
+#	Date:	13 Jun 2019
 #
 #	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.
@@ -19,6 +19,7 @@
 
 .section .text
 .balign 4
+
 .global	gdtResetSegments			# Reset segments
 .global	gdtLoad					# Load GDT
 
