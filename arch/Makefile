@@ -3,7 +3,7 @@
 #	arch folder Make script
 #
 #	File:	Makefile
-#	Date:	06 Jun 2019
+#	Date:	13 Jun 2019
 #
 #	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.
@@ -15,7 +15,6 @@ export	IGROS_DIR_BUILD		= $(CURDIR)/../build
 export	IGROS_DIR_RELEASE	= $(CURDIR)/../release
 
 export	IGROS_ARCH		?= i386
-#x86_64
 
 export	CXX			?= g++
 
@@ -29,9 +28,9 @@ export	CXXFLAGS		= -m32					\
 				  -ffreestanding			\
 				  -fno-exceptions			\
 				  -fno-rtti				\
+				  -nostdlib				\
 				  -fno-pic				\
 				  -fno-pie				\
-				  -nostdlib				\
 				  -Os					\
 				  -s					\
 				  -mno-red-zone				\
@@ -39,7 +38,8 @@ export	CXXFLAGS		= -m32					\
 				  -mno-sse				\
 				  -mno-sse2				\
 				  -mno-sse3				\
-				  -mno-mmx
+				  -mno-mmx				#\
+				  -mcmodel=large
 
 export	CXXINCLUDE		= -I $(CURDIR)/$(IGROS_ARCH)/include/	\
 				  -I $(CURDIR)/../include/
