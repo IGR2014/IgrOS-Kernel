@@ -3,7 +3,7 @@
 //	Memory paging for x86
 //
 //	File:	paging.cpp
-//	Date:	06 Jun 2019
+//	Date:	13 Jun 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -49,47 +49,6 @@ namespace arch {
 #endif	// __cplusplus
 
 
-	// Setup page directory
-	void pagingSetupPD(const pointer_t pageDirAddr) {
-
-		// Write page directory address to CR3
-		inCR3(reinterpret_cast<quad_t>(pageDirAddr));
-
-	}
-
-	// Flush page directory
-	void pagingFlushPD() {
-
-		// Get current value of CR3
-		quad_t cr3 = outCR3();
-		// Rewrite it again to CR3
-		inCR3(cr3);
-
-	}
-
-
-	// Enable paging
-	void pagingEnable() {
-
-		// Get current value of CR0
-		quad_t cr0 = outCR0();
-		// Set bit 31 to "1"
-		cr0 |= (1 << 31);
-		// Rewrite CR0 with new value
-		inCR0(cr0);
-
-	}
-
-
-	// Get address which is caused Page Fault Exception
-	quad_t pagingGetFaultAddres() {
-
-		// Simply read CR2 value inside ISR
-		return outCR2();
-
-	}
-
-
 	// Setup paging
 	void pagingSetup() {
 
@@ -102,56 +61,63 @@ namespace arch {
 		}
 
 		// Map first 1 GB of physical RAM to first 1 GB of virtual RAM
-		pageMapLevel4Table[0]	 = quad_t(pageDirectoryPointer);
+		pageMapLevel4Table[0]		 = quad_t(pageDirectoryPointer) & 0x7FFFFFFF;
 		// Page marked as present and writable
-		pageMapLevel4Table[0]	|= quad_t(pagingFlags_t::WRITABLE | pagingFlags_t::PRESENT);
+		pageMapLevel4Table[0]		|= quad_t(pagingFlags_t::WRITABLE | pagingFlags_t::PRESENT);
 
 		// Map first 1 GB of physical RAM to first 1 GB of virtual RAM
-		pageDirectoryPointer[0]	 = quad_t(pageDirectory);
+		pageMapLevel4Table[511]		 = quad_t(pageDirectoryPointer) & 0x7FFFFFFF;
 		// Page marked as present and writable
-		pageDirectoryPointer[0]	|= quad_t(pagingFlags_t::WRITABLE | pagingFlags_t::PRESENT);
+		pageMapLevel4Table[511]		|= quad_t(pagingFlags_t::WRITABLE | pagingFlags_t::PRESENT);
 
-		// Map all pages of first 1 GB to first page table
-		// Note 2 MB pages!
-		for (sdword_t j = 0; j < 512; ++j) {
+		// Other page directories are unused
+		for (dword_t j = 0; j < 512; ++j) {
 
-			pageDirectory[j]	 = (j << 21);
-			// Page marked as present and writable
-			pageDirectory[j]	|= quad_t(pagingFlags_t::WRITABLE | pagingFlags_t::PRESENT | pagingFlags_t::HUGE);
+			// Pages marked as clear
+			pageDirectoryPointer[j] = quad_t(pagingFlags_t::CLEAR);
 
 		}
 
-		// Also map first 4MB of physical RAM to first 4MB after 3GB in virtual memory
-		// (This should be useful for higher-half kernel)
-		//pageDirectory[768]	= reinterpret_cast<quad_t>(pageTable);
-		//pagingSetPDFlags(&pageDirectory[768],	pagingFlags_t::PAGE_WRITABLE | pagingFlags_t::PAGE_PRESENT);
+		// Map first 1 GB of physical RAM to first 1 GB of virtual RAM
+		pageDirectoryPointer[0]		 = quad_t(pageDirectory) & 0x7FFFFFFF;
+		// Page marked as present and writable
+		pageDirectoryPointer[0]		|= quad_t(pagingFlags_t::WRITABLE | pagingFlags_t::PRESENT);
 
-		// Map page table itself to the last page of virtual memory
-		//pageMapLevel4Table[511]	= reinterpret_cast<quad_t>(pageTable);
-		//pagingSetPDFlags(&pageMapLevel4Table[511],	pagingFlags_t::PAGE_WRITABLE | pagingFlags_t::PAGE_PRESENT);
+		// Map first 1 GB of physical RAM to first 1 GB of virtual RAM
+		pageDirectoryPointer[510]	 = quad_t(pageDirectory) & 0x7FFFFFFF;
+		// Page marked as present and writable
+		pageDirectoryPointer[510]	|= quad_t(pagingFlags_t::WRITABLE | pagingFlags_t::PRESENT);
+
+		// Map all pages of first 1 GB to first page table
+		// Note 2 MB pages!
+		for (sdword_t k = 0; k < 2; ++k) {
+
+			pageDirectory[k]	 = (k << 21);
+			// Page marked as present and writable
+			pageDirectory[k]	|= quad_t(pagingFlags_t::HUGE | pagingFlags_t::WRITABLE | pagingFlags_t::PRESENT);
+
+		}
 
 		// Install exception handler for page fault
 		exHandlerInstall(PAGE_FAULT, pagingFaultExceptionHandler);
 
 		// Setup page directory
-		pagingSetupPD(pageMapLevel4Table);
+		// PD address bits ([0 .. 63] in cr3)
+		inCR3(quad_t(pageMapLevel4Table) & 0x7FFFFFFF);
 
-		// 2 MB paging
-		// Get current value of CR4
-		quad_t cr4 = outCR4();
-		// Set bit 5 to "1"
-		cr4 |= (1 << 5);
-		// Rewrite CR4 with new value
-		inCR4(cr4);
+		// Enable Page Size Extension
+		// Set PAE bit ([5] in cr4)
+		inCR4(outCR4() | 0x00000020);
 
 		// Long mode paging
-		asm volatile("movl $0xC0000080, %ecx\n"
+		asm volatile("movq $0xC0000080, %rcx\n"
 			     "rdmsr\n"
-			     "orl 1<<8, %eax\n"
+			     "orq $0x00000100, %rax\n"
 			     "wrmsr\n");
 
 		// Enable paging
-		pagingEnable();
+		// Set PE bit ([31] in cr0)
+		inCR0(outCR0() | 0x80000000);
 
 	}
 
@@ -165,8 +131,6 @@ namespace arch {
 		quad_t pdpEntryIndex	= (quad_t(virtAddr) & 0x7FC0000000) >> 30;
 		// Page directory table entry index from virtual address
 		quad_t pdEntryIndex	= (quad_t(virtAddr) & 0x3FE00000) >> 21;
-		// Page table entry index from virtual address
-		//quad_t ptEntryIndex	= (quad_t(virtAddr) & 0x1FF000) >> 12;
 
 		// Physical pointer to page table
 		quad_t		pageDirectoryPtr	= pageMapLevel4Table[pml4EntryIndex];
@@ -232,7 +196,7 @@ namespace arch {
 		vmemWrite("WHEN:\t\tattempting to ");
 		vmemWrite(((regs->param & 0x02) == 0) ? "READ" : "WRITE");
 		vmemWrite("\r\nADDRESS:\t0x");
-		klib::kitoa(text, 64, static_cast<dword_t>(pagingGetFaultAddres()), klib::base::HEX);
+		klib::kitoa(text, 64, outCR2(), klib::base::HEX);
 		vmemWrite(text);
 		vmemWrite("\r\nWHICH IS:\tNON-");
 		vmemWrite(((regs->param & 0x01) == 0) ? "PRESENT\r\n" : "PRIVILEGED\r\n");

@@ -66,7 +66,7 @@ namespace arch {
 
 			// Print message about unhandled interrupt
 			vmemWrite("\r\nIRQ\t\t-> #");
-			klib::kitoa(text, 64, static_cast<dword_t>(regs->number - 32));
+			klib::kitoa(text, 64, dword_t(regs->number - 32));
 			vmemWrite(text);
 			vmemWrite("\r\nSTATE:\t\tunhandled!\r\n");
 		
@@ -107,10 +107,10 @@ namespace arch {
 	void irqMask(const irqNumber_t irq) {
 
 		// Chech if it's hardware interrupt
-		if (static_cast<dword_t>(irq) < 16) {
+		if (dword_t(irq) < 16) {
 
 			// Set interrupts mask
-			irqMaskSet(irqMaskGet() & ~(1 << static_cast<dword_t>(irq)));
+			irqMaskSet(irqMaskGet() & ~(1 << dword_t(irq)));
 
 		}
 
@@ -120,9 +120,9 @@ namespace arch {
 	void irqMaskSet(const word_t mask) {
 
 		// Set Master controller mask
-		outPort8(PIC_MASTER_DATA, static_cast<byte_t>(mask & 0xFF));
+		outPort8(PIC_MASTER_DATA, byte_t(mask & 0xFF));
 		// Set Slave controller mask
-		outPort8(PIC_SLAVE_DATA, static_cast<byte_t>((mask >> 8) & 0xFF));
+		outPort8(PIC_SLAVE_DATA, byte_t((mask >> 8) & 0xFF));
 
 	}
 
@@ -130,7 +130,7 @@ namespace arch {
 	word_t irqMaskGet() {
 
 		// Read slave PIC current mask
-		word_t mask	= static_cast<word_t>(inPort8(PIC_SLAVE_DATA)) << 8;
+		word_t mask	= word_t(inPort8(PIC_SLAVE_DATA)) << 8;
 		// Read master PIC current mask
 		mask		|= inPort8(PIC_MASTER_DATA);
 
@@ -142,7 +142,7 @@ namespace arch {
 	void irqHandlerInstall(irqNumber_t irqNumber, irqHandler_t handler) {
 
 		// Set handler to ISR list
-		isrList[static_cast<dword_t>(irqNumber)] = handler;
+		isrList[dword_t(irqNumber)] = handler;
 
 	}
 
@@ -150,7 +150,7 @@ namespace arch {
 	void irqHandlerUninstall(irqNumber_t irqNumber) {
 
 		// Set nullptr as a handler to ISR list
-		isrList[static_cast<dword_t>(irqNumber)] = nullptr;
+		isrList[dword_t(irqNumber)] = nullptr;
 
 	}
 

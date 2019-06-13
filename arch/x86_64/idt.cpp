@@ -3,7 +3,7 @@
 //	Interrupt descriptor table low-level operations
 //
 //	File:	idt.cpp
-//	Date:	06 Jun 2019
+//	Date:	13 Jun 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -26,24 +26,24 @@ namespace arch {
 
 
 	// Create IDT entry
-	idtEntry_t idtSetEntry(const idtISRPtr_t offset, const word_t &selector, const byte_t &type) {
+	constexpr idtEntry_t idtSetEntry(const idtISRPtr_t offset, const word_t &selector, const byte_t &type) {
 
-		idtEntry_t entry;	
+		return	idtEntry_t {
 
-		entry.offsetLow		= quad_t(offset) & 0xFFFF;
-		entry.selector		= selector;
-		entry.reserved		= 0x00;
-		entry.type		= type;
-		entry.offsetMiddle	= (quad_t(offset) & 0xFFFF0000) >> 16;
-		entry.offsetHigh	= (quad_t(offset) & 0xFFFFFFFF00000000) >> 32;
-		entry.reserved2		= 0x00000000;
+				.offsetLow	= quad_t(offset) & 0xFFFF,
+				.selector	= selector,
+				.ist		= 0x00,
+				.type		= type,
+				.offsetMiddle	= (quad_t(offset) & 0xFFFF0000) >> 16,
+				.offsetHigh	= (quad_t(offset) & 0xFFFFFFFF00000000) >> 32,
+				.reserved2	= 0x00000000
 
-		return entry;
+			};
 
 	}
 
 	// Calculate IDT size
-	dword_t idtCalcTableSize(const dword_t &numOfEntries) {
+	constexpr dword_t idtCalcTableSize(const dword_t &numOfEntries) {
 
 		return (numOfEntries * sizeof(idtEntry_t)) - 1;
 

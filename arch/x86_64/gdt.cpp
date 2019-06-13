@@ -3,7 +3,7 @@
 //	Global descriptor table low-level operations
 //
 //	File:	boot.cpp
-//	Date:	06 Jun 2019
+//	Date:	13 Jun 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -25,23 +25,23 @@ namespace arch {
 
 
 	// Create GDT entry
-	gdtEntry_t gdtSetEntry(const dword_t &base, const dword_t &limit, const gdtFlags_t &flags) {
+	constexpr gdtEntry_t gdtSetEntry(const dword_t &base, const dword_t &limit, const gdtFlags_t &flags) {
 
-		gdtEntry_t entry;
+		return	gdtEntry_t {
 
-		entry.limitLow		= limit & 0xFFFF;
-		entry.baseLow		= base & 0xFFFF;
-		entry.baseMid		= (base & 0xFF0000) >> 16;
-		entry.access		= flags & gdtFlags_t(0x00FF);
-		entry.limitFlags	= ((limit & 0xF0000) >> 16) | (word_t(flags & gdtFlags_t(0x0F00)) >> 4);
-		entry.baseHigh		= (base & 0xFF000000) >> 24;
+				.limitLow	= limit & 0xFFFF,
+				.baseLow	= base & 0xFFFF,
+				.baseMid	= (base & 0xFF0000) >> 16,
+				.access		= flags & gdtFlags_t(0x00FF),
+				.limitFlags	= ((limit & 0xF0000) >> 16) | (word_t(flags & 0x0F00) >> 4),
+				.baseHigh	= (base & 0xFF000000) >> 24,
 
-		return entry;
+			};
 
 	}
 
 	// Calculate GDT size
-	dword_t gdtCalcTableSize(const dword_t &numOfEntries) {
+	constexpr dword_t gdtCalcTableSize(const dword_t &numOfEntries) {
 
 		return (numOfEntries * sizeof(gdtEntry_t)) - 1;
 
