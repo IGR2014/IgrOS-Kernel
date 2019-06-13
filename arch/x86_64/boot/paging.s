@@ -3,7 +3,7 @@
 #	Memory paging low-level operations
 #
 #	File:	paging.s
-#	Date:	06 Jun 2019
+#	Date:	12 Jun 2019
 #
 #	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.
@@ -13,9 +13,9 @@
 
 .code64
 
-
 .section .bss
 .balign	4096
+
 .global	pageMapLevel4Table
 .global	pageDirectoryPointer
 .global	pageDirectory

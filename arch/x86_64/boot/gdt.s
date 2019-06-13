@@ -3,7 +3,7 @@
 #	Global descriptor table low-level operations
 #
 #	File:	gdt.s
-#	Date:	06 Jun 2019
+#	Date:	13 Jun 2019
 #
 #	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.
@@ -11,34 +11,33 @@
 #
 
 
+.set	KERNEL_SEGMENT_DATA,	0x00		# Kernel data segment
+
+
 .code64
 
 .section .text
 .balign 8
-.global	gdtLoad				# Load GDT
 
-gdtLoad:
-	cld				# Clear direction flag
-	lgdt	(%rdi)			# Load GDT from pointer
-	movabsq	$1f, %rax
-	jmpq	*%rax
+.global	gdtResetSegments			# Reset segments
+.global	gdtLoad					# Load GDT
+
+# Reset segments
+gdtResetSegments:
+	movabsq	$1f, %rax			# Move absolute address to RAX
+	jmpq	*%rax				# Jump from RAX for CS changes to take affect
 1:
-	movw	$0x00, %ax
-	movw	%ax, %ds
-	movw	%ax, %es
-	movw	%ax, %fs
-	movw	%ax, %gs
-	movw	%ax, %ss
+	movw	$KERNEL_SEGMENT_DATA, %ax	# Set proper segment registers
+	movw	%ax, %ds			# --//--
+	movw	%ax, %es			# --//--
+	movw	%ax, %fs			# --//--
+	movw	%ax, %gs			# --//--
+	movw	%ax, %ss			# --//--
 	retq
 
-
-.section .bss
-PML4Table:
-	.skip	4096
-PDPTable:
-	.skip	4096
-PDTable:
-	.skip	4096
-PTable:
-	.skip	4096
+gdtLoad:
+	cld					# Clear direction flag
+	lgdt	(%rdi)				# Load GDT from pointer
+	callq	gdtResetSegments		# Reset segments after GDT change
+	retq
 
