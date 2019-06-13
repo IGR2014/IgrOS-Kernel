@@ -3,7 +3,7 @@
 //	Interrupt descriptor table low-level operations
 //
 //	File:	idt.hpp
-//	Date:	06 Jun 2019
+//	Date:	13 Jun 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -19,6 +19,7 @@
 #include <type_traits>
 
 #include <arch/types.hpp>
+#include <arch/taskRegs.hpp>
 
 
 // Arch-dependent code zone
@@ -40,7 +41,7 @@ namespace arch {
 
 		word_t		offsetLow;		// Offset lower part (0..15)
 		word_t		selector;		// Selectod from GDT/LDT
-		byte_t		reserved;		// Must be zero
+		byte_t		ist;			// Interrupt service table
 		byte_t		type;			// Type attributes
 		word_t		offsetMiddle;		// Offset middle part (16..31)
 		dword_t		offsetHigh;		// Offset higher part (32..63)
@@ -60,7 +61,7 @@ namespace arch {
 
 
 	// Create IDT entry
-	idtEntry_t	idtSetEntry(const idtISRPtr_t, const word_t&, const byte_t&);
+	constexpr idtEntry_t	idtSetEntry(const idtISRPtr_t, const word_t&, const byte_t&);
 
 
 #ifdef	__cplusplus
@@ -82,10 +83,10 @@ namespace arch {
 
 
 	// Calculate IDT size
-	dword_t		idtCalcTableSize(const dword_t&);
+	constexpr dword_t	idtCalcTableSize(const dword_t&);
 
 	// Setup IDT
-	void		idtSetup();
+	void			idtSetup();
 
 
 }	// namespace arch
