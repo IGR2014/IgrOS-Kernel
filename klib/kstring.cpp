@@ -3,7 +3,7 @@
 //	Kernel string functions
 //
 //	File:	string.cpp
-//	Date:	06 Jun 2019
+//	Date:	14 Jun 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -20,31 +20,43 @@ namespace klib {
 
 
 	// Calculate string length
-	dword_t kstrlen(const sbyte_t* src) {
+	std::size_t kstrlen(const sbyte_t* src) {
 
-                // String length value
-                dword_t strLength = 0;
-
-                // Calculate string length
-                while (*src++ != '\0') {};
-
-                // Return result
-                return strLength;
+                // Copy string start pointer
+                auto iter = src;
+                // Find string end pointer
+                for (;*iter != '\0'; ++iter);
+                // Return string length
+                return (iter - src);
 
         }
 
 	// Copy string from one to other
-	void kstrcpy(const sbyte_t* src, sbyte_t* dst, dword_t size) {
+	sbyte_t* kstrcpy(const sbyte_t* src, sbyte_t* dst, std::size_t size) {
 
-                // Copy string
-                while (--size > 0) {
+		// Save destination pointer
+		auto tempDst = dst;
 
-                        // Copy string byte by byte
-                        *dst++ = *src++;
+		// Check input
+		if (src == nullptr || dst == nullptr || size == 0) {
+			// Pointer to empty dst
+			// Fill with null terminator for sanity
+			return &(*tempDst = '\0');
+		}
 
-                }
+		// Copy first symbol
+		*dst = *src;
+		// Copy string
+		do {
+			// Copy string byte by byte
+			*++dst = *++src;
+		// Stop on size overflow or null terminator
+		} while (--size > 0 && *src != '\0');
 
-        }
+		// Return pointer to dst tring
+		return tempDst;
+
+	}
 
 
 }	// namespace klib

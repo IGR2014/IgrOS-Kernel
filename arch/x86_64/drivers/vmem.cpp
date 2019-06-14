@@ -3,7 +3,7 @@
 //	VGA memory low-level operations
 //
 //	File:	vmem.cpp
-//	Date:	06 Jun 2019
+//	Date:	14 Jun 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -31,7 +31,7 @@ namespace arch {
 		// Choose cursor location high register
 		outPort8(VGA_CURSOR_CONTROL, 0x0E);
 		// Write cursor position high byte
-		outPort8(VGA_CURSOR_DATA, ((position >> 8) & 0x00FF));
+		outPort8(VGA_CURSOR_DATA, ((position & 0xFF00) >> 8));
 		// Choose cursor location low register
 		outPort8(VGA_CURSOR_CONTROL, 0x0F);
 		// Write cursor position low byte
@@ -53,13 +53,10 @@ namespace arch {
 	// Get VGA memory cursor position
 	vmemCursor vmemCursorGet() {
 
-		// Position holder
-		word_t position;
-
 		// Choose cursor location high register
 		outPort8(VGA_CURSOR_CONTROL, 0x0E);
 		// Write cursor position high byte
-		position = inPort8(VGA_CURSOR_DATA);
+		word_t position = inPort8(VGA_CURSOR_DATA);
 		// Choose cursor location low register
 		outPort8(VGA_CURSOR_CONTROL, 0x0F);
 		// Write cursor position low byte
@@ -182,7 +179,7 @@ namespace arch {
 			// Calculate offset in VGA console
 			word_t pos = cursorPos.y * VIDEO_MEM_WIDTH + cursorPos.x;
 			// Clear bottom line
-			kmemset16(&vmemBase[pos], VIDEO_MEM_WIDTH, (' ' | (vmemBkgColor << 8)));
+			klib::kmemset16(&vmemBase[pos], VIDEO_MEM_WIDTH, {' ' | (vmemBkgColor << 8)});
 
 		}
 
@@ -195,7 +192,7 @@ namespace arch {
 	void vmemWrite(const sbyte_t* message) {
 
 		// Cast const pointer to pointer
-		sbyte_t* data = const_cast<sbyte_t*>(&message[0]);
+		auto data = &message[0];
 
 		// Loop through message while \0 not found
 		while (*data != '\0') {
@@ -225,7 +222,7 @@ namespace arch {
 	void vmemClear() {
 
 		// Set whole screen with whitespace with default background
-		kmemset16(vmemBase, VIDEO_MEM_SIZE, (' ' | (vmemBkgColor << 8)));
+		klib::kmemset16(vmemBase, VIDEO_MEM_SIZE, {' ' | (vmemBkgColor << 8)});
 
 	}
 

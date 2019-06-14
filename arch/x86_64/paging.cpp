@@ -133,8 +133,8 @@ namespace arch {
 		quad_t pdEntryIndex	= (quad_t(virtAddr) & 0x3FE00000) >> 21;
 
 		// Physical pointer to page table
-		quad_t		pageDirectoryPtr	= pageMapLevel4Table[pml4EntryIndex];
-		pagingFlags_t	pageFlags		= pagingFlags_t(pageDirectoryPtr);
+		quad_t	pageDirectoryPtr	= pageMapLevel4Table[pml4EntryIndex];
+		auto	pageFlags		= pagingFlags_t(pageDirectoryPtr);
 
 		// Check if page table is present or not
 		if ((pageFlags & pagingFlags_t::PRESENT) == pagingFlags_t::CLEAR) {
@@ -196,8 +196,7 @@ namespace arch {
 		vmemWrite("WHEN:\t\tattempting to ");
 		vmemWrite(((regs->param & 0x02) == 0) ? "READ" : "WRITE");
 		vmemWrite("\r\nADDRESS:\t0x");
-		klib::kitoa(text, 64, outCR2(), klib::base::HEX);
-		vmemWrite(text);
+		vmemWrite(klib::kitoa(text, 64, outCR2(), klib::base::HEX));
 		vmemWrite("\r\nWHICH IS:\tNON-");
 		vmemWrite(((regs->param & 0x01) == 0) ? "PRESENT\r\n" : "PRIVILEGED\r\n");
 		vmemWrite("\r\n");

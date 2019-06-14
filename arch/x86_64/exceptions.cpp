@@ -82,8 +82,7 @@ namespace arch {
 
 			// Manage exception
 			vmemWrite("\r\nEXCEPTION:\t-> ");
-			klib::kitoa(text, 64, dword_t(regs->number));
-			vmemWrite(text);
+			vmemWrite(klib::kitoa(text, 64, regs->number));
 			vmemWrite("\r\n\r\n");
 			exception(regs);
 			vmemWrite("\r\n");
@@ -92,8 +91,7 @@ namespace arch {
 
 			// Exception handler is not installed
 			vmemWrite("\r\nEXCEPTION:\t-> ");
-			klib::kitoa(text, 64, dword_t(regs->number));
-			vmemWrite(text);
+			vmemWrite(klib::kitoa(text, 64, regs->number));
 			vmemWrite("\r\n\t\t");
 			vmemWrite(exName[regs->number]);
 			vmemWrite(" unhandled!\r\n");

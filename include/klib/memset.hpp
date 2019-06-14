@@ -19,8 +19,8 @@
 #include <arch/types.hpp>
 
 
-// Arch-dependent code zone
-namespace arch {
+// Kernel library code zone
+namespace klib {
 
 
 #ifdef	__cplusplus
@@ -39,8 +39,9 @@ namespace arch {
 		// Set required memory with specified double word
 		static inline pointer_t	kmemset32(const pointer_t, const dword_t, const dword_t);
 
+		// TODO: implement!
 		// Set required memory with specified quad word
-		static inline pointer_t	kmemset64(const pointer_t, const dword_t, const quad_t);
+		//static inline pointer_t	kmemset64(const pointer_t, const dword_t, const quad_t);
 
 
 #ifdef	__cplusplus

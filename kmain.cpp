@@ -3,7 +3,7 @@
 //	Boot low-level main setup function
 //
 //	File:	boot.cpp
-//	Date:	13 Jun 2019
+//	Date:	14 Jun 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -52,11 +52,9 @@ extern "C" {
 			//arch::vgaConsoleWriteHex(magic);
 			arch::vmemWrite("Bad multiboot 1 bootloader magic!\r\n");
 			arch::vmemWrite("\tMAGIC:\t\t0x");
-			klib::kitoa(text, 20, magic, klib::base::HEX);
-			arch::vmemWrite(text);
+			arch::vmemWrite(klib::kitoa(text, 20, magic, klib::base::HEX));
 			arch::vmemWrite("\r\n\tADDRESS:\t0x");
-			klib::kitoa(text, 20, quad_t(multiboot), klib::base::HEX);
-			arch::vmemWrite(text);
+			arch::vmemWrite(klib::kitoa(text, 20, quad_t(multiboot), klib::base::HEX));
 
 			// Hang CPU
 			while (true) {};
@@ -66,23 +64,18 @@ extern "C" {
 		// Write "Hello World" message
 		arch::vmemWrite("Build:\t\t" __DATE__ ", " __TIME__ "\r\n");
 		arch::vmemWrite("Version:\tv");
-		klib::kitoa(text, 20, IGROS_VERSION_MAJOR);
-		arch::vmemWrite(text);
+		arch::vmemWrite(klib::kitoa(text, 20, IGROS_VERSION_MAJOR));
 		arch::vmemWrite(".");
-		klib::kitoa(text, 20, IGROS_VERSION_MINOR);
-		arch::vmemWrite(text);
+		arch::vmemWrite(klib::kitoa(text, 20, IGROS_VERSION_MINOR));
 		arch::vmemWrite(".");
-		klib::kitoa(text, 20, IGROS_VERSION_BUILD);
-		arch::vmemWrite(text);
+		arch::vmemWrite(klib::kitoa(text, 20, IGROS_VERSION_BUILD));
 		arch::vmemWrite(" (");
 		arch::vmemWrite(IGROS_VERSION_NAME);
 		arch::vmemWrite(")\r\n");
 		arch::vmemWrite("Author:\t\tIgor Baklykov (c) ");
-		klib::kitoa(text, 20, dword_t(2017));
-		arch::vmemWrite(text);
+		arch::vmemWrite(klib::kitoa(text, 20, dword_t(2017)));
 		arch::vmemWrite(" - ");
-		klib::kitoa(text, 20, dword_t(2019));
-		arch::vmemWrite(text);
+		arch::vmemWrite(klib::kitoa(text, 20, dword_t(2019)));
 		arch::vmemWrite("\r\n\r\n");
 
 		// Setup Interrupts Descriptor Table
@@ -112,11 +105,9 @@ extern "C" {
 		// Page mapping test (higher half test)
 		volatile word_t* ptr = reinterpret_cast<word_t*>(0xC00B8006);
 		arch::vmemWrite("0x");
-		klib::kitoa(text, 20, dword_t(ptr), klib::base::HEX);
-		arch::vmemWrite(text);
+		arch::vmemWrite(klib::kitoa(text, 20, dword_t(ptr), klib::base::HEX));
 		arch::vmemWrite(" = 0x");
-		klib::kitoa(text, 20, dword_t(arch::pagingVirtToPhys(pointer_t(ptr))), klib::base::HEX);
-		arch::vmemWrite(text);
+		arch::vmemWrite(klib::kitoa(text, 20, dword_t(arch::pagingVirtToPhys(pointer_t(ptr))), klib::base::HEX));
 		arch::vmemWrite("\r\n\r\n");
 		// Rewrite 'IgrOS' text 'O' and 'S' green symbols with white ones
 		*ptr = 0x0700 | 'O';
@@ -126,12 +117,10 @@ extern "C" {
 
 		/*
 		// Numbers print test
-		klib::kitoa(text, 20, dword_t(0x7FFFFFFF), klib::base::HEX);
 		arch::vmemWrite("0x");
-		arch::vmemWrite(text);
+		arch::vmemWrite(klib::kitoa(text, 20, dword_t(0x7FFFFFFF), klib::base::HEX));
 		arch::vmemWrite(" = ");
-		klib::kitoa(text, 20, dword_t(0x7FFFFFFF), klib::base::DEC);
-		arch::vmemWrite(text);
+		arch::vmemWrite(klib::kitoa(text, 20, dword_t(0x7FFFFFFF)));
 		arch::vmemWrite("\r\n");
 		*/
 
