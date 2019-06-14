@@ -3,7 +3,7 @@
 //	Keyboard generic handling
 //
 //	File:	keyboard.cpp
-//	Date:	06 May 2019
+//	Date:	14 Jun 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -50,8 +50,7 @@ namespace arch {
 			sbyte_t text[10];
 
 			vmemWrite("Key CODE:\t");
-			klib::kitoa(text, 10, static_cast<dword_t>(keyCode & 0x7F), klib::base::HEX);
-			vmemWrite(text);
+			vmemWrite(klib::kitoa(text, 10, keyCode & 0x7F, klib::base::HEX));
 			vmemWrite("\r\n\r\n");
 
 		}

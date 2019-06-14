@@ -3,7 +3,7 @@
 //	Programmable interrupt timer
 //
 //	File:	pit.cpp
-//	Date:	06 Jun 2019
+//	Date:	14 Jun 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -50,8 +50,7 @@ namespace arch {
 		sbyte_t text[10];
 
 		vmemWrite("REAL frequency set to: ");
-		klib::kitoa(text, 10, static_cast<dword_t>(PIT_FREQUENCY), klib::base::DEC);
-		vmemWrite(text);
+		vmemWrite(klib::kitoa(text, 10, PIT_FREQUENCY));
 		vmemWrite(" Hz\r\n");
 
 		// Tell pit we want to change divisor for channel 0
@@ -59,7 +58,7 @@ namespace arch {
 
 		// Set divisor (LOW first, then HIGH)
 		outPort8(PIT_CHANNEL_0,	divisor & 0xFF);
-		outPort8(PIT_CHANNEL_0,	(divisor >> 8) & 0xFF);
+		outPort8(PIT_CHANNEL_0,	(divisor & 0xFF00) >> 8);
 
         }
 
@@ -71,11 +70,10 @@ namespace arch {
 		outPort8(PIT_CONTROL, 0x00);
 
 		// Get number of elapsed ticks since last IRQ
-		byte_t	lowByte		= inPort8(PIT_CHANNEL_0);
-		byte_t	highByte	= inPort8(PIT_CHANNEL_0);
-
+		byte_t lowByte	= inPort8(PIT_CHANNEL_0);
+		byte_t highByte	= inPort8(PIT_CHANNEL_0);
 		// Total elapsed ticks value
-		word_t elapsedSinceIRQ	= (highByte << 8) | lowByte;
+		word_t elapsedSinceIRQ = (highByte << 8) | lowByte;
 
 		// Return full expired ticks count
 		return PIT_TICKS * PIT_DIVISOR + elapsedSinceIRQ;
@@ -99,13 +97,13 @@ namespace arch {
 			vmemWrite("IRQ\t\t-> PIT\r\n");
 			vmemWrite("\t100 TICKS (~1 SECOND) EXPIRED\r\n");
 			vmemWrite("\t");
-			//vgaConsoleWriteDec(hours % 24);
+			vmemWrite(klib::kitoa(text, 10, hours % 24));
 			vmemWrite(":");
-			//vgaConsoleWriteDec(minutes % 60);
+			vmemWrite(klib::kitoa(text, 10, minutes % 60));
 			vmemWrite(":");
-			//vgaConsoleWriteDec(seconds % 60);
+			vmemWrite(klib::kitoa(text, 10, seconds % 60));
 			vmemWrite(".");
-			//vgaConsoleWriteDec(nanoseconds);
+			vmemWrite(klib::kitoa(text, 10, nanoseconds));
 			vmemWrite("\r\n\r\n");
 */
 

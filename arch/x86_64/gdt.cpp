@@ -3,7 +3,7 @@
 //	Global descriptor table low-level operations
 //
 //	File:	boot.cpp
-//	Date:	13 Jun 2019
+//	Date:	14 Jun 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.

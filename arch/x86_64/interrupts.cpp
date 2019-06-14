@@ -3,7 +3,7 @@
 //	Interrupts low-level operations
 //
 //	File:	interupts.cpp
-//	Date:	06 Jun 2019
+//	Date:	14 Jun 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -66,8 +66,7 @@ namespace arch {
 
 			// Print message about unhandled interrupt
 			vmemWrite("\r\nIRQ\t\t-> #");
-			klib::kitoa(text, 64, dword_t(regs->number - 32));
-			vmemWrite(text);
+			vmemWrite(klib::kitoa(text, 64, regs->number - 32));
 			vmemWrite("\r\nSTATE:\t\tunhandled!\r\n");
 		
 		}
@@ -122,7 +121,7 @@ namespace arch {
 		// Set Master controller mask
 		outPort8(PIC_MASTER_DATA, byte_t(mask & 0xFF));
 		// Set Slave controller mask
-		outPort8(PIC_SLAVE_DATA, byte_t((mask >> 8) & 0xFF));
+		outPort8(PIC_SLAVE_DATA, byte_t((mask & 0xFF00) >> 8));
 
 	}
 

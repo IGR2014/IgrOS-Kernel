@@ -3,7 +3,7 @@
 //	Kernel string functions
 //
 //	File:	string.hpp
-//	Date:	22 May 2019
+//	Date:	14 Jun 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -16,6 +16,8 @@
 #define IGROS_KLIB_KERNEL_STRING_HPP
 
 
+#include <cstdint>
+
 #include <arch/types.hpp>
 
 
@@ -24,10 +26,10 @@ namespace klib {
 
 
 	// Calculate string length
-	dword_t	kstrlen(const sbyte_t* src);
+	std::size_t	kstrlen(const sbyte_t* src);
 
 	// Copy string from one to other
-	void	kstrcpy(const sbyte_t* src, sbyte_t* dst, dword_t size);
+	sbyte_t*	kstrcpy(const sbyte_t* src, sbyte_t* dst, std::size_t size);
 
 
 }	// namespace arch
