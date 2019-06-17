@@ -27,9 +27,10 @@ namespace klib {
 
 	// Calculate string length
 	std::size_t	kstrlen(const sbyte_t* src);
-
 	// Copy string from one to other
 	sbyte_t*	kstrcpy(const sbyte_t* src, sbyte_t* dst, std::size_t size);
+	// Compare strings
+	sdword_t	kstrcmp(const sbyte_t* src1, const sbyte_t* src2, std::size_t size);
 
 
 }	// namespace arch
