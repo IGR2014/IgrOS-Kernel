@@ -25,7 +25,7 @@ namespace klib {
                 // Copy string start pointer
                 auto iter = src;
                 // Find string end pointer
-                for (;*iter != '\0'; ++iter);
+                for (;*iter != '\0', src != nullptr; ++iter);
                 // Return string length
                 return (iter - src);
 
@@ -37,7 +37,7 @@ namespace klib {
 		// Save destination pointer
 		auto tempDst = dst;
 
-		// Check input
+		// Check src, dst pointers and size
 		if (src == nullptr || dst == nullptr || size == 0) {
 			// Pointer to empty dst
 			// Fill with null terminator for sanity
@@ -55,6 +55,22 @@ namespace klib {
 
 		// Return pointer to dst tring
 		return tempDst;
+
+	}
+
+	// Compare strings
+	sdword_t kstrcmp(const sbyte_t* src1, const sbyte_t* src2, std::size_t size) {
+
+		// Check src1 and src2 pointers
+		if (src1 == nullptr || src2 == nullptr || size == 0) {
+			// Handle wrong input
+			return ((src1 == nullptr) ? ((src2 == nullptr) ? 0 : -1) : 1);
+		}
+
+		// Compare string symbol by symbol
+		for (;--size > 0 && *src1 != '\0' && *src1 == *src2; ++src1, ++src2);
+		// Return string difference
+		return byte_t(*src1) - byte_t(*src2);
 
 	}
 
