@@ -3,7 +3,7 @@
 #	x86_64 folder Make script
 #
 #	File:	Makefile
-#	Date:	12 Jun 2019
+#	Date:	18 Jun 2019
 #
 #	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.
@@ -27,6 +27,7 @@ OBJ		= $(IGROS_DIR_TARGET_BUILD)/boot/multiboot.o	\
 		  $(IGROS_DIR_TARGET_BUILD)/boot/interrupts.o	\
 		  $(IGROS_DIR_TARGET_BUILD)/boot/paging.o	\
 		  $(IGROS_DIR_TARGET_BUILD)/boot/cr.o		\
+		  $(IGROS_DIR_TARGET_BUILD)/boot/msr.o		\
 		  $(IGROS_DIR_TARGET_BUILD)/boot/longMode.o	\
 		  $(IGROS_DIR_TARGET_BUILD)/klib/memset.o	\
 		  $(IGROS_DIR_TARGET_BUILD)/../klib/kstring.o	\

@@ -3,7 +3,7 @@
 //	Memory paging for x86
 //
 //	File:	paging.cpp
-//	Date:	13 Jun 2019
+//	Date:	18 Jun 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -11,6 +11,7 @@
 //
 
 
+#include <arch/msr.hpp>
 #include <arch/cr.hpp>
 #include <arch/exceptions.hpp>
 #include <arch/paging.hpp>
@@ -104,20 +105,6 @@ namespace arch {
 		// Setup page directory
 		// PD address bits ([0 .. 63] in cr3)
 		inCR3(quad_t(pageMapLevel4Table) & 0x7FFFFFFF);
-
-		// Enable Page Size Extension
-		// Set PAE bit ([5] in cr4)
-		inCR4(outCR4() | 0x00000020);
-
-		// Long mode paging
-		asm volatile("movq $0xC0000080, %rcx\n"
-			     "rdmsr\n"
-			     "orq $0x00000100, %rax\n"
-			     "wrmsr\n");
-
-		// Enable paging
-		// Set PE bit ([31] in cr0)
-		inCR0(outCR0() | 0x80000000);
 
 	}
 
