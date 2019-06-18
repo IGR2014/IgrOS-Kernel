@@ -3,7 +3,7 @@
 #	CR0-CR4 in/out operations
 #
 #	File:	cr.s
-#	Date:	06 Jun 2019
+#	Date:	18 Jun 2019
 #
 #	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.
@@ -15,6 +15,7 @@
 
 .section .text
 .balign 8
+
 .global inCR0			# Write CR0 register
 .global inCR3			# Write CR3 register
 .global inCR4			# Write CR4 register
