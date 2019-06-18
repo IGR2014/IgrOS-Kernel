@@ -3,7 +3,7 @@
 //	Boot low-level main setup function
 //
 //	File:	boot.cpp
-//	Date:	14 Jun 2019
+//	Date:	18 Jun 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -46,13 +46,17 @@ extern "C" {
 		// Print buffer
 		sbyte_t text[64];
 
+		// Write Multiboot info message
+		arch::vmemWrite("Multiboot info\r\n");
+
 		// Check multiboot magic
 		if (!multiboot::check(magic)) {
 
-			//arch::vgaConsoleWriteHex(magic);
-			arch::vmemWrite("Bad multiboot 1 bootloader magic!\r\n");
+			arch::vmemWrite("\tBAD MULTIBOOT MAGIC!!!\r\n");
+			// Print multiboot magic
 			arch::vmemWrite("\tMAGIC:\t\t0x");
 			arch::vmemWrite(klib::kitoa(text, 20, magic, klib::base::HEX));
+			// Print multiboot address
 			arch::vmemWrite("\r\n\tADDRESS:\t0x");
 			arch::vmemWrite(klib::kitoa(text, 20, quad_t(multiboot), klib::base::HEX));
 
@@ -61,7 +65,27 @@ extern "C" {
 
 		}
 
-		// Write "Hello World" message
+		// Print multiboot header flags
+		arch::vmemWrite("Flags:\t\t0x");
+		arch::vmemWrite(klib::kitoa(text, 20, multiboot->flags, klib::base::HEX));
+
+		// Check ifmultiboot kernel command line present
+		if (multiboot->flags & (1 << 2)) {
+
+			// Get pointer to multiboot kernel command line
+			const sbyte_t* cmdLine = reinterpret_cast<const sbyte_t*>(multiboot->commandLine);
+
+			// Print multiboot kernel command line
+			arch::vmemWrite("\r\n");
+			arch::vmemWrite("Command line:\t");
+			arch::vmemWrite(cmdLine);
+
+		}
+
+		arch::vmemWrite("\r\n\r\n");
+
+		// Write Kernel info message
+		arch::vmemWrite("Kernel info\r\n");
 		arch::vmemWrite("Build:\t\t" __DATE__ ", " __TIME__ "\r\n");
 		arch::vmemWrite("Version:\tv");
 		arch::vmemWrite(klib::kitoa(text, 20, IGROS_VERSION_MAJOR));
