@@ -22,6 +22,8 @@
 .set	PAGE_BIT_LME,		0x00000100		# Long Mode Enable bit
 .set	PAGE_BIT_PE,		0x80000000		# Paging Enable bit
 
+.set	MBOOT_STACK_PHOLDER,	0x00000000		# Multiboot stack placeholder (MSB 32 bits)
+
 
 .code32
 
@@ -45,10 +47,13 @@ kernelStart:						# Kernel starts here
 	leal	stackTop - KERNEL_VMA, %esp		# Set stack
 
 	# Save multiboot data for kmain
-	# Note - since now till kmain call this regs
-	# should NOT be rewrited!
-	movl	%eax, %esi				# Multiboot magic value
-	movl	%ebx, %edi				# Multiboot header address
+	# Note - since now till kmain call nothing
+	# should NOT be pushed on stack without
+	# poping from it!
+	pushl	$MBOOT_STACK_PHOLDER			# Push stack placeholder
+	pushl	%eax					# Push Multiboot magic value
+	pushl	$MBOOT_STACK_PHOLDER			# Push stack placeholder
+	pushl	%ebx					# Push Multiboot header address
 
 	# Check if CPUID available
 	leal	checkCPUID - KERNEL_VMA, %eax		# Load address of CPUID check func
@@ -104,6 +109,10 @@ kernelStart:						# Kernel starts here
 
 	# Adjust stack to higher half
 	addq	$KERNEL_VMA, %rsp			# Add virtual memory offset to RSP
+
+	# Pop Multiboot header and magic from stack
+	popq	%rdi					# Pop Multiboot header pointer
+	popq	%rsi					# Pop Multiboot magic
 
 	# Go to C++
 	cld						# Clear direction flag
