@@ -3,7 +3,7 @@
 //	CPUID detection
 //
 //	File:	cpuid.hpp
-//	Date:	06 Jun 2019
+//	Date:	18 Jun 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -23,13 +23,26 @@
 namespace arch {
 
 
+	// CPUID EAX value (e.g. flag)
+	enum class cpuidFlags_t {
+
+		// "Intel" features list
+		FEATURES_INTEL		= 0x00000000,		//
+		INFO_PROCVERSION	= 0x00000001,		//
+		INFO_CACHE_TLB		= 0x00000002,		//
+		INFO_PENTIUM_III_SERIAL	= 0x00000003,		//
+
+
+	};
+
+
 	// CPUID registers values holder
 	struct cpuidRegs_t {
 
-		dword_t		EAX;		// EAX register value
-		dword_t		EBX;		// EBX register value
-		dword_t		ECX;		// ECX register value
-		dword_t		EDX;		// EDX register value
+		dword_t		eax;			// EAX register value
+		dword_t		ebx;			// EBX register value
+		dword_t		ecx;			// ECX register value
+		dword_t		edx;			// EDX register value
 
 	};
 
@@ -38,7 +51,7 @@ namespace arch {
 	bool		cpuidCheck();
 
 	// CPUID instruction call
-        cpuidRegs_t	cpuid(const dword_t eax);
+        cpuidRegs_t	cpuid(const cpuidFlags_t flag);
 
 
 }	// namespace arch
