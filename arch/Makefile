@@ -64,10 +64,12 @@ export	BIN_NAME		= kernel.bin
 all: $(IGROS_DIR_BUILD) $(IGROS_DIR_RELEASE)
 	@echo "	ECHO	$(IGROS_DIR_BUILD)"
 	@echo "	ECHO	$(IGROS_DIR_RELEASE)"
+	@$(MAKE) -C $(CURDIR)/../multiboot
 	@$(MAKE) -C $(CURDIR)/../klib
 	@$(MAKE) -C $(IGROS_ARCH)
 
 clean:
+	@$(MAKE) -C $(CURDIR)/../multiboot clean
 	@$(MAKE) -C $(CURDIR)/../klib clean
 	@$(MAKE) -C $(IGROS_ARCH) clean
 
@@ -75,6 +77,7 @@ distclean:
 	@$(MAKE) -C $(IGROS_ARCH) distclean
 
 rebuild:
+	@$(MAKE) -C $(CURDIR)/../multiboot rebuild
 	@$(MAKE) -C $(CURDIR)/../klib rebuild
 	@$(MAKE) -C $(IGROS_ARCH) rebuild
 

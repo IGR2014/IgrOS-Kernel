@@ -3,7 +3,7 @@
 //	Boot low-level main setup function
 //
 //	File:	boot.cpp
-//	Date:	18 Jun 2019
+//	Date:	21 Jun 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -47,7 +47,7 @@ extern "C" {
 		sbyte_t text[64];
 
 		// Write Multiboot info message
-		arch::vmemWrite("Multiboot info\r\n");
+		//arch::vmemWrite("Multiboot info\r\n");
 
 		// Check multiboot magic
 		if (!multiboot::check(magic)) {
@@ -65,29 +65,24 @@ extern "C" {
 
 		}
 
-		// Print multiboot header flags
-		arch::vmemWrite("Flags:\t\t0x");
-		arch::vmemWrite(klib::kitoa(text, 20, multiboot->flags, klib::base::HEX));
+		// Dump multiboot flags
+		//multiboot->dumpFlags();
 
-		// Check ifmultiboot kernel command line present
-		if (multiboot->flags & (1 << 2)) {
-
-			// Get pointer to multiboot kernel command line
-			const sbyte_t* cmdLine = reinterpret_cast<const sbyte_t*>(multiboot->commandLine);
-
-			// Print multiboot kernel command line
-			arch::vmemWrite("\r\n");
-			arch::vmemWrite("Command line:\t");
-			arch::vmemWrite(cmdLine);
-
-		}
-
+		// Write Multiboot info message
+		arch::vmemWrite("Bootloader info\r\n");
+		// Dump multiboot command line
+		arch::vmemWrite("\tCommand line:\t");
+		arch::vmemWrite(multiboot->commandLine());
+		arch::vmemWrite("\r\n");
+		// Dump multiboot bootloader name
+		arch::vmemWrite("\tLoader name:\t");
+		arch::vmemWrite(multiboot->loaderName());
 		arch::vmemWrite("\r\n\r\n");
 
 		// Write Kernel info message
 		arch::vmemWrite("Kernel info\r\n");
-		arch::vmemWrite("Build:\t\t" __DATE__ ", " __TIME__ "\r\n");
-		arch::vmemWrite("Version:\tv");
+		arch::vmemWrite("\tBuild:\t\t" __DATE__ ", " __TIME__ "\r\n");
+		arch::vmemWrite("\tVersion:\tv");
 		arch::vmemWrite(klib::kitoa(text, 20, IGROS_VERSION_MAJOR));
 		arch::vmemWrite(".");
 		arch::vmemWrite(klib::kitoa(text, 20, IGROS_VERSION_MINOR));
@@ -96,7 +91,7 @@ extern "C" {
 		arch::vmemWrite(" (");
 		arch::vmemWrite(IGROS_VERSION_NAME);
 		arch::vmemWrite(")\r\n");
-		arch::vmemWrite("Author:\t\tIgor Baklykov (c) ");
+		arch::vmemWrite("\tAuthor:\t\tIgor Baklykov (c) ");
 		arch::vmemWrite(klib::kitoa(text, 20, dword_t(2017)));
 		arch::vmemWrite(" - ");
 		arch::vmemWrite(klib::kitoa(text, 20, dword_t(2019)));
