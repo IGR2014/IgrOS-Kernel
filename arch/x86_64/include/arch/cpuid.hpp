@@ -24,14 +24,15 @@ namespace arch {
 
 
 	// CPUID EAX value (e.g. flag)
-	enum class cpuidFlags_t {
+	enum class cpuidFlags_t : dword_t {
 
 		// "Intel" features list
 		FEATURES_INTEL		= 0x00000000,		//
-		INFO_PROCVERSION	= 0x00000001,		//
+		INFO_PROC_VERSION	= 0x00000001,		//
 		INFO_CACHE_TLB		= 0x00000002,		//
 		INFO_PENTIUM_III_SERIAL	= 0x00000003,		//
 
+		FEATURES_AMD		= 0x80000000		//
 
 	};
 
