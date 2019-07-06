@@ -3,7 +3,7 @@
 //	Interrupts low-level operations
 //
 //	File:	interupts.cpp
-//	Date:	13 Jun 2019
+//	Date:	14 Jun 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -66,8 +66,7 @@ namespace arch {
 
 			// Print message about unhandled interrupt
 			vmemWrite("\r\nIRQ\t\t-> #");
-			klib::kitoa(text, 64, dword_t(regs->number - 32));
-			vmemWrite(text);
+			vmemWrite(klib::kitoa(text, 64, regs->number - 32));
 			vmemWrite("\r\nSTATE:\t\tunhandled!\r\n");
 
 		}

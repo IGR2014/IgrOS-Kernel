@@ -3,7 +3,7 @@
 #	x86_64 folder Make script
 #
 #	File:	Makefile
-#	Date:	12 Jun 2019
+#	Date:	18 Jun 2019
 #
 #	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.
@@ -18,27 +18,29 @@ BIN					= $(IGROS_DIR_TARGET_RELEASE)/$(BIN_NAME)
 
 LDSCRIPT				= link.ld
 
-OBJ		= $(IGROS_DIR_TARGET_BUILD)/boot/multiboot.o	\
-		  $(IGROS_DIR_TARGET_BUILD)/boot/boot.o		\
-		  $(IGROS_DIR_TARGET_BUILD)/boot/idt.o		\
-		  $(IGROS_DIR_TARGET_BUILD)/boot/gdt.o		\
-		  $(IGROS_DIR_TARGET_BUILD)/boot/port.o		\
-		  $(IGROS_DIR_TARGET_BUILD)/boot/exceptions.o	\
-		  $(IGROS_DIR_TARGET_BUILD)/boot/interrupts.o	\
-		  $(IGROS_DIR_TARGET_BUILD)/boot/paging.o	\
-		  $(IGROS_DIR_TARGET_BUILD)/boot/cr.o		\
-		  $(IGROS_DIR_TARGET_BUILD)/boot/longMode.o	\
-		  $(IGROS_DIR_TARGET_BUILD)/klib/memset.o	\
-		  $(IGROS_DIR_TARGET_BUILD)/../klib/kstring.o	\
-		  $(IGROS_DIR_TARGET_BUILD)/../klib/kprint.o	\
-		  $(IGROS_DIR_TARGET_BUILD)/drivers/vmem.o	\
-		  $(IGROS_DIR_TARGET_BUILD)/drivers/keyboard.o	\
-		  $(IGROS_DIR_TARGET_BUILD)/drivers/pit.o	\
-		  $(IGROS_DIR_TARGET_BUILD)/idt.o		\
-		  $(IGROS_DIR_TARGET_BUILD)/gdt.o		\
-		  $(IGROS_DIR_TARGET_BUILD)/exceptions.o	\
-		  $(IGROS_DIR_TARGET_BUILD)/interrupts.o	\
-		  $(IGROS_DIR_TARGET_BUILD)/paging.o		\
+OBJ		= $(IGROS_DIR_TARGET_BUILD)/boot/multiboot.o		\
+		  $(IGROS_DIR_TARGET_BUILD)/boot/boot.o			\
+		  $(IGROS_DIR_TARGET_BUILD)/boot/idt.o			\
+		  $(IGROS_DIR_TARGET_BUILD)/boot/gdt.o			\
+		  $(IGROS_DIR_TARGET_BUILD)/boot/port.o			\
+		  $(IGROS_DIR_TARGET_BUILD)/boot/exceptions.o		\
+		  $(IGROS_DIR_TARGET_BUILD)/boot/interrupts.o		\
+		  $(IGROS_DIR_TARGET_BUILD)/boot/paging.o		\
+		  $(IGROS_DIR_TARGET_BUILD)/boot/cr.o			\
+		  $(IGROS_DIR_TARGET_BUILD)/boot/msr.o			\
+		  $(IGROS_DIR_TARGET_BUILD)/boot/longMode.o		\
+		  $(IGROS_DIR_TARGET_BUILD)/klib/memset.o		\
+		  $(IGROS_DIR_TARGET_BUILD)/../klib/kstring.o		\
+		  $(IGROS_DIR_TARGET_BUILD)/../klib/kprint.o		\
+		  $(IGROS_DIR_TARGET_BUILD)/../multiboot/multiboot.o	\
+		  $(IGROS_DIR_TARGET_BUILD)/drivers/vmem.o		\
+		  $(IGROS_DIR_TARGET_BUILD)/drivers/keyboard.o		\
+		  $(IGROS_DIR_TARGET_BUILD)/drivers/pit.o		\
+		  $(IGROS_DIR_TARGET_BUILD)/idt.o			\
+		  $(IGROS_DIR_TARGET_BUILD)/gdt.o			\
+		  $(IGROS_DIR_TARGET_BUILD)/exceptions.o		\
+		  $(IGROS_DIR_TARGET_BUILD)/interrupts.o		\
+		  $(IGROS_DIR_TARGET_BUILD)/paging.o			\
 		  $(IGROS_DIR_TARGET_BUILD)/../../kmain.o
 
 

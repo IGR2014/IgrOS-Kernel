@@ -3,7 +3,7 @@
 //	Memory paging for x86
 //
 //	File:	paging.cpp
-//	Date:	13 Jun 2019
+//	Date:	18 Jun 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -11,6 +11,7 @@
 //
 
 
+#include <arch/msr.hpp>
 #include <arch/cr.hpp>
 #include <arch/exceptions.hpp>
 #include <arch/paging.hpp>
@@ -105,20 +106,6 @@ namespace arch {
 		// PD address bits ([0 .. 63] in cr3)
 		inCR3(quad_t(pageMapLevel4Table) & 0x7FFFFFFF);
 
-		// Enable Page Size Extension
-		// Set PAE bit ([5] in cr4)
-		inCR4(outCR4() | 0x00000020);
-
-		// Long mode paging
-		asm volatile("movq $0xC0000080, %rcx\n"
-			     "rdmsr\n"
-			     "orq $0x00000100, %rax\n"
-			     "wrmsr\n");
-
-		// Enable paging
-		// Set PE bit ([31] in cr0)
-		inCR0(outCR0() | 0x80000000);
-
 	}
 
 
@@ -133,8 +120,8 @@ namespace arch {
 		quad_t pdEntryIndex	= (quad_t(virtAddr) & 0x3FE00000) >> 21;
 
 		// Physical pointer to page table
-		quad_t		pageDirectoryPtr	= pageMapLevel4Table[pml4EntryIndex];
-		pagingFlags_t	pageFlags		= pagingFlags_t(pageDirectoryPtr);
+		quad_t	pageDirectoryPtr	= pageMapLevel4Table[pml4EntryIndex];
+		auto	pageFlags		= pagingFlags_t(pageDirectoryPtr);
 
 		// Check if page table is present or not
 		if ((pageFlags & pagingFlags_t::PRESENT) == pagingFlags_t::CLEAR) {
@@ -196,8 +183,7 @@ namespace arch {
 		vmemWrite("WHEN:\t\tattempting to ");
 		vmemWrite(((regs->param & 0x02) == 0) ? "READ" : "WRITE");
 		vmemWrite("\r\nADDRESS:\t0x");
-		klib::kitoa(text, 64, outCR2(), klib::base::HEX);
-		vmemWrite(text);
+		vmemWrite(klib::kitoa(text, 64, outCR2(), klib::base::HEX));
 		vmemWrite("\r\nWHICH IS:\tNON-");
 		vmemWrite(((regs->param & 0x01) == 0) ? "PRESENT\r\n" : "PRIVILEGED\r\n");
 		vmemWrite("\r\n");

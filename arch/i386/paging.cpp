@@ -3,7 +3,7 @@
 //	Memory paging for x86
 //
 //	File:	paging.cpp
-//	Date:	13 Jun 2019
+//	Date:	18 Jun 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -87,14 +87,6 @@ namespace arch {
 		// PD address bits ([0 .. 31] in cr3)
 		inCR3(dword_t(pageDirectory) & 0x3FFFFFFF);
 
-		// Disable Page Size Extension
-		// Clear PSE bit ([4] in cr4)
-		inCR4(outCR4() & 0xFFFFFFEF);
-
-		// Enable paging
-		// Set PE bit ([31] in cr0)
-		inCR0(outCR0() | 0x80000000);
-
 	}
 
 
@@ -158,8 +150,7 @@ namespace arch {
 		vmemWrite("WHEN:\t\tattempting to ");
 		vmemWrite(((regs->param & 0x02) == 0) ? "READ" : "WRITE");
 		vmemWrite("\r\nADDRESS:\t0x");
-		klib::kitoa(text, 64, outCR2(), klib::base::HEX);
-		vmemWrite(text);
+		vmemWrite(klib::kitoa(text, 64, outCR2(), klib::base::HEX));
 		vmemWrite("\r\nWHICH IS:\tNON-");
 		vmemWrite(((regs->param & 0x01) == 0) ? "PRESENT\r\n" : "PRIVILEGED\r\n");
 		vmemWrite("\r\n");
