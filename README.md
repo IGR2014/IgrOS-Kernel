@@ -1,0 +1,2 @@
+# IgrOS-Kernel
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/1a4425daf2a946448a3d9c915c25da71)](https://app.codacy.com/app/IGR2014/IgrOS-Kernel?utm_source=github.com&utm_medium=referral&utm_content=IGR2014/IgrOS-Kernel&utm_campaign=Badge_Grade_Dashboard)
