@@ -16,6 +16,8 @@
 #define IGROS_KLIB_KERNEL_PRINT_HPP
 
 
+#include <cstdint>
+
 #include <arch/types.hpp>
 
 
@@ -35,24 +37,24 @@ namespace klib {
 
 
 	// Kernel integer to string function
-	sbyte_t*	kitoa(sbyte_t* buffer, dword_t size, byte_t value, const base radix = base::DEC);
+	sbyte_t*	kitoa(sbyte_t* buffer, std::size_t size, byte_t value, const base radix = base::DEC);
 	// Kernel integer to string function
-	sbyte_t*	kitoa(sbyte_t* buffer, dword_t size, sbyte_t value, const base radix = base::DEC);
+	sbyte_t*	kitoa(sbyte_t* buffer, std::size_t size, sbyte_t value, const base radix = base::DEC);
 
 	// Kernel integer to string function
-	sbyte_t*	kitoa(sbyte_t* buffer, dword_t size, word_t value, const base radix = base::DEC);
+	sbyte_t*	kitoa(sbyte_t* buffer, std::size_t size, word_t value, const base radix = base::DEC);
 	// Kernel integer to string function
-	sbyte_t*	kitoa(sbyte_t* buffer, dword_t size, sword_t value, const base radix = base::DEC);
+	sbyte_t*	kitoa(sbyte_t* buffer, std::size_t size, sword_t value, const base radix = base::DEC);
 
 	// Kernel integer to string function
-	sbyte_t*	kitoa(sbyte_t* buffer, dword_t size, dword_t value, const base radix = base::DEC);
+	sbyte_t*	kitoa(sbyte_t* buffer, std::size_t size, dword_t value, const base radix = base::DEC);
 	// Kernel integer to string function
-	sbyte_t*	kitoa(sbyte_t* buffer, dword_t size, sdword_t value, const base radix = base::DEC);
+	sbyte_t*	kitoa(sbyte_t* buffer, std::size_t size, sdword_t value, const base radix = base::DEC);
 
 	// Kernel integer to string function
-	sbyte_t*	kitoa(sbyte_t* buffer, dword_t size, quad_t value, const base radix = base::DEC);
+	sbyte_t*	kitoa(sbyte_t* buffer, std::size_t size, quad_t value, const base radix = base::DEC);
 	// Kernel integer to string function
-	sbyte_t*	kitoa(sbyte_t* buffer, dword_t size, squad_t value, const base radix = base::DEC);
+	sbyte_t*	kitoa(sbyte_t* buffer, std::size_t size, squad_t value, const base radix = base::DEC);
 
 
 	// TODO Implement kernel print function

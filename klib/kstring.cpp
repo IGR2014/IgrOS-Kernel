@@ -3,7 +3,7 @@
 //	Kernel string functions
 //
 //	File:	string.cpp
-//	Date:	14 Jun 2019
+//	Date:	12 Sep 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -12,7 +12,6 @@
 
 
 #include <klib/kstring.hpp>
-#include <klib/memset.hpp>
 
 
 // Kernel library code zone
@@ -42,7 +41,6 @@ namespace klib {
 
 		// Save destination pointer
 		auto tempDst = dst;
-
 		// Check src, dst pointers and size
 		if (src == nullptr || dst == nullptr || size == 0) {
 			// Pointer to empty dst
@@ -69,7 +67,6 @@ namespace klib {
 
 		// Save destination pointer
 		auto tempDst = dst;
-
 		// Check src, dst pointers and size
 		if (src == nullptr || dst == nullptr || size == 0) {
 			// Pointer to empty dst
