@@ -3,7 +3,7 @@
 //	Kernel string functions
 //
 //	File:	string.hpp
-//	Date:	14 Jun 2019
+//	Date:	12 Sep 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
