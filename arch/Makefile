@@ -35,13 +35,14 @@ export	CXXFLAGS		= -std=c++11				\
 				  -mno-sse				\
 				  -mno-sse2				\
 				  -mno-sse3				\
-				  -mno-mmx				\
-				  -march=$(IGROS_ARCH)
+				  -mno-mmx
 
 ifeq ($(IGROS_ARCH), i386)
-	CXXFLAGS		+= -m32
+	CXXFLAGS		+= -m32					\
+				   -march=i386
 else ifeq ($(IGROS_ARCH), x86_64)
 	CXXFLAGS		+= -m64					\
+				   -march=x86-64			\
 				   -mcmodel=large
 endif
 
