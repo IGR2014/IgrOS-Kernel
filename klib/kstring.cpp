@@ -11,6 +11,8 @@
 //
 
 
+#include <cstdint>
+
 #include <klib/kstring.hpp>
 
 
