@@ -3,7 +3,7 @@
 //	Kernel string functions
 //
 //	File:	string.cpp
-//	Date:	14 Jun 2019
+//	Date:	12 Sep 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -23,41 +23,44 @@ namespace klib {
 	// Calculate string length
 	std::size_t kstrlen(const sbyte_t* src) {
 
-		// Soure string's start pointer
-		auto srcPtr = src;
-		// Get source string end pointer
-		for (; *srcPtr != '\0'; ++srcPtr);
-		// Calculate string length
-		return (srcPtr - src);
+		// Check src pointer and size
+		if (src == nullptr) {
+			return 0;
+		}
+
+                // Copy string start pointer
+                auto iter = src;
+                // Find string end pointer
+                for (;*iter != '\0'; ++iter);
+                // Return string length
+                return iter - src;
 
         }
 
 
 	// Copy string from one to other
-	sbyte_t* kstrcpy(const sbyte_t* src, sbyte_t* dst, std::size_t size) {
+	sbyte_t* kstrcpy(sbyte_t* src, sbyte_t* dst, std::size_t size) {
 
-		// Destination pointer
-		auto dstPtr = dst;
-
-		// Check src, dst and size
-                if (src == nullptr || dst == nullptr || size == 0) {
-
-			return dstPtr;
-
+		// Save destination pointer
+		auto tempDst = dst;
+		// Check src, dst pointers and size
+		if (src == nullptr || dst == nullptr || size == 0) {
+			// Pointer to empty dst
+			// Fill with null terminator for sanity
+			return &(*tempDst = '\0');
 		}
 
-		// Copy first symbol from src to dst
+		// Copy first symbol
 		*dst = *src;
-
-		// Copy string while possible
+		// Copy string
 		do {
-
+			// Copy string byte by byte
 			*++dst = *++src;
-                    
+		// Stop on size overflow or null terminator
 		} while (--size > 0 && *src != '\0');
 
-		// Destination address
-		return dstPtr;
+		// Return pointer to dst tring
+		return tempDst;
 
 	}
 
