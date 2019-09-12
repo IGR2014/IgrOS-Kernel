@@ -3,7 +3,7 @@
 #	arch folder Make script
 #
 #	File:	Makefile
-#	Date:	13 Jun 2019
+#	Date:	12 Sep 2019
 #
 #	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.
@@ -13,13 +13,10 @@
 
 export	IGROS_DIR_BUILD		= $(CURDIR)/../build
 export	IGROS_DIR_RELEASE	= $(CURDIR)/../release
-
-export	IGROS_ARCH		?= x86_64
+export	IGROS_ARCH		?= i386
 
 export	CXX			?= g++
-
-export	CXXFLAGS		= -m64					\
-				  -std=c++11				\
+export	CXXFLAGS		= -std=c++11				\
 				  -Wall					\
 				  -Wextra				\
 				  -w					\
@@ -39,17 +36,30 @@ export	CXXFLAGS		= -m64					\
 				  -mno-sse2				\
 				  -mno-sse3				\
 				  -mno-mmx				\
-				  -mcmodel=large
+				  -march=$(IGROS_ARCH)
+
+ifeq ($(IGROS_ARCH), i386)
+	CXXFLAGS		+= -m32
+else ifeq ($(IGROS_ARCH), x86_64)
+	CXXFLAGS		+= -m64					\
+				   -mcmodel=large
+endif
 
 export	CXXINCLUDE		= -I $(CURDIR)/$(IGROS_ARCH)/include/	\
 				  -I $(CURDIR)/../include/
 
 export	AS			= as
+export	ASFLAGS
 
-export	ASFLAGS			= --64
+ifeq ($(IGROS_ARCH), i386)
+	ASFLAGS			= --32
+else ifeq ($(IGROS_ARCH), x86_64)
+	ASFLAGS			= --64
+else
+	ASFLAGS			= 
+endif
 
 export	LD			= ld
-
 export	LDFLAGS			= -n					\
 				  -m elf_$(IGROS_ARCH)			\
 				  -z max-page-size=0x1000
@@ -76,10 +86,7 @@ clean:
 distclean:
 	@$(MAKE) -C $(IGROS_ARCH) distclean
 
-rebuild:
-	@$(MAKE) -C $(CURDIR)/../multiboot rebuild
-	@$(MAKE) -C $(CURDIR)/../klib rebuild
-	@$(MAKE) -C $(IGROS_ARCH) rebuild
+rebuild: clean all
 
 run: all
 	@$(MAKE) -C $(IGROS_ARCH) run
