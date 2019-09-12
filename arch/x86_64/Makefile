@@ -3,7 +3,7 @@
 #	x86_64 folder Make script
 #
 #	File:	Makefile
-#	Date:	18 Jun 2019
+#	Date:	12 Sep 2019
 #
 #	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.
@@ -55,8 +55,6 @@ all-before:
 	@$(MAKE) -C klib
 	@echo "	MAKE	drivers"
 	@$(MAKE) -C drivers
-
-rebuild: clean all
 
 clean:
 	@echo "	CLEAN	boot"
