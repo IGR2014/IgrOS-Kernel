@@ -3,7 +3,7 @@
 //	Bit flags template datatype
 //
 //	File:	flags.hpp
-//	Date:	06 Jun 2019
+//	Date:	18 Sep 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -132,7 +132,7 @@ namespace arch {
 	// Bitwise OR assignment operator for flags
         template <typename T>
 	typename std::enable_if<std::is_enum<T>::value, T>::type
-	inline constexpr operator|= (T &left, const T right) {
+	inline operator|= (T &left, const T right) {
 
 		// Underlying type acquisition
 		using U = typename std::underlying_type<T>::type;
@@ -148,7 +148,7 @@ namespace arch {
 	// Bitwise AND assignment operator for flags
         template <typename T>
 	typename std::enable_if<std::is_enum<T>::value, T>::type
-	inline constexpr operator&= (T &left, const T right) {
+	inline operator&= (T &left, const T right) {
 
 		// Underlying type acquisition
 		using U = typename std::underlying_type<T>::type;
@@ -164,7 +164,7 @@ namespace arch {
 	// Bitwise XOR assignment operator for flags
         template <typename T>
 	typename std::enable_if<std::is_enum<T>::value, T>::type
-	inline constexpr operator^= (T &left, const T right) {
+	inline operator^= (T &left, const T right) {
 
 		// Underlying type acquisition
 		using U = typename std::underlying_type<T>::type;

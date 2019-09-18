@@ -3,7 +3,7 @@
 //	Interrupt descriptor table low-level operations
 //
 //	File:	idt.cpp
-//	Date:	13 Jun 2019
+//	Date:	18 Sep 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -26,15 +26,15 @@ namespace arch {
 
 
 	// Create IDT entry
-	constexpr idtEntry_t idtSetEntry(const idtISRPtr_t offset, const word_t &selector, const byte_t &type) {
+	idtEntry_t idtSetEntry(const idtISRPtr_t offset, const word_t &selector, const byte_t &type) {
 
 		return	idtEntry_t {
 
-				.offsetLow	= dword_t(offset) & 0xFFFF,
+				.offsetLow	= word_t(dword_t(offset) & 0xFFFF),
 				.selector	= selector,
 				.reserved	= 0x00,
 				.type		= type,
-				.offsetHigh	= (dword_t(offset) & 0xFFFF0000) >> 16
+				.offsetHigh	= word_t((dword_t(offset) & 0xFFFF0000) >> 16)
 
 			};
 

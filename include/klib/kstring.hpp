@@ -3,7 +3,7 @@
 //	Kernel string functions
 //
 //	File:	string.hpp
-//	Date:	12 Sep 2019
+//	Date:	18 Sep 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -25,6 +25,11 @@
 namespace klib {
 
 
+	// Find string end
+	sbyte_t*	kstrend(sbyte_t* src);
+	// Find string end
+	const sbyte_t*	kstrend(const sbyte_t* src);
+
 	// Calculate string length
 	std::size_t	kstrlen(const sbyte_t* src);
 
@@ -35,6 +40,9 @@ namespace klib {
 
 	// Compare strings
 	sdword_t	kstrcmp(const sbyte_t* src1, const sbyte_t* src2, std::size_t size);
+
+	// Concatenate string
+	sbyte_t*	kstrcat(const sbyte_t* src, sbyte_t* dst, std::size_t size);
 
 	// Find char occurrence in string
 	sbyte_t*	kstrchr(sbyte_t* src, sbyte_t chr, std::size_t size);

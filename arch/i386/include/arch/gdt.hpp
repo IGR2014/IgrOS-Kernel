@@ -3,7 +3,7 @@
 //	Global descriptor table low-level operations
 //
 //	File:	gdt.hpp
-//	Date:	13 Jun 2019
+//	Date:	18 Sep 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -132,7 +132,7 @@ namespace arch {
 
 
 	// Set GDT entry
-	constexpr gdtEntry_t	gdtSetEntry(const dword_t&, const dword_t&, const gdtFlags_t&);
+	gdtEntry_t		gdtSetEntry(const dword_t&, const dword_t&, const gdtFlags_t&);
 
 	// Calculate GDT size
 	constexpr dword_t	gdtCalcTableSize(const dword_t&);

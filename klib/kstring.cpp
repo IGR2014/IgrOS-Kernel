@@ -3,7 +3,7 @@
 //	Kernel string functions
 //
 //	File:	string.cpp
-//	Date:	12 Sep 2019
+//	Date:	18 Sep 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -20,20 +20,48 @@
 namespace klib {
 
 
-	// Calculate string length
-	std::size_t kstrlen(const sbyte_t* src) {
+	// Find string end
+	sbyte_t* kstrend(sbyte_t* src) {
 
-		// Check src pointer and size
+		// Check src pointer
 		if (src == nullptr) {
-			return 0;
+			return nullptr;
 		}
 
-                // Copy string start pointer
+                // Find string end pointer
+                for (;*src != '\0'; ++src);
+		// Return string end
+                return src;
+
+	}
+
+	// Find string end
+	const sbyte_t* kstrend(const sbyte_t* src) {
+
+		// Check src pointer
+		if (src == nullptr) {
+			return nullptr;
+		}
+
+		// Copy string start pointer
                 auto iter = src;
                 // Find string end pointer
                 for (;*iter != '\0'; ++iter);
+		// Return string end
+                return iter;
+
+	}
+
+
+	// Calculate string length
+	std::size_t kstrlen(const sbyte_t* src) {
+
+		// Check src pointer
+		if (src == nullptr) {
+			return 0;
+		}
                 // Return string length
-                return iter - src;
+                return kstrend(src) - src;
 
         }
 
@@ -42,7 +70,7 @@ namespace klib {
 	sbyte_t* kstrcpy(sbyte_t* src, sbyte_t* dst, std::size_t size) {
 
 		// Save destination pointer
-		auto tempDst = dst;
+		const auto tempDst = dst;
 		// Check src, dst pointers and size
 		if (src == nullptr || dst == nullptr || size == 0) {
 			// Pointer to empty dst
@@ -68,7 +96,7 @@ namespace klib {
 	const sbyte_t* kstrcpy(const sbyte_t* src, sbyte_t* dst, std::size_t size) {
 
 		// Save destination pointer
-		auto tempDst = dst;
+		const auto tempDst = dst;
 		// Check src, dst pointers and size
 		if (src == nullptr || dst == nullptr || size == 0) {
 			// Pointer to empty dst
@@ -87,6 +115,18 @@ namespace klib {
 
 		// Return pointer to dst tring
 		return tempDst;
+
+	}
+
+
+	// Concatenate string
+	sbyte_t* kstrcat(const sbyte_t* src, sbyte_t* dst, std::size_t size) {
+
+		// Check src, dst pointers and size
+		if (src == nullptr || dst == nullptr || size == 0) {
+			// return nothing
+			return nullptr;
+		}
 
 	}
 
