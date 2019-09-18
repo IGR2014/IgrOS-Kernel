@@ -58,22 +58,6 @@ namespace klib {
 			value			= newValue;
 		} while (value > 0);
 
-		// Check radix
-		if (base::BIN == radix) {
-			// Add "b" in front of digits
-			// for binary representation
-			tempBuffer[pos--] = 'b';
-		} else if (base::OCT == radix) {
-			// Add "o" in front of digits
-			// for octal representation
-			tempBuffer[pos--] = 'o';
-		} else if (base::HEX == radix) {
-			// Add "0x" in front of digits
-			// for hex representation
-			tempBuffer[pos--] = 'x';
-			tempBuffer[pos--] = '0';
-		}
-
 		// Resulting string length
 		std::size_t strLength = (KITOA_BUFF_LEN - pos);
 		// Check size fit
