@@ -3,7 +3,7 @@
 //	VGA memory low-level operations
 //
 //	File:	vmem.cpp
-//	Date:	14 Jun 2019
+//	Date:	18 Sep 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -67,8 +67,8 @@ namespace arch {
 
 		// Return cursor data
 		return	vmemCursor {
-				.x = position % VIDEO_MEM_WIDTH,
-				.y = position / VIDEO_MEM_WIDTH
+				.x = byte_t(position % VIDEO_MEM_WIDTH),
+				.y = byte_t(position / VIDEO_MEM_WIDTH)
 			};
 
 	}
@@ -182,7 +182,7 @@ namespace arch {
 			// Calculate offset in VGA console
 			word_t pos = cursorPos.y * VIDEO_MEM_WIDTH + cursorPos.x;
 			// Clear bootom line
-			klib::kmemset16(&vmemBase[pos], VIDEO_MEM_WIDTH, {' ' | (vmemBkgColor << 8)});
+			klib::kmemset16(&vmemBase[pos], VIDEO_MEM_WIDTH, word_t(' ' | (vmemBkgColor << 8)));
 
 		}
 
@@ -225,7 +225,7 @@ namespace arch {
 	void vmemClear() {
 
 		// Set whole screen with whitespace with default background
-		klib::kmemset16(vmemBase, VIDEO_MEM_SIZE, {' ' | (vmemBkgColor << 8)});
+		klib::kmemset16(vmemBase, VIDEO_MEM_SIZE, word_t(' ' | (vmemBkgColor << 8)));
 
 	}
 

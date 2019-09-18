@@ -3,7 +3,7 @@
 //	Global descriptor table low-level operations
 //
 //	File:	boot.cpp
-//	Date:	13 Jun 2019
+//	Date:	18 Sep 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -25,16 +25,16 @@ namespace arch {
 
 
 	// Create GDT entry
-	constexpr gdtEntry_t gdtSetEntry(const dword_t &base, const dword_t &limit, const gdtFlags_t &flags) {
+	gdtEntry_t gdtSetEntry(const dword_t &base, const dword_t &limit, const gdtFlags_t &flags) {
 
 		return	gdtEntry_t {
 
-				.limitLow	= limit & 0xFFFF,
-				.baseLow	= base & 0xFFFF,
-				.baseMid	= (base & 0xFF0000) >> 16,
+				.limitLow	= word_t(limit & 0xFFFF),
+				.baseLow	= word_t(base & 0xFFFF),
+				.baseMid	= byte_t((base & 0xFF0000) >> 16),
 				.access		= byte_t(flags & 0x00FF),
-				.limitFlags	= ((limit & 0xF0000) >> 16) | (word_t(flags & 0x0F00) >> 4),
-				.baseHigh	= (base & 0xFF000000) >> 24
+				.limitFlags	= byte_t(((limit & 0xF0000) >> 16) | (word_t(flags & 0x0F00) >> 4)),
+				.baseHigh	= byte_t((base & 0xFF000000) >> 24)
 
 			};
 
