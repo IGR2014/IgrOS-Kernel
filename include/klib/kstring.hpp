@@ -49,6 +49,9 @@ namespace klib {
 	// Find char occurrence in string
 	const sbyte_t*	kstrchr(const sbyte_t* src, sbyte_t chr, std::size_t size);
 
+	// Invert string
+	sbyte_t*	kstrinv(sbyte_t* src, std::size_t size);
+
 
 }	// namespace arch
 
