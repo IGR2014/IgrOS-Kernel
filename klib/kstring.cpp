@@ -3,7 +3,7 @@
 //	Kernel string functions
 //
 //	File:	string.cpp
-//	Date:	18 Sep 2019
+//	Date:	30 Sep 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -12,6 +12,7 @@
 
 
 #include <cstdint>
+//#include <algorithm>
 
 #include <klib/kstring.hpp>
 
@@ -24,7 +25,7 @@ namespace klib {
 	sbyte_t* kstrend(sbyte_t* src) {
 
 		// Check src pointer
-		if (src == nullptr) {
+		if (nullptr == src) {
 			return nullptr;
 		}
 
@@ -39,7 +40,7 @@ namespace klib {
 	const sbyte_t* kstrend(const sbyte_t* src) {
 
 		// Check src pointer
-		if (src == nullptr) {
+		if (nullptr == src) {
 			return nullptr;
 		}
 
@@ -57,7 +58,7 @@ namespace klib {
 	std::size_t kstrlen(const sbyte_t* src) {
 
 		// Check src pointer
-		if (src == nullptr) {
+		if (nullptr == src) {
 			return 0;
 		}
                 // Return string length
@@ -72,7 +73,7 @@ namespace klib {
 		// Save destination pointer
 		const auto tempDst = dst;
 		// Check src, dst pointers and size
-		if (src == nullptr || dst == nullptr || size == 0) {
+		if (nullptr == src || nullptr == dst || 0 == size) {
 			// Pointer to empty dst
 			// Fill with null terminator for sanity
 			return &(*tempDst = '\0');
@@ -98,7 +99,7 @@ namespace klib {
 		// Save destination pointer
 		const auto tempDst = dst;
 		// Check src, dst pointers and size
-		if (src == nullptr || dst == nullptr || size == 0) {
+		if (nullptr == src || nullptr == dst || 0 == size) {
 			// Pointer to empty dst
 			// Fill with null terminator for sanity
 			return &(*tempDst = '\0');
@@ -123,7 +124,7 @@ namespace klib {
 	sbyte_t* kstrcat(const sbyte_t* src, sbyte_t* dst, std::size_t size) {
 
 		// Check src, dst pointers and size
-		if (src == nullptr || dst == nullptr || size == 0) {
+		if (nullptr == src || nullptr == dst || 0 == size) {
 			// return nothing
 			return nullptr;
 		}
@@ -135,7 +136,7 @@ namespace klib {
 	sdword_t kstrcmp(const sbyte_t* src1, const sbyte_t* src2, std::size_t size) {
 
 		// Check src1 and src2 pointers
-		if (src1 == nullptr || src2 == nullptr || size == 0) {
+		if (nullptr == src1 || nullptr == src2 || 0 == size) {
 			// Handle wrong input
 			return ((src1 == nullptr) ? ((src2 == nullptr) ? 0 : -1) : 1);
 		}
@@ -152,7 +153,7 @@ namespace klib {
 	sbyte_t* kstrchr(sbyte_t* src, sbyte_t chr, std::size_t size) {
 
 		// Check src pointer and size
-		if (src == nullptr || size == 0) {
+		if (nullptr == src || 0 == size) {
 			return nullptr;
 		}
 
@@ -167,7 +168,7 @@ namespace klib {
 	const sbyte_t* kstrchr(const sbyte_t* src, sbyte_t chr, std::size_t size) {
 
 		// Check src pointer and size
-		if (src == nullptr || size == 0) {
+		if (nullptr == src || 0 == size) {
 			return nullptr;
 		}
 
@@ -175,6 +176,35 @@ namespace klib {
 		for (;--size > 0 && *src != '\0' && *src != chr; ++src);
 		// Return address of first occurrence or null pointer
 		return (*src == chr) ? src : nullptr;
+
+	}
+
+
+	// Invert string
+	sbyte_t* kstrinv(sbyte_t* src, std::size_t size) {
+
+		// Check src pointer and size
+		if (nullptr == src) {
+			return nullptr;
+		}
+
+		//
+		auto iter = src;
+		//
+		const auto strLen	= kstrlen(src);
+		// Get string length
+		const auto len		= (strLen < size) ? strLen : (size - 1);
+		// Calculate half length of the string
+		const auto halfLen	= (len >> 1);
+		// Loop through image
+		for (dword_t i = len; i != halfLen; i--, iter++) {
+			// Swap symbols
+			const auto temp = *iter;
+			*iter = src[i];
+			src[i] = temp;
+		}
+		// Return string address
+		return src;
 
 	}
 

@@ -3,7 +3,7 @@
 //	Boot low-level main setup function
 //
 //	File:	boot.cpp
-//	Date:	21 Jun 2019
+//	Date:	30 Sep 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -26,6 +26,7 @@
 #include <drivers/keyboard.hpp>
 #include <drivers/pit.hpp>
 
+#include <klib/kstring.hpp>
 #include <klib/kprint.hpp>
 
 
