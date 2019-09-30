@@ -188,13 +188,13 @@ namespace klib {
 			return nullptr;
 		}
 
-		//
+		// Copy pointer to string start
 		auto iter = src;
-		//
-		const auto strLen	= kstrlen(src);
 		// Get string length
+		const auto strLen	= kstrlen(src);
+		// Get required reverting string length
 		const auto len		= (strLen < size) ? strLen : (size - 1);
-		// Calculate half length of the string
+		// Calculate half length of the reverting string
 		const auto halfLen	= (len >> 1);
 		// Loop through image
 		for (dword_t i = len; i != halfLen; i--, iter++) {
