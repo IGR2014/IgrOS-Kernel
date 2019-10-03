@@ -83,7 +83,7 @@ namespace sys {
 
 
 	// ELF identity class
-	struct ELF_IDENTITY {
+	struct elfIdentity_t {
 
 		byte_t		magic[4];			// ELF magic
 		ELF_CLASS	classType;			// ELF class
@@ -135,9 +135,9 @@ namespace sys {
 	};
 
 	// ELF file header
-        struct ELF_HEADER {
+        struct elfHeader_t {
 
-		ELF_IDENTITY	identity;			// ELF Header identity
+		elfIdentity_t	identity;			// ELF Header identity
 		ELF_TYPE	type;				// ELF Header type
                 ELF_MACHINE	machine;			// ELF Header machine type
                 ELF_VERSION	version;			// ELF Header version
@@ -173,7 +173,7 @@ namespace sys {
 	};
 
 	// ELF program header
-	struct ELF_PROGRAM_HEADER {
+	struct elfProgramHeader_t {
 
 		ELF_PROGRAM_TYPE	type;			// ELF Program table type
 
@@ -195,7 +195,7 @@ namespace sys {
 
 #endif	// (IGROS_ARCH == i386)
 
-		pointer_t		allign;			// ELF Program table segment alignment
+		pointer_t		align;			// ELF Program table segment alignment
 
 	};
 
