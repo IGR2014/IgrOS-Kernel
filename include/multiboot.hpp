@@ -3,7 +3,7 @@
 //	Multiboot 1 header info
 //
 //	File:	multiboot.hpp
-//	Date:	21 Jun 2019
+//	Date:	01 Oct 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -30,21 +30,21 @@ namespace multiboot {
 
 
 	// Multiboot header flags enumeration
-	enum flags : dword_t {
+	enum FLAGS : dword_t {
 
-		MEM		= (1 << 0),			//
-		BOOT_DEV	= (1 << 1),			//
-		CMD		= (1 << 2),			//
-		MODULES		= (1 << 3),			//
-		SYMS_AOUT	= (1 << 4),			//
-		SYMS_ELF	= (1 << 5),			//
-		MEM_MAP		= (1 << 6),			//
-		DRIVES		= (1 << 7),			//
-		TABLE_CONFIG	= (1 << 8),			//
-		LOADER_NAME	= (1 << 9),			//
-		TABLE_APM	= (1 << 10),			//
-		VBE		= (1 << 11),			//
-		FRAME_BUF	= (1 << 12)			//
+		MEM		= (1 << 0),			// Memory info available
+		BOOT_DEV	= (1 << 1),			// Boot device info available
+		CMD		= (1 << 2),			// Kernel command line available
+		MODULES		= (1 << 3),			// Kernel modules available
+		SYMS_AOUT	= (1 << 4),			// A.OUT info available
+		SYMS_ELF	= (1 << 5),			// ELF info available
+		MEM_MAP		= (1 << 6),			// Memory map available
+		DRIVES		= (1 << 7),			// Drives info available
+		TABLE_CONFIG	= (1 << 8),			// Configuration table available
+		LOADER_NAME	= (1 << 9),			// Bootloader name available
+		TABLE_APM	= (1 << 10),			// APM table available
+		VBE		= (1 << 11),			// VBE table available
+		FRAME_BUF	= (1 << 12)			// Frame buffer info available
 
 	};
 
@@ -73,7 +73,7 @@ namespace multiboot {
 	};
 
 	// Multiboot 1 header
-	struct header {
+	struct header_t {
 
 		dword_t		magic;				// Multiboot header magic - must be equal to HEADER_MAGIC
 		dword_t		flags;				// Multiboot header flag
@@ -85,7 +85,7 @@ namespace multiboot {
 
 
 	// Multiboot 1 information from bootloader
-	struct info {
+	struct info_t {
 
 		dword_t		flags;				// Multiboot present features flag
 
@@ -101,15 +101,15 @@ namespace multiboot {
 
 		dword_t		syms[4];
 
-		dword_t		mmapLength;
-		dword_t		mmapAddr;
+		dword_t		mmapLength;			// Multiboot kernel memory map length
+		dword_t		mmapAddr;			// Multiboot kernel memory map start address
 
-		dword_t		drivesLength;
-		dword_t		drivesAddr;
+		dword_t		drivesLength;			// Multiboot kernel drives info length
+		dword_t		drivesAddr;			// Multiboot kernel drives info start address
 
-		dword_t		configTable;
+		dword_t		configTable;			// Multiboot kernel config table
 
-		dword_t		bootloaderName;
+		dword_t		bootloaderName;			// Multiboot kernel bootloader name
 
 
 		// Multiboot contains valid memory info
@@ -150,116 +150,86 @@ namespace multiboot {
 	};
 
 	// Multiboot contains valid memory info
-	bool info::hasInfoMemory() const {
-
-		return flags & flags::MEM;
-
+	bool info_t::hasInfoMemory() const {
+		return flags & FLAGS::MEM;
 	}
 
 	// Multiboot contains valid boot device info
-	bool info::hasInfoBootDevice() const {
-
-		return flags & flags::BOOT_DEV;
-
+	bool info_t::hasInfoBootDevice() const {
+		return flags & FLAGS::BOOT_DEV;
 	}
 
 	// Multiboot contains valid command line info
-	bool info::hasInfoCommandLine() const {
-
-		return flags & flags::CMD;
-
+	bool info_t::hasInfoCommandLine() const {
+		return flags & FLAGS::CMD;
 	}
 
 	// Multiboot contains valid kernel modules info
-	bool info::hasInfoModules() const {
-
-		return flags & flags::MODULES;
-
+	bool info_t::hasInfoModules() const {
+		return flags & FLAGS::MODULES;
 	}
 
 	// Multiboot contains valid A.OUT sections info
-	bool info::hasInfoAOUT() const {
-
+	bool info_t::hasInfoAOUT() const {
 		// A.OUT but not ELF
-		return (flags & flags::SYMS_AOUT) && !(flags & flags::SYMS_ELF);
-
+		return (flags & FLAGS::SYMS_AOUT) && !(flags & FLAGS::SYMS_ELF);
 	}
 
 	// Multiboot contains valid ELF sections info
-	bool info::hasInfoELF() const {
-
+	bool info_t::hasInfoELF() const {
 		// ELF but not A.OUT
-		return (flags & flags::SYMS_ELF) && !(flags & flags::SYMS_AOUT);
-
+		return (flags & FLAGS::SYMS_ELF) && !(flags & FLAGS::SYMS_AOUT);
 	}
 
 	// Multiboot contains valid memory map info
-	bool info::hasInfoMemoryMap() const {
-
-		return flags & flags::MEM_MAP;
-
+	bool info_t::hasInfoMemoryMap() const {
+		return flags & FLAGS::MEM_MAP;
 	}
 
 	// Multiboot contains valid drives info
-	bool info::hasInfoDrives() const {
-
-		return flags & flags::DRIVES;
-
+	bool info_t::hasInfoDrives() const {
+		return flags & FLAGS::DRIVES;
 	}
 
 	// Multiboot contains valid config table info
-	bool info::hasInfoConfig() const {
-
-		return flags & flags::TABLE_CONFIG;
-
+	bool info_t::hasInfoConfig() const {
+		return flags & FLAGS::TABLE_CONFIG;
 	}
 
 	// Multiboot contains valid bootloader name info
-	bool info::hasInfoBootloaderName() const {
-
-		return flags & flags::LOADER_NAME;
-
+	bool info_t::hasInfoBootloaderName() const {
+		return flags & FLAGS::LOADER_NAME;
 	}
 
 	// Multiboot contains valid APM table info
-	bool info::hasInfoAPM() const {
-
-		return flags & flags::TABLE_APM;
-
+	bool info_t::hasInfoAPM() const {
+		return flags & FLAGS::TABLE_APM;
 	}
 
 	// Multiboot contains valid VBE info
-	bool info::hasInfoVBE() const {
-
-		return flags & flags::VBE;
-
+	bool info_t::hasInfoVBE() const {
+		return flags & FLAGS::VBE;
 	}
 
 	// Multiboot contains valid FrameBuffer info
-	bool info::hasInfoFrameBuffer() const {
-
-		return flags & flags::FRAME_BUF;
-
+	bool info_t::hasInfoFrameBuffer() const {
+		return flags & FLAGS::FRAME_BUF;
 	}
 
 
 	// Get multiboot command line
-	const sbyte_t* info::commandLine() const {
-
-		return (flags & flags::CMD) ? reinterpret_cast<const sbyte_t*>(cmdLine) : nullptr;
-
+	const sbyte_t* info_t::commandLine() const {
+		return (flags & FLAGS::CMD) ? reinterpret_cast<const sbyte_t*>(cmdLine) : nullptr;
 	}
 
 	// Get multiboot bootloader name
-	const sbyte_t* info::loaderName() const {
-
-		return (flags & flags::LOADER_NAME) ? reinterpret_cast<const sbyte_t*>(bootloaderName) : nullptr;
-
+	const sbyte_t* info_t::loaderName() const {
+		return (flags & FLAGS::LOADER_NAME) ? reinterpret_cast<const sbyte_t*>(bootloaderName) : nullptr;
 	}
 
 
 	// Multiboot 1 memory entry type
-	enum class mmapType_t : dword_t {
+	enum class MEMORY_MAP_TYPE : dword_t {
 
 		AVAILABLE	= 1,			// Memory available
 		RESERVED	= 2,			// Memory reserved
@@ -270,12 +240,12 @@ namespace multiboot {
 	};
 
 	// Multiboot 1 memory map entry
-	struct mmapEntry_t {
+	struct memoryMapEntry_t {
 
 		dword_t		size;			// Memory entry size
 		quad_t		address;		// Memory entry address
 		quad_t		length;			// Memory entry length
-		mmapType_t	type;			// Memory entry type
+		MEMORY_MAP_TYPE	type;			// Memory entry type
 
 	};
 
