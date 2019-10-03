@@ -3,7 +3,7 @@
 #	arch folder Make script
 #
 #	File:	Makefile
-#	Date:	18 Sep 2019
+#	Date:	03 Oct 2019
 #
 #	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.
@@ -69,37 +69,67 @@ export	RM			= rm -rf
 
 export	BIN_NAME		= kernel.bin
 
+IGROS_DIR_ISO			= /iso
+IGROS_DIR_BOOT			= $(IGROS_DIR_ISO)/boot
+IGROS_DIR_GRUB			= $(IGROS_DIR_BOOT)/grub
+IGROS_GRUB_CONFIG		= $(IGROS_DIR_GRUB)/grub.cfg
+IGROS_ISO			= os-$(IGROS_ARCH).iso
+
 
 .PHONY: all clean distclean rebuild run deploy
 
 all: $(IGROS_DIR_BUILD) $(IGROS_DIR_RELEASE)
-	@echo "	ECHO	$(IGROS_DIR_BUILD)"
-	@echo "	ECHO	$(IGROS_DIR_RELEASE)"
+	@echo "	MAKE	multiboot"
 	@$(MAKE) -C $(CURDIR)/../multiboot
+	@echo "	MAKE	klib"
 	@$(MAKE) -C $(CURDIR)/../klib
+	@echo "	MAKE	mem"
+	@$(MAKE) -C $(CURDIR)/../mem
+	@echo "	MAKE	$(IGROS_ARCH)"
 	@$(MAKE) -C $(IGROS_ARCH)
 
 clean:
+	@echo "	CLEAN	multiboot"
 	@$(MAKE) -C $(CURDIR)/../multiboot clean
+	@echo "	CLEAN	klib"
 	@$(MAKE) -C $(CURDIR)/../klib clean
+	@echo "	CLEAN	mem"
+	@$(MAKE) -C $(CURDIR)/../mem clean
+	@echo "	CLEAN	$(IGROS_ARCH)"
 	@$(MAKE) -C $(IGROS_ARCH) clean
 
 distclean:
+	@echo "	DIST	$(IGROS_ARCH)"
 	@$(MAKE) -C $(IGROS_ARCH) distclean
 
 rebuild: clean all
 
 run: all
+	@echo "	RUN	$(IGROS_ARCH)"
 	@$(MAKE) -C $(IGROS_ARCH) run
 
 deploy: all
 	@echo "	DEPLOY	$(BIN_NAME)"
-	@mkdir -p $(IGROS_DIR_RELEASE)/iso/
-	@mkdir -p $(IGROS_DIR_RELEASE)/iso/boot/
-	@cp $(IGROS_DIR_RELEASE)/$(IGROS_ARCH)/$(BIN_NAME) $(IGROS_DIR_RELEASE)/iso/boot/
-	@mkdir -p $(IGROS_DIR_RELEASE)/iso/boot/grub/
-	@cp $(IGROS_DIR_RELEASE)/../grub.cfg $(IGROS_DIR_RELEASE)/iso/boot/grub/grub.cfg
-	@grub-mkrescue -o $(IGROS_DIR_RELEASE)/os-$(IGROS_ARCH).iso $(IGROS_DIR_RELEASE)/iso
+	@echo "	MKDIR	$(IGROS_DIR_ISO)"
+	@mkdir -p $(IGROS_DIR_RELEASE)/$(IGROS_DIR_ISO)
+	@echo "	MKDIR	$(IGROS_DIR_BOOT)"
+	@mkdir -p $(IGROS_DIR_RELEASE)/$(IGROS_DIR_BOOT)
+	@echo "	CP	$(BIN_NAME) $(IGROS_DIR_BOOT)"
+	@cp $(IGROS_DIR_RELEASE)/$(IGROS_ARCH)/$(BIN_NAME) $(IGROS_DIR_RELEASE)/$(IGROS_DIR_BOOT)
+	@echo "	MKDIR	$(IGROS_DIR_GRUB)"
+	@mkdir -p $(IGROS_DIR_RELEASE)/$(IGROS_DIR_GRUB)
+	@echo "	GEN	$(IGROS_GRUB_CONFIG)"
+	@echo 'set timeout=0'			 > $(IGROS_DIR_RELEASE)/$(IGROS_GRUB_CONFIG)
+	@echo 'set default=0'			>> $(IGROS_DIR_RELEASE)/$(IGROS_GRUB_CONFIG)
+	@echo ''				>> $(IGROS_DIR_RELEASE)/$(IGROS_GRUB_CONFIG)
+	@echo 'menuentry "IgrOS-Kernel" {'	>> $(IGROS_DIR_RELEASE)/$(IGROS_GRUB_CONFIG)
+	@echo '	multiboot /boot/kernel.bin'	>> $(IGROS_DIR_RELEASE)/$(IGROS_GRUB_CONFIG)
+	@echo '	boot'				>> $(IGROS_DIR_RELEASE)/$(IGROS_GRUB_CONFIG)
+	@echo '}'				>> $(IGROS_DIR_RELEASE)/$(IGROS_GRUB_CONFIG)
+	@echo "	GEN	$(IGROS_ISO)"
+	@grub-mkrescue -o $(IGROS_DIR_RELEASE)/$(IGROS_ISO) $(IGROS_DIR_RELEASE)/$(IGROS_DIR_ISO) 2>/dev/null
+	@echo "	RM	$(IGROS_DIR_ISO)"
+	@rm -rf $(IGROS_DIR_RELEASE)/$(IGROS_DIR_ISO)
 
 $(IGROS_DIR_BUILD):
 	@echo "	MKDIR	$(IGROS_DIR_BUILD)/$(IGROS_ARCH)"
