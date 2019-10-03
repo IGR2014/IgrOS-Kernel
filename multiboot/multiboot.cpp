@@ -25,7 +25,7 @@ namespace multiboot {
 
 
         // Dump multiboot flags
-	void info::dumpFlags() const {
+	void info_t::dumpFlags() const {
 
                 // Print buffer
 		sbyte_t text[64];
