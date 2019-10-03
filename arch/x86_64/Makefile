@@ -3,7 +3,7 @@
 #	x86_64 folder Make script
 #
 #	File:	Makefile
-#	Date:	12 Sep 2019
+#	Date:	02 Oct 2019
 #
 #	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.
@@ -33,6 +33,7 @@ OBJ		= $(IGROS_DIR_TARGET_BUILD)/boot/multiboot.o		\
 		  $(IGROS_DIR_TARGET_BUILD)/../klib/kstring.o		\
 		  $(IGROS_DIR_TARGET_BUILD)/../klib/kprint.o		\
 		  $(IGROS_DIR_TARGET_BUILD)/../multiboot/multiboot.o	\
+		  $(IGROS_DIR_TARGET_BUILD)/../mem/mmap.o		\
 		  $(IGROS_DIR_TARGET_BUILD)/drivers/vmem.o		\
 		  $(IGROS_DIR_TARGET_BUILD)/drivers/keyboard.o		\
 		  $(IGROS_DIR_TARGET_BUILD)/drivers/pit.o		\
@@ -72,7 +73,7 @@ distclean:
 
 run: $(BIN)
 	@echo "	RUN	$(BIN_NAME)"
-	@qemu-system-x86_64 -kernel $(BIN)
+	@qemu-system-x86_64 -kernel $(BIN) -m 1G
 
 # Default build rule for all .cpp files
 $(IGROS_DIR_TARGET_BUILD)/%.o: %.cpp

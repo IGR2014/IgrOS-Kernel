@@ -3,7 +3,7 @@
 //	VGA memory low-level operations
 //
 //	File:	vmem.hpp
-//	Date:	06 Jun 2019
+//	Date:	01 Oct 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
