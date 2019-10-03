@@ -3,7 +3,7 @@
 //	Boot low-level main setup function
 //
 //	File:	boot.cpp
-//	Date:	30 Sep 2019
+//	Date:	03 Oct 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -29,6 +29,13 @@
 #include <klib/kstring.hpp>
 #include <klib/kprint.hpp>
 
+#include <mem/mmap.hpp>
+
+
+// Kernel start and end
+extern byte_t _SECTION_KERNEL_START_;
+extern byte_t _SECTION_KERNEL_END_;
+
 
 #ifdef	__cplusplus
 
@@ -38,7 +45,7 @@ extern "C" {
 
 
 	// Kernel main function
-	void kmain(multiboot::info* multiboot, dword_t magic) {
+	void kmain(multiboot::info_t* multiboot, dword_t magic) {
 
 		// Init VGA memory
 		arch::vmemInit();
@@ -46,9 +53,6 @@ extern "C" {
 
 		// Print buffer
 		sbyte_t text[64];
-
-		// Write Multiboot info message
-		//arch::vmemWrite("Multiboot info\r\n");
 
 		// Check multiboot magic
 		if (!multiboot::check(magic)) {
@@ -69,19 +73,70 @@ extern "C" {
 		// Dump multiboot flags
 		//multiboot->dumpFlags();
 
+		//
+		byte_t* ptr = reinterpret_cast<byte_t*>(0xA0000);
+		ptr[0] = 0x00;
+		ptr[1] = 0x00;
+		ptr[2] = 0xFF;
+		ptr[3] = 0x00;
+
 		// Write Multiboot info message
 		arch::vmemWrite("Bootloader info\r\n");
 		// Dump multiboot command line
-		arch::vmemWrite("\tCommand line:\t");
-		arch::vmemWrite(multiboot->commandLine());
-		arch::vmemWrite("\r\n");
+		//arch::vmemWrite("\tCommand line:\t");
+		//arch::vmemWrite(multiboot->commandLine());
+		//arch::vmemWrite("\r\n");
 		// Dump multiboot bootloader name
-		arch::vmemWrite("\tLoader name:\t");
-		arch::vmemWrite(multiboot->loaderName());
-		arch::vmemWrite("\r\n\r\n");
+		//arch::vmemWrite("\tLoader name:\t");
+		//arch::vmemWrite(multiboot->loaderName());
+		//arch::vmemWrite("\r\n");
+		// Dump memory info
+		if (multiboot->hasInfoMemory()) {
+			arch::vmemWrite("\tMemory info:\r\n");
+			arch::vmemWrite("\t\tLow:\t");
+			arch::vmemWrite(klib::kitoa(text, 64, multiboot->memLow));
+			arch::vmemWrite("\r\n\t\tHigh:\t");
+			arch::vmemWrite(klib::kitoa(text, 64, multiboot->memHigh));
+			arch::vmemWrite("\r\n");
+		} else {
+			arch::vmemWrite("\tNo memory info provided...\r\n");
+		}
+		// Dump multiboot memory map
+		if (multiboot->hasInfoMemoryMap()) {
+			arch::vmemWrite("\tMemory map:\r\n");
+			arch::vmemWrite("\t\tSize:\t");
+			arch::vmemWrite(klib::kitoa(text, 64, multiboot->mmapLength));
+			arch::vmemWrite("\r\n\t\tAddr:\t0x");
+			arch::vmemWrite(klib::kitoa(text, 64, multiboot->mmapAddr, klib::base::HEX));
+			arch::vmemWrite("\r\n");
+			// Get pointer to memory map
+			multiboot::memoryMapEntry_t* memoryMap = reinterpret_cast<multiboot::memoryMapEntry_t*>(multiboot->mmapAddr);
+			// Loop through memory map
+			while (quad_t(memoryMap) < (multiboot->mmapAddr + multiboot->mmapLength)) {
+				arch::vmemWrite("\t\t\t[");
+				arch::vmemWrite(klib::kitoa(text, 64, dword_t(memoryMap->type), klib::base::HEX));
+				arch::vmemWrite("]\t0x");
+				arch::vmemWrite(klib::kitoa(text, 64, memoryMap->address, klib::base::HEX));
+				arch::vmemWrite(" - 0x");
+				arch::vmemWrite(klib::kitoa(text, 64, (memoryMap->address + memoryMap->length), klib::base::HEX));
+				arch::vmemWrite("\r\n");
+				// Move to next memory map entry
+				memoryMap = reinterpret_cast<multiboot::memoryMapEntry_t*>(quad_t(memoryMap) + memoryMap->size + sizeof(memoryMap->size));
+			}
+		} else {
+			arch::vmemWrite("\tNo memory map provided...\r\n");
+		}
+		arch::vmemWrite("\r\n");
 
 		// Write Kernel info message
 		arch::vmemWrite("Kernel info\r\n");
+		arch::vmemWrite("\tStart addr:\t0x");
+		arch::vmemWrite(klib::kitoa(text, 64, quad_t(&_SECTION_KERNEL_START_), klib::base::HEX));
+		arch::vmemWrite("\r\n\tEnd addr:\t0x");
+		arch::vmemWrite(klib::kitoa(text, 64, quad_t(&_SECTION_KERNEL_END_), klib::base::HEX));
+		arch::vmemWrite("\r\n\tSize:\t\t");
+		arch::vmemWrite(klib::kitoa(text, 64, quad_t(&_SECTION_KERNEL_END_ - &_SECTION_KERNEL_START_)));
+		arch::vmemWrite(" bytes \r\n");
 		arch::vmemWrite("\tBuild:\t\t" __DATE__ ", " __TIME__ "\r\n");
 		arch::vmemWrite("\tVersion:\tv");
 		arch::vmemWrite(klib::kitoa(text, 20, IGROS_VERSION_MAJOR));
@@ -110,7 +165,10 @@ extern "C" {
 		// Setup Global Descriptors Table
 		arch::gdtSetup();
 
-		// Setup paging (And identity map first 4MB where kernel is)
+		// Setup physical memory map
+		//mem::mmapInit(reinterpret_cast<multiboot::memoryMapEntry_t*>(multiboot->mmapAddr), multiboot->mmapAddr + multiboot->mmapLength);
+
+		// Setup paging (And identity map first 4MB where kernel physically is)
 		arch::pagingSetup();
 
 		// Setup keyboard
