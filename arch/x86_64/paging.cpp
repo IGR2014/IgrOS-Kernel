@@ -3,7 +3,7 @@
 //	Memory paging for x86
 //
 //	File:	paging.cpp
-//	Date:	02 Oct 2019
+//	Date:	04 Oct 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -83,7 +83,7 @@ namespace arch {
 
 		// Map all pages of first 1 GB to first page table
 		// Note 2 MB pages!
-		for (sdword_t k = 0; k < 2; ++k) {
+		for (sdword_t k = 0; k < 2; k++) {
 			pageDirectory[k]	 = (k << 21);
 			// Page marked as present and writable
 			pageDirectory[k]	|= quad_t(pagingFlags_t::HUGE | pagingFlags_t::WRITABLE | pagingFlags_t::PRESENT);
