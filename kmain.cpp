@@ -3,7 +3,7 @@
 //	Boot low-level main setup function
 //
 //	File:	boot.cpp
-//	Date:	03 Oct 2019
+//	Date:	04 Oct 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -63,7 +63,7 @@ extern "C" {
 			arch::vmemWrite(klib::kitoa(text, 20, magic, klib::base::HEX));
 			// Print multiboot address
 			arch::vmemWrite("\r\n\tADDRESS:\t0x");
-			arch::vmemWrite(klib::kitoa(text, 20, quad_t(multiboot), klib::base::HEX));
+			arch::vmemWrite(klib::kptoa(text, 20, multiboot));
 
 			// Hang CPU
 			while (true) {};
@@ -72,13 +72,6 @@ extern "C" {
 
 		// Dump multiboot flags
 		//multiboot->dumpFlags();
-
-		//
-		byte_t* ptr = reinterpret_cast<byte_t*>(0xA0000);
-		ptr[0] = 0x00;
-		ptr[1] = 0x00;
-		ptr[2] = 0xFF;
-		ptr[3] = 0x00;
 
 		// Write Multiboot info message
 		arch::vmemWrite("Bootloader info\r\n");
@@ -178,6 +171,15 @@ extern "C" {
 
 		// Write "Booted successfully" message
 		arch::vmemWrite("\r\nBooted successfully\r\n\r\n");
+
+		/*
+		byte_t* ptr = reinterpret_cast<byte_t*>(0xA0000);
+		for (dword_t j = 0; j < 10000000; j+=4) {
+			ptr[j + 0] = 0x00;
+			ptr[j + 1] = 0xFF;
+			ptr[j + 2] = 0x00;
+		}
+		*/
 
 		/*
 		// Page mapping test (higher half test)
