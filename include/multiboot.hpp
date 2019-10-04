@@ -3,7 +3,7 @@
 //	Multiboot 1 header info
 //
 //	File:	multiboot.hpp
-//	Date:	01 Oct 2019
+//	Date:	04 Oct 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -253,10 +253,8 @@ namespace multiboot {
 
 
 	// Multiboot 1 header signature check function
-	inline constexpr bool check(const dword_t signature) {
-
+	inline const bool check(const dword_t signature) {
 		return (BOOTLOADER_MAGIC == signature);
-
 	}
 
 
