@@ -3,7 +3,7 @@
 //	Kernel text print functions
 //
 //	File:	kprint.hpp
-//	Date:	14 Jun 2019
+//	Date:	04 Oct 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -55,6 +55,9 @@ namespace klib {
 	sbyte_t*	kitoa(sbyte_t* buffer, std::size_t size, quad_t value, const base radix = base::DEC);
 	// Kernel integer to string function
 	sbyte_t*	kitoa(sbyte_t* buffer, std::size_t size, squad_t value, const base radix = base::DEC);
+
+	// Kernel pointer to string function
+	sbyte_t*	kptoa(sbyte_t* buffer, std::size_t size, pointer_t value, const base radix = base::HEX);
 
 
 	// TODO Implement kernel print function
