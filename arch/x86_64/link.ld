@@ -3,14 +3,14 @@
 **	Kernel linker script
 **
 **	File:	link.ld
-**	Date:	03 Oct 2019
+**	Date:	04 Oct 2019
 **
 **	Copyright (c) 2017 - 2019, Igor Baklykov
 **	All rights reserved.
 **
 */
 
-/* Create i386 kernel and than just jump to x86_64 in code */
+/* Create i386 kernel. Then just jump to x86_64 in code */
 OUTPUT_FORMAT(elf32-i386)
 /*OUTPUT_FORMAT(elf64-x86-64)*/
 OUTPUT_ARCH(i386:x86-64)
