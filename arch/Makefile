@@ -35,7 +35,8 @@ export	CXXFLAGS		= -std=c++11				\
 				  -mno-sse				\
 				  -mno-sse2				\
 				  -mno-sse3				\
-				  -mno-mmx
+				  -mno-mmx				\
+				  -DIGROS_ARCH_$(IGROS_ARCH)
 
 ifeq ($(IGROS_ARCH), i386)
 	CXXFLAGS		+= -m32					\
