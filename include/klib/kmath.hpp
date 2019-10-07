@@ -1,9 +1,9 @@
 ////////////////////////////////////////////////////////////////
 //
-//	Kernel math functions
+//	Kernel math functions definitions
 //
 //	File:	kmath.hpp
-//	Date:	04 Oct 2019
+//	Date:	07 Oct 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -42,58 +42,16 @@ namespace klib {
 	};
 
 
-#if defined(IGROS_ARCH_i386)
+	// Divide 64-bit integer by 32-bit integer
+	// Returns 64-bit quotient and 64-bit reminder
+	udivmod_t	kudivmod(quad_t dividend, dword_t divisor);
 
 	// Divide 64-bit integer by 32-bit integer
 	// Returns 64-bit quotient and 64-bit reminder
-	inline static udivmod_t kdivmod(quad_t dividend, dword_t divisor) {
-
-		// Division result
-		udivmod_t	res	= {0ULL, dividend};
-		// Quotient bit
-		quad_t		qbit	= 1ULL;
-
-		// Division by 0
-		if (0 == divisor) {
-			res.quotient = quad_t(1 / divisor);
-			res.reminder = 0ULL;
-			return res;
-		}
-
-		while (0 <= sdword_t(divisor)) {
-			divisor <<= 1ULL;
-			qbit	<<= 1ULL;
-		}
-
-		while (qbit) {
-			if (res.reminder >= divisor) {
-				res.reminder	-= divisor;
-				res.quotient	|= qbit;
-			}
-			divisor	>>= 1ULL;
-			qbit	>>= 1ULL;
-		}
-
-		return res;
-
-	}
-
-#else
-
-	// Divide 64-bit integer by 32-bit integer
-	// Returns 64-bit quotient and 64-bit reminder
-	inline udivmod_t kdivmod(quad_t dividend, dword_t divisor) {
-		udivmod_t res = {
-			(dividend / divisor),
-			(dividend % divisor)
-		};
-		return res;
-	}
-
-#endif
+	divmod_t	kdivmod(squad_t dividend, sdword_t divisor);
 
 
-}	// namespace arch
+}	// namespace klib
 
 
 #endif	// IGROS_KLIB_KERNEL_MATH_HPP
