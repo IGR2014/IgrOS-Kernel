@@ -3,7 +3,7 @@
 //	Kernel text print functions
 //
 //	File:	kprint.cpp
-//	Date:	04 Oct 2019
+//	Date:	07 Oct 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -26,14 +26,13 @@ namespace klib {
 	static const sbyte_t	KITOA_CONST_BUFFER[]	= {"0123456789ABCDEF"};
 
 
-	// Kernel integer to string template function 
-	template<typename T>
-	inline sbyte_t* kitoaHelper(sbyte_t* buffer, std::size_t size, T value, const base radix) {
+	// Kernel integer to string template function
+	inline static sbyte_t* kitoaHelper(sbyte_t* buffer, std::size_t size, dword_t value, const base radix) {
 
 		// Temporary buffer for value text representation
 		sbyte_t tempBuffer[KITOA_BUFF_LEN] {};
 		// Setup counter to last - 1 position in temporary buffer
-		T	pos = KITOA_BUFF_LEN - 2;
+		dword_t	pos = KITOA_BUFF_LEN - 2;
 		// Check if sign is negative and value should be represented
 		// as decimal (binary, octal and hexidemical values have no sign)
 		if ((value < 0)	&& (base::DEC == radix)) {
@@ -72,13 +71,12 @@ namespace klib {
 
 
 	// Kernel long integer to string template function 
-	template<typename T>
-	inline sbyte_t* kltoaHelper(sbyte_t* buffer, std::size_t size, T value, const base radix) {
+	inline static sbyte_t* kltoaHelper(sbyte_t* buffer, std::size_t size, quad_t value, const base radix) {
 
 		// Temporary buffer for value text representation
 		sbyte_t tempBuffer[KITOA_BUFF_LEN] {};
 		// Setup counter to last - 1 position in temporary buffer
-		T	pos = KITOA_BUFF_LEN - 2;
+		quad_t	pos = KITOA_BUFF_LEN - 2;
 		// Check if sign is negative and value should be represented
 		// as decimal (binary, octal and hexidemical values have no sign)
 		if ((value < 0)	&& (base::DEC == radix)) {
@@ -95,7 +93,7 @@ namespace klib {
 		// (this makes easier dealing with reverse routine by removing it)
 		do {
 			// Calculate digit index
-			udivmod_t divres	= kdivmod(value, dword_t(radix));
+			udivmod_t divres	= kudivmod(value, dword_t(radix));
 			// Save current digit to temporary buffer
 			tempBuffer[pos--]	= KITOA_CONST_BUFFER[divres.reminder];
 			// Divide value by base to remove current digit
@@ -114,52 +112,19 @@ namespace klib {
 	}
 
 
-	// Kernel unsigned byte to string function
-	sbyte_t* kitoa(sbyte_t* buffer, std::size_t size, byte_t value, const base radix) {
+	// Kernel unsigned integer to string function
+	sbyte_t* kitoa(sbyte_t* buffer, std::size_t size, const dword_t value, const base radix) {
 		return kitoaHelper(buffer, size, value, radix);
 	}
 
-	// Kernel signed byte to string function
-	sbyte_t* kitoa(sbyte_t* buffer, std::size_t size, sbyte_t value, const base radix) {
-		return kitoaHelper(buffer, size, value, radix);
-	}
-
-
-	// Kernel unsigned word to string function
-	sbyte_t* kitoa(sbyte_t* buffer, std::size_t size, word_t value, const base radix) {
-		return kitoaHelper(buffer, size, value, radix);
-	}
-
-	// Kernel signed word to string function
-	sbyte_t* kitoa(sbyte_t* buffer, std::size_t size, sword_t value, const base radix) {
-		return kitoaHelper(buffer, size, value, radix);
-	}
-
-
-	// Kernel unsigned double word to string function
-	sbyte_t* kitoa(sbyte_t* buffer, std::size_t size, dword_t value, const base radix) {
-		return kitoaHelper(buffer, size, value, radix);
-	}
-
-	// Kernel signed double word to string function
-	sbyte_t* kitoa(sbyte_t* buffer, std::size_t size, sdword_t value, const base radix) {
-		return kitoaHelper(buffer, size, value, radix);
-	}
-
-
-	// Kernel unsigned quad word to string function
-	sbyte_t* kitoa(sbyte_t* buffer, std::size_t size, quad_t value, const base radix) {
-		return kltoaHelper(buffer, size, value, radix);
-	}
-
-	// Kernel signed quad word to string function
-	sbyte_t* kitoa(sbyte_t* buffer, std::size_t size, squad_t value, const base radix) {
+	// Kernel large unsigned integer to string function
+	sbyte_t* kitoa(sbyte_t* buffer, std::size_t size, const quad_t value, const base radix) {
 		return kltoaHelper(buffer, size, value, radix);
 	}
 
 
-	// Kernel pointer to string function
-	sbyte_t* kptoa(sbyte_t* buffer, std::size_t size, pointer_t value, const base radix) {
+	// Kernel size type to string function
+	sbyte_t* kstoa(sbyte_t* buffer, std::size_t size, const std::size_t value, const base radix) {
 
 #if defined(IGROS_ARCH_i386)
 

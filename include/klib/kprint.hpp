@@ -3,7 +3,7 @@
 //	Kernel text print functions
 //
 //	File:	kprint.hpp
-//	Date:	04 Oct 2019
+//	Date:	07 Oct 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -36,28 +36,54 @@ namespace klib {
 	};
 
 
-	// Kernel integer to string function
-	sbyte_t*	kitoa(sbyte_t* buffer, std::size_t size, byte_t value, const base radix = base::DEC);
-	// Kernel integer to string function
-	sbyte_t*	kitoa(sbyte_t* buffer, std::size_t size, sbyte_t value, const base radix = base::DEC);
+	// Kernel large unsigned integer to string function
+	sbyte_t* kitoa(sbyte_t* buffer, std::size_t size, const quad_t value, const base radix = base::DEC);
+
+	// Kernel large integer to string function
+	inline sbyte_t* kitoa(sbyte_t* buffer, std::size_t size, const squad_t value, const base radix = base::DEC) {
+		return kitoa(buffer, size, quad_t(value), radix);
+	}
+
+
+	// Kernel unsigned integer to string function
+	sbyte_t* kitoa(sbyte_t* buffer, std::size_t size, const dword_t value, const base radix = base::DEC);
 
 	// Kernel integer to string function
-	sbyte_t*	kitoa(sbyte_t* buffer, std::size_t size, word_t value, const base radix = base::DEC);
-	// Kernel integer to string function
-	sbyte_t*	kitoa(sbyte_t* buffer, std::size_t size, sword_t value, const base radix = base::DEC);
+	inline sbyte_t* kitoa(sbyte_t* buffer, std::size_t size, const sdword_t value, const base radix = base::DEC) {
+		return kitoa(buffer, size, dword_t(value), radix);
+	}
+
 
 	// Kernel integer to string function
-	sbyte_t*	kitoa(sbyte_t* buffer, std::size_t size, dword_t value, const base radix = base::DEC);
-	// Kernel integer to string function
-	sbyte_t*	kitoa(sbyte_t* buffer, std::size_t size, sdword_t value, const base radix = base::DEC);
+	inline sbyte_t* kitoa(sbyte_t* buffer, std::size_t size, const word_t value, const base radix = base::DEC) {
+		return kitoa(buffer, size, dword_t(value), radix);
+	}
 
 	// Kernel integer to string function
-	sbyte_t*	kitoa(sbyte_t* buffer, std::size_t size, quad_t value, const base radix = base::DEC);
+	inline sbyte_t* kitoa(sbyte_t* buffer, std::size_t size, const sword_t value, const base radix = base::DEC) {
+		return kitoa(buffer, size, dword_t(value), radix);
+	}
+
+
 	// Kernel integer to string function
-	sbyte_t*	kitoa(sbyte_t* buffer, std::size_t size, squad_t value, const base radix = base::DEC);
+	inline sbyte_t* kitoa(sbyte_t* buffer, std::size_t size, const byte_t value, const base radix = base::DEC) {
+		return kitoa(buffer, size, dword_t(value), radix);
+	}
+
+	// Kernel integer to string function
+	inline sbyte_t* kitoa(sbyte_t* buffer, std::size_t size, const sbyte_t value, const base radix = base::DEC) {
+		return kitoa(buffer, size, sdword_t(value), radix);
+	}
+
+
+	// Kernel size type to string function
+	sbyte_t* kstoa(sbyte_t* buffer, std::size_t size, const std::size_t value, const base radix = base::DEC);
+
 
 	// Kernel pointer to string function
-	sbyte_t*	kptoa(sbyte_t* buffer, std::size_t size, pointer_t value, const base radix = base::HEX);
+	inline sbyte_t* kptoa(sbyte_t* buffer, std::size_t size, const void* value) {
+		return kstoa(buffer, size, std::size_t(value), base::HEX);
+	}
 
 
 	// TODO Implement kernel print function
