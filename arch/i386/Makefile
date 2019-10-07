@@ -3,7 +3,7 @@
 #	i386 folder Make script
 #
 #	File:	Makefile
-#	Date:	02 Oct 2019
+#	Date:	07 Oct 2019
 #
 #	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.
@@ -30,6 +30,7 @@ OBJ		= $(IGROS_DIR_TARGET_BUILD)/boot/multiboot.o		\
 		  $(IGROS_DIR_TARGET_BUILD)/klib/memset.o		\
 		  $(IGROS_DIR_TARGET_BUILD)/../klib/kstring.o		\
 		  $(IGROS_DIR_TARGET_BUILD)/../klib/kprint.o		\
+		  $(IGROS_DIR_TARGET_BUILD)/../klib/kmath.o		\
 		  $(IGROS_DIR_TARGET_BUILD)/../multiboot/multiboot.o	\
 		  $(IGROS_DIR_TARGET_BUILD)/../mem/mmap.o		\
 		  $(IGROS_DIR_TARGET_BUILD)/drivers/vmem.o		\
@@ -71,7 +72,7 @@ distclean:
 
 run: $(BIN)
 	@echo "	RUN	$(BIN_NAME)"
-	@qemu-system-i386 -kernel $(BIN)
+	@qemu-system-i386 -kernel $(BIN) -m 1G
 
 # Default build rule for all .cpp files
 $(IGROS_DIR_TARGET_BUILD)/%.o: %.cpp

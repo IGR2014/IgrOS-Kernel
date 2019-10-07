@@ -37,6 +37,11 @@ kernelStart:
 
 	# Start kernel code
 	leal	stackTop - KERNEL_VMA, %esp		# Set stack
+
+	# Save multiboot data for kmain
+	# Note - since now till kmain call nothing
+	# should NOT be pushed on stack without
+	# poping from it!
 	pushl	%eax					# Multiboot magic value
 	pushl	%ebx					# Multiboot header address
 

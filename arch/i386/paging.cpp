@@ -50,7 +50,7 @@ namespace arch {
 	void pagingSetup() {
 
 		// Other page directories are unused
-		for (dword_t i = 0; i < 1024; ++i) {
+		for (dword_t i = 0; i < 1024; i++) {
 			// Pages marked as clear
 			pageDirectory[i] = dword_t(pagingFlags_t::CLEAR);
 		}
@@ -59,7 +59,7 @@ namespace arch {
 		pageDirectory[0]	|= dword_t(pagingFlags_t::WRITABLE | pagingFlags_t::PRESENT);
 
 		// Map all pages of first 4MB to first page table
-		for (sdword_t j = 0; j < 1024; ++j) {
+		for (sdword_t j = 0; j < 1024; j++) {
 			pageTable[j]	 = (j << 12);
 			pageTable[j]	|= dword_t(pagingFlags_t::WRITABLE | pagingFlags_t::PRESENT);
 		}
