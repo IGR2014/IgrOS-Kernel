@@ -3,7 +3,7 @@
 //	Boot low-level main setup function
 //
 //	File:	boot.cpp
-//	Date:	04 Oct 2019
+//	Date:	07 Oct 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -33,8 +33,8 @@
 
 
 // Kernel start and end
-extern byte_t _SECTION_KERNEL_START_;
-extern byte_t _SECTION_KERNEL_END_;
+extern const byte_t _SECTION_KERNEL_START_;
+extern const byte_t _SECTION_KERNEL_END_;
 
 
 #ifdef	__cplusplus
@@ -76,13 +76,13 @@ extern "C" {
 		// Write Multiboot info message
 		arch::vmemWrite("Bootloader info\r\n");
 		// Dump multiboot command line
-		//arch::vmemWrite("\tCommand line:\t");
-		//arch::vmemWrite(multiboot->commandLine());
-		//arch::vmemWrite("\r\n");
+		arch::vmemWrite("\tCommand line:\t");
+		arch::vmemWrite(multiboot->commandLine());
+		arch::vmemWrite("\r\n");
 		// Dump multiboot bootloader name
-		//arch::vmemWrite("\tLoader name:\t");
-		//arch::vmemWrite(multiboot->loaderName());
-		//arch::vmemWrite("\r\n");
+		arch::vmemWrite("\tLoader name:\t");
+		arch::vmemWrite(multiboot->loaderName());
+		arch::vmemWrite("\r\n");
 		// Dump memory info
 		if (multiboot->hasInfoMemory()) {
 			arch::vmemWrite("\tMemory info:\r\n");
@@ -124,11 +124,11 @@ extern "C" {
 		// Write Kernel info message
 		arch::vmemWrite("Kernel info\r\n");
 		arch::vmemWrite("\tStart addr:\t0x");
-		arch::vmemWrite(klib::kitoa(text, 64, quad_t(&_SECTION_KERNEL_START_), klib::base::HEX));
+		arch::vmemWrite(klib::kptoa(text, 64, &_SECTION_KERNEL_START_));
 		arch::vmemWrite("\r\n\tEnd addr:\t0x");
-		arch::vmemWrite(klib::kitoa(text, 64, quad_t(&_SECTION_KERNEL_END_), klib::base::HEX));
+		arch::vmemWrite(klib::kptoa(text, 64, &_SECTION_KERNEL_END_));
 		arch::vmemWrite("\r\n\tSize:\t\t");
-		arch::vmemWrite(klib::kitoa(text, 64, quad_t(&_SECTION_KERNEL_END_ - &_SECTION_KERNEL_START_)));
+		arch::vmemWrite(klib::kitoa(text, 64, dword_t(&_SECTION_KERNEL_END_ - &_SECTION_KERNEL_START_)));
 		arch::vmemWrite(" bytes \r\n");
 		arch::vmemWrite("\tBuild:\t\t" __DATE__ ", " __TIME__ "\r\n");
 		arch::vmemWrite("\tVersion:\tv");
