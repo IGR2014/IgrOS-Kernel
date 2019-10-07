@@ -3,7 +3,7 @@
 #	arch folder Make script
 #
 #	File:	Makefile
-#	Date:	03 Oct 2019
+#	Date:	07 Oct 2019
 #
 #	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.
@@ -28,9 +28,8 @@ export	CXXFLAGS		= -std=c++11				\
 				  -nostdlib				\
 				  -fno-pic				\
 				  -fno-pie				\
-				  -Os					\
+				  -O3					\
 				  -s					\
-				  -mno-red-zone				\
 				  -mno-3dnow				\
 				  -mno-sse				\
 				  -mno-sse2				\
@@ -44,6 +43,7 @@ ifeq ($(IGROS_ARCH), i386)
 else ifeq ($(IGROS_ARCH), x86_64)
 	CXXFLAGS		+= -m64					\
 				   -march=x86-64			\
+				   -mno-red-zone			\
 				   -mcmodel=large
 endif
 
