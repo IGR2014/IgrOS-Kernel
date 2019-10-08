@@ -17,6 +17,7 @@
 
 
 #include <cstdint>
+#include <cstdarg>
 
 #include <arch/types.hpp>
 
@@ -86,8 +87,50 @@ namespace klib {
 	}
 
 
-	// TODO Implement kernel print function
-	void kprint(const sbyte_t* format, ...);
+	// Kernel variadic arguments list va_list
+	struct kvaList {
+
+		std::size_t listArg = 0U;		// Current list arg
+
+		// Kernel variadic arguments list va_start
+		template<typename T>
+		inline void start(const T &arg);
+		// Kernel variadic arguments list va_end
+		inline void end();
+
+		// Kernel variadic arguments list va_arg
+		template<typename T>
+		inline const T& arg();
+
+	};
+
+
+	// Kernel variadic arguments list va_start macros
+	template<typename T>
+	void kvaList::start(const T &arg) {
+		listArg = std::size_t(&arg) + sizeof(T);
+	}
+
+	// Kernel variadic arguments list va_end macros
+	void kvaList::end() {
+		listArg = 0U;
+	}
+
+	// Kernel variadic arguments list va_arg macros
+	template<typename T>
+	const T& kvaList::arg() {
+		const T* arg = reinterpret_cast<const T*>(listArg);
+		listArg = std::size_t(arg + 1);
+		return *arg;
+	}
+
+	// Kernel vsnprintf function
+	void kvsnprint(sbyte_t* buffer, const std::size_t size, const sbyte_t* format, va_list list/*kvaList &list*/);
+
+	// Kernel snprintf function
+	void ksnprint(sbyte_t* buffer, const std::size_t size, const sbyte_t* format, ...);
+	// Kernel sprintf function
+	void ksprint(sbyte_t* buffer, const sbyte_t* format, ...);
 
 
 }	// namespace klib
