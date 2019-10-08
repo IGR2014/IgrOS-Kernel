@@ -3,7 +3,7 @@
 //	Programmable interrupt timer
 //
 //	File:	pit.cpp
-//	Date:	14 Jun 2019
+//	Date:	08 Oct 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -17,6 +17,7 @@
 #include <drivers/vmem.hpp>
 #include <drivers/pit.hpp>
 
+#include <klib/kmath.hpp>
 #include <klib/kprint.hpp>
 
 
@@ -40,22 +41,18 @@ namespace arch {
 
 		// Calculate PIT divisor (Base PIT frequency / required frequency)
 		word_t divisor	= PIT_MAIN_FREQUENCY / frequency;
-
 		// Save divisor value
 		PIT_DIVISOR	= divisor;
 		// Save current real frequency value
 		PIT_FREQUENCY	= PIT_MAIN_FREQUENCY / divisor;
 
 		// Print buffer
-		sbyte_t text[10];
-
-		vmemWrite("REAL frequency set to: ");
-		vmemWrite(klib::kitoa(text, 10, PIT_FREQUENCY));
-		vmemWrite(" Hz\r\n");
+		sbyte_t text[1024];
+		klib::ksprint(text, "REAL frequency set to: %d Hz.\r\n", PIT_FREQUENCY);
+		arch::vmemWrite(text);
 
 		// Tell pit we want to change divisor for channel 0
 		outPort8(PIT_CONTROL, 0x36);
-
 		// Set divisor (LOW first, then HIGH)
 		outPort8(PIT_CHANNEL_0,	divisor & 0xFF);
 		outPort8(PIT_CHANNEL_0,	(divisor & 0xFF00) >> 8);
@@ -68,13 +65,11 @@ namespace arch {
 
 		// Send latch command for channel 0;
 		outPort8(PIT_CONTROL, 0x00);
-
 		// Get number of elapsed ticks since last IRQ
 		byte_t lowByte	= inPort8(PIT_CHANNEL_0);
 		byte_t highByte	= inPort8(PIT_CHANNEL_0);
 		// Total elapsed ticks value
 		word_t elapsedSinceIRQ = (highByte << 8) | lowByte;
-
 		// Return full expired ticks count
 		return PIT_TICKS * PIT_DIVISOR + elapsedSinceIRQ;
 
@@ -87,25 +82,25 @@ namespace arch {
 		// Output every N-th tick were N = frequency
 		if ((++PIT_TICKS % PIT_FREQUENCY) == 0) {
 
-			dword_t elapsed		= pitGetTicks();
-			dword_t nanoseconds	= elapsed % PIT_MAIN_FREQUENCY;
-			dword_t seconds		= elapsed / PIT_MAIN_FREQUENCY;
+			auto	elapsed		= pitGetTicks();
+			auto	res		= klib::kudivmod(elapsed, PIT_MAIN_FREQUENCY);
+			dword_t nanoseconds	= dword_t(res.reminder);
+			dword_t seconds		= dword_t(res.quotient);
 			dword_t minutes		= seconds / 60;
 			dword_t hours		= minutes / 60;
 
-/*
-			vmemWrite("IRQ\t\t-> PIT\r\n");
-			vmemWrite("\t100 TICKS (~1 SECOND) EXPIRED\r\n");
-			vmemWrite("\t");
-			vmemWrite(klib::kitoa(text, 10, hours % 24));
-			vmemWrite(":");
-			vmemWrite(klib::kitoa(text, 10, minutes % 60));
-			vmemWrite(":");
-			vmemWrite(klib::kitoa(text, 10, seconds % 60));
-			vmemWrite(".");
-			vmemWrite(klib::kitoa(text, 10, nanoseconds));
-			vmemWrite("\r\n\r\n");
-*/
+			//
+			sbyte_t text[1024];
+			klib::ksprint(text,	"IRQ #%d\t[PIT]\r\n"
+						"Time:\t%d:%d:%d.%d (~1 sec.)\r\n"
+						"\r\n",
+						arch::irqNumber_t::PIT,
+						hours % 24,
+						minutes % 60,
+						seconds % 60,
+						nanoseconds);
+			arch::vmemWrite(text);
+			//
 
 		}
 
@@ -121,6 +116,12 @@ namespace arch {
 		irqHandlerInstall(arch::irqNumber_t::PIT, arch::pitInterruptHandler);
 		// Mask PIT interrupts
 		irqMask(arch::irqNumber_t::PIT);
+
+		// Print buffer
+		sbyte_t text[1024];
+		klib::ksprint(text,	"IRQ #%d [PIT] installed\r\n",
+					arch::irqNumber_t::PIT);
+		arch::vmemWrite(text);
 
 	}
 

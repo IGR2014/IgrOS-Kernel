@@ -3,7 +3,7 @@
 //	Exceptions low-level operations
 //
 //	File:	exceptions.cpp
-//	Date:	13 Jun 2019
+//	Date:	08 Oct 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -59,7 +59,7 @@ namespace arch {
 
 
 	// Exception handlers
-	static exHandler_t	exList[32] = {0};
+	static exHandler_t exList[32] = {};
 
 
 	// Exception handler function
@@ -67,39 +67,27 @@ namespace arch {
 
 		// Actually it`s an interrupt and normaly shouldn't be there
 		if (regs->number > 32) {
-
 			return;
-
 		}
 
 		// Acquire irq handler from list
-		exHandler_t exception = exList[regs->number];
+		auto exception = exList[regs->number];
 
-		sbyte_t text[64];
+		// Print buffer
+		sbyte_t text[1024];
+		klib::ksprint(text,	"EXCEPTION ->\t[#%d] %s\r\n"
+					"STATE:\t\t%s\r\n",
+					regs->number,
+					exName[regs->number],
+					(nullptr == exception) ? "UNHANDLED! CPU halted!\r\n\r\n" : "IN PROGRESS");
+		vmemWrite(text);
 
 		// Check if exception handler installed
-		if (exception) {
-
-			// Manage exception
-			vmemWrite("\r\nEXCEPTION:\t-> ");
-			vmemWrite(klib::kitoa(text, 64, regs->number));
-			vmemWrite("\r\n\r\n");
+		if (nullptr != exception) {
 			exception(regs);
-			vmemWrite("\r\n");
-
 		} else {
-
-			// Exception handler is not installed
-			vmemWrite("\r\nEXCEPTION:\t-> ");
-			vmemWrite(klib::kitoa(text, 64, regs->number));
-			vmemWrite("\r\n\t\t");
-			vmemWrite(exName[regs->number]);
-			vmemWrite(" unhandled!\r\n");
-			vmemWrite("CPU halted.\r\n");
-
 			// Hang CPU
 			while (true) {};
-
 		}
 
 	}
@@ -107,18 +95,14 @@ namespace arch {
 
 	// Install handler
 	void exHandlerInstall(exNumber_t exNumber, exHandler_t handler) {
-
 		// Set exception handler to handlers list
 		exList[exNumber] = handler;
-
 	}
 
 	// Uninstall handler
 	void exHandlerUninstall(exNumber_t exNumber) {
-
 		// Set exception handler as nullptr to exceprions list
 		exList[exNumber] = nullptr;
-
 	}
 
 

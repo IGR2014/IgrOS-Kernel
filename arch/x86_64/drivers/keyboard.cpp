@@ -3,7 +3,7 @@
 //	Keyboard generic handling
 //
 //	File:	keyboard.cpp
-//	Date:	14 Jun 2019
+//	Date:	08 Oct 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -26,32 +26,23 @@ namespace arch {
 	// Keyboard interrupt (#1) handler
 	void keyboardInterruptHandler(const taskRegs_t* regs) {
 
-		vmemWrite("IRQ\t\t-> KEYBOARD\r\n");
-		vmemWrite("KEY STATE:\t");
-
+		// Check keyboard status
 		byte_t keyStatus = inPort8(KEYBOARD_CONTROL);
-
 		// Check keyboard data port
 		if (keyStatus & 0x01) {
 
+			// Read keyboard data
 			byte_t keyCode = inPort8(KEYBOARD_DATA);
-
-			if (keyCode > 0x80) {
-
-				vmemWrite("KEY_RELEASED\r\n");
-
-			} else {
-
-				vmemWrite("KEY_PRESSED\r\n");
-
-			}
-
 			// Print buffer
-			sbyte_t text[10];
-
-			vmemWrite("Key CODE:\t");
-			vmemWrite(klib::kitoa(text, 10, keyCode & 0x7F, klib::base::HEX));
-			vmemWrite("\r\n\r\n");
+			sbyte_t text[1024];
+			klib::ksprint(text,	"IRQ #%d\t[Keyboard]\r\n"
+						"Key:\t%s\r\n"
+						"Code:\t0x%x\r\n"
+						"\r\n",
+						arch::irqNumber_t::KEYBOARD,
+						(keyCode > 0x80) ? "RELEASED" : "PRESSED",
+						keyCode);
+			arch::vmemWrite(text);
 
 		}
 
@@ -65,6 +56,12 @@ namespace arch {
 		irqHandlerInstall(arch::irqNumber_t::KEYBOARD, arch::keyboardInterruptHandler);
 		// Mask Keyboard interrupts
 		irqMask(arch::irqNumber_t::KEYBOARD);
+
+		// Print buffer
+		sbyte_t text[1024];
+		klib::ksprint(text,	"IRQ #%d [Keyboard] installed\r\n",
+					arch::irqNumber_t::KEYBOARD);
+		arch::vmemWrite(text);
 
 	}
 
