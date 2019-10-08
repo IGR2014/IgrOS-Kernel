@@ -3,7 +3,7 @@
 //	Interrupt descriptor table low-level operations
 //
 //	File:	idt.cpp
-//	Date:	18 Sep 2019
+//	Date:	08 Oct 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -42,9 +42,7 @@ namespace arch {
 
 	// Calculate IDT size
 	constexpr dword_t idtCalcTableSize(const dword_t &numOfEntries) {
-
 		return (numOfEntries * sizeof(idtEntry_t)) - 1;
-
 	}
 
 	// Setup IDT

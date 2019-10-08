@@ -45,9 +45,7 @@ namespace arch {
 
 	// Set VGA memory cursor position
 	void vmemCursorSet(const vmemCursor &cursor) {
-
 		vmemCursorSet(cursor.x, cursor.y);
-
 	}
 
 	// Get VGA memory cursor position
@@ -76,32 +74,26 @@ namespace arch {
 
 	// Disable VGA memory cursor
 	void vmemCursorDisable() {
-
 		// Choose cursor start register
 		outPort8(VGA_CURSOR_CONTROL, 0x0A);
 		// Send control word to disable cursor
 		outPort8(VGA_CURSOR_DATA, 0x20);
-
 	}
 
 	// Enable VGA memory cursor
 	void vmemCursorEnable() {
-
 		// Choose cursor start register
 		outPort8(VGA_CURSOR_CONTROL, 0x0A);
 		// Get current register value
 		byte_t cursorStartReg = inPort8(VGA_CURSOR_DATA);
 		// Send control word to disable cursor
 		outPort8(VGA_CURSOR_DATA, cursorStartReg & ~0x20);
-
 	}
 
 	// Set VGA memory color
 	void vmemSetColor(const byte_t &background, const byte_t &foreground) {
-
 		// Background is first 4 bits and foreground is next 4
 		vmemBkgColor = (background << 4) | foreground;
-
 	}
 
 	// Write symbol to VGA memory
@@ -112,36 +104,26 @@ namespace arch {
 
 			// If we are not at start
 			if (cursorPos.x != 0) {
-
 				// Move 1 symbol backward
 				--cursorPos.x;
-
 			} else {
-
 				cursorPos.x = VIDEO_MEM_WIDTH - 1;
 				// Move 1 line up
 				--cursorPos.y;
-
 			}
 
 		// Tabulation symbol
 		} else if (symbol == '\t') {
-
 			// calculate new tab offset
 			cursorPos.x = (cursorPos.x + VIDEO_MEM_TAB_SIZE) & ~7;
-
 		// Carret return
 		} else if (symbol == '\r') {
-
 			// Move to start of the row
 			cursorPos.x = 0;
-
 		// Carret new line
 		} else if (symbol == '\n') {
-
 			// Move to next row
 			++cursorPos.y;
-
 		// If non-control (printable) character
 		} else if (symbol >= ' ') {
 
@@ -159,11 +141,9 @@ namespace arch {
 
 		// Check if we are not out of columns
 		if (cursorPos.x >= VIDEO_MEM_WIDTH) {
-
 			// Move to next line
 			cursorPos.x = 0;
 			++cursorPos.y;
-
 		}
 
 		// Chech if we are not out of rows
@@ -171,12 +151,9 @@ namespace arch {
 
 			// Move cursor to the last line
 			cursorPos.y = VIDEO_MEM_HEIGHT - 1;
-
 			// Move screen 1 line up
 			for (word_t i = VIDEO_MEM_WIDTH; i < VIDEO_MEM_SIZE; ++i) {
-
 				vmemBase[i - VIDEO_MEM_WIDTH] = vmemBase[i];
-
 			}
 
 			// Calculate offset in VGA console
@@ -196,13 +173,10 @@ namespace arch {
 
 		// Cast const pointer to pointer
 		sbyte_t* data = const_cast<sbyte_t*>(&message[0]);
-
 		// Loop through message while \0 not found
 		while (*data != '\0') {
-
 			// Write symbols one by one
 			vmemWrite(*data++);
-
 		}
 
 	}
@@ -212,10 +186,8 @@ namespace arch {
 
 		// Loop through message
 		for (dword_t i = 0; i < size; ++i) {
-
 			// Write symbols one by one
 			vmemWrite(message[i]);
-
 		}
 
 	}
@@ -223,10 +195,8 @@ namespace arch {
 
 	// Clear VGA memory
 	void vmemClear() {
-
 		// Set whole screen with whitespace with default background
 		klib::kmemset16(vmemBase, VIDEO_MEM_SIZE, word_t(' ' | (vmemBkgColor << 8)));
-
 	}
 
 
