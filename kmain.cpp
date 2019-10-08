@@ -3,7 +3,7 @@
 //	Boot low-level main setup function
 //
 //	File:	boot.cpp
-//	Date:	07 Oct 2019
+//	Date:	08 Oct 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -49,102 +49,103 @@ extern "C" {
 
 		// Init VGA memory
 		arch::vmemInit();
-		arch::vmemWrite("IgrOS kernel\r\n\r\n");
 
 		// Print buffer
-		sbyte_t text[64];
+		sbyte_t text[1024];
 
 		// Check multiboot magic
 		if (!multiboot::check(magic)) {
 
-			arch::vmemWrite("\tBAD MULTIBOOT MAGIC!!!\r\n");
-			// Print multiboot magic
-			arch::vmemWrite("\tMAGIC:\t\t0x");
-			arch::vmemWrite(klib::kitoa(text, 20, magic, klib::base::HEX));
-			// Print multiboot address
-			arch::vmemWrite("\r\n\tADDRESS:\t0x");
-			arch::vmemWrite(klib::kptoa(text, 20, multiboot));
+			// Write Multiboot magic error message message
+			klib::ksprint(text,	"IgrOS kernel\r\n\r\n"
+						"\tBAD MULTIBOOT MAGIC!!!\r\n"
+						"\tMAGIC:\t\t0x%x\r\n"
+						"\tADDRESS:\t0x%p\r\n", magic, multiboot);
+			arch::vmemWrite(text);
 
 			// Hang CPU
 			while (true) {};
 
 		}
 
-		// Dump multiboot flags
-		//multiboot->dumpFlags();
+		// Write Multiboot magic error message message
+		klib::ksprint(text, "IgrOS kernel\r\n\r\n");
+		arch::vmemWrite(text);
 
 		// Write Multiboot info message
-		arch::vmemWrite("Bootloader info\r\n");
-		// Dump multiboot command line
-		arch::vmemWrite("\tCommand line:\t");
-		arch::vmemWrite(multiboot->commandLine());
-		arch::vmemWrite("\r\n");
-		// Dump multiboot bootloader name
-		arch::vmemWrite("\tLoader name:\t");
-		arch::vmemWrite(multiboot->loaderName());
-		arch::vmemWrite("\r\n");
+		klib::ksprint(text,	"BOOTLOADER INFO\r\n"
+					"Command line:\t%s\r\n"
+					"Loader name:\t%s\r\n"
+					"\r\n",
+					multiboot->commandLine(),
+					multiboot->loaderName());
+		arch::vmemWrite(text);
+
 		// Dump memory info
 		if (multiboot->hasInfoMemory()) {
-			arch::vmemWrite("\tMemory info:\r\n");
-			arch::vmemWrite("\t\tLow:\t");
-			arch::vmemWrite(klib::kitoa(text, 64, multiboot->memLow));
-			arch::vmemWrite("\r\n\t\tHigh:\t");
-			arch::vmemWrite(klib::kitoa(text, 64, multiboot->memHigh));
-			arch::vmemWrite("\r\n");
+			klib::ksprint(text,	"MEMORY INFO:\r\n"
+						"\tLow:\t%d Kb\r\n"
+						"\tHigh:\t%d Mb.\r\n",
+						multiboot->memLow,
+						multiboot->memHigh >> 10);
+			arch::vmemWrite(text);
 		} else {
-			arch::vmemWrite("\tNo memory info provided...\r\n");
+			klib::ksprint(text,	"\tNo memory info provided...\r\n");
+			arch::vmemWrite(text);
 		}
+		klib::ksprint(text, "\r\n");
+		arch::vmemWrite(text);
+
 		// Dump multiboot memory map
 		if (multiboot->hasInfoMemoryMap()) {
-			arch::vmemWrite("\tMemory map:\r\n");
-			arch::vmemWrite("\t\tSize:\t");
-			arch::vmemWrite(klib::kitoa(text, 64, multiboot->mmapLength));
-			arch::vmemWrite("\r\n\t\tAddr:\t0x");
-			arch::vmemWrite(klib::kitoa(text, 64, multiboot->mmapAddr, klib::base::HEX));
-			arch::vmemWrite("\r\n");
+			klib::ksprint(text,	"MEMORY MAP:\r\n"
+						"\tSize:\t%d bytes\r\n"
+						"\tAddr:\t0x%p\r\n",
+						multiboot->mmapLength,
+						multiboot->mmapAddr);
+			arch::vmemWrite(text);
 			// Get pointer to memory map
-			multiboot::memoryMapEntry_t* memoryMap = reinterpret_cast<multiboot::memoryMapEntry_t*>(multiboot->mmapAddr);
+			auto memoryMap = reinterpret_cast<multiboot::memoryMapEntry_t*>(multiboot->mmapAddr);
 			// Loop through memory map
 			while (quad_t(memoryMap) < (multiboot->mmapAddr + multiboot->mmapLength)) {
-				arch::vmemWrite("\t\t\t[");
-				arch::vmemWrite(klib::kitoa(text, 64, dword_t(memoryMap->type), klib::base::HEX));
-				arch::vmemWrite("]\t0x");
-				arch::vmemWrite(klib::kitoa(text, 64, memoryMap->address, klib::base::HEX));
-				arch::vmemWrite(" - 0x");
-				arch::vmemWrite(klib::kitoa(text, 64, (memoryMap->address + memoryMap->length), klib::base::HEX));
-				arch::vmemWrite("\r\n");
+				klib::ksprint(text,	"\t[%d] 0x%xll - 0x%xll\r\n",
+							memoryMap->type,
+							memoryMap->address,
+							memoryMap->address + memoryMap->length);
+				arch::vmemWrite(text);
 				// Move to next memory map entry
 				memoryMap = reinterpret_cast<multiboot::memoryMapEntry_t*>(quad_t(memoryMap) + memoryMap->size + sizeof(memoryMap->size));
 			}
 		} else {
-			arch::vmemWrite("\tNo memory map provided...\r\n");
+			klib::ksprint(text,	"\tNo memory map provided...\r\n");
+			arch::vmemWrite(text);
 		}
-		arch::vmemWrite("\r\n");
+		klib::ksprint(text, "\r\n");
+		arch::vmemWrite(text);
 
-		// Write Kernel info message
-		arch::vmemWrite("Kernel info\r\n");
-		arch::vmemWrite("\tStart addr:\t0x");
-		arch::vmemWrite(klib::kptoa(text, 64, &_SECTION_KERNEL_START_));
-		arch::vmemWrite("\r\n\tEnd addr:\t0x");
-		arch::vmemWrite(klib::kptoa(text, 64, &_SECTION_KERNEL_END_));
-		arch::vmemWrite("\r\n\tSize:\t\t");
-		arch::vmemWrite(klib::kitoa(text, 64, dword_t(&_SECTION_KERNEL_END_ - &_SECTION_KERNEL_START_)));
-		arch::vmemWrite(" bytes \r\n");
-		arch::vmemWrite("\tBuild:\t\t" __DATE__ ", " __TIME__ "\r\n");
-		arch::vmemWrite("\tVersion:\tv");
-		arch::vmemWrite(klib::kitoa(text, 20, IGROS_VERSION_MAJOR));
-		arch::vmemWrite(".");
-		arch::vmemWrite(klib::kitoa(text, 20, IGROS_VERSION_MINOR));
-		arch::vmemWrite(".");
-		arch::vmemWrite(klib::kitoa(text, 20, IGROS_VERSION_BUILD));
-		arch::vmemWrite(" (");
-		arch::vmemWrite(IGROS_VERSION_NAME);
-		arch::vmemWrite(")\r\n");
-		arch::vmemWrite("\tAuthor:\t\tIgor Baklykov (c) ");
-		arch::vmemWrite(klib::kitoa(text, 20, dword_t(2017)));
-		arch::vmemWrite(" - ");
-		arch::vmemWrite(klib::kitoa(text, 20, dword_t(2019)));
-		arch::vmemWrite("\r\n\r\n");
+		klib::ksprint(text,	"KERNEL INFO\r\n"
+					"Arch:\t\t%s\r\n"
+					"Start addr:\t0x%p\r\n"
+					"End addr:\t0x%p\r\n"
+					"Size:\t\t%d Kb.\r\n"
+					"Build:\t\t" __DATE__ ", " __TIME__ "\r\n"
+					"Version:\tv%d.%d.%d [%s]\r\n"
+					"Author:\t\tIgor Baklykov (c) %d - %d\r\n"
+					"\r\n",
+					(IGROS_ARCH),
+					&_SECTION_KERNEL_START_,
+					&_SECTION_KERNEL_END_,
+					(&_SECTION_KERNEL_END_ - &_SECTION_KERNEL_START_) >> 10,
+					IGROS_VERSION_MAJOR,
+					IGROS_VERSION_MINOR,
+					IGROS_VERSION_BUILD,
+					IGROS_VERSION_NAME,
+					2017,
+					2019);
+		arch::vmemWrite(text);
+
+		// Dump multiboot flags
+		//multiboot->dumpFlags();
 
 		// Setup Interrupts Descriptor Table
 		arch::idtSetup();
@@ -170,7 +171,8 @@ extern "C" {
 		arch::pitSetup();
 
 		// Write "Booted successfully" message
-		arch::vmemWrite("\r\nBooted successfully\r\n\r\n");
+		klib::ksprint(text, "\r\nBooted successfully\r\n\r\n");
+		arch::vmemWrite(text);
 
 		/*
 		byte_t* ptr = reinterpret_cast<byte_t*>(0xA0000);
@@ -184,24 +186,15 @@ extern "C" {
 		/*
 		// Page mapping test (higher half test)
 		volatile word_t* ptr = reinterpret_cast<word_t*>(0xC00B8006);
-		arch::vmemWrite("0x");
-		arch::vmemWrite(klib::kitoa(text, 20, dword_t(ptr), klib::base::HEX));
-		arch::vmemWrite(" = 0x");
-		arch::vmemWrite(klib::kitoa(text, 20, dword_t(arch::pagingVirtToPhys(pointer_t(ptr))), klib::base::HEX));
-		arch::vmemWrite("\r\n\r\n");
+		klib::ksprint(text,	"Paging test:\t0x%p = 0x%p\r\n"
+					"\r\n",
+					ptr,
+					arch::pagingVirtToPhys(pointer_t(ptr)));
+		arch::vmemWrite(text);
 		// Rewrite 'IgrOS' text 'O' and 'S' green symbols with white ones
 		*ptr = 0x0700 | 'O';
 		++ptr;
 		*ptr = 0x0700 | 'S';
-		*/
-
-		/*
-		// Numbers print test
-		arch::vmemWrite("0x");
-		arch::vmemWrite(klib::kitoa(text, 20, dword_t(0x7FFFFFFF), klib::base::HEX));
-		arch::vmemWrite(" = ");
-		arch::vmemWrite(klib::kitoa(text, 20, dword_t(0x7FFFFFFF)));
-		arch::vmemWrite("\r\n");
 		*/
 
 		/*
