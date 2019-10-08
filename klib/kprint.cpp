@@ -11,6 +11,8 @@
 //
 
 
+#include <cstdarg>
+
 #include <klib/kprint.hpp>
 #include <klib/kstring.hpp>
 #include <klib/kmath.hpp>
@@ -136,6 +138,163 @@ namespace klib {
 
 #endif
 
+	}
+
+
+	// Kernel vsnprintf function
+	void kvsnprint(sbyte_t* buffer, const std::size_t size, const sbyte_t* format, va_list list/*kvaList &list*/) {
+
+		// Foramt string iterator
+		auto fmtIterator = 0ULL;
+		// Resulting string iterator
+		auto strIterator = buffer;
+
+		// String pointer holder
+		char*		str = nullptr;
+		// Numeric value holder
+		std::size_t	len = 0ULL;
+		// Number holder
+		sbyte_t		number[65] {};
+
+		// Iterate through format string
+		while (format[fmtIterator] != '\0' && fmtIterator < size) {
+
+			// If symbol is not placeholder symbol '%'
+			if (format[fmtIterator] != '%') {
+				// Copy string till the next placeholder symbol '%'
+				*strIterator++ = format[fmtIterator++];
+			// Placeholder symbol '%' received
+			} else {
+
+				// Determine type
+				switch (format[++fmtIterator]) {
+
+				// '%' character
+				case '%':
+				// Character
+				case 'c':
+					// Copy character to resulting string
+					*strIterator++ = va_arg(list, sbyte_t);//list.arg<sbyte_t>();
+					break;
+
+				// String
+				case 's':
+					// Get string from args
+					str = va_arg(list, sbyte_t*);//list.arg<sbyte_t*>();
+					// Get string length
+					len = kstrlen(str);
+					// Copy string
+					kstrcpy(str, strIterator, len);
+					// Move iterator to string's end
+					strIterator += len;
+					break;
+
+				// Integer
+				case 'd':
+				case 'i':
+				// Unsigned integer
+				case 'u':
+					// check if long long specified
+					if (format[fmtIterator + 1] == 'l' && format[fmtIterator + 2] == 'l') {
+						// Get string length
+						len = kstrlen(kitoa(number, 64, va_arg(list, quad_t)/*list.arg<sdword_t>()*/, base::DEC));
+						// Adjust format iterator
+						fmtIterator += 2;
+					} else {
+						// Get string length
+						len = kstrlen(kitoa(number, 64, va_arg(list, dword_t)/*list.arg<sdword_t>()*/, base::DEC));
+					}
+					// Copy string
+					kstrcpy(number, strIterator, len);
+					// Move iterator to string's end
+					strIterator += len;
+					break;
+
+				// Long integer
+				case 'l':
+					// Get string length
+					len = kstrlen(kitoa(number, 64, va_arg(list, quad_t)/*list.arg<dword_t>()*/, base::DEC));
+					// Copy string
+					kstrcpy(number, strIterator, len);
+					// Move iterator to string's end
+					strIterator += len;
+					break;
+
+				// Hex integer
+				case 'x':
+					// check if long long specified
+					if (format[fmtIterator + 1] == 'l' && format[fmtIterator + 2] == 'l') {
+						// Get string length
+						len = kstrlen(kitoa(number, 64, va_arg(list, quad_t)/*list.arg<quad_t>()*/, base::HEX));
+						// Adjust format iterator
+						fmtIterator += 2;
+					} else {
+						// Get string length
+						len = kstrlen(kitoa(number, 64, va_arg(list, dword_t)/*list.arg<sdword_t>()*/, base::HEX));
+					}
+					// Copy string
+					kstrcpy(number, strIterator, len);
+					// Move iterator to string's end
+					strIterator += len;
+					break;
+
+				// Address
+				case 'p':
+					// Get string length
+					len = kstrlen(kptoa(number, 64, va_arg(list, pointer_t)/*list.arg<dword_t>()*/));
+					// Copy string
+					kstrcpy(number, strIterator, len);
+					// Move iterator to string's end
+					strIterator += len;
+					break;
+
+				// Default action
+				default:
+					break;
+
+				}
+
+				// Incremet format iterator
+				++fmtIterator;
+
+			}
+
+		}
+
+		// Insert null terminator
+		*strIterator++ = '\0';
+
+	}
+
+
+	// Kernel snprintf function
+	void ksnprint(sbyte_t* buffer, const std::size_t size, const sbyte_t* format, ...) {
+		// Kernel variadic argument list
+		//kvaList list;
+		va_list list;
+		// Initialize variadic arguments list
+		//list.start(format);
+		va_start(list, format);
+		// Format string
+		kvsnprint(buffer, size, format, list);
+		// End variadic arguments list
+		//list.end();
+		va_end(list);
+	}
+
+	// Kernel sprintf function
+	void ksprint(sbyte_t* buffer, const sbyte_t* format, ...) {
+		// Kernel variadic argument list
+		//kvaList list;
+		va_list list;
+		// Initialize variadic arguments list
+		//list.start(format);
+		va_start(list, format);
+		// Format string
+		kvsnprint(buffer, 1024, format, list);
+		// End variadic arguments list
+		//list.end();
+		va_end(list);
 	}
 
 
