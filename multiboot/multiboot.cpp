@@ -3,7 +3,7 @@
 //	Multiboot 1 functions
 //
 //	File:	multiboot.cpp
-//	Date:	21 Jun 2019
+//	Date:	08 Oct 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -28,72 +28,37 @@ namespace multiboot {
 	void info_t::dumpFlags() const {
 
                 // Print buffer
-		sbyte_t text[64];
+		sbyte_t text[1024];
 
-                // Print multiboot header flags
-		arch::vmemWrite("\tFlags:\t\t0x");
-		arch::vmemWrite(klib::kitoa(text, 20, flags, klib::base::HEX));
-		arch::vmemWrite("\r\n");
-
-		// Check if multiboot BIOS memory info present
-		arch::vmemWrite("\tBIOS memory:\t");
-		arch::vmemWrite(hasInfoMemory() ? "true" : "false");
-		arch::vmemWrite("\r\n");
-
-		// Check if multiboot boot device info present
-		arch::vmemWrite("\tBoot device:\t");
-		arch::vmemWrite(hasInfoBootDevice() ? "true" : "false");
-		arch::vmemWrite("\r\n");
-
-		// Check if multiboot kernel command line present
-		arch::vmemWrite("\tCommand line:\t");
-		arch::vmemWrite(hasInfoBootDevice() ? "true" : "false");
-		arch::vmemWrite("\r\n");
-
-		// Check if multiboot kernel AOUT sections info present
-		arch::vmemWrite("\tSections AOUT:\t");
-		arch::vmemWrite(hasInfoAOUT() ? "true" : "false");
-		arch::vmemWrite("\r\n");
-
-		// Check if multiboot kernel ELF sections info present
-		arch::vmemWrite("\tSections ELF:\t");
-		arch::vmemWrite(hasInfoELF() ? "true" : "false");
-		arch::vmemWrite("\r\n");
-
-		// Check if multiboot memory map present
-		arch::vmemWrite("\tMemory map:\t");
-		arch::vmemWrite(hasInfoMemoryMap() ? "true" : "false");
-		arch::vmemWrite("\r\n");
-
-		// Check if multiboot drives info present
-		arch::vmemWrite("\tDrives:\t\t");
-		arch::vmemWrite(hasInfoDrives() ? "true" : "false");
-		arch::vmemWrite("\r\n");
-
-		// Check if multiboot config table present
-		arch::vmemWrite("\tTable config:\t");
-		arch::vmemWrite(hasInfoConfig() ? "true" : "false");
-		arch::vmemWrite("\r\n");
-
-		// Check if multiboot bootloader name present
-		arch::vmemWrite("\tLoader name:\t");
-		arch::vmemWrite(hasInfoBootloaderName() ? "true" : "false");
-		arch::vmemWrite("\r\n");
-
-		// Check if multiboot APM table present
-		arch::vmemWrite("\tTable APM:\t");
-		arch::vmemWrite(hasInfoAPM() ? "true" : "false");
-		arch::vmemWrite("\r\n");
-
-		// Check if multiboot VBE info present
-		arch::vmemWrite("\tVBE:\t\t");
-		arch::vmemWrite(hasInfoVBE() ? "true" : "false");
-		arch::vmemWrite("\r\n");
-
-		// Check if multiboot FrameBuffer info present
-		arch::vmemWrite("\tFrame buffer:\t");
-		arch::vmemWrite(hasInfoFrameBuffer() ? "true" : "false");
-		arch::vmemWrite("\r\n\r\n");
+		klib::ksprint(text,	"MULTIBOOT header\r\n"
+					"Flags:\t\t0x%x\r\n"
+					"BIOS memory:\t%s\r\n"
+					"Boot device:\t%s\r\n"
+					"Command line:\t%s\r\n"
+					"Sections AOUT:\t%s\r\n"
+					"Sections ELF:\t%s\r\n"
+					"Memory map:\t%s\r\n"
+					"Drives:\t\t%s\r\n"
+					"Table config:\t%s\r\n"
+					"Loader name:\t%s\r\n"
+					"Table APM:\t%s\r\n"
+					"VBE:\t\t%s\r\n"
+					"Frame buffer:\t%s\r\n"
+					"\r\n",
+					flags,
+					hasInfoMemory() ? "true" : "false",
+					hasInfoBootDevice() ? "true" : "false",
+					hasInfoCommandLine() ? "true" : "false",
+					hasInfoAOUT() ? "true" : "false",
+					hasInfoELF() ? "true" : "false",
+					hasInfoMemoryMap() ? "true" : "false",
+					hasInfoDrives() ? "true" : "false",
+					hasInfoConfig() ? "true" : "false",
+					hasInfoBootloaderName() ? "true" : "false",
+					hasInfoAPM() ? "true" : "false",
+					hasInfoVBE() ? "true" : "false",
+					hasInfoFrameBuffer() ? "true" : "false");
+		arch::vmemWrite(text);
 
         }
 
