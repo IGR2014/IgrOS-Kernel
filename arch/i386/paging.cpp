@@ -3,7 +3,7 @@
 //	Memory paging for x86
 //
 //	File:	paging.cpp
-//	Date:	02 Oct 2019
+//	Date:	08 Oct 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -122,23 +122,22 @@ namespace arch {
 	void pagingFaultExceptionHandler(const taskRegs_t* regs) {
 
 		// Print buffer
-		sbyte_t text[64];
-
-		// Exception info
-		vmemWrite("CAUSED BY:\t");
-		vmemWrite(((regs->param & 0x18) == 0) ? "ACCESS VIOLATION" : "");
-		vmemWrite(((regs->param & 0x10) == 0) ? "" : "INSTRUCTION FETCH");
-		vmemWrite(((regs->param & 0x08) == 0) ? "" : "RESERVED BIT SET");
-		vmemWrite("\r\nFROM:\t\t");
-		vmemWrite(((regs->param & 0x04) == 0) ? "KERNEL" : "USER");
-		vmemWrite(" space\r\n");
-		vmemWrite("WHEN:\t\tattempting to ");
-		vmemWrite(((regs->param & 0x02) == 0) ? "READ" : "WRITE");
-		vmemWrite("\r\nADDRESS:\t0x");
-		vmemWrite(klib::kitoa(text, 64, outCR2(), klib::base::HEX));
-		vmemWrite("\r\nWHICH IS:\tNON-");
-		vmemWrite(((regs->param & 0x01) == 0) ? "PRESENT\r\n" : "PRIVILEGED\r\n");
-		vmemWrite("\r\n");
+		sbyte_t text[1024];
+		// Write Multiboot magic error message message
+		klib::ksprint(text,	"CAUSED BY:\t%s%s%s\r\n"
+					"FROM:\t\t%s\r\n"
+					"WHEN:\t\tattempting to %s\r\n"
+					"ADDRESS:\t0x%p\r\n"
+					"WHICH IS:\tnot %s\r\n"
+					"\r\n",
+					((regs->param & 0x18) == 0) ? "ACCESS VIOLATION" : "",
+					((regs->param & 0x10) == 0) ? "" : "INSTRUCTION FETCH",
+					((regs->param & 0x08) == 0) ? "" : "RESERVED BIT SET",
+					((regs->param & 0x04) == 0) ? "KERNEL" : "USER",
+					((regs->param & 0x02) == 0) ? "READ" : "WRITE",
+					outCR2(),
+					((regs->param & 0x01) == 0) ? "PRESENT" : "PRIVILEGED");
+		arch::vmemWrite(text);
 
 		// Hang here
 		while (true) {};
