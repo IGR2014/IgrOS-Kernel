@@ -111,6 +111,7 @@ namespace arch {
 		word_t mask	= word_t(inPort8(PIC_SLAVE_DATA)) << 8;
 		// Read master PIC current mask
 		mask		|= inPort8(PIC_MASTER_DATA);
+		// Return IRQ mask
 		return mask;
 	}
 
