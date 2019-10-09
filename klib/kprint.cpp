@@ -3,7 +3,7 @@
 //	Kernel text print functions
 //
 //	File:	kprint.cpp
-//	Date:	07 Oct 2019
+//	Date:	09 Oct 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -130,11 +130,11 @@ namespace klib {
 
 #if defined(IGROS_ARCH_i386)
 
-		return kitoaHelper(buffer, size, std::size_t(value), radix);
+		return kitoaHelper(buffer, size, value, radix);
 
 #else
 
-		return kltoaHelper(buffer, size, std::size_t(value), radix);
+		return kltoaHelper(buffer, size, value, radix);
 
 #endif
 
@@ -157,7 +157,7 @@ namespace klib {
 		sbyte_t		number[65] {};
 
 		// Iterate through format string
-		while (format[fmtIterator] != '\0' && fmtIterator < size) {
+		while ((fmtIterator < size) && (format[fmtIterator] != '\0')) {
 
 			// If symbol is not placeholder symbol '%'
 			if (format[fmtIterator] != '%') {
@@ -166,15 +166,128 @@ namespace klib {
 			// Placeholder symbol '%' received
 			} else {
 
+				// Quad argument flag
+				bool isQuad = false;
+				// Word argument flag
+				bool isWord = false;
+				// Byte argument flag
+				bool isByte = false;
+				// Check if quad specifier
+				if (format[fmtIterator + 1] == 'l') {
+					// Check if quad specifier
+					if (format[fmtIterator + 2] == 'l') {
+						// Quad argument
+						isQuad = true;
+						// Adjust format iterator
+						fmtIterator += 2;
+					}
+				// Otherwise it could be word
+				} else if (format[fmtIterator + 1] == 'h') {
+					// Or even byte
+					if (format[fmtIterator + 2] == 'h') {
+						// Byte argument
+						isByte = true;
+						// Adjust format iterator
+						fmtIterator += 2;
+					} else {
+						// Word argument
+						isWord = true;
+						// Adjust format iterator
+						++fmtIterator;
+					}
+				}
+				// Otherwise it's double word
+
 				// Determine type
 				switch (format[++fmtIterator]) {
 
+				// Binary integer
+				case 'b':
+					// Check if quad specified
+					if (isQuad) {
+						// Get string length
+						len = kstrlen(kitoa(number, 64, quad_t(va_arg(list, quad_t))/*list.arg<quad_t>()*/, base::BIN));
+					} else if (isWord) {
+						// Get string length
+						len = kstrlen(kitoa(number, 64, word_t(va_arg(list, dword_t))/*list.arg<word_t>()*/, base::BIN));
+					} else if (isByte) {
+						// Get string length
+						len = kstrlen(kitoa(number, 64, byte_t(va_arg(list, dword_t))/*list.arg<byte_t>()*/, base::BIN));
+					} else {
+						// Get string length
+						len = kstrlen(kitoa(number, 64, dword_t(va_arg(list, dword_t))/*list.arg<dword_t>()*/, base::BIN));
+					}
+					// Copy string
+					kstrcpy(number, strIterator, len);
+					// Move iterator to string's end
+					strIterator += len;
+					break;
+
 				// '%' character
 				case '%':
+					// Copy placeholder symbol '%'
+					*strIterator++ = format[fmtIterator];
+					break;
+
 				// Character
 				case 'c':
 					// Copy character to resulting string
-					*strIterator++ = va_arg(list, sbyte_t);//list.arg<sbyte_t>();
+					*strIterator++ = sbyte_t(va_arg(list, dword_t));//list.arg<sbyte_t>();
+					break;
+
+				// Integer
+				case 'd':
+				case 'i':
+					// Check if quad specified
+					if (isQuad) {
+						// Get string length
+						len = kstrlen(kitoa(number, 64, quad_t(va_arg(list, squad_t))/*list.arg<squad_t>()*/));
+					} else if (isWord) {
+						// Get string length
+						len = kstrlen(kitoa(number, 64, word_t(va_arg(list, dword_t))/*list.arg<sword_t>()*/));
+					} else if (isByte) {
+						// Get string length
+						len = kstrlen(kitoa(number, 64, byte_t(va_arg(list, dword_t))/*list.arg<sbyte_t>()*/));
+					} else {
+						// Get string length
+						len = kstrlen(kitoa(number, 64, dword_t(va_arg(list, sdword_t))/*list.arg<sdword_t>()*/));
+					}
+					// Copy string
+					kstrcpy(number, strIterator, len);
+					// Move iterator to string's end
+					strIterator += len;
+					break;
+
+				// Octal integer
+				case 'o':
+					// Check if quad specified
+					if (isQuad) {
+						// Get string length
+						len = kstrlen(kitoa(number, 64, quad_t(va_arg(list, quad_t))/*list.arg<quad_t>()*/, base::OCT));
+					} else if (isWord) {
+						// Get string length
+						len = kstrlen(kitoa(number, 64, word_t(va_arg(list, dword_t))/*list.arg<word_t>()*/, base::OCT));
+					} else if (isByte) {
+						// Get string length
+						len = kstrlen(kitoa(number, 64, byte_t(va_arg(list, dword_t))/*list.arg<byte_t>()*/, base::OCT));
+					} else {
+						// Get string length
+						len = kstrlen(kitoa(number, 64, dword_t(va_arg(list, dword_t))/*list.arg<dword_t>()*/, base::OCT));
+					}
+					// Copy string
+					kstrcpy(number, strIterator, len);
+					// Move iterator to string's end
+					strIterator += len;
+					break;
+
+				// Address
+				case 'p':
+					// Get string length
+					len = kstrlen(kptoa(number, 64, pointer_t(va_arg(list, pointer_t))/*list.arg<dword_t>()*/));
+					// Copy string
+					kstrcpy(number, strIterator, len);
+					// Move iterator to string's end
+					strIterator += len;
 					break;
 
 				// String
@@ -189,20 +302,21 @@ namespace klib {
 					strIterator += len;
 					break;
 
-				// Integer
-				case 'd':
-				case 'i':
 				// Unsigned integer
 				case 'u':
-					// check if long long specified
-					if (format[fmtIterator + 1] == 'l' && format[fmtIterator + 2] == 'l') {
+					// Check if quad specified
+					if (isQuad) {
 						// Get string length
-						len = kstrlen(kitoa(number, 64, va_arg(list, quad_t)/*list.arg<sdword_t>()*/, base::DEC));
-						// Adjust format iterator
-						fmtIterator += 2;
+						len = kstrlen(kitoa(number, 64, quad_t(va_arg(list, quad_t))/*list.arg<quad_t>()*/));
+					} else if (isWord) {
+						// Get string length
+						len = kstrlen(kitoa(number, 64, word_t(va_arg(list, dword_t))/*list.arg<word_t>()*/));
+					} else if (isByte) {
+						// Get string length
+						len = kstrlen(kitoa(number, 64, byte_t(va_arg(list, dword_t))/*list.arg<byte_t>()*/));
 					} else {
 						// Get string length
-						len = kstrlen(kitoa(number, 64, va_arg(list, dword_t)/*list.arg<sdword_t>()*/, base::DEC));
+						len = kstrlen(kitoa(number, 64, dword_t(va_arg(list, dword_t))/*list.arg<dword_t>()*/));
 					}
 					// Copy string
 					kstrcpy(number, strIterator, len);
@@ -210,38 +324,22 @@ namespace klib {
 					strIterator += len;
 					break;
 
-				// Long integer
-				case 'l':
-					// Get string length
-					len = kstrlen(kitoa(number, 64, va_arg(list, quad_t)/*list.arg<dword_t>()*/, base::DEC));
-					// Copy string
-					kstrcpy(number, strIterator, len);
-					// Move iterator to string's end
-					strIterator += len;
-					break;
-
-				// Hex integer
+				// Hexidemical integer
 				case 'x':
-					// check if long long specified
-					if (format[fmtIterator + 1] == 'l' && format[fmtIterator + 2] == 'l') {
+					// Check if quad specified
+					if (isQuad) {
 						// Get string length
-						len = kstrlen(kitoa(number, 64, va_arg(list, quad_t)/*list.arg<quad_t>()*/, base::HEX));
-						// Adjust format iterator
-						fmtIterator += 2;
+						len = kstrlen(kitoa(number, 64, quad_t(va_arg(list, quad_t))/*list.arg<quad_t>()*/, base::HEX));
+					} else if (isWord) {
+						// Get string length
+						len = kstrlen(kitoa(number, 16, word_t(va_arg(list, dword_t))/*list.arg<word_t>()*/, base::HEX));
+					} else if (isByte) {
+						// Get string length
+						len = kstrlen(kitoa(number, 8, byte_t(va_arg(list, dword_t))/*list.arg<byte_t>()*/, base::HEX));
 					} else {
 						// Get string length
-						len = kstrlen(kitoa(number, 64, va_arg(list, dword_t)/*list.arg<sdword_t>()*/, base::HEX));
+						len = kstrlen(kitoa(number, 32, dword_t(va_arg(list, dword_t))/*list.arg<dword_t>()*/, base::HEX));
 					}
-					// Copy string
-					kstrcpy(number, strIterator, len);
-					// Move iterator to string's end
-					strIterator += len;
-					break;
-
-				// Address
-				case 'p':
-					// Get string length
-					len = kstrlen(kptoa(number, 64, va_arg(list, pointer_t)/*list.arg<dword_t>()*/));
 					// Copy string
 					kstrcpy(number, strIterator, len);
 					// Move iterator to string's end
@@ -250,6 +348,8 @@ namespace klib {
 
 				// Default action
 				default:
+					// Copy character to resulting string
+					*strIterator++ = '?';
 					break;
 
 				}
