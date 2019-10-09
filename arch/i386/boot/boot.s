@@ -3,7 +3,7 @@
 #	Low-level boot setup function
 #
 #	File:	boot.s
-#	Date:	12 Jun 2019
+#	Date:	09 Oct 2019
 #
 #	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.
@@ -66,7 +66,6 @@ kernelStart:
 1:
 	# Adjust stack to higher half
 	addl	$KERNEL_VMA, %esp			# Add virtual memory offset to ESP
-
 	# Go to C++
 	calll	kmain					# Call main func
 
@@ -92,7 +91,7 @@ bootPageDirectory:
 
 
 .section .bss
-.balign 4096
+.balign 16
 
 # Stack data
 # Stack grows from stackTop to stackBottom
