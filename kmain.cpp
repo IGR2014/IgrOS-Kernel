@@ -3,7 +3,7 @@
 //	Boot low-level main setup function
 //
 //	File:	boot.cpp
-//	Date:	08 Oct 2019
+//	Date:	09 Oct 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -108,7 +108,7 @@ extern "C" {
 			auto memoryMap = reinterpret_cast<multiboot::memoryMapEntry_t*>(multiboot->mmapAddr);
 			// Loop through memory map
 			while (quad_t(memoryMap) < (multiboot->mmapAddr + multiboot->mmapLength)) {
-				klib::ksprint(text,	"\t[%d] 0x%xll - 0x%xll\r\n",
+				klib::ksprint(text,	"\t[%d] 0x%llx - 0x%llx\r\n",
 							memoryMap->type,
 							memoryMap->address,
 							memoryMap->address + memoryMap->length);
@@ -135,7 +135,7 @@ extern "C" {
 					(IGROS_ARCH),
 					&_SECTION_KERNEL_START_,
 					&_SECTION_KERNEL_END_,
-					(&_SECTION_KERNEL_END_ - &_SECTION_KERNEL_START_) >> 10,
+					dword_t(&_SECTION_KERNEL_END_ - &_SECTION_KERNEL_START_) >> 10,
 					IGROS_VERSION_MAJOR,
 					IGROS_VERSION_MINOR,
 					IGROS_VERSION_BUILD,
@@ -165,13 +165,27 @@ extern "C" {
 		// Setup paging (And identity map first 4MB where kernel physically is)
 		arch::pagingSetup();
 
-		// Setup keyboard
-		arch::keyboardSetup();
 		// Setup PIT
 		arch::pitSetup();
+		// Setup keyboard
+		arch::keyboardSetup();
 
 		// Write "Booted successfully" message
 		klib::ksprint(text, "\r\nBooted successfully\r\n\r\n");
+		arch::vmemWrite(text);
+
+		klib::ksprint(text,	"Test:\t\t%%c\t= %c\r\n"
+					"byte_t:\t\t%%hhx\t= 0x%hhx\r\n"
+					"word_t:\t\t%%hx\t= 0x%hx\r\n"
+					"dword_t:\t%%x\t= 0x%x\r\n"
+					"quad_t:\t\t%%llx\t= 0x%lx\r\n"
+					"\r\n",
+					'5',
+					byte_t(0xF0),
+					word_t(0xF0F0),
+					dword_t(0xF0F0F0F0),
+					0xF0F0F0F0F0F0F0F0ULL
+					);
 		arch::vmemWrite(text);
 
 		/*
