@@ -3,7 +3,7 @@
 //	Common C++ types redefinition
 //
 //	File:	types.hpp
-//	Date:	22 May 2019
+//	Date:	09 Oct 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -20,14 +20,14 @@
 using   byte_t          = unsigned char;
 using	word_t          = unsigned short;
 using	dword_t         = unsigned int;
-using	quad_t          = unsigned long long;
+using	quad_t          = unsigned long long int;
 
 
 // Signed integer types
 using	sbyte_t         = char;
 using	sword_t         = short;
 using	sdword_t        = int;
-using	squad_t         = long long;
+using	squad_t         = long long int;
 
 
 // Floating point types

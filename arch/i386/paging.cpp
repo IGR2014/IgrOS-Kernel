@@ -3,7 +3,7 @@
 //	Memory paging for x86
 //
 //	File:	paging.cpp
-//	Date:	08 Oct 2019
+//	Date:	09 Oct 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -125,7 +125,7 @@ namespace arch {
 		sbyte_t text[1024];
 		// Write Multiboot magic error message message
 		klib::ksprint(text,	"CAUSED BY:\t%s%s%s\r\n"
-					"FROM:\t\t%s\r\n"
+					"FROM:\t\t%s space\r\n"
 					"WHEN:\t\tattempting to %s\r\n"
 					"ADDRESS:\t0x%p\r\n"
 					"WHICH IS:\tnot %s\r\n"
