@@ -3,7 +3,7 @@
 //	Multiboot 1 header info
 //
 //	File:	multiboot.hpp
-//	Date:	04 Oct 2019
+//	Date:	09 Oct 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -139,13 +139,18 @@ namespace multiboot {
 		// Multiboot contains valid FrameBuffer info
 		inline bool		hasInfoFrameBuffer()	const;
 
-		// Dump multiboot flags
-		void			dumpFlags()		const;
-
 		// Get multiboot command line
 		inline const sbyte_t*	commandLine()		const;
 		// Get multiboot bootloader name
 		inline const sbyte_t*	loaderName()		const;
+
+		// Dump multiboot flags
+		void			dumpFlags()		const;
+		// Dump multiboot memory info
+		void			dumpMemInfo()		const;
+		// Dump multiboot memory map
+		void			dumpMemMap()		const;
+
 
 	};
 
@@ -253,7 +258,7 @@ namespace multiboot {
 
 
 	// Multiboot 1 header signature check function
-	inline const bool check(const dword_t signature) {
+	inline static const bool check(const dword_t signature) {
 		return (BOOTLOADER_MAGIC == signature);
 	}
 
