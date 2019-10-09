@@ -36,6 +36,9 @@
 extern const byte_t _SECTION_KERNEL_START_;
 extern const byte_t _SECTION_KERNEL_END_;
 
+// Print buffer
+static sbyte_t text[1024];
+
 
 #ifdef	__cplusplus
 
@@ -50,15 +53,15 @@ extern "C" {
 		// Init VGA memory
 		arch::vmemInit();
 
-		// Print buffer
-		sbyte_t text[1024];
+		// Write Multiboot magic error message message
+		klib::ksprint(text, "IgrOS kernel\r\n\r\n");
+		arch::vmemWrite(text);
 
 		// Check multiboot magic
 		if (!multiboot::check(magic)) {
 
 			// Write Multiboot magic error message message
-			klib::ksprint(text,	"IgrOS kernel\r\n\r\n"
-						"\tBAD MULTIBOOT MAGIC!!!\r\n"
+			klib::ksprint(text,	"\tBAD MULTIBOOT MAGIC!!!\r\n"
 						"\tMAGIC:\t\t0x%x\r\n"
 						"\tADDRESS:\t0x%p\r\n", magic, multiboot);
 			arch::vmemWrite(text);
@@ -68,12 +71,8 @@ extern "C" {
 
 		}
 
-		// Write Multiboot magic error message message
-		klib::ksprint(text, "IgrOS kernel\r\n\r\n");
-		arch::vmemWrite(text);
-
 		// Write Multiboot info message
-		klib::ksprint(text,	"BOOTLOADER INFO\r\n"
+		klib::ksprint(text,	"BOOT INFO\r\n"
 					"Command line:\t%s\r\n"
 					"Loader name:\t%s\r\n"
 					"\r\n",
@@ -82,46 +81,9 @@ extern "C" {
 		arch::vmemWrite(text);
 
 		// Dump memory info
-		if (multiboot->hasInfoMemory()) {
-			klib::ksprint(text,	"MEMORY INFO:\r\n"
-						"\tLow:\t%d Kb\r\n"
-						"\tHigh:\t%d Mb.\r\n",
-						multiboot->memLow,
-						multiboot->memHigh >> 10);
-			arch::vmemWrite(text);
-		} else {
-			klib::ksprint(text,	"\tNo memory info provided...\r\n");
-			arch::vmemWrite(text);
-		}
-		klib::ksprint(text, "\r\n");
-		arch::vmemWrite(text);
-
+		multiboot->dumpMemInfo();
 		// Dump multiboot memory map
-		if (multiboot->hasInfoMemoryMap()) {
-			klib::ksprint(text,	"MEMORY MAP:\r\n"
-						"\tSize:\t%d bytes\r\n"
-						"\tAddr:\t0x%p\r\n",
-						multiboot->mmapLength,
-						multiboot->mmapAddr);
-			arch::vmemWrite(text);
-			// Get pointer to memory map
-			auto memoryMap = reinterpret_cast<multiboot::memoryMapEntry_t*>(multiboot->mmapAddr);
-			// Loop through memory map
-			while (quad_t(memoryMap) < (multiboot->mmapAddr + multiboot->mmapLength)) {
-				klib::ksprint(text,	"\t[%d] 0x%llx - 0x%llx\r\n",
-							memoryMap->type,
-							memoryMap->address,
-							memoryMap->address + memoryMap->length);
-				arch::vmemWrite(text);
-				// Move to next memory map entry
-				memoryMap = reinterpret_cast<multiboot::memoryMapEntry_t*>(quad_t(memoryMap) + memoryMap->size + sizeof(memoryMap->size));
-			}
-		} else {
-			klib::ksprint(text,	"\tNo memory map provided...\r\n");
-			arch::vmemWrite(text);
-		}
-		klib::ksprint(text, "\r\n");
-		arch::vmemWrite(text);
+		multiboot->dumpMemMap();
 
 		klib::ksprint(text,	"KERNEL INFO\r\n"
 					"Arch:\t\t%s\r\n"
@@ -174,19 +136,21 @@ extern "C" {
 		klib::ksprint(text, "\r\nBooted successfully\r\n\r\n");
 		arch::vmemWrite(text);
 
+		/*
 		klib::ksprint(text,	"Test:\t\t%%c\t= %c\r\n"
 					"byte_t:\t\t%%hhx\t= 0x%hhx\r\n"
 					"word_t:\t\t%%hx\t= 0x%hx\r\n"
 					"dword_t:\t%%x\t= 0x%x\r\n"
-					"quad_t:\t\t%%llx\t= 0x%lx\r\n"
+					"quad_t:\t\t%%llx\t= 0x%llx\r\n"
 					"\r\n",
 					'5',
 					byte_t(0xF0),
 					word_t(0xF0F0),
 					dword_t(0xF0F0F0F0),
-					0xF0F0F0F0F0F0F0F0ULL
+					quad_t(0xF0F0F0F0F0F0F0F0)
 					);
 		arch::vmemWrite(text);
+		*/
 
 		/*
 		byte_t* ptr = reinterpret_cast<byte_t*>(0xA0000);

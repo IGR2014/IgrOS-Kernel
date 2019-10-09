@@ -3,7 +3,7 @@
 #	arch folder Make script
 #
 #	File:	Makefile
-#	Date:	07 Oct 2019
+#	Date:	09 Oct 2019
 #
 #	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.
@@ -28,7 +28,7 @@ export	CXXFLAGS		= -std=c++11				\
 				  -nostdlib				\
 				  -fno-pic				\
 				  -fno-pie				\
-				  -O3					\
+				  -Os					\
 				  -s					\
 				  -mno-3dnow				\
 				  -mno-sse				\
