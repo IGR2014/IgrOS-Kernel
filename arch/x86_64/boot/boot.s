@@ -3,7 +3,7 @@
 #	Low-level boot setup function
 #
 #	File:	boot.s
-#	Date:	13 Jun 2019
+#	Date:	09 Oct 2019
 #
 #	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.
@@ -179,7 +179,7 @@ bootPageDirectory:
 
 
 .section .bss
-.balign	4096
+.balign	16
 
 # Stack data
 # Stack grows from stackTop to stackBottom
