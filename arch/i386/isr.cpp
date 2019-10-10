@@ -59,7 +59,7 @@ namespace arch {
 			isr(regs);
 		} else {
 			// Debug
-			klib::ksprint(  text,
+			klib::ksprintf(  text,
 					"%s -> [#%d]\r\n"
 					"State:\t\tUNHANDLED! CPU halted!\r\n\r\n",
 					((regs->number >= IRQ_OFFSET) ? "IRQ" : "EXCEPTION"),

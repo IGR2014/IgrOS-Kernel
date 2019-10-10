@@ -3,7 +3,7 @@
 //	Exceptions low-level operations
 //
 //	File:	exceptions.cpp
-//	Date:	08 Oct 2019
+//	Date:	10 Oct 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -75,7 +75,7 @@ namespace arch {
 
 		// Print buffer
 		sbyte_t text[1024];
-		klib::ksprint(text,	"EXCEPTION ->\t[#%d] %s\r\n"
+		klib::ksprintf(text,	"EXCEPTION ->\t[#%d] %s\r\n"
 					"STATE:\t\t%s\r\n",
 					regs->number,
 					exName[regs->number],

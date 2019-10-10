@@ -3,7 +3,7 @@
 //	Interrupts low-level operations
 //
 //	File:	interupts.cpp
-//	Date:	08 Oct 2019
+//	Date:	10 Oct 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -54,7 +54,7 @@ namespace arch {
 
 			// Print buffer
 			sbyte_t text[1024];
-			klib::ksprint(text,	"IRQ ->\t\t#%d\r\n"
+			klib::ksprintf(text,	"IRQ ->\t\t#%d\r\n"
 						"STATE:\t\tunhandled!\r\n"
 						"\r\n",
 						regs->number - 32);

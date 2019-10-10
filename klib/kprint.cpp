@@ -3,7 +3,7 @@
 //	Kernel text print functions
 //
 //	File:	kprint.cpp
-//	Date:	09 Oct 2019
+//	Date:	10 Oct 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -142,7 +142,7 @@ namespace klib {
 
 
 	// Kernel vsnprintf function
-	void kvsnprint(sbyte_t* buffer, const std::size_t size, const sbyte_t* format, va_list list/*kvaList &list*/) {
+	void kvsnprintf(sbyte_t* buffer, const std::size_t size, const sbyte_t* format, va_list list/*kvaList &list*/) {
 
 		// Foramt string iterator
 		auto fmtIterator = 0ULL;
@@ -368,7 +368,7 @@ namespace klib {
 
 
 	// Kernel snprintf function
-	void ksnprint(sbyte_t* buffer, const std::size_t size, const sbyte_t* format, ...) {
+	void ksnprintf(sbyte_t* buffer, const std::size_t size, const sbyte_t* format, ...) {
 		// Kernel variadic argument list
 		//kvaList list;
 		va_list list;
@@ -376,14 +376,14 @@ namespace klib {
 		//list.start(format);
 		va_start(list, format);
 		// Format string
-		kvsnprint(buffer, size, format, list);
+		kvsnprintf(buffer, size, format, list);
 		// End variadic arguments list
 		//list.end();
 		va_end(list);
 	}
 
 	// Kernel sprintf function
-	void ksprint(sbyte_t* buffer, const sbyte_t* format, ...) {
+	void ksprintf(sbyte_t* buffer, const sbyte_t* format, ...) {
 		// Kernel variadic argument list
 		//kvaList list;
 		va_list list;
@@ -391,7 +391,7 @@ namespace klib {
 		//list.start(format);
 		va_start(list, format);
 		// Format string
-		kvsnprint(buffer, 1024, format, list);
+		kvsnprintf(buffer, 1024, format, list);
 		// End variadic arguments list
 		//list.end();
 		va_end(list);

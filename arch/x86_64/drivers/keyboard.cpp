@@ -3,7 +3,7 @@
 //	Keyboard generic handling
 //
 //	File:	keyboard.cpp
-//	Date:	08 Oct 2019
+//	Date:	10 Oct 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -35,13 +35,14 @@ namespace arch {
 			byte_t keyCode = inPort8(KEYBOARD_DATA);
 			// Print buffer
 			sbyte_t text[1024];
-			klib::ksprint(text,	"IRQ #%d\t[Keyboard]\r\n"
-						"Key:\t%s\r\n"
-						"Code:\t0x%x\r\n"
-						"\r\n",
-						arch::irqNumber_t::KEYBOARD,
-						(keyCode > 0x80) ? "RELEASED" : "PRESSED",
-						keyCode);
+			klib::ksprintf(	text,
+					"IRQ #%d\t[Keyboard]\r\n"
+					"Key:\t%s\r\n"
+					"Code:\t0x%x\r\n"
+					"\r\n",
+					arch::irqNumber_t::KEYBOARD,
+					(keyCode > 0x80) ? "RELEASED" : "PRESSED",
+					keyCode);
 			arch::vmemWrite(text);
 
 		}
@@ -59,8 +60,9 @@ namespace arch {
 
 		// Print buffer
 		sbyte_t text[1024];
-		klib::ksprint(text,	"IRQ #%d [Keyboard] installed\r\n",
-					arch::irqNumber_t::KEYBOARD);
+		klib::ksprintf(	text,
+				"IRQ #%d [Keyboard] installed\r\n",
+				arch::irqNumber_t::KEYBOARD);
 		arch::vmemWrite(text);
 
 	}

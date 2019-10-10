@@ -3,7 +3,7 @@
 //	Kernel text print functions
 //
 //	File:	kprint.hpp
-//	Date:	07 Oct 2019
+//	Date:	10 Oct 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -125,12 +125,12 @@ namespace klib {
 	}
 
 	// Kernel vsnprintf function
-	void kvsnprint(sbyte_t* buffer, const std::size_t size, const sbyte_t* format, va_list list/*kvaList &list*/);
+	void kvsnprintf(sbyte_t* buffer, const std::size_t size, const sbyte_t* format, va_list list/*kvaList &list*/);
 
 	// Kernel snprintf function
-	void ksnprint(sbyte_t* buffer, const std::size_t size, const sbyte_t* format, ...);
+	void ksnprintf(sbyte_t* buffer, const std::size_t size, const sbyte_t* format, ...);
 	// Kernel sprintf function
-	void ksprint(sbyte_t* buffer, const sbyte_t* format, ...);
+	void ksprintf(sbyte_t* buffer, const sbyte_t* format, ...);
 
 
 }	// namespace klib

@@ -3,7 +3,7 @@
 //	Multiboot 1 functions
 //
 //	File:	multiboot.cpp
-//	Date:	09 Oct 2019
+//	Date:	10 Oct 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -29,7 +29,7 @@ namespace multiboot {
 
                 // Print buffer
 		sbyte_t text[1024];
-		klib::ksprint(	text,
+		klib::ksprintf(	text,
 				"MULTIBOOT header\r\n"
 				"Flags:\t\t0x%x\r\n"
 				"BIOS memory:\t%s\r\n"
@@ -69,7 +69,7 @@ namespace multiboot {
 		sbyte_t text[1024];
 		// Check if memory info exists
 		if (hasInfoMemory()) {
-			klib::ksprint(	text,
+			klib::ksprintf(	text,
 					"MEMORY INFO:\r\n"
 					"\tLow:\t%d Kb\r\n"
 					"\tHigh:\t%d Kb.\r\n",
@@ -77,11 +77,11 @@ namespace multiboot {
 					memHigh);
 			arch::vmemWrite(text);
 		} else {
-			klib::ksprint(	text,
+			klib::ksprintf(	text,
 					"\tNo memory info provided...\r\n");
 			arch::vmemWrite(text);
 		}
-		klib::ksprint(text, "\r\n");
+		klib::ksprintf(text, "\r\n");
 		arch::vmemWrite(text);
 
 	}
@@ -93,7 +93,7 @@ namespace multiboot {
 		sbyte_t text[1024];
 		// Check if memory map exists
 		if (hasInfoMemoryMap()) {
-			klib::ksprint(	text,
+			klib::ksprintf(	text,
 					"MEMORY MAP:\r\n"
 					"\tSize:\t%d bytes\r\n"
 					"\tAddr:\t0x%p\r\n",
@@ -104,7 +104,7 @@ namespace multiboot {
 			auto memoryMap = reinterpret_cast<multiboot::memoryMapEntry_t*>(mmapAddr);
 			// Loop through memory map
 			while (quad_t(memoryMap) < (mmapAddr + mmapLength)) {
-				klib::ksprint(	text,
+				klib::ksprintf(	text,
 						"\t[%d] 0x%llx - 0x%llx\r\n",
 						memoryMap->type,
 						memoryMap->address,
@@ -114,11 +114,11 @@ namespace multiboot {
 				memoryMap = reinterpret_cast<multiboot::memoryMapEntry_t*>(quad_t(memoryMap) + memoryMap->size + sizeof(memoryMap->size));
 			}
 		} else {
-			klib::ksprint(	text,
+			klib::ksprintf(	text,
 					"\tNo memory map provided...\r\n");
 			arch::vmemWrite(text);
 		}
-		klib::ksprint(text, "\r\n");
+		klib::ksprintf(text, "\r\n");
 		arch::vmemWrite(text);
 
 	}
