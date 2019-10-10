@@ -29,7 +29,7 @@ namespace arch {
 
 
 	// Interrupts number enumeration
-	enum exNumber_t : byte_t {
+	enum exNumber_t : dword_t {
 
 		DIVIDE_BY_ZERO			= 0,
 		DEBUG				= 1,
