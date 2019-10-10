@@ -12,7 +12,7 @@
 
 
 #include <arch/port.hpp>
-#include <arch/interrupts.hpp>
+#include <arch/irq.hpp>
 
 #include <drivers/vmem.hpp>
 
