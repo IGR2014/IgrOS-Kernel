@@ -2,7 +2,7 @@
 //
 //	Interrupts low-level operations
 //
-//	File:	interupts.cpp
+//	File:	irq.cpp
 //	Date:	10 Oct 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
@@ -11,8 +11,8 @@
 //
 
 
-#include <arch/taskRegs.hpp>
-#include <arch/interrupts.hpp>
+#include <arch/isr.hpp>
+#include <arch/irq.hpp>
 #include <arch/port.hpp>
 
 #include <drivers/vmem.hpp>
@@ -22,47 +22,6 @@
 
 // Arch-dependent code zone
 namespace arch {
-
-
-	// Interrupt handlers
-	static irqHandler_t isrList[224] = {};
-
-
-	// Interrupts handler function
-	void irqHandler(const taskRegs_t* regs) {
-
-		// Notify slave PIC if needed
-		if (regs->number > 39) {
-			outPort8(PIC_SLAVE_CONTROL, 0x20);
-		} else {
-			// Notify master PIC
-			outPort8(PIC_MASTER_CONTROL, 0x20);
-		}
-
-		// Actually it`s an exception and normaly shouldn't be there
-		if (regs->number < 32) {
-			return;
-		}
-
-		// Acquire irq handler from list
-		auto isr = isrList[regs->number - 32];
-		// If handler exists
-		if (isr) {
-			// Finally handle IRQ
-			isr(regs);
-		} else {
-
-			// Print buffer
-			sbyte_t text[1024];
-			klib::ksprintf(text,	"IRQ ->\t\t#%d\r\n"
-						"STATE:\t\tunhandled!\r\n"
-						"\r\n",
-						regs->number - 32);
-			vmemWrite(text);
-
-		}
-
-	}
 
 
 	// Init interrupts
@@ -116,15 +75,15 @@ namespace arch {
 	}
 
 	// Install handler
-	void irqHandlerInstall(irqNumber_t irqNumber, irqHandler_t handler) {
-		// Set handler to ISR list
-		isrList[dword_t(irqNumber)] = handler;
+	void irqHandlerInstall(irqNumber_t irqNumber, isrHandler_t handler) {
+		// Install ISR
+		isrHandlerInstall(dword_t(irqNumber) + IRQ_OFFSET, handler);
 	}
 
 	// Uninstall handler
 	void irqHandlerUninstall(irqNumber_t irqNumber) {
-		// Set nullptr as a handler to ISR list
-		isrList[dword_t(irqNumber)] = nullptr;
+		// Uninstall ISR
+		isrHandlerUninstall(dword_t(irqNumber) + IRQ_OFFSET);
 	}
 
 

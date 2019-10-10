@@ -152,12 +152,15 @@ namespace arch {
 		sbyte_t text[1024];
 		// Write Multiboot magic error message message
 		klib::ksprintf(	text,
+				"EXCEPTION [#%d]\t-> (%s)\r\n"
 				"CAUSED BY:\t%s%s%s\r\n"
 				"FROM:\t\t%s space\r\n"
 				"WHEN:\t\tattempting to %s\r\n"
 				"ADDRESS:\t0x%p\r\n"
 				"WHICH IS:\tnot %s\r\n"
 				"\r\n",
+				exNumber_t::PAGE_FAULT,
+				exName[exNumber_t::PAGE_FAULT],
 				((regs->param & 0x18) == 0) ? "ACCESS VIOLATION" : "",
 				((regs->param & 0x10) == 0) ? "" : "INSTRUCTION FETCH",
 				((regs->param & 0x08) == 0) ? "" : "RESERVED BIT SET",
