@@ -25,7 +25,7 @@ namespace arch {
 
 
 	// Interrupts number enumeration
-	enum class irqNumber_t : byte_t {
+	enum class irqNumber_t : dword_t {
 
 		PIT		= 0,
 		KEYBOARD	= 1
