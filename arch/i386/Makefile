@@ -3,7 +3,7 @@
 #	i386 folder Make script
 #
 #	File:	Makefile
-#	Date:	07 Oct 2019
+#	Date:	10 Oct 2019
 #
 #	Copyright (c) 2017 - 2019, Igor Baklykov
 #	All rights reserved.
@@ -23,8 +23,9 @@ OBJ		= $(IGROS_DIR_TARGET_BUILD)/boot/multiboot.o		\
 		  $(IGROS_DIR_TARGET_BUILD)/boot/idt.o			\
 		  $(IGROS_DIR_TARGET_BUILD)/boot/gdt.o			\
 		  $(IGROS_DIR_TARGET_BUILD)/boot/port.o			\
+		  $(IGROS_DIR_TARGET_BUILD)/boot/isr.o			\
+		  $(IGROS_DIR_TARGET_BUILD)/boot/irq.o			\
 		  $(IGROS_DIR_TARGET_BUILD)/boot/exceptions.o		\
-		  $(IGROS_DIR_TARGET_BUILD)/boot/interrupts.o		\
 		  $(IGROS_DIR_TARGET_BUILD)/boot/paging.o		\
 		  $(IGROS_DIR_TARGET_BUILD)/boot/cr.o			\
 		  $(IGROS_DIR_TARGET_BUILD)/klib/memset.o		\
@@ -38,8 +39,9 @@ OBJ		= $(IGROS_DIR_TARGET_BUILD)/boot/multiboot.o		\
 		  $(IGROS_DIR_TARGET_BUILD)/drivers/pit.o		\
 		  $(IGROS_DIR_TARGET_BUILD)/idt.o			\
 		  $(IGROS_DIR_TARGET_BUILD)/gdt.o			\
+		  $(IGROS_DIR_TARGET_BUILD)/isr.o			\
+		  $(IGROS_DIR_TARGET_BUILD)/irq.o			\
 		  $(IGROS_DIR_TARGET_BUILD)/exceptions.o		\
-		  $(IGROS_DIR_TARGET_BUILD)/interrupts.o		\
 		  $(IGROS_DIR_TARGET_BUILD)/paging.o			\
 		  $(IGROS_DIR_TARGET_BUILD)/../../kmain.o
 

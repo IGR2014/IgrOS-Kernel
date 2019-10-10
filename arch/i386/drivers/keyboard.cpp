@@ -3,7 +3,7 @@
 //	Keyboard generic handling
 //
 //	File:	keyboard.cpp
-//	Date:	08 Oct 2019
+//	Date:	10 Oct 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -12,7 +12,7 @@
 
 
 #include <arch/port.hpp>
-#include <arch/interrupts.hpp>
+#include <arch/irq.hpp>
 
 #include <drivers/vmem.hpp>
 

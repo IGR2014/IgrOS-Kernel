@@ -3,7 +3,7 @@
 //	Boot low-level main setup function
 //
 //	File:	boot.cpp
-//	Date:	09 Oct 2019
+//	Date:	10 Oct 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -19,7 +19,7 @@
 #include <arch/types.hpp>
 #include <arch/gdt.hpp>
 #include <arch/idt.hpp>
-#include <arch/interrupts.hpp>
+#include <arch/irq.hpp>
 #include <arch/paging.hpp>
 
 #include <drivers/vmem.hpp>

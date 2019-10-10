@@ -3,7 +3,7 @@
 //	Exceptions low-level operations
 //
 //	File:	exceptions.cpp
-//	Date:	08 Oct 2019
+//	Date:	10 Oct 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -11,7 +11,7 @@
 //
 
 
-#include <arch/taskRegs.hpp>
+#include <arch/isr.hpp>
 #include <arch/exceptions.hpp>
 
 #include <drivers/vmem.hpp>
@@ -58,51 +58,16 @@ namespace arch {
 				     "RESERVED"};			// 31
 
 
-	// Exception handlers
-	static exHandler_t exList[32] = {};
-
-
-	// Exception handler function
-	void exHandler(const taskRegs_t* regs) {
-
-		// Actually it`s an interrupt and normaly shouldn't be there
-		if (regs->number > 32) {
-			return;
-		}
-
-		// Acquire irq handler from list
-		auto exception = exList[regs->number];
-
-		// Print buffer
-		sbyte_t text[1024];
-		klib::ksprint(text,	"EXCEPTION ->\t[#%d] %s\r\n"
-					"STATE:\t\t%s\r\n",
-					regs->number,
-					exName[regs->number],
-					(nullptr == exception) ? "UNHANDLED! CPU halted!\r\n\r\n" : "IN PROGRESS");
-		vmemWrite(text);
-
-		// Check if exception handler installed
-		if (nullptr != exception) {
-			exception(regs);
-		} else {
-			// Hang CPU
-			while (true) {};
-		}
-
-	}
-
-
 	// Install handler
-	void exHandlerInstall(exNumber_t exNumber, exHandler_t handler) {
-		// Set exception handler to handlers list
-		exList[exNumber] = handler;
+	void exHandlerInstall(exNumber_t exNumber, isrHandler_t handler) {
+		// Install ISR
+		isrHandlerInstall(dword_t(exNumber), handler);
 	}
 
 	// Uninstall handler
 	void exHandlerUninstall(exNumber_t exNumber) {
-		// Set exception handler as nullptr to exceprions list
-		exList[exNumber] = nullptr;
+		// Uninstall ISR
+		isrHandlerUninstall(dword_t(exNumber));
 	}
 
 

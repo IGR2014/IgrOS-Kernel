@@ -3,7 +3,7 @@
 //	Memory paging for x86
 //
 //	File:	paging.cpp
-//	Date:	09 Oct 2019
+//	Date:	10 Oct 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -124,19 +124,23 @@ namespace arch {
 		// Print buffer
 		sbyte_t text[1024];
 		// Write Multiboot magic error message message
-		klib::ksprint(text,	"CAUSED BY:\t%s%s%s\r\n"
-					"FROM:\t\t%s space\r\n"
-					"WHEN:\t\tattempting to %s\r\n"
-					"ADDRESS:\t0x%p\r\n"
-					"WHICH IS:\tnot %s\r\n"
-					"\r\n",
-					((regs->param & 0x18) == 0) ? "ACCESS VIOLATION" : "",
-					((regs->param & 0x10) == 0) ? "" : "INSTRUCTION FETCH",
-					((regs->param & 0x08) == 0) ? "" : "RESERVED BIT SET",
-					((regs->param & 0x04) == 0) ? "KERNEL" : "USER",
-					((regs->param & 0x02) == 0) ? "READ" : "WRITE",
-					outCR2(),
-					((regs->param & 0x01) == 0) ? "PRESENT" : "PRIVILEGED");
+		klib::ksprint(	text,
+				"EXCEPTION [#%d]\t-> (%s)\r\n"
+				"CAUSED BY:\t%s%s%s\r\n"
+				"FROM:\t\t%s space\r\n"
+				"WHEN:\t\tattempting to %s\r\n"
+				"ADDRESS:\t0x%p\r\n"
+				"WHICH IS:\tnot %s\r\n"
+				"\r\n",
+				exNumber_t::PAGE_FAULT,
+				exName[exNumber_t::PAGE_FAULT],
+				((regs->param & 0x18) == 0) ? "ACCESS VIOLATION" : "",
+				((regs->param & 0x10) == 0) ? "" : "INSTRUCTION FETCH",
+				((regs->param & 0x08) == 0) ? "" : "RESERVED BIT SET",
+				((regs->param & 0x04) == 0) ? "KERNEL" : "USER",
+				((regs->param & 0x02) == 0) ? "READ" : "WRITE",
+				outCR2(),
+				((regs->param & 0x01) == 0) ? "PRESENT" : "PRIVILEGED");
 		arch::vmemWrite(text);
 
 		// Hang here
