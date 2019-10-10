@@ -35,7 +35,7 @@ namespace arch {
 			byte_t keyCode = inPort8(KEYBOARD_DATA);
 			// Print buffer
 			sbyte_t text[1024];
-			klib::ksprint(text,	"IRQ #%d\t[Keyboard]\r\n"
+			klib::ksprintf(text,	"IRQ #%d\t[Keyboard]\r\n"
 						"Key:\t%s\r\n"
 						"Code:\t0x%x\r\n"
 						"\r\n",
@@ -59,7 +59,7 @@ namespace arch {
 
 		// Print buffer
 		sbyte_t text[1024];
-		klib::ksprint(text,	"IRQ #%d [Keyboard] installed\r\n",
+		klib::ksprintf(text,	"IRQ #%d [Keyboard] installed\r\n",
 					arch::irqNumber_t::KEYBOARD);
 		arch::vmemWrite(text);
 

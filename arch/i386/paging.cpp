@@ -124,7 +124,7 @@ namespace arch {
 		// Print buffer
 		sbyte_t text[1024];
 		// Write Multiboot magic error message message
-		klib::ksprint(	text,
+		klib::ksprintf(	text,
 				"EXCEPTION [#%d]\t-> (%s)\r\n"
 				"CAUSED BY:\t%s%s%s\r\n"
 				"FROM:\t\t%s space\r\n"

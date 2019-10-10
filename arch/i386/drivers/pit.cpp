@@ -48,7 +48,7 @@ namespace arch {
 
 		// Print buffer
 		sbyte_t text[1024];
-		klib::ksprint(text, "REAL frequency set to: %d Hz.\r\n", PIT_FREQUENCY);
+		klib::ksprintf(text, "REAL frequency set to: %d Hz.\r\n", PIT_FREQUENCY);
 		arch::vmemWrite(text);
 
 		// Tell pit we want to change divisor for channel 0
@@ -91,7 +91,7 @@ namespace arch {
 
 			//
 			sbyte_t text[1024];
-			klib::ksprint(text,	"IRQ #%d\t[PIT]\r\n"
+			klib::ksprintf(text,	"IRQ #%d\t[PIT]\r\n"
 						"Time:\t%d:%d:%d.%d (~1 sec.)\r\n"
 						"\r\n",
 						arch::irqNumber_t::PIT,
@@ -119,7 +119,7 @@ namespace arch {
 
 		// Print buffer
 		sbyte_t text[1024];
-		klib::ksprint(text,	"IRQ #%d [PIT] installed\r\n",
+		klib::ksprintf(text,	"IRQ #%d [PIT] installed\r\n",
 					arch::irqNumber_t::PIT);
 		arch::vmemWrite(text);
 

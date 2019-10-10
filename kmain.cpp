@@ -54,14 +54,14 @@ extern "C" {
 		arch::vmemInit();
 
 		// Write Multiboot magic error message message
-		klib::ksprint(text, "IgrOS kernel\r\n\r\n");
+		klib::ksprintf(text, "IgrOS kernel\r\n\r\n");
 		arch::vmemWrite(text);
 
 		// Check multiboot magic
 		if (!multiboot::check(magic)) {
 
 			// Write Multiboot magic error message message
-			klib::ksprint(text,	"\tBAD MULTIBOOT MAGIC!!!\r\n"
+			klib::ksprintf(text,	"\tBAD MULTIBOOT MAGIC!!!\r\n"
 						"\tMAGIC:\t\t0x%x\r\n"
 						"\tADDRESS:\t0x%p\r\n", magic, multiboot);
 			arch::vmemWrite(text);
@@ -72,7 +72,7 @@ extern "C" {
 		}
 
 		// Write Multiboot info message
-		klib::ksprint(text,	"BOOT INFO\r\n"
+		klib::ksprintf(text,	"BOOT INFO\r\n"
 					"Command line:\t%s\r\n"
 					"Loader name:\t%s\r\n"
 					"\r\n",
@@ -85,7 +85,7 @@ extern "C" {
 		// Dump multiboot memory map
 		multiboot->dumpMemMap();
 
-		klib::ksprint(text,	"KERNEL INFO\r\n"
+		klib::ksprintf(text,	"KERNEL INFO\r\n"
 					"Arch:\t\t%s\r\n"
 					"Start addr:\t0x%p\r\n"
 					"End addr:\t0x%p\r\n"
@@ -133,11 +133,11 @@ extern "C" {
 		arch::keyboardSetup();
 
 		// Write "Booted successfully" message
-		klib::ksprint(text, "\r\nBooted successfully\r\n\r\n");
+		klib::ksprintf(text, "\r\nBooted successfully\r\n\r\n");
 		arch::vmemWrite(text);
 
 		/*
-		klib::ksprint(text,	"Test:\t\t%%c\t= %c\r\n"
+		klib::ksprintf(text,	"Test:\t\t%%c\t= %c\r\n"
 					"byte_t:\t\t%%hhx\t= 0x%hhx\r\n"
 					"word_t:\t\t%%hx\t= 0x%hx\r\n"
 					"dword_t:\t%%x\t= 0x%x\r\n"
@@ -164,7 +164,7 @@ extern "C" {
 		/*
 		// Page mapping test (higher half test)
 		volatile word_t* ptr = reinterpret_cast<word_t*>(0xC00B8006);
-		klib::ksprint(text,	"Paging test:\t0x%p = 0x%p\r\n"
+		klib::ksprintf(text,	"Paging test:\t0x%p = 0x%p\r\n"
 					"\r\n",
 					ptr,
 					arch::pagingVirtToPhys(pointer_t(ptr)));

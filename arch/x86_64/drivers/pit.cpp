@@ -3,7 +3,7 @@
 //	Programmable interrupt timer
 //
 //	File:	pit.cpp
-//	Date:	08 Oct 2019
+//	Date:	10 Oct 2019
 //
 //	Copyright (c) 2017 - 2019, Igor Baklykov
 //	All rights reserved.
@@ -48,7 +48,9 @@ namespace arch {
 
 		// Print buffer
 		sbyte_t text[1024];
-		klib::ksprint(text, "REAL frequency set to: %d Hz.\r\n", PIT_FREQUENCY);
+		klib::ksprintf(	text,
+				"REAL frequency set to: %d Hz.\r\n",
+				PIT_FREQUENCY);
 		arch::vmemWrite(text);
 
 		// Tell pit we want to change divisor for channel 0
@@ -91,14 +93,15 @@ namespace arch {
 
 			//
 			sbyte_t text[1024];
-			klib::ksprint(text,	"IRQ #%d\t[PIT]\r\n"
-						"Time:\t%d:%d:%d.%d (~1 sec.)\r\n"
-						"\r\n",
-						arch::irqNumber_t::PIT,
-						hours % 24,
-						minutes % 60,
-						seconds % 60,
-						nanoseconds);
+			klib::ksprintf(	text,
+					"IRQ #%d\t[PIT]\r\n"
+					"Time:\t%d:%d:%d.%d (~1 sec.)\r\n"
+					"\r\n",
+					arch::irqNumber_t::PIT,
+					hours % 24,
+					minutes % 60,
+					seconds % 60,
+					nanoseconds);
 			arch::vmemWrite(text);
 			//
 
@@ -119,8 +122,9 @@ namespace arch {
 
 		// Print buffer
 		sbyte_t text[1024];
-		klib::ksprint(text,	"IRQ #%d [PIT] installed\r\n",
-					arch::irqNumber_t::PIT);
+		klib::ksprintf(	text,
+				"IRQ #%d [PIT] installed\r\n",
+				arch::irqNumber_t::PIT);
 		arch::vmemWrite(text);
 
 	}
