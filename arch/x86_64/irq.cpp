@@ -5,7 +5,7 @@
 //	File:	irq.cpp
 //	Date:	10 Oct 2019
 //
-//	Copyright (c) 2017 - 2019, Igor Baklykov
+//	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
 //
 //

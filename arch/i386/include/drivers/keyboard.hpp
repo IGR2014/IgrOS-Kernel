@@ -5,7 +5,7 @@
 //	File:	keyboard.hpp
 //	Date:	15 May 2019
 //
-//	Copyright (c) 2017 - 2019, Igor Baklykov
+//	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
 //
 //
