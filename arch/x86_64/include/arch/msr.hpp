@@ -3,7 +3,7 @@
 //	MSR registers operations
 //
 //	File:	msr.hpp
-//	Date:	18 Jun 2019
+//	Date:	20 Jan 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -30,11 +30,11 @@ namespace arch {
 #endif	// __cplusplus
 
 
-		// Write MSR register
-		static inline void volatile	inMSR(const dword_t reg, const dword_t val);
-
 		// Read MSR register
-		static inline dword_t volatile	outMSR(const dword_t reg);
+		[[nodiscard]] dword_t volatile outMSR(const dword_t reg) noexcept;
+
+		// Write MSR register
+		void volatile inMSR(const dword_t reg, const dword_t value) noexcept;
 
 
 #ifdef	__cplusplus

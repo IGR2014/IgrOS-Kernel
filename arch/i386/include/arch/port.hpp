@@ -3,7 +3,7 @@
 //	IO low-level port operations
 //
 //	File:	port.hpp
-//	Date:	06 Jun 2019
+//	Date:	20 Jan 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -25,7 +25,6 @@ namespace arch {
 
 	// Machine ports enumeration
 	enum portAddress_t : word_t {
-
 		PIC_MASTER_CONTROL	= 0x0020,
 		PIC_MASTER_DATA		= 0x0021,
 		PIT_CHANNEL_0		= 0x0040,
@@ -38,7 +37,6 @@ namespace arch {
 		PIC_SLAVE_DATA		= 0x00A1,
 		VGA_CURSOR_CONTROL	= 0x03D4,
 		VGA_CURSOR_DATA		= 0x03D5
-
 	};
 
 
@@ -50,18 +48,18 @@ namespace arch {
 
 
 		// Read byte from port
-		static inline byte_t volatile	inPort8(const portAddress_t);
+		[[nodiscard]] byte_t volatile outPort8(const portAddress_t addr) noexcept;
 		// Read word from port
-		static inline word_t volatile	inPort16(const portAddress_t);
+		[[nodiscard]] word_t volatile outPort16(const portAddress_t addr) noexcept;
 		// Read long from port
-		static inline dword_t volatile	inPort32(const portAddress_t);
+		[[nodiscard]] dword_t volatile outPort32(const portAddress_t addr) noexcept;
 
 		// Write byte to port
-		static inline void volatile	outPort8(const portAddress_t, const byte_t);
+		void volatile inPort8(const portAddress_t addr, const byte_t value) noexcept;
 		// Write word to port
-		static inline void volatile	outPort16(const portAddress_t, const word_t);
+		void volatile inPort16(const portAddress_t addr, const word_t value) noexcept;
 		// Write long to port
-		static inline void volatile	outPort32(const portAddress_t, const dword_t);
+		void volatile inPort32(const portAddress_t addr, const dword_t value) noexcept;
 
 
 #ifdef	__cplusplus

@@ -3,7 +3,7 @@
 //	Interrupts low-level operations
 //
 //	File:	irq.hpp
-//	Date:	10 Oct 2019
+//	Date:	20 Jan 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -26,10 +26,8 @@ namespace arch {
 
 	// Interrupts number enumeration
 	enum class irqNumber_t : dword_t {
-
 		PIT		= 0,
 		KEYBOARD	= 1
-
 	};
 
 
@@ -86,21 +84,57 @@ namespace arch {
 #endif	// __cplusplus
 
 
-	// Init interrupts
-	void	irqInit();
+	// IRQ structure
+	class irq final {
 
-	// Mask interrupts
-	void	irqMask(const irqNumber_t);
+	public:
 
-	// Set interrupts mask
-	void	irqMaskSet(const word_t);
-	// Get interrupts mask
-	word_t	irqMaskGet();
+		// Default c-tor
+		irq() noexcept = default;
+
+		// Copy c-tor
+		irq(const irq &other) = delete;
+		// Copy assignment
+		irq& operator=(const irq &other) = delete;
+
+		// Move c-tor
+		irq(irq &&other) = delete;
+		// Move assignment
+		irq& operator=(irq &&other) = delete;
+
+		// Init IRQ
+		static void init() noexcept;
+
+		// Mask interrupt
+		static void mask(const irqNumber_t irqNumber) noexcept;
+		// Unmask interrupt
+		static void unmask(const irqNumber_t irqNumber) noexcept;
+
+		// Set interrupts mask
+		static void			setMask(const word_t mask = 0xFFFF) noexcept;
+		// Get interrupts mask
+		[[nodiscard]] static word_t	getMask() noexcept;
+
+		// Install IRQ handler
+		constexpr static void install(const irqNumber_t irqNumber, const isrHandler_t irqHandler) noexcept;
+		// Uninstall IRQ handler
+		constexpr static void uninstall(const irqNumber_t irqNumber) noexcept;
+
+
+	};
+
 
 	// Install handler
-	void	irqHandlerInstall(irqNumber_t, isrHandler_t);
+	constexpr void irq::install(const irqNumber_t irqNumber, const isrHandler_t irqHandler) noexcept {
+		// Install ISR
+		isrHandlerInstall(dword_t(irqNumber) + IRQ_OFFSET, irqHandler);
+	}
+
 	// Uninstall handler
-	void	irqHandlerUninstall(irqNumber_t);
+	constexpr void irq::uninstall(const irqNumber_t irqNumber) noexcept {
+		// Uninstall ISR
+		isrHandlerUninstall(dword_t(irqNumber) + IRQ_OFFSET);
+	}
 
 
 }	// namespace arch

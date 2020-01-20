@@ -3,7 +3,7 @@
 //	Keyboard generic handling
 //
 //	File:	keyboard.hpp
-//	Date:	15 May 2019
+//	Date:	17 Jan 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -30,10 +30,10 @@ namespace arch {
 	//void	keyboardSetLED();
 
 	// Keyboard interrupt (#1) handler
-	void	keyboardInterruptHandler(const taskRegs_t*);
+	void	keyboardInterruptHandler(const taskRegs_t* regs) noexcept;
 
 	// Setip keyboard function
-	void	keyboardSetup();
+	void	keyboardSetup() noexcept;
 
 
 }	// namespace arch

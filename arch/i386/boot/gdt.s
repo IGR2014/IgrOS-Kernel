@@ -3,7 +3,7 @@
 #	Global descriptor table low-level operations
 #
 #	File:	gdt.s
-#	Date:	13 Jun 2019
+#	Date:	20 Jan 2020
 #
 #	Copyright (c) 2017 - 2020, Igor Baklykov
 #	All rights reserved.
@@ -23,6 +23,7 @@
 .global	gdtResetSegments			# Reset segments
 .global	gdtLoad					# Load GDT
 
+
 # Reset segments
 gdtResetSegments:
 	ljmp	$KERNEL_SEGMENT_CODE, $1f	# Long jump for CS changes to take affect
@@ -34,6 +35,7 @@ gdtResetSegments:
 	movw	%ax, %gs			# --//--
 	movw	%ax, %ss			# --//--
 	ret
+
 
 # Load GDT
 gdtLoad:

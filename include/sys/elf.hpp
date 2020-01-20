@@ -3,7 +3,7 @@
 //	ELF header info
 //
 //	File:	elf.hpp
-//	Date:	12 Sep 2019
+//	Date:	17 Jan 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -26,41 +26,34 @@ namespace sys {
 
 
         // ELF identity magic
-        static const byte_t ELF_MAGIC_0		= 0x7F;
-	static const byte_t ELF_MAGIC_1		= 'E';
-	static const byte_t ELF_MAGIC_2		= 'L';
-	static const byte_t ELF_MAGIC_3		= 'F';
+        constexpr static byte_t ELF_MAGIC_0		= 0x7F;
+	constexpr static byte_t ELF_MAGIC_1		= 'E';
+	constexpr static byte_t ELF_MAGIC_2		= 'L';
+	constexpr static byte_t ELF_MAGIC_3		= 'F';
 
 
 	// ELF class type
 	enum class ELF_CLASS : byte_t {
-
 		NONE		= 0x00,				// Unknown
 		CLASS32		= 0x01,				// 32-bit
 		CLASS64		= 0x02				// 64-bit
-
 	};
 
 	// ELF data type
 	enum class ELF_DATA : byte_t {
-
 		NONE		= 0x00,				// Unknown
 		LSB		= 0x01,				// LSB order
 		MSB		= 0x02				// MSB order
-
 	};
 
 	// ELF version
 	enum class ELF_VERSION : dword_t {
-
 		NONE		= 0,				// Unknown version
 		CURRENT		= 1				// Current version
-
 	};
 
 	// ELF OS ABI
 	enum class ELF_ABI {
-
 		SYSV		= 0x00,				// System-V
 		HP_UX		= 0x01,				// HP-UX
 		NETBSD		= 0x02,				// NetBSD
@@ -78,13 +71,11 @@ namespace sys {
 		AROS		= 0x0F,				// AROS
 		FENIX		= 0x10,				// Fenix OS
 		CLOUD		= 0x11				// Cloud ABI
-
 	};
 
 
 	// ELF identity class
 	struct elfIdentity_t {
-
 		byte_t		magic[4];			// ELF magic
 		ELF_CLASS	classType;			// ELF class
 		ELF_DATA	dataType;			// ELF data order
@@ -92,13 +83,11 @@ namespace sys {
 		ELF_ABI		abiType;			// ELS OS ABI
 		byte_t		abiVersion;			// ELS OS ABI version
 		byte_t		reserved[7];			// Unused
-
 	};
 
 
 	// ELF type
 	enum class ELF_TYPE : word_t {
-
 		NONE		= 0x0000,			// Unknown
 		REL		= 0x0001,			// Relocatable file
 		EXEC		= 0x0002,			// Executable file
@@ -108,13 +97,11 @@ namespace sys {
 		HIOS		= 0xFEFF,			// --- // ---
 		LOPROC		= 0xFF00,			// Processor-specific
 		HIPROC		= 0xFFFF			// --- // ---
-
 	};
 
 
 	// ELF machine type
 	enum class ELF_MACHINE : word_t {
-
 		NONE		= 0x00,				// Unknown
 		M32		= 0x01,				// AT&T WE 32100
 		SPARC		= 0x02,				// SPARC
@@ -131,12 +118,10 @@ namespace sys {
 		X86_64		= 0x3E,				// AMD/Intel x86-64
 		AARCH64		= 0xB7,				// AArch64
 		RISC_V		= 0xF3				// RISC-V
-
 	};
 
 	// ELF file header
         struct elfHeader_t {
-
 		elfIdentity_t	identity;			// ELF Header identity
 		ELF_TYPE	type;				// ELF Header type
                 ELF_MACHINE	machine;			// ELF Header machine type
@@ -151,13 +136,11 @@ namespace sys {
 		word_t		sectionHeaderSize;		// ELF Header section header size
 		word_t		sectionHeaderNum;		// ELF Header section header count
 		word_t		sectionNamesIndex;		// ELF Header names section index
-
         };
 
 
 	// ELF program type
 	enum class ELF_PROGRAM_TYPE : dword_t {
-
 		NONE		= 0x00000000,			// Unused
 		LOAD		= 0x00000001,			// Loadable segment
 		DYNAMIC		= 0x00000002,			// Dynamic linking info
@@ -169,7 +152,6 @@ namespace sys {
 		HIOS		= 0x6FFFFFFF,			// --- // ---
 		LOPROC		= 0x70000000,			// --- // ---
 		HIPROC		= 0x7FFFFFFF			// --- // ---
-
 	};
 
 	// ELF program header

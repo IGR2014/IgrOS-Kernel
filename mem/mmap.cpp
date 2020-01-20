@@ -3,7 +3,7 @@
 //	Memory map operations definition
 //
 //	File:	mmap.cpp
-//	Date:	03 Oct 2019
+//	Date:	20 Jan 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -16,56 +16,63 @@
 #include <mem/mmap.hpp>
 
 
+// Kernel start and end
+extern const byte_t _SECTION_KERNEL_START_;
+extern const byte_t _SECTION_KERNEL_END_;
+
+
 // Memory code zone
 namespace mem {
 
 
 	// Free pages pointer
-	static pointer_t FREE_PAGES = nullptr;
+	pointer_t phys::freePageList {nullptr};
 
 
-	// Initialize memory map
-	void mmapInit(const multiboot::memoryMapEntry_t* memoryMap, const std::size_t memoryMapSize) {
+	// Initialize physical memory
+	void phys::init(const multiboot::memoryMapEntry_t* map, const std::size_t size) noexcept {
 
 		// Memory map entries iterator
-		auto entry = memoryMap;
+		auto entry		= map;
 		// Previous entry pointer
-		pointer_t prevEntry = nullptr;
+		pointer_t prevEntry	= nullptr;
 		// Loop through memory map
-		while (std::size_t(entry) < memoryMapSize) {
+		while (std::size_t(entry) < size) {
 			// Check if entry is available
-			if (multiboot::MEMORY_MAP_TYPE::AVAILABLE == entry->type) {
+			if (	(multiboot::MEMORY_MAP_TYPE::AVAILABLE == entry->type)
+				&& ((std::size_t(entry) < std::size_t(&_SECTION_KERNEL_START_))
+				|| (std::size_t(entry) > std::size_t(&_SECTION_KERNEL_END_)))) {
 				// Initial entry's memory offset
-				quad_t size = 0ULL;
+				auto entrySize = 0ULL;
 				// Loop through entry's memory
-				while ((entry->address + size) < entry->length) {
+				while ((entry->address + entrySize) < entry->length) {
 					// Calculate new entry address
-					const pointer_t newEntry = pointer_t(entry->address + size);
+					const auto newEntry = pointer_t(entry->address + entrySize);
 					// Place previous entry's pointer in current entry
-					*reinterpret_cast<std::size_t*>(newEntry) = std::size_t(prevEntry);
+					*reinterpret_cast<pointer_t*>(newEntry) = prevEntry;
 					// Save new entry's address ass new oldEntry's address
 					prevEntry = newEntry;
 					// Increment size by one page (4KB)
-					size += DEFAULT_PAGE_SIZE;
+					entrySize += DEFAULT_PAGE_SIZE;
 				}
 			}
 			// Move to next memory map entry
 			entry = reinterpret_cast<multiboot::memoryMapEntry_t*>(std::size_t(entry) + entry->size + sizeof(entry->size));
 		}
 		// Linked list of free pages 
-		FREE_PAGES = prevEntry;
+		phys::freePageList = prevEntry;
 
 	}
 
 
 	// Allcoate physical page
-   	pointer_t mmapPageAlloc() {
+   	[[nodiscard]] pointer_t phys::alloc() noexcept {
 		// Check if we have free pages
-		if (nullptr != FREE_PAGES) {
+		if (nullptr != phys::freePageList) {
 			// Get page pointer
-			auto page = FREE_PAGES;
+			const auto page		= phys::freePageList;
 			// Remove page from list of free pages
-			FREE_PAGES = reinterpret_cast<std::size_t*>(FREE_PAGES);
+			phys::freePageList	= reinterpret_cast<pointer_t>(*static_cast<std::size_t*>(phys::freePageList));
 			// Return page pointer
 			return page;
 		}
@@ -74,13 +81,15 @@ namespace mem {
 	}
 
 	// Free physical page
-	void mmapPageFree(pointer_t* page) {
+	void phys::free(pointer_t &page) noexcept {
 		// Error check
 		if (nullptr == page) {
 			return;
 		}
-		//
-
+		// Return page to free pages list
+		*static_cast<pointer_t*>(page)	= phys::freePageList;
+		phys::freePageList		= reinterpret_cast<pointer_t>(*static_cast<std::size_t*>(phys::freePageList));
+		page				= nullptr;
 	}
 
 

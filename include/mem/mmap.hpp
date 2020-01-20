@@ -3,7 +3,7 @@
 //	Memory map operations
 //
 //	File:	mmap.hpp
-//	Date:	02 Oct 2019
+//	Date:	20 Jan 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -28,16 +28,28 @@ namespace mem {
 
 
 	// Default page size constant
-	static const std::size_t DEFAULT_PAGE_SIZE = 0x1000;
+	constexpr static std::size_t DEFAULT_PAGE_SIZE = 0x1000;
 
 
-	// Initialize memory map
-	void		mmapInit(const multiboot::memoryMapEntry_t* memoryMap, const std::size_t memoryMapSize);
+	// Phyical memory structure
+	class phys final {
 
-	// Allcoate physical page
-   	pointer_t	mmapPageAlloc();
-	// Free physical page
-	void		mmapPageFree(pointer_t* page);
+		// Free pages pointer
+		static pointer_t freePageList;
+
+
+	public:
+
+		// Initialize physical memory
+		static void init(const multiboot::memoryMapEntry_t* map, const std::size_t size) noexcept;
+
+		// Allcoate physical page
+   		[[nodiscard]] static pointer_t	alloc() noexcept;
+		// Free physical page
+		static void			free(pointer_t &page) noexcept;
+
+
+	};
 
 
 }	// namespace mem

@@ -3,7 +3,7 @@
 //	CR0 - CR4 registers operations
 //
 //	File:	cr.hpp
-//	Date:	06 Jun 2019
+//	Date:	20 Jan 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -30,21 +30,21 @@ namespace arch {
 #endif	// __cplusplus
 
 
-		// Write CR0 register
-		static inline void volatile	inCR0(const quad_t registerValue);
-		// Write CR3 register
-		static inline void volatile	inCR3(const quad_t registerValue);
-		// Write CR4 register
-		static inline void volatile	inCR4(const quad_t registerValue);
-
 		// Read CR0 register
-		static inline quad_t volatile	outCR0();
+		[[nodiscard]] quad_t volatile outCR0() noexcept;
 		// Read CR2 register
-		static inline quad_t volatile	outCR2();
+		[[nodiscard]] quad_t volatile outCR2() noexcept;
 		// Read CR3 register
-		static inline quad_t volatile	outCR3();
+		[[nodiscard]] quad_t volatile outCR3() noexcept;
 		// Read CR4 register
-		static inline quad_t volatile	outCR4();
+		[[nodiscard]] quad_t volatile outCR4() noexcept;
+
+		// Write CR0 register
+		void volatile inCR0(const quad_t value) noexcept;
+		// Write CR3 register
+		void volatile inCR3(const quad_t value) noexcept;
+		// Write CR4 register
+		void volatile inCR4(const quad_t value) noexcept;
 
 
 #ifdef	__cplusplus

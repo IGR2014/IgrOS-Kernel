@@ -3,7 +3,7 @@
 #	Interrupts descriptor table low-level operations
 #
 #	File:	idt.s
-#	Date:	06 Jun 2019
+#	Date:	20 Jan 2020
 #
 #	Copyright (c) 2017, Igor Baklykov
 #	All rights reserved.
@@ -17,6 +17,7 @@
 .balign	8
 
 .global	idtLoad				# Load IDT
+
 
 # Load IDT
 idtLoad:

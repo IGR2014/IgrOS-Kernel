@@ -3,7 +3,7 @@
 //	Kernel math functions declarations
 //
 //	File:	kmath.hpp
-//	Date:	07 Oct 2019
+//	Date:	17 Jan 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -22,7 +22,7 @@ namespace klib {
 
 	// Divide 64-bit integer by 32-bit integer
 	// Returns 64-bit quotient and 64-bit reminder
-	udivmod_t kudivmod(quad_t dividend, dword_t divisor) {
+	udivmod_t kudivmod(quad_t dividend, dword_t divisor) noexcept {
 
 		// Division result
 		udivmod_t	res	= {0ULL, dividend};
@@ -57,7 +57,7 @@ namespace klib {
 
         // Divide 64-bit integer by 32-bit integer
 	// Returns 64-bit quotient and 64-bit reminder
-	divmod_t kdivmod(squad_t dividend, dword_t divisor) {
+	divmod_t kdivmod(squad_t dividend, dword_t divisor) noexcept {
 
 		// Division result
 		divmod_t	res	= {0LL, dividend};
@@ -94,27 +94,21 @@ namespace klib {
 
 	// Divide 64-bit integer by 32-bit integer
 	// Returns 64-bit quotient and 64-bit reminder
-	udivmod_t kudivmod(quad_t dividend, dword_t divisor) {
-
-		udivmod_t res = {
+	udivmod_t kudivmod(quad_t dividend, dword_t divisor) noexcept {
+		return {
 			quad_t(dividend / divisor),
 			quad_t(dividend % divisor)
 		};
-		return res;
-
 	}
 
 
         // Divide 64-bit integer by 32-bit integer
 	// Returns 64-bit quotient and 64-bit reminder
-	divmod_t kdivmod(squad_t dividend, sdword_t divisor) {
-
-		divmod_t res = {
+	divmod_t kdivmod(squad_t dividend, sdword_t divisor) noexcept {
+		return {
 			squad_t(dividend / divisor),
 			squad_t(dividend % divisor)
 		};
-		return res;
-
 	}
 
 #endif

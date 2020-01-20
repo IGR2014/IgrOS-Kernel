@@ -3,7 +3,7 @@
 #	CR0-CR4 in/out operations
 #
 #	File:	cr.s
-#	Date:	18 Jun 2019
+#	Date:	20 Jan 2020
 #
 #	Copyright (c) 2017 - 2020, Igor Baklykov
 #	All rights reserved.
@@ -16,32 +16,13 @@
 .section .text
 .balign 8
 
-.global inCR0			# Write CR0 register
-.global inCR3			# Write CR3 register
-.global inCR4			# Write CR4 register
 .global outCR0			# Read CR0 register
 .global outCR2			# Read CR2 register
 .global outCR3			# Read CR3 register
 .global outCR4			# Read CR4 register
-
-
-# Write CR0 register
-inCR0:
-	cld				# Clear direction flag
-	movq	%rdi, %cr0
-	retq
-
-# Write CR3 register
-inCR3:
-	cld				# Clear direction flag
-	movq	%rdi, %cr3
-	retq
-
-# Write CR$ register
-inCR4:
-	cld				# Clear direction flag
-	movq	%rdi, %cr4
-	retq
+.global inCR0			# Write CR0 register
+.global inCR3			# Write CR3 register
+.global inCR4			# Write CR4 register
 
 
 # Read CR0 register
@@ -66,5 +47,24 @@ outCR3:
 outCR4:
 	cld				# Clear direction flag
 	movq	%cr4, %rax
+	retq
+
+
+# Write CR0 register
+inCR0:
+	cld				# Clear direction flag
+	movq	%rdi, %cr0
+	retq
+
+# Write CR3 register
+inCR3:
+	cld				# Clear direction flag
+	movq	%rdi, %cr3
+	retq
+
+# Write CR$ register
+inCR4:
+	cld				# Clear direction flag
+	movq	%rdi, %cr4
 	retq
 
