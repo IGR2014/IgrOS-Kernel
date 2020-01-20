@@ -3,7 +3,7 @@
 //	Kernel string functions
 //
 //	File:	string.cpp
-//	Date:	17 Jan 2020
+//	Date:	20 Jan 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -89,7 +89,7 @@ namespace klib {
 		if (nullptr == src || nullptr == dst || 0u == size) {
 			// Pointer to empty dst
 			// Fill with null terminator for sanity
-			return &(*tempDst = '\0');
+			return dst;
 		}
 		// Copy first symbol
 		*dst = *src;
