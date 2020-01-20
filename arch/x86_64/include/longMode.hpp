@@ -3,7 +3,7 @@
 //	Long mode low-level preparation operations
 //
 //	File:	longMode.hpp
-//	Date:	06 Jun 2019
+//	Date:	20 Jan 2020
 //
 //	Copyright (c) 2017, Igor Baklykov
 //	All rights reserved.
@@ -23,25 +23,34 @@
 namespace arch {
 
 
-	// Set GDT
+#ifdef	__cplusplus
+
 	extern "C" {
 
+#endif	// __cplusplus
+
+
 		// Check if loaded with multiboot loader
-		byte_t	checkMultiboot();
+		constexpr byte_t checkMultiboot() noexcept;
 		// Check CPUID is extended
-		byte_t	checkCPUID();
+		constexpr byte_t checkCPUID() noexcept;
 		// Check CPUID for long mode existance
-		byte_t	checkLongMode();
+		constexpr byte_t checkLongMode() noexcept;
 
 		// Setup page tables
-		void	setupPageTables();
+		constexpr void	setupPageTables() noexcept;
 		// Enable paging
-		void	enablePaging();
+		constexpr void	enablePaging() noexcept;
 
 		// Perform jum to long mode
-		void	jumpToLongMode();
+		constexpr void	jumpToLongMode() noexcept;
+
+
+#ifdef	__cplusplus
 
 	}
+
+#endif	// __cplusplus
 
 
 }	// namespace arch

@@ -3,7 +3,7 @@
 //	VGA memory low-level operations
 //
 //	File:	vmem.hpp
-//	Date:	06 Jun 2019
+//	Date:	17 Jan 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -24,22 +24,21 @@ namespace arch {
 
 
 	// VGA console max width
-	static const word_t	VIDEO_MEM_WIDTH		= 80;
+	constexpr static word_t		VIDEO_MEM_WIDTH		= 80u;
 	// VGA console max height
-	static const word_t	VIDEO_MEM_HEIGHT	= 25;
+	constexpr static word_t		VIDEO_MEM_HEIGHT	= 25u;
 	// VGA console size
-	static const dword_t	VIDEO_MEM_SIZE		= (VIDEO_MEM_WIDTH * VIDEO_MEM_HEIGHT);
+	constexpr static dword_t	VIDEO_MEM_SIZE		= (VIDEO_MEM_WIDTH * VIDEO_MEM_HEIGHT);
 
 	// TAB size
-	static const word_t	VIDEO_MEM_TAB_SIZE	= 8;
+	constexpr static word_t		VIDEO_MEM_TAB_SIZE	= 8u;
 
 	// VGA cursor start register
-	static const byte_t	VIDEO_MEM_CURSOR_START	= 0x0A;
+	constexpr static byte_t		VIDEO_MEM_CURSOR_START	= 0x0A;
 
 
 	// VGA memory colors enumeration
 	enum vmemColor : byte_t {
-
 	        Black   	= 0x00,			// Black VGA color
 	        Blue		= 0x01,			// Blue VGA color
 		Green		= 0x02,			// Green VGA color
@@ -56,29 +55,24 @@ namespace arch {
 		LightMagenta	= 0x0D,			// Light magenta VGA color
 		Yellow		= 0x0E,			// Yellow VGA color
 		White		= 0x0F			// White VGA color
-
 	};
 
 	// VGA memory symbol representation
 	struct vmemSymbol {
-
 		sbyte_t	symbol;		// Symbol
 		byte_t	color;		// Color of symbol and background
-
 	};
 
 	// VGA memory base address
-	static vmemSymbol* const	vmemBase	= reinterpret_cast<vmemSymbol*>(0x000B8000);
+	static vmemSymbol* const vmemBase		= reinterpret_cast<vmemSymbol*>(0x000B8000);
 
 	// VGA memory background symbol
 	static byte_t			vmemBkgColor	= vmemColor::Green;
 
 	// VGA memory cursor struct
 	struct vmemCursor {
-
 		byte_t	x;		// Cursor X coordinate
 		byte_t	y;		// Cursor Y coordinate
-
 	};
 
 	// Current cursor coordinates
@@ -86,33 +80,33 @@ namespace arch {
 
 
 	// Set VGA memory cursor position
-	void		vmemCursorSet(const byte_t&, const byte_t&);
+	void		vmemCursorSet(const byte_t &x, const byte_t &y) noexcept;
 	// Set VGA memory cursor position
-	void		vmemCursorSet(const vmemCursor&);
+	void		vmemCursorSet(const vmemCursor&) noexcept;
 
 	// Get VGA memory cursor position
-	vmemCursor	vmemCursorGet();
+	vmemCursor	vmemCursorGet() noexcept;
 
 	// Disable VGA memory cursor
-	void		vmemCursorDisable();
+	void		vmemCursorDisable() noexcept;
 	// Enable VGA memory cursor
-	void		vmemCursorEnable();
+	void		vmemCursorEnable() noexcept;
 
 	// Set VGA memory color
-	void		vmemSetColor(const byte_t&, const byte_t&);
+	void		vmemSetColor(const byte_t &background, const byte_t &foreground) noexcept;
 
 	// Write symbol to VGA memory
-	void		vmemWrite(const sbyte_t&);
+	void		vmemWrite(const sbyte_t &symbol) noexcept;
 	// Write string to VGA memory
-	void		vmemWrite(const sbyte_t*);
+	void		vmemWrite(const sbyte_t* message) noexcept;
 	// Write fixed-width string to VGA memory
-	void		vmemWrite(const sbyte_t*, const dword_t&);
+	void		vmemWrite(const sbyte_t* message, const dword_t &size) noexcept;
 
 	// Clear VGA console
-	void		vmemClear();
+	void		vmemClear() noexcept;
 
 	// Init VGA console
-	void		vmemInit();
+	void		vmemInit() noexcept;
 
 
 }	// namespace arch

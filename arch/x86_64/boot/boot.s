@@ -3,7 +3,7 @@
 #	Low-level boot setup function
 #
 #	File:	boot.s
-#	Date:	09 Oct 2019
+#	Date:	20 Jan 2020
 #
 #	Copyright (c) 2017 - 2020, Igor Baklykov
 #	All rights reserved.
@@ -58,14 +58,14 @@ kernelStart:						# Kernel starts here
 	# Check if CPUID available
 	leal	checkCPUID - KERNEL_VMA, %eax		# Load address of CPUID check func
 	calll	*%eax					# Call CPUID check
-	cmpb	$0x00, %al				# Check if AL equals to zero
-	jz	2f
+	testb	%al, %al				# Check if AL equals to zero
+	jz	1f
 
 	# Check if Long Mode available
 	leal	checkLongMode - KERNEL_VMA, %eax	# Load address of Long Mode check func
 	calll	*%eax					# Call Long Mode check
-	cmpb	$0x00, %al				# Check if AL equals to zero
-	jz	2f
+	testb	%al, %al				# Check if AL equals to zero
+	jz	1f
 
 	# Load new Page Map Level 4 table
 	leal	bootPageMapLevel4 - KERNEL_VMA, %eax	# Load address of Page Map Level 4 table

@@ -3,7 +3,7 @@
 //	Exceptions low-level operations
 //
 //	File:	exceptions.hpp
-//	Date:	10 Oct 2019
+//	Date:	20 Jan 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -25,12 +25,44 @@ namespace arch {
 
 
 	// Exceptions names
-	extern const sbyte_t* exName[32];
+	constexpr const sbyte_t* exName[32] {
+		u8"DIVIDE BY ZERO",			// 0
+		u8"DEBUG",				// 1
+		u8"NON-MASKABLE INTERRUPT",		// 2
+		u8"BREAKPOINT",				// 3
+		u8"INTO DETECTED OVERFLOW",		// 4
+		u8"BOUND RANGE EXCEEDED",		// 5
+		u8"INVALID OPCODE",			// 6
+		u8"NO COPROCESSOR",			// 7
+		u8"DOUBLE FAULT",			// 8
+		u8"COPROCESSOR SEGMENT OVERRUN",	// 9
+		u8"INVALID TSS",			// 10
+		u8"SEGMENT NOT PPRESENT",		// 11
+		u8"STACK FAULT",			// 12
+		u8"GENERAL PROTECTION FAULT",		// 13
+		u8"PAGE FAULT",				// 14
+		u8"UNKNOWN INTERRUPT",			// 15
+		u8"COPROCESSOR FAULT",			// 16
+		u8"ALIGNMENT CHECK",			// 17
+		u8"MACHINE CHECK",			// 18
+		u8"RESERVED",				// 19
+		u8"RESERVED",				// 20
+		u8"RESERVED",				// 21
+		u8"RESERVED",				// 22
+		u8"RESERVED",				// 23
+		u8"RESERVED",				// 24
+		u8"RESERVED",				// 25
+		u8"RESERVED",				// 26
+		u8"RESERVED",				// 27
+		u8"RESERVED",				// 28
+		u8"RESERVED",				// 29
+		u8"RESERVED",				// 30
+		u8"RESERVED"				// 31
+	};
 
 
 	// Interrupts number enumeration
 	enum exNumber_t : dword_t {
-
 		DIVIDE_BY_ZERO			= 0,
 		DEBUG				= 1,
 		NON_MASKABLE_IRQ		= 2,
@@ -50,7 +82,6 @@ namespace arch {
 		COPROCESSOR_FAULT		= 16,
 		ALIGNMENT_CHECK			= 17,
 		MACHINE_CHECK			= 18
-
 	};
 
 
@@ -62,69 +93,69 @@ namespace arch {
 
 
 		// Exception 0 handler
-		void	exHandler00();
+		constexpr void	exHandler00();
 		// Exception 1 handler
-		void	exHandler01();
+		constexpr void	exHandler01();
 		// Exception 2 handler
-		void	exHandler02();
+		constexpr void	exHandler02();
 		// Exception 3 handler
-		void	exHandler03();
+		constexpr void	exHandler03();
 		// Exception 4 handler
-		void	exHandler04();
+		constexpr void	exHandler04();
 		// Exception 5 handler
-		void	exHandler05();
+		constexpr void	exHandler05();
 		// Exception 6 handler
-		void	exHandler06();
+		constexpr void	exHandler06();
 		// Exception 7 handler
-		void	exHandler07();
+		constexpr void	exHandler07();
 		// Exception 8 handler
-		void	exHandler08();
+		constexpr void	exHandler08();
 		// Exception 9 handler
-		void	exHandler09();
+		constexpr void	exHandler09();
 		// Exception 10 handler
-		void	exHandler0A();
+		constexpr void	exHandler0A();
 		// Exception 11 handler
-		void	exHandler0B();
+		constexpr void	exHandler0B();
 		// Exception 12 handler
-		void	exHandler0C();
+		constexpr void	exHandler0C();
 		// Exception 13 handler
-		void	exHandler0D();
+		constexpr void	exHandler0D();
 		// Exception 14 handler
-		void	exHandler0E();
+		constexpr void	exHandler0E();
 		// Exception 15 handler
-		void	exHandler0F();
+		constexpr void	exHandler0F();
 		// Exception 16 handler
-		void	exHandler10();
+		constexpr void	exHandler10();
 		// Exception 17 handler
-		void	exHandler11();
+		constexpr void	exHandler11();
 		// Exception 18 handler
-		void	exHandler12();
+		constexpr void	exHandler12();
 		// Exception 19 handler
-		void	exHandler13();
+		constexpr void	exHandler13();
 		// Exception 20 handler
-		void	exHandler14();
+		constexpr void	exHandler14();
 		// Exception 21 handler
-		void	exHandler15();
+		constexpr void	exHandler15();
 		// Exception 22 handler
-		void	exHandler16();
+		constexpr void	exHandler16();
 		// Exception 23 handler
-		void	exHandler17();
+		constexpr void	exHandler17();
 		// Exception 24 handler
-		void	exHandler18();
+		constexpr void	exHandler18();
 		// Exception 25 handler
-		void	exHandler19();
+		constexpr void	exHandler19();
 		// Exception 26 handler
-		void	exHandler1A();
+		constexpr void	exHandler1A();
 		// Exception 27 handler
-		void	exHandler1B();
+		constexpr void	exHandler1B();
 		// Exception 28 handler
-		void	exHandler1C();
+		constexpr void	exHandler1C();
 		// Exception 29 handler
-		void	exHandler1D();
+		constexpr void	exHandler1D();
 		// Exception 30 handler
-		void	exHandler1E();
+		constexpr void	exHandler1E();
 		// Exception 31 handler
-		void	exHandler1F();
+		constexpr void	exHandler1F();
 
 
 #ifdef	__cplusplus
@@ -135,9 +166,16 @@ namespace arch {
 
 
 	// Install handler
-	void	exHandlerInstall(exNumber_t, isrHandler_t);
+	constexpr void exHandlerInstall(const exNumber_t exNumber, const isrHandler_t handler) {
+		// Install ISR
+		isrHandlerInstall(dword_t(exNumber), handler);
+	}
+
 	// Uninstall handler
-	void	exHandlerUninstall(exNumber_t);
+	constexpr void exHandlerUninstall(const exNumber_t exNumber) {
+		// Uninstall ISR
+		isrHandlerUninstall(dword_t(exNumber));
+	}
 
 
 }	// namespace arch

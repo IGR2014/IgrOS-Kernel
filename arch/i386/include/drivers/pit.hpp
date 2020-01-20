@@ -3,7 +3,7 @@
 //	Programmable interrupt timer
 //
 //	File:	pit.hpp
-//	Date:	15 May 2019
+//	Date:	17 Jan 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -42,23 +42,16 @@ namespace arch {
 		};
 
 
-		pitInterval_t& operator+=(const pitInterval_t &interval) {
-
+		pitInterval_t& operator+=(const pitInterval_t &interval) noexcept {
 			fixed += interval.fixed;
-
 			return *this;
-
 		}
 
-		pitInterval_t operator+(const pitInterval_t &interval) {
-
+		pitInterval_t operator+(const pitInterval_t &interval) noexcept {
 			pitInterval_t newInterwal;
 			newInterwal.fixed = fixed;
-
 			newInterwal += interval;
-
 			return newInterwal;
-
 		}
 
 	};
@@ -67,20 +60,22 @@ namespace arch {
 
 
 	// PIT frequency (1.193181(3) MHz)
-	static const dword_t	PIT_MAIN_FREQUENCY	= 1193181;
+	constexpr static dword_t PIT_MAIN_FREQUENCY	= 1193181u;
+	// Default pit frequency (100 Hz)
+	constexpr static dword_t PIT_DEFAULT_FREQUENCY	= 100u;
 
 
 	// Setup PIT frequency
-	void	pitSetupFrequency(word_t frequency);
+	void	pitSetupFrequency(const word_t frequency) noexcept;
 
 	// PIT interrupt (#0) handler
-	void	pitInterruptHandler(const taskRegs_t*);
+	void	pitInterruptHandler(const taskRegs_t* regs) noexcept;
 
 	// Get expired ticks
-	quad_t	pitGetTicks();
+	[[nodiscard]] quad_t	pitGetTicks() noexcept;
 
 	// Setup programmable interrupt timer
-	void	pitSetup();
+	void	pitSetup() noexcept;
 
 
 }	// namespace arch

@@ -3,7 +3,7 @@
 //	Interrupts low-level operations
 //
 //	File:	irq.hpp
-//	Date:	10 Oct 2019
+//	Date:	20 Jan 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -26,14 +26,17 @@ namespace arch {
 
 
 	// IRQ offset in ISR list
-	static const dword_t IRQ_OFFSET = 32;
-
+	constexpr static dword_t IRQ_OFFSET	= 32u;
+	// ISR list size
+	constexpr static dword_t ISR_SIZE	= 256u;
 
 	// Forward declaration
 	struct taskRegs_t;
-
 	// Interrupt service routine handler type
 	using isrHandler_t = std::add_pointer<void(const taskRegs_t* regs)>::type;
+
+	// Interrupt handlers
+	extern isrHandler_t isrList[ISR_SIZE];
 
 
 #ifdef	__cplusplus
@@ -44,7 +47,7 @@ namespace arch {
 
 
 		// Interrupts handler function
-		void isrHandler(const taskRegs_t*);
+		void	isrHandler(const taskRegs_t* regs) noexcept;
 
 
 #ifdef	__cplusplus
@@ -55,9 +58,16 @@ namespace arch {
 
 
 	// Install interrupt service routine handler
-	void isrHandlerInstall(const dword_t, const isrHandler_t);
+	constexpr void isrHandlerInstall(const dword_t isrNumber, const isrHandler_t isrHandler) noexcept{
+		// Put interrupt service routine handler in ISRs list
+		isrList[isrNumber] = isrHandler;
+	}
+
 	// Uninstall interrupt service routine handler
-	void isrHandlerUninstall(const dword_t);
+	constexpr void isrHandlerUninstall(const dword_t isrNumber) noexcept {
+		// Remove interrupt service routine handler from ISRs list
+		isrList[isrNumber] = nullptr;
+	}
 
 
 }	// namespace arch

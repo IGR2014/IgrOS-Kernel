@@ -3,7 +3,7 @@
 #	i386 folder Make script
 #
 #	File:	Makefile
-#	Date:	10 Oct 2019
+#	Date:	20 Jan 2020
 #
 #	Copyright (c) 2017 - 2020, Igor Baklykov
 #	All rights reserved.
@@ -41,7 +41,6 @@ OBJ		= $(IGROS_DIR_TARGET_BUILD)/boot/multiboot.o		\
 		  $(IGROS_DIR_TARGET_BUILD)/gdt.o			\
 		  $(IGROS_DIR_TARGET_BUILD)/isr.o			\
 		  $(IGROS_DIR_TARGET_BUILD)/irq.o			\
-		  $(IGROS_DIR_TARGET_BUILD)/exceptions.o		\
 		  $(IGROS_DIR_TARGET_BUILD)/paging.o			\
 		  $(IGROS_DIR_TARGET_BUILD)/../../kmain.o
 

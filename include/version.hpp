@@ -3,7 +3,7 @@
 //	IgrOS version info
 //
 //	File:	version.hpp
-//	Date:	15 May 2019
+//	Date:	17 Jan 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -19,11 +19,11 @@
 #include <arch/types.hpp>
 
 
-static const	dword_t		IGROS_VERSION_MAJOR	= 0;
-static const	dword_t		IGROS_VERSION_MINOR	= 1;
-static const	dword_t		IGROS_VERSION_BUILD	= 0;
+constexpr static dword_t	IGROS_VERSION_MAJOR	= 0u;
+constexpr static dword_t	IGROS_VERSION_MINOR	= 1u;
+constexpr static dword_t        IGROS_VERSION_BUILD	= 0u;
 
-static const	sbyte_t*	IGROS_VERSION_NAME	= "ALPHA";
+constexpr static const sbyte_t*	IGROS_VERSION_NAME	= "ALPHA";
 
 
 #endif	// IGROS_VERSION_HPP

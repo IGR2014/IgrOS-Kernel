@@ -3,7 +3,7 @@
 //	Interrupts low-level operations
 //
 //	File:	irq.cpp
-//	Date:	10 Oct 2019
+//	Date:	20 Jan 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -15,8 +15,6 @@
 #include <arch/irq.hpp>
 #include <arch/port.hpp>
 
-#include <drivers/vmem.hpp>
-
 #include <klib/kprint.hpp>
 
 
@@ -24,66 +22,60 @@
 namespace arch {
 
 
-	// Init interrupts
-	void irqInit() {
-
+	// Init IRQ
+	void irq::init() noexcept {
 		// Restart PIC`s
-		outPort8(PIC_MASTER_CONTROL, 0x11);
-		outPort8(PIC_SLAVE_CONTROL, 0x11);
+		inPort8(PIC_MASTER_CONTROL, 0x11);
+		inPort8(PIC_SLAVE_CONTROL, 0x11);
 		// Remap IRQ`s because of exceptions
-		outPort8(PIC_MASTER_DATA, 0x20);
-		outPort8(PIC_SLAVE_DATA, 0x28);
+		inPort8(PIC_MASTER_DATA, 0x20);
+		inPort8(PIC_SLAVE_DATA, 0x28);
 		// Setup PIC`s cascading
-		outPort8(PIC_MASTER_DATA, 0x04);
-		outPort8(PIC_SLAVE_DATA, 0x02);
+		inPort8(PIC_MASTER_DATA, 0x04);
+		inPort8(PIC_SLAVE_DATA, 0x02);
 		// Setup done
-		outPort8(PIC_MASTER_DATA, 0x01);
-		outPort8(PIC_SLAVE_DATA, 0x01);
-
+		inPort8(PIC_MASTER_DATA, 0x01);
+		inPort8(PIC_SLAVE_DATA, 0x01);
 		// Unmask all interrupts
-		irqMaskSet(0xFFFF);
-
+		irq::setMask();
 	}
 
-	// Mask interrupts
-	void irqMask(const irqNumber_t irq) {
 
+	// Mask interrupt
+	void irq::mask(const irqNumber_t irqNumber) noexcept {
 		// Chech if it's hardware interrupt
-		if (dword_t(irq) < 16) {
+		if (dword_t(irqNumber) < 16u) {
 			// Set interrupts mask
-			irqMaskSet(irqMaskGet() & ~(1 << dword_t(irq)));
+			irq::setMask(irq::getMask() & ~(1u << dword_t(irqNumber)));
 		}
-
 	}
+
+	// Unmask interrupt
+	void irq::unmask(const irqNumber_t irqNumber) noexcept {
+		// Chech if it's hardware interrupt
+		if (dword_t(irqNumber) < 16u) {
+			// Set interrupts mask
+			irq::setMask(irq::getMask() | (1u << dword_t(irqNumber)));
+		}
+	}
+
 
 	// Set interrupts mask
-	void irqMaskSet(const word_t mask) {
+	void irq::setMask(const word_t mask) noexcept {
 		// Set Master controller mask
-		outPort8(PIC_MASTER_DATA, byte_t(mask & 0xFF));
+		inPort8(PIC_MASTER_DATA, byte_t(mask & 0xFF));
 		// Set Slave controller mask
-		outPort8(PIC_SLAVE_DATA, byte_t((mask & 0xFF00) >> 8));
+		inPort8(PIC_SLAVE_DATA, byte_t((mask & 0xFF00) >> 8));
 	}
 
 	// Get interrupts mask
-	word_t irqMaskGet() {
+	[[nodiscard]] word_t irq::getMask() noexcept {
 		// Read slave PIC current mask
-		word_t mask	= word_t(inPort8(PIC_SLAVE_DATA)) << 8;
+		auto mask	= word_t(outPort8(PIC_SLAVE_DATA)) << 8;
 		// Read master PIC current mask
-		mask		|= inPort8(PIC_MASTER_DATA);
+		mask		|= outPort8(PIC_MASTER_DATA);
 		// Return IRQ mask
 		return mask;
-	}
-
-	// Install handler
-	void irqHandlerInstall(irqNumber_t irqNumber, isrHandler_t handler) {
-		// Install ISR
-		isrHandlerInstall(dword_t(irqNumber) + IRQ_OFFSET, handler);
-	}
-
-	// Uninstall handler
-	void irqHandlerUninstall(irqNumber_t irqNumber) {
-		// Uninstall ISR
-		isrHandlerUninstall(dword_t(irqNumber) + IRQ_OFFSET);
 	}
 
 

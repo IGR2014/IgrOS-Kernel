@@ -3,7 +3,7 @@
 //	Interrupts low-level operations
 //
 //	File:	irq.hpp
-//	Date:	10 Oct 2019
+//	Date:	20 Jan 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -26,10 +26,8 @@ namespace arch {
 
 	// Interrupts number enumeration
 	enum class irqNumber_t : dword_t {
-
 		PIT		= 0,
 		KEYBOARD	= 1
-
 	};
 
 
@@ -41,42 +39,42 @@ namespace arch {
 
 
 		// Interrupt 0 handler
-		void	irqHandler0();
+		constexpr void	irqHandler0() noexcept;
 		// Interrupt 1 handler
-		void	irqHandler1();
+		constexpr void	irqHandler1() noexcept;
 		// Interrupt 2 handler
-		void	irqHandler2();
+		constexpr void	irqHandler2() noexcept;
 		// Interrupt 3 handler
-		void	irqHandler3();
+		constexpr void	irqHandler3() noexcept;
 		// Interrupt 4 handler
-		void	irqHandler4();
+		constexpr void	irqHandler4() noexcept;
 		// Interrupt 5 handler
-		void	irqHandler5();
+		constexpr void	irqHandler5() noexcept;
 		// Interrupt 6 handler
-		void	irqHandler6();
+		constexpr void	irqHandler6() noexcept;
 		// Interrupt 7 handler
-		void	irqHandler7();
+		constexpr void	irqHandler7() noexcept;
 		// Interrupt 8 handler
-		void	irqHandler8();
+		constexpr void	irqHandler8() noexcept;
 		// Interrupt 9 handler
-		void	irqHandler9();
+		constexpr void	irqHandler9() noexcept;
 		// Interrupt 10 handler
-		void	irqHandlerA();
+		constexpr void	irqHandlerA() noexcept;
 		// Interrupt 11 handler
-		void	irqHandlerB();
+		constexpr void	irqHandlerB() noexcept;
 		// Interrupt 12 handler
-		void	irqHandlerC();
+		constexpr void	irqHandlerC() noexcept;
 		// Interrupt 13 handler
-		void	irqHandlerD();
+		constexpr void	irqHandlerD() noexcept;
 		// Interrupt 14 handler
-		void	irqHandlerE();
+		constexpr void	irqHandlerE() noexcept;
 		// Interrupt 15 handler
-		void	irqHandlerF();
+		constexpr void	irqHandlerF() noexcept;
 
 		// Enable interrupts
-		void	irqEnable();
+		constexpr void	irqEnable() noexcept;
 		// Disable interrupts
-		void	irqDisable();
+		constexpr void	irqDisable() noexcept;
 
 
 #ifdef	__cplusplus
@@ -86,21 +84,57 @@ namespace arch {
 #endif	// __cplusplus
 
 
-	// Init interrupts
-	void	irqInit();
+	// IRQ structure
+	class irq final {
 
-	// Mask interrupts
-	void	irqMask(const irqNumber_t);
+	public:
 
-	// Set interrupts mask
-	void	irqMaskSet(const word_t);
-	// Get interrupts mask
-	word_t	irqMaskGet();
+		// Default c-tor
+		irq() noexcept = default;
+
+		// Copy c-tor
+		irq(const irq &other) = delete;
+		// Copy assignment
+		irq& operator=(const irq &other) = delete;
+
+		// Move c-tor
+		irq(irq &&other) = delete;
+		// Move assignment
+		irq& operator=(irq &&other) = delete;
+
+		// Init IRQ
+		static void init() noexcept;
+
+		// Mask interrupt
+		static void mask(const irqNumber_t irqNumber) noexcept;
+		// Unmask interrupt
+		static void unmask(const irqNumber_t irqNumber) noexcept;
+
+		// Set interrupts mask
+		static void			setMask(const word_t mask = 0xFFFF) noexcept;
+		// Get interrupts mask
+		[[nodiscard]] static word_t	getMask() noexcept;
+
+		// Install IRQ handler
+		constexpr static void install(const irqNumber_t irqNumber, const isrHandler_t irqHandler) noexcept;
+		// Uninstall IRQ handler
+		constexpr static void uninstall(const irqNumber_t irqNumber) noexcept;
+
+
+	};
+
 
 	// Install handler
-	void	irqHandlerInstall(irqNumber_t, isrHandler_t);
+	constexpr void irq::install(const irqNumber_t irqNumber, const isrHandler_t irqHandler) noexcept {
+		// Install ISR
+		isrHandlerInstall(dword_t(irqNumber) + IRQ_OFFSET, irqHandler);
+	}
+
 	// Uninstall handler
-	void	irqHandlerUninstall(irqNumber_t);
+	constexpr void irq::uninstall(const irqNumber_t irqNumber) noexcept {
+		// Uninstall ISR
+		isrHandlerUninstall(dword_t(irqNumber) + IRQ_OFFSET);
+	}
 
 
 }	// namespace arch

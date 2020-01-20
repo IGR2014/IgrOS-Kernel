@@ -3,7 +3,7 @@
 #	Low-level boot setup function
 #
 #	File:	boot.s
-#	Date:	09 Oct 2019
+#	Date:	20 Jan 2020
 #
 #	Copyright (c) 2017 - 2020, Igor Baklykov
 #	All rights reserved.
@@ -29,6 +29,11 @@
 
 .global	kernelStart					# Kernel main function
 
+.extern outCR0
+.extern outCR3
+.extern outCR4
+.extern inCR0
+.extern inCR4
 .extern	kmain						# Extern kernel C-function
 
 # Kernel starts here
@@ -48,16 +53,32 @@ kernelStart:
 	# Set new page directory (phys address)
 	leal	bootPageDirectory - KERNEL_VMA, %eax	# Load temporary boot page directory phys address
 	movl	%eax, %cr3				# Set new CR3 value
+	#pushl	%eax
+	#leal	inCR3  - KERNEL_VMA, %ebx
+	#calll	*%ebx
+	#addl	$4, %esp
 
 	# Enable Page Size Extension (4 Mb pages)
 	movl	%cr4, %eax				# Get CR4 value
+	#leal	outCR4  - KERNEL_VMA, %ebx
+	#calll	*%ebx
 	orl	$PAGE_BIT_PSE, %eax			# Set PSE bit
 	movl	%eax, %cr4				# Set new CR4 value
+	#pushl	%eax
+	#leal	inCR4  - KERNEL_VMA, %ebx
+	#calll	*%ebx
+	#addl	$4, %esp
 
 	# Enable paging
 	movl	%cr0, %eax				# Get CR0 value
+	#leal	outCR0  - KERNEL_VMA, %ebx
+	#calll	*%ebx
 	orl	$PAGE_BIT_PE, %eax			# Set PE bit
 	movl	%eax, %cr0				# Set new CR0 value
+	#pushl	%eax
+	#leal	inCR0  - KERNEL_VMA, %ebx
+	#calll	*%ebx
+	#addl	$4, %esp
 
 	# Reload CS
 	leal	1f, %eax				# Load new CS related address
@@ -96,6 +117,6 @@ bootPageDirectory:
 # Stack data
 # Stack grows from stackTop to stackBottom
 stackBottom:						# End of stack
-	.skip	0x40000					# Stack size of 256kB
+	.skip	0x20000					# Stack size of 128kB
 stackTop:						# Stack pointer
 

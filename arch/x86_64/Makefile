@@ -3,7 +3,7 @@
 #	x86_64 folder Make script
 #
 #	File:	Makefile
-#	Date:	10 Oct 2019
+#	Date:	20 Jan 2020
 #
 #	Copyright (c) 2017 - 2020, Igor Baklykov
 #	All rights reserved.

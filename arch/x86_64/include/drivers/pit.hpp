@@ -26,6 +26,9 @@ namespace arch {
 	// Forward declaration
 	struct	taskRegs_t;
 
+	// Default pit frequency (100 Hz)
+	constexpr static dword_t	PIT_DEFAULT_FREQUENCY	= 100u;
+
 
 #pragma pack(push, 1)
 

@@ -3,7 +3,7 @@
 //	Exceptions low-level operations
 //
 //	File:	exceptions.hpp
-//	Date:	10 Oct 2019
+//	Date:	20 Jan 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -25,12 +25,44 @@ namespace arch {
 
 
 	// Exceptions names
-	extern const sbyte_t* exName[32];
+	constexpr const sbyte_t* exName[32] {
+		u8"DIVIDE BY ZERO",			// 0
+		u8"DEBUG",				// 1
+		u8"NON-MASKABLE INTERRUPT",		// 2
+		u8"BREAKPOINT",				// 3
+		u8"INTO DETECTED OVERFLOW",		// 4
+		u8"BOUND RANGE EXCEEDED",		// 5
+		u8"INVALID OPCODE",			// 6
+		u8"NO COPROCESSOR",			// 7
+		u8"DOUBLE FAULT",			// 8
+		u8"COPROCESSOR SEGMENT OVERRUN",	// 9
+		u8"INVALID TSS",			// 10
+		u8"SEGMENT NOT PPRESENT",		// 11
+		u8"STACK FAULT",			// 12
+		u8"GENERAL PROTECTION FAULT",		// 13
+		u8"PAGE FAULT",				// 14
+		u8"UNKNOWN INTERRUPT",			// 15
+		u8"COPROCESSOR FAULT",			// 16
+		u8"ALIGNMENT CHECK",			// 17
+		u8"MACHINE CHECK",			// 18
+		u8"RESERVED",				// 19
+		u8"RESERVED",				// 20
+		u8"RESERVED",				// 21
+		u8"RESERVED",				// 22
+		u8"RESERVED",				// 23
+		u8"RESERVED",				// 24
+		u8"RESERVED",				// 25
+		u8"RESERVED",				// 26
+		u8"RESERVED",				// 27
+		u8"RESERVED",				// 28
+		u8"RESERVED",				// 29
+		u8"RESERVED",				// 30
+		u8"RESERVED"				// 31
+	};
 
 
 	// Interrupts number enumeration
 	enum exNumber_t : dword_t {
-
 		DIVIDE_BY_ZERO			= 0,
 		DEBUG				= 1,
 		NON_MASKABLE_IRQ		= 2,
@@ -50,7 +82,6 @@ namespace arch {
 		COPROCESSOR_FAULT		= 16,
 		ALIGNMENT_CHECK			= 17,
 		MACHINE_CHECK			= 18
-
 	};
 
 
@@ -135,9 +166,16 @@ namespace arch {
 
 
 	// Install handler
-	void	exHandlerInstall(exNumber_t, isrHandler_t);
+	constexpr void exHandlerInstall(const exNumber_t exNumber, const isrHandler_t handler) {
+		// Install ISR
+		isrHandlerInstall(dword_t(exNumber), handler);
+	}
+
 	// Uninstall handler
-	void	exHandlerUninstall(exNumber_t);
+	constexpr void exHandlerUninstall(const exNumber_t exNumber) {
+		// Uninstall ISR
+		isrHandlerUninstall(dword_t(exNumber));
+	}
 
 
 }	// namespace arch

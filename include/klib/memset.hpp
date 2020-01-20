@@ -3,7 +3,7 @@
 //	Kernel-space memset for x86
 //
 //	File:	memset.hpp
-//	Date:	06 Jun 2019
+//	Date:	17 Jan 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -31,17 +31,17 @@ namespace klib {
 
 
 		// Set required memory with specified byte
-		static inline pointer_t	kmemset8(const pointer_t, const dword_t, const byte_t);
+		[[maybe_unused]] static inline pointer_t kmemset8(const pointer_t, const dword_t, const byte_t) noexcept;
 
 		// Set required memory with specified word
-		static inline pointer_t	kmemset16(const pointer_t, const dword_t, const word_t);
+		[[maybe_unused]] static inline pointer_t kmemset16(const pointer_t, const dword_t, const word_t) noexcept;
 
 		// Set required memory with specified double word
-		static inline pointer_t	kmemset32(const pointer_t, const dword_t, const dword_t);
+		[[maybe_unused]] static inline pointer_t kmemset32(const pointer_t, const dword_t, const dword_t) noexcept;
 
 		// TODO: implement!
 		// Set required memory with specified quad word
-		//static inline pointer_t	kmemset64(const pointer_t, const dword_t, const quad_t);
+		//static inline pointer_t	kmemset64(const pointer_t, const dword_t, const quad_t) noexcept;
 
 
 #ifdef	__cplusplus
