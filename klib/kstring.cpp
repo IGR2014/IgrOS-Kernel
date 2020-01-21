@@ -3,7 +3,7 @@
 //	Kernel string functions
 //
 //	File:	string.cpp
-//	Date:	20 Jan 2020
+//	Date:	21 Jan 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -28,7 +28,7 @@ namespace klib {
 			return nullptr;
 		}
                 // Find string end pointer
-                for (;*src != '\0'; ++src);
+                for (;*src != u8'\0'; ++src);
 		// Return string end
                 return src;
 	}
@@ -42,7 +42,7 @@ namespace klib {
 		// Copy string start pointer
                 auto iter = src;
                 // Find string end pointer
-                for (;*iter != '\0'; ++iter);
+                for (;*iter != u8'\0'; ++iter);
 		// Return string end
                 return iter;
 	}
@@ -61,36 +61,14 @@ namespace klib {
 
 	// Copy string from one to other
 	sbyte_t* kstrcpy(sbyte_t* src, sbyte_t* dst, std::size_t size) noexcept {
-		// Save destination pointer
-		const auto tempDst = dst;
-		// Check src, dst pointers and size
-		if (nullptr == src || nullptr == dst || 0u == size) {
-			// Pointer to empty dst
-			// Fill with null terminator for sanity
-			return &(*tempDst = '\0');
-		}
-		// Copy first symbol
-		*dst = *src;
-		// Copy string
-		do {
-			// Copy string byte by byte
-			*++dst = *++src;
-		// Stop on size overflow or null terminator
-		} while (--size > 0u && *src != '\0');
-		// Return pointer to dst tring
-		return tempDst;
-	}
-
-	// Copy string from one to other
-	const sbyte_t* kstrcpy(const sbyte_t* src, sbyte_t* dst, std::size_t size) noexcept {
-		// Save destination pointer
-		const auto tempDst = dst;
 		// Check src, dst pointers and size
 		if (nullptr == src || nullptr == dst || 0u == size) {
 			// Pointer to empty dst
 			// Fill with null terminator for sanity
 			return dst;
 		}
+		// Save destination pointer
+		const auto tempDst = dst;
 		// Copy first symbol
 		*dst = *src;
 		// Copy string
@@ -98,7 +76,29 @@ namespace klib {
 			// Copy string byte by byte
 			*++dst = *++src;
 		// Stop on size overflow or null terminator
-		} while (--size > 0u && *src != '\0');
+		} while (--size > 0u && *src != u8'\0');
+		// Return pointer to dst tring
+		return tempDst;
+	}
+
+	// Copy string from one to other
+	const sbyte_t* kstrcpy(const sbyte_t* src, sbyte_t* dst, std::size_t size) noexcept {
+		// Check src, dst pointers and size
+		if (nullptr == src || nullptr == dst || 0u == size) {
+			// Pointer to empty dst
+			// Fill with null terminator for sanity
+			return dst;
+		}
+		// Save destination pointer
+		const auto tempDst = dst;
+		// Copy first symbol
+		*dst = *src;
+		// Copy string
+		do {
+			// Copy string byte by byte
+			*++dst = *++src;
+		// Stop on size overflow or null terminator
+		} while (--size > 0u && *src != u8'\0');
 		// Return pointer to dst tring
 		return tempDst;
 	}
@@ -122,7 +122,7 @@ namespace klib {
 			return ((src1 == nullptr) ? ((src2 == nullptr) ? 0 : -1) : 1);
 		}
 		// Compare string symbol by symbol
-		for (;--size > 0u && *src1 != '\0' && *src1 == *src2; ++src1, ++src2);
+		for (;--size > 0u && *src1 != u8'\0' && *src1 == *src2; ++src1, ++src2);
 		// Return string difference
 		return byte_t(*src1) - byte_t(*src2);
 	}
@@ -135,7 +135,7 @@ namespace klib {
 			return nullptr;
 		}
 		// Find symbol inside string
-		for (;--size > 0u && *src != '\0' && *src != chr; ++src);
+		for (;--size > 0u && *src != u8'\0' && *src != chr; ++src);
 		// Return address of first occurrence or null pointer
 		return (*src == chr) ? src : nullptr;
 	}
@@ -147,7 +147,7 @@ namespace klib {
 			return nullptr;
 		}
 		// Find symbol inside string
-		for (;--size > 0u && *src != '\0' && *src != chr; ++src);
+		for (;--size > 0u && *src != u8'\0' && *src != chr; ++src);
 		// Return address of first occurrence or null pointer
 		return (*src == chr) ? src : nullptr;
 	}
