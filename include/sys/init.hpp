@@ -3,7 +3,7 @@
 //	Init RAM image data
 //
 //	File:	init.hpp
-//	Date:	01 Oct 2019
+//	Date:	21 Jan 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -12,8 +12,8 @@
 
 
 #pragma once
-#ifndef IGROS_ARCH_INIT_HPP
-#define IGROS_ARCH_INIT_HPP
+#ifndef IGROS_SYS_INIT_HPP
+#define IGROS_SYS_INIT_HPP
 
 
 #include <cstdint>
@@ -31,5 +31,5 @@ namespace sys {
 }	// namespace sys
 
 
-#endif	// IGROS_ARCH_INIT_HPP
+#endif	// IGROS_SYS_INIT_HPP
 

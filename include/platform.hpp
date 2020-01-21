@@ -3,7 +3,7 @@
 //	IgrOS platform description
 //
 //	File:	platform.hpp
-//	Date:	06 Jun 2019
+//	Date:	21 Jan 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -22,11 +22,11 @@
 
 
 // Platform init function pointer type
-using funcInit_t	= std::add_pointer<void()>::type;
+using funcInit_t	= std::add_pointer_t<void()>;
 // Platform shutdown function pointer type
-using funcShutdown_t	= std::add_pointer<void()>::type;
+using funcShutdown_t	= std::add_pointer_t<void()>;
 // Platform reboot function pointer type
-using funcReboot_t	= std::add_pointer<void()>::type;
+using funcReboot_t	= std::add_pointer_t<void()>;
 
 
 // Platform desciption structure

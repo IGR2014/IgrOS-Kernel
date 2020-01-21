@@ -2,8 +2,8 @@
 //
 //	Interrupts low-level operations
 //
-//	File:	irq.hpp
-//	Date:	20 Jan 2020
+//	File:	isr.hpp
+//	Date:	21 Jan 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -33,7 +33,7 @@ namespace arch {
 	// Forward declaration
 	struct taskRegs_t;
 	// Interrupt service routine handler type
-	using isrHandler_t = std::add_pointer<void(const taskRegs_t* regs)>::type;
+	using isrHandler_t = std::add_pointer_t<void(const taskRegs_t*)>;
 
 	// Interrupt handlers
 	extern isrHandler_t isrList[ISR_SIZE];

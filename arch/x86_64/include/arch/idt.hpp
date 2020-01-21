@@ -3,7 +3,7 @@
 //	Interrupt descriptor table low-level operations
 //
 //	File:	idt.hpp
-//	Date:	18 Sep 2019
+//	Date:	21 Jan 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -52,7 +52,7 @@ namespace arch {
 	class idt final {
 
 		// IDT ISR pointer
-		using isrPointer_t = std::add_pointer<void()>::type;
+		using isrPointer_t = std::add_pointer_t<void()>;
 
 		// Number of IDT entries
 		constexpr static dword_t IDT_SIZE = 256u;

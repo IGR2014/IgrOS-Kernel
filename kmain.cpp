@@ -3,7 +3,7 @@
 //	Boot low-level main setup function
 //
 //	File:	boot.cpp
-//	Date:	20 Jan 2020
+//	Date:	21 Jan 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -40,6 +40,49 @@
 // Kernel start and end
 extern const byte_t _SECTION_KERNEL_START_;
 extern const byte_t _SECTION_KERNEL_END_;
+
+
+// Dividy by zero exception test
+void testDivideByZero() noexcept {
+	volatile auto x = 10u;
+	volatile auto y = 0u;
+	volatile auto z = x / y;
+}
+
+// Page fault exception test (PFE)
+void testPageFaultException() noexcept {
+	volatile auto ptr2 = reinterpret_cast<word_t*>(0xA0000000);
+	*ptr2 = 0x4000;
+}
+
+// Test higher half virtual memory mapping
+void testHigherHalfMemory() noexcept {
+#if	defined(IGROS_ARCH_i386)
+	auto ptr = reinterpret_cast<word_t*>(0xC00B8006);
+#elif	defined(IGROS_ARCH_x86_64)
+	auto ptr = reinterpret_cast<word_t*>(0xFFFFFFFF800B8006);
+#endif
+	klib::kprintf(	u8"Paging test:\t0x%p = 0x%p\r\n",
+			ptr,
+			arch::paging::toPhys(static_cast<pointer_t>(ptr)));
+	*ptr = 0x0700 | u8'O';
+	++ptr;
+	*ptr = 0x0700 | u8'S';
+}
+
+// Test VGA draw
+void testDrawVGA() noexcept {
+#if	defined(IGROS_ARCH_i386)
+	auto ptr = reinterpret_cast<word_t*>(0xA0000);
+#elif	defined(IGROS_ARCH_x86_64)
+	auto ptr = reinterpret_cast<word_t*>(0xFFFFFFFF80A0000);
+#endif
+	for (auto j = 0u; j < 10000000u; j += 4u) {
+		ptr[j + 0] = 0x00;
+		ptr[j + 1] = 0xFF;
+		ptr[j + 2] = 0x00;
+	}
+}
 
 
 #ifdef	__cplusplus
@@ -82,9 +125,9 @@ extern "C" {
 				multiboot->loaderName());
 
 		// Dump memory info
-		multiboot->dumpMemInfo();
+		//multiboot->dumpMemInfo();
 		// Dump multiboot memory map
-		multiboot->dumpMemMap();
+		//multiboot->dumpMemMap();
 
 		klib::kprintf(	u8"KERNEL INFO:\r\n"
 				u8"Arch:\t\t%s\r\n"
@@ -97,7 +140,7 @@ extern "C" {
 				(IGROS_ARCH),
 				&_SECTION_KERNEL_START_,
 				&_SECTION_KERNEL_END_,
-				dword_t(&_SECTION_KERNEL_END_ - &_SECTION_KERNEL_START_) >> 10,
+				static_cast<dword_t>(&_SECTION_KERNEL_END_ - &_SECTION_KERNEL_START_) >> 10,
 				IGROS_VERSION_MAJOR,
 				IGROS_VERSION_MINOR,
 				IGROS_VERSION_BUILD,
@@ -111,17 +154,19 @@ extern "C" {
 		// Setup Interrupts Descriptor Table
 		arch::idt::init();
 
-		// Init interrupts
-		arch::irq::init();
-
-		// Enable interrupts
-		arch::irqEnable();
+		// Init exceptions
+		arch::except::init();
 
 		// Setup Global Descriptors Table
 		arch::gdt::init();
 
 		// Setup paging (And identity map first 4MB where kernel physically is)
 		arch::paging::init();
+
+		// Init interrupts
+		arch::irq::init();
+		// Enable interrupts
+		arch::irqEnable();
 
 		// Setup PIT
 		arch::pitSetup();
@@ -143,52 +188,14 @@ extern "C" {
 		// Write "Booted successfully" message
 		klib::kprintf(u8"Phys. page at:\t0x%p\r\n", pg);
 
-		/*
-		klib::kprintf(	u8"Test:\t\t%%c\t= %c\r\n"
-				u8"byte_t:\t\t%%hhx\t= 0x%hhx\r\n"
-				u8"word_t:\t\t%%hx\t= 0x%hx\r\n"
-				u8"dword_t:\t%%x\t= 0x%x\r\n"
-				u8"quad_t:\t\t%%llx\t= 0x%llx\r\n",
-				u8'5',
-				byte_t(0xF0),
-				word_t(0xF0F0),
-				dword_t(0xF0F0F0F0),
-				quad_t(0xF0F0F0F0F0F0F0F0));
-		*/
-
-		/*
-		auto ptr = reinterpret_cast<byte_t*>(0xA0000);
-		for (auto j = 0u; j < 10000000u; j += 4u) {
-			ptr[j + 0] = 0x00;
-			ptr[j + 1] = 0xFF;
-			ptr[j + 2] = 0x00;
-		}
-		*/
-
-		/*
-		// Page mapping test (higher half test)
-		auto ptr = reinterpret_cast<word_t*>(0xC00B8006);
-		klib::kprintf(	u8"Paging test:\t0x%p = 0x%p\r\n",
-				ptr,
-				arch::paging::toPhys(pointer_t(ptr)));
-		// Rewrite 'IgrOS' text 'O' and 'S' green symbols with white ones
-		*ptr = 0x0700 | u8'O';
-		++ptr;
-		*ptr = 0x0700 | u8'S';
-		*/
-
-		/*
-		// Page Fault Exception test
-		volatile auto ptr2 = reinterpret_cast<word_t*>(0xA0000000);
-		*ptr2 = 0x4000;
-		*/
-
-		/*
-		// Divide by Zero Exception Test
-		volatile auto x = 10u;
-		volatile auto y = 0u;
-		volatile auto z = x / y;
-		*/
+		// Dividy by zero exception test
+		//testDivideByZero();
+		// Page fault exception test (PFE)
+		//testPageFaultException();
+		// Test higher half virtual memory mapping
+		//testHigherHalfMemory();
+		// Test VGA draw
+		//testDrawVGA();
 
 	}
 
