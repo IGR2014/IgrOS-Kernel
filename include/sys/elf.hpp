@@ -3,7 +3,7 @@
 //	ELF header info
 //
 //	File:	elf.hpp
-//	Date:	17 Jan 2020
+//	Date:	21 Jan 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -12,8 +12,8 @@
 
 
 #pragma once
-#ifndef IGROS_ARCH_ELF_HPP
-#define IGROS_ARCH_ELF_HPP
+#ifndef IGROS_SYS_ELF_HPP
+#define IGROS_SYS_ELF_HPP
 
 
 #include <cstdint>
@@ -185,5 +185,5 @@ namespace sys {
 }	// namespace sys
 
 
-#endif	// IGROS_ARCH_ELF_HPP
+#endif	// IGROS_SYS_ELF_HPP
 
