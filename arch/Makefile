@@ -15,7 +15,7 @@ export	IGROS_DIR_BUILD		= $(CURDIR)/../build
 export	IGROS_DIR_RELEASE	= $(CURDIR)/../release
 export	IGROS_ARCH		?= i386
 
-export	CXX			?= clang++
+export	CXX			?= g++
 export	CXXFLAGS		= -std=c++17				\
 				  -Wall					\
 				  -Wextra				\
@@ -28,7 +28,6 @@ export	CXXFLAGS		= -std=c++17				\
 				  -nostdlib				\
 				  -fno-pic				\
 				  -fno-pie				\
-				  -fcf-protection=branch		\
 				  -O3					\
 				  -s					\
 				  -mno-3dnow				\
@@ -36,7 +35,6 @@ export	CXXFLAGS		= -std=c++17				\
 				  -mno-sse2				\
 				  -mno-sse3				\
 				  -mno-mmx				\
-				  -mmanual-endbr			\
 				  -DIGROS_ARCH_$(IGROS_ARCH)		\
 				  -DIGROS_ARCH="\"$(IGROS_ARCH)"\"
 
