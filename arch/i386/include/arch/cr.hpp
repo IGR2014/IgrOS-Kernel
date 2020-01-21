@@ -58,3 +58,4 @@ namespace arch {
 
 
 #endif	// IGROS_ARCH_CONTROL_REGISTERS_HPP
+
