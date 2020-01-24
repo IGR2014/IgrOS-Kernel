@@ -3,7 +3,7 @@
 //	Global descriptor table low-level operations
 //
 //	File:	gdt.hpp
-//	Date:	20 Jan 2020
+//	Date:	24 Jan 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -137,7 +137,7 @@ namespace arch {
 		// Set GDT entry
 		constexpr static void	setEntry(const byte_t ID, const dword_t base, const dword_t &limit, const FLAGS flags) noexcept;
 		// Calc GDT size
-		[[nodiscard]] constexpr static dword_t	calcSize() noexcept;
+		[[nodiscard]] constexpr static word_t	calcSize() noexcept;
 
 		// Init GDT table
 		constexpr static void	init() noexcept;
@@ -159,7 +159,7 @@ namespace arch {
 	}
 
 	// Calculate GDT size
-	constexpr dword_t gdt::calcSize() noexcept {
+	constexpr word_t gdt::calcSize() noexcept {
 		return (GDT_SIZE * sizeof(gdtEntry_t)) - 1u;
 	}
 
@@ -198,8 +198,8 @@ namespace arch {
 		// User data
 		gdt::setEntry(0x04, 0x00000000, 0xFFFFFFFF, GDT_ENTRY_DATA_RING3);
 		// Set GDT size and data pointer
-		pointer.size	= gdt::calcSize();
-		pointer.pointer	= table;
+		gdt::pointer.size	= gdt::calcSize();
+		gdt::pointer.pointer	= gdt::table;
 		// Load new GDT
 		gdtLoad(&pointer);
 	}

@@ -3,7 +3,7 @@
 //	IO low-level port operations
 //
 //	File:	port.hpp
-//	Date:	20 Jan 2020
+//	Date:	23 Jan 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -48,18 +48,18 @@ namespace arch {
 
 
 		// Read byte from port
-		[[nodiscard]] byte_t volatile outPort8(const portAddress_t addr) noexcept;
+		[[nodiscard]] inline byte_t volatile outPort8(const portAddress_t addr) noexcept;
 		// Read word from port
-		[[nodiscard]] word_t volatile outPort16(const portAddress_t addr) noexcept;
+		[[nodiscard]] inline word_t volatile outPort16(const portAddress_t addr) noexcept;
 		// Read long from port
-		[[nodiscard]] dword_t volatile outPort32(const portAddress_t addr) noexcept;
+		[[nodiscard]] inline dword_t volatile outPort32(const portAddress_t addr) noexcept;
 
 		// Write byte to port
-		void volatile inPort8(const portAddress_t addr, const byte_t value) noexcept;
+		inline void volatile inPort8(const portAddress_t addr, const byte_t value) noexcept;
 		// Write word to port
-		void volatile inPort16(const portAddress_t addr, const word_t value) noexcept;
+		inline void volatile inPort16(const portAddress_t addr, const word_t value) noexcept;
 		// Write long to port
-		void volatile inPort32(const portAddress_t addr, const dword_t value) noexcept;
+		inline void volatile inPort32(const portAddress_t addr, const dword_t value) noexcept;
 
 
 #ifdef	__cplusplus
