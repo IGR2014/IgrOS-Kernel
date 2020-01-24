@@ -31,20 +31,20 @@ namespace arch {
 
 
 		// Read CR0 register
-		[[nodiscard]] dword_t volatile outCR0() noexcept;
+		[[nodiscard]] inline dword_t volatile outCR0() noexcept;
 		// Read CR2 register
-		[[nodiscard]] dword_t volatile outCR2() noexcept;
+		[[nodiscard]] inline dword_t volatile outCR2() noexcept;
 		// Read CR3 register
-		[[nodiscard]] dword_t volatile outCR3() noexcept;
+		[[nodiscard]] inline dword_t volatile outCR3() noexcept;
 		// Read CR4 register
-		[[nodiscard]] dword_t volatile outCR4() noexcept;
+		[[nodiscard]] inline dword_t volatile outCR4() noexcept;
 
 		// Write CR0 register
-		void volatile inCR0(const dword_t value) noexcept;
+		inline void volatile inCR0(const dword_t value) noexcept;
 		// Write CR3 register
-		void volatile inCR3(const dword_t value) noexcept;
+		inline void volatile inCR3(const dword_t value) noexcept;
 		// Write CR4 register
-		void volatile inCR4(const dword_t value) noexcept;
+		inline void volatile inCR4(const dword_t value) noexcept;
 
 
 #ifdef	__cplusplus

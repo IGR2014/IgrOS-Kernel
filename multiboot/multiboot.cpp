@@ -3,7 +3,7 @@
 //	Multiboot 1 functions
 //
 //	File:	multiboot.cpp
-//	Date:	20 Jan 2020
+//	Date:	24 Jan 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -83,11 +83,11 @@ namespace multiboot {
 			// Get pointer to memory map
 			auto memoryMap = reinterpret_cast<multiboot::memoryMapEntry_t*>(mmapAddr);
 			// Loop through memory map
-			while (quad_t(memoryMap) < (mmapAddr + mmapLength)) {
-				klib::kprintf(	u8"\t[%d] 0x%llx - 0x%llx",
+			while (reinterpret_cast<quad_t>(memoryMap) < (mmapAddr + mmapLength)) {
+				klib::kprintf(	u8"\t[%d] 0x%p - 0x%p",
 						memoryMap->type,
-						memoryMap->address,
-						memoryMap->address + memoryMap->length);
+						reinterpret_cast<pointer_t>(memoryMap->address),
+						reinterpret_cast<pointer_t>(memoryMap->address + memoryMap->length));
 				// Move to next memory map entry
 				memoryMap = reinterpret_cast<multiboot::memoryMapEntry_t*>(quad_t(memoryMap) + memoryMap->size + sizeof(memoryMap->size));
 			}

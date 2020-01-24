@@ -3,7 +3,7 @@
 //	Interrupt descriptor table low-level operations
 //
 //	File:	idt.hpp
-//	Date:	21 Jan 2020
+//	Date:	24 Jan 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -79,7 +79,7 @@ namespace arch {
 		// Set IDT entry
 		constexpr static void	setEntry(const byte_t ID, const isrPointer_t offset, const word_t selector, const byte_t type) noexcept;
 		// Calc IDT size
-		[[nodiscard]] constexpr static dword_t	calcSize() noexcept;
+		[[nodiscard]] constexpr static word_t	calcSize() noexcept;
 
 		// Init IDT table
 		constexpr static void	init() noexcept;
@@ -100,7 +100,7 @@ namespace arch {
 	}
 
 	// Calculate IDT size
-	constexpr dword_t idt::calcSize() noexcept {
+	constexpr word_t idt::calcSize() noexcept {
 		return (IDT_SIZE * sizeof(idtEntry_t)) - 1u;
 	}
 
@@ -176,8 +176,8 @@ namespace arch {
 		idt::setEntry(0x2E, irqHandlerE, 0x08, 0x8E);
 		idt::setEntry(0x2F, irqHandlerF, 0x08, 0x8E);
 		// Set IDT size and data pointer
-		pointer.size	= idt::calcSize();
-		pointer.pointer	= table;
+		idt::pointer.size	= idt::calcSize();
+		idt::pointer.pointer	= idt::table;
 		// Load new IDT
 		idtLoad(&pointer);
 	}
