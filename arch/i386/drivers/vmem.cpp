@@ -3,7 +3,7 @@
 //	VGA memory low-level operations
 //
 //	File:	vmem.cpp
-//	Date:	17 Jan 2020
+//	Date:	24 Jan 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -15,7 +15,7 @@
 
 #include <drivers/vmem.hpp>
 
-#include <klib/memset.hpp>
+#include <klib/kmemset.hpp>
 
 
 // Arch-dependent code zone
@@ -49,15 +49,15 @@ namespace arch {
 		// Choose cursor location high register
 		inPort8(VGA_CURSOR_CONTROL, 0x0E);
 		// Write cursor position high byte
-		auto position = word_t(outPort8(VGA_CURSOR_DATA));
+		auto position = static_cast<word_t>(outPort8(VGA_CURSOR_DATA));
 		// Choose cursor location low register
 		inPort8(VGA_CURSOR_CONTROL, 0x0F);
 		// Write cursor position low byte
 		(position <<= 8) |= outPort8(VGA_CURSOR_DATA);
 		// Return cursor data
 		return {
-			.x = byte_t(position % VIDEO_MEM_WIDTH),
-			.y = byte_t(position / VIDEO_MEM_WIDTH)
+			.x = static_cast<byte_t>(position % VIDEO_MEM_WIDTH),
+			.y = static_cast<byte_t>(position / VIDEO_MEM_WIDTH)
 		};
 	}
 
@@ -141,7 +141,7 @@ namespace arch {
 			// Calculate offset in VGA console
 			auto pos = cursorPos.y * VIDEO_MEM_WIDTH + cursorPos.x;
 			// Clear bootom line
-			klib::kmemset16(&vmemBase[pos], VIDEO_MEM_WIDTH, word_t(' ' | (vmemBkgColor << 8)));
+			klib::kmemset16(&vmemBase[pos], VIDEO_MEM_WIDTH, static_cast<word_t>(' ' | (vmemBkgColor << 8)));
 		}
 
 		// Set new cursor position
@@ -173,7 +173,7 @@ namespace arch {
 	// Clear VGA memory
 	void vmemClear() noexcept {
 		// Set whole screen with whitespace with default background
-		klib::kmemset16(vmemBase, VIDEO_MEM_SIZE, word_t(' ' | (vmemBkgColor << 8)));
+		klib::kmemset16(vmemBase, VIDEO_MEM_SIZE, static_cast<word_t>(' ' | (vmemBkgColor << 8)));
 	}
 
 
