@@ -3,7 +3,7 @@
 #	Multiboot v1.0 header
 #
 #	File:	multiboot.s
-#	Date:	04 Oct 2019
+#	Date:	23 Jan 2020
 #
 #	Copyright (c) 2017 - 2020, Igor Baklykov
 #	All rights reserved.
@@ -30,13 +30,13 @@
 	.long	MULTIBOOT_MAGIC		# Multiboot magic value
 	.long	MULTIBOOT_FLAGS		# Multiboot flags
 	.long	MULTIBOOT_CHECKSUM	# Multiboot checksum
-	#.long	0			# Multiboot File header address
-	#.long	0			# Multiboot File load start address
-	#.long	0			# Multiboot File load end address
-	#.long	0			# Multiboot File BSS end address
-	#.long	0			# Multiboot File Entry point address
-	#.long	1			# Multiboot Graphics mode
-	#.long	80			# Multiboot Graphics width
-	#.long	24			# Multiboot Graphics height
-	#.long	0			# Multiboot Graphics depth
+	.long	0			# Multiboot File header address
+	.long	0			# Multiboot File load start address
+	.long	0			# Multiboot File load end address
+	.long	0			# Multiboot File BSS end address
+	.long	0			# Multiboot File Entry point address
+	.long	0			# Multiboot Graphics mode
+	.long	800			# Multiboot Graphics width
+	.long	600			# Multiboot Graphics height
+	.long	32			# Multiboot Graphics depth
 
