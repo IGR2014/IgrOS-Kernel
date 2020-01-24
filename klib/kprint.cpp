@@ -3,7 +3,7 @@
 //	Kernel text print functions
 //
 //	File:	kprint.cpp
-//	Date:	20 Jan 2020
+//	Date:	24 Jan 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -18,6 +18,7 @@
 #include <klib/kprint.hpp>
 #include <klib/kstring.hpp>
 #include <klib/kmath.hpp>
+#include <klib/kmemset.hpp>
 
 
 // Kernel library code zone
@@ -151,14 +152,14 @@ namespace klib {
 	void kvsnprintf(sbyte_t* buffer, const std::size_t size, const sbyte_t* format, va_list list/*kvaList &list*/) noexcept {
 
 		// Foramt string iterator
-		auto fmtIterator = 0ULL;
+		auto fmtIterator = 0ull;
 		// Resulting string iterator
 		auto strIterator = buffer;
 
 		// String pointer holder
 		char*	str = nullptr;
 		// Numeric value holder
-		auto	len = 0ULL;
+		auto	len = 0ull;
 		// Number holder
 		sbyte_t	number[65u] {};
 
@@ -171,6 +172,26 @@ namespace klib {
 				*strIterator++ = format[fmtIterator++];
 			// Placeholder symbol '%' received
 			} else {
+
+				// Fill character
+				auto fillChar	= u8' ';
+				auto fillWidth	= 0u;
+				// Check format fill char
+				if (u8'0' == format[fmtIterator + 1u]) {
+					// Set fillcahr to '0'
+					fillChar = u8'0';
+					// Adjust format iterator
+					++fmtIterator;
+				}
+
+				// Check format fill width
+				if (u8'1'	<= format[fmtIterator + 1u]
+				    && u8'9'	>= format[fmtIterator + 1u]) {
+					// Set fillcahr to '0'
+					fillWidth = static_cast<dword_t>(format[fmtIterator + 1u] - u8'0');
+					// Adjust format iterator
+					++fmtIterator;
+				}
 
 				// Quad argument flag
 				auto isQuad = false;
@@ -223,6 +244,14 @@ namespace klib {
 						// Get string length
 						len = kstrlen(kitoa(number, 64u, dword_t(va_arg(list, dword_t))/*list.arg<dword_t>()*/, base::BIN));
 					}
+					// Check if value should be extended with fillChar
+					if (len < fillWidth) {
+						auto size = fillWidth - len;
+						// Copy string
+						kmemset8(strIterator, size, fillChar);
+						// Move iterator to string's end
+						strIterator += size;
+					}
 					// Copy string
 					kstrcpy(number, strIterator, len);
 					// Move iterator to string's end
@@ -258,6 +287,14 @@ namespace klib {
 						// Get string length
 						len = kstrlen(kitoa(number, 64u, dword_t(va_arg(list, sdword_t))/*list.arg<sdword_t>()*/));
 					}
+					// Check if value should be extended with fillChar
+					if (len < fillWidth) {
+						auto size = fillWidth - len;
+						// Copy string
+						kmemset8(strIterator, size, fillChar);
+						// Move iterator to string's end
+						strIterator += size;
+					}
 					// Copy string
 					kstrcpy(number, strIterator, len);
 					// Move iterator to string's end
@@ -280,6 +317,14 @@ namespace klib {
 						// Get string length
 						len = kstrlen(kitoa(number, 64u, dword_t(va_arg(list, dword_t))/*list.arg<dword_t>()*/, base::OCT));
 					}
+					// Check if value should be extended with fillChar
+					if (len < fillWidth) {
+						auto size = fillWidth - len;
+						// Copy string
+						kmemset8(strIterator, size, fillChar);
+						// Move iterator to string's end
+						strIterator += size;
+					}
 					// Copy string
 					kstrcpy(number, strIterator, len);
 					// Move iterator to string's end
@@ -288,8 +333,20 @@ namespace klib {
 
 				// Address
 				case u8'p':
+					// For pointers width is always size of pointer_t (aka void*) on current platform
+					// And fill char is always '0'
+					fillWidth	= sizeof(pointer_t) << 1;
+					fillChar	= u8'0';
 					// Get string length
 					len = kstrlen(kptoa(number, 64u, pointer_t(va_arg(list, pointer_t))/*list.arg<dword_t>()*/));
+					// Check if value should be extended with fillChar
+					if (len < fillWidth) {
+						auto size = fillWidth - len;
+						// Copy string
+						kmemset8(strIterator, size, fillChar);
+						// Move iterator to string's end
+						strIterator += size;
+					}
 					// Copy string
 					kstrcpy(number, strIterator, len);
 					// Move iterator to string's end
@@ -324,6 +381,14 @@ namespace klib {
 						// Get string length
 						len = kstrlen(kitoa(number, 64u, dword_t(va_arg(list, dword_t))/*list.arg<dword_t>()*/));
 					}
+					// Check if value should be extended with fillChar
+					if (len < fillWidth) {
+						auto size = fillWidth - len;
+						// Copy string
+						kmemset8(strIterator, size, fillChar);
+						// Move iterator to string's end
+						strIterator += size;
+					}
 					// Copy string
 					kstrcpy(number, strIterator, len);
 					// Move iterator to string's end
@@ -346,6 +411,14 @@ namespace klib {
 						// Get string length
 						len = kstrlen(kitoa(number, 32u, dword_t(va_arg(list, dword_t))/*list.arg<dword_t>()*/, base::HEX));
 					}
+					// Check if value should be extended with fillChar
+					if (len < fillWidth) {
+						auto size = fillWidth - len;
+						// Copy string
+						kmemset8(strIterator, size, fillChar);
+						// Move iterator to string's end
+						strIterator += size;
+					}
 					// Copy string
 					kstrcpy(number, strIterator, len);
 					// Move iterator to string's end
@@ -362,6 +435,10 @@ namespace klib {
 
 				// Incremet format iterator
 				++fmtIterator;
+
+				// Reset fill char
+				fillChar	= u8' ';
+				fillWidth	= 0u;
 
 			}
 

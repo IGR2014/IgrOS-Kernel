@@ -44,44 +44,58 @@ extern const byte_t _SECTION_KERNEL_END_;
 
 // Dividy by zero exception test
 void testDivideByZero() noexcept {
+
 	volatile auto x = 10u;
 	volatile auto y = 0u;
 	volatile auto z = x / y;
+
 }
 
 // Page fault exception test (PFE)
 void testPageFaultException() noexcept {
+
 	volatile auto ptr2 = reinterpret_cast<word_t*>(0xA0000000);
 	*ptr2 = 0x4000;
+
 }
 
 // Test higher half virtual memory mapping
 void testHigherHalfMemory() noexcept {
+
 #if	defined(IGROS_ARCH_i386)
 	auto ptr = reinterpret_cast<word_t*>(0xC00B8006);
 #elif	defined(IGROS_ARCH_x86_64)
 	auto ptr = reinterpret_cast<word_t*>(0xFFFFFFFF800B8006);
 #endif
+
 	klib::kprintf(	u8"Paging test:\t0x%p = 0x%p\r\n",
 			ptr,
 			arch::paging::toPhys(static_cast<pointer_t>(ptr)));
 	*ptr = 0x0700 | u8'O';
 	++ptr;
 	*ptr = 0x0700 | u8'S';
+
 }
 
 // Test VGA draw
 void testDrawVGA() noexcept {
+
 #if	defined(IGROS_ARCH_i386)
-	auto ptr = reinterpret_cast<word_t*>(0xA0000);
+	auto ptr = reinterpret_cast<byte_t*>(0xC00A0000);
 #elif	defined(IGROS_ARCH_x86_64)
-	auto ptr = reinterpret_cast<word_t*>(0xFFFFFFFF80A0000);
+	auto ptr = reinterpret_cast<byte_t*>(0xFFFFFFFF80A0000);
 #endif
-	for (auto j = 0u; j < 10000000u; j += 4u) {
-		ptr[j + 0] = 0x00;
-		ptr[j + 1] = 0xFF;
-		ptr[j + 2] = 0x00;
+
+	for (auto x = 0u; x < 800u; x++) {
+		for (auto y = 0u; y < 600u; y++) {
+			auto id = x * 4u + y * 3200u;
+			ptr[id]		= 0xFF;
+			ptr[id + 1]	= 0x00;
+			ptr[id + 2]	= 0x00;
+			ptr[id + 3]	= 0x00;
+		}
 	}
+
 }
 
 
@@ -105,7 +119,7 @@ extern "C" {
 		if (!multiboot::check(magic)) {
 			// Write Multiboot magic error message message
 			klib::kprintf(	u8"BAD MULTIBOOT MAGIC!!!\r\n"
-					u8"\tMAGIC:\t\t0x%x\r\n"
+					u8"\tMAGIC:\t\t0x%08x\r\n"
 					u8"\tADDRESS:\t0x%p\r\n",
 					magic,
 					multiboot);
@@ -115,7 +129,7 @@ extern "C" {
 
 		// Write Multiboot info message
 		klib::kprintf(	u8"BOOT INFO:\r\n"
-				u8"\tMAGIC:\t\t0x%x\r\n"
+				u8"\tMAGIC:\t\t0x%08x\r\n"
 				u8"\tADDRESS:\t0x%p\r\n"
 				u8"\tCommands:\t%s\r\n"
 				u8"\tLoader:\t\t%s\r\n",
@@ -125,9 +139,9 @@ extern "C" {
 				multiboot->loaderName());
 
 		// Dump memory info
-		//multiboot->dumpMemInfo();
+		multiboot->dumpMemInfo();
 		// Dump multiboot memory map
-		//multiboot->dumpMemMap();
+		multiboot->dumpMemMap();
 
 		klib::kprintf(	u8"KERNEL INFO:\r\n"
 				u8"Arch:\t\t%s\r\n"
@@ -176,17 +190,31 @@ extern "C" {
 		// Write "Booted successfully" message
 		klib::kprintf(u8"\r\nBooted successfully\r\n");
 
-		// Setup physical memory map
-		mem::phys::init(reinterpret_cast<multiboot::memoryMapEntry_t*>(multiboot->mmapAddr), multiboot->mmapAddr + multiboot->mmapLength);
-		// Allocate one page
-		auto pg = mem::phys::alloc();
-		reinterpret_cast<dword_t*>(pg)[0] = 45u;
-		// Write "Booted successfully" message
-		klib::kprintf(u8"Phys. page at:\t0x%p", pg);
-		// Free page
-		mem::phys::free(pg);
-		// Write "Booted successfully" message
-		klib::kprintf(u8"Phys. page at:\t0x%p\r\n", pg);
+		// Check if memory map exists
+		if (multiboot->hasInfoMemoryMap()) {
+
+			// Write "Booted successfully" message
+			klib::kprintf(u8"Memory page allocation...");
+
+			// Setup physical memory map
+			mem::phys::init(reinterpret_cast<multiboot::memoryMapEntry_t*>(multiboot->mmapAddr), multiboot->mmapAddr + multiboot->mmapLength);
+
+			// Allocate one page
+			auto pg = mem::phys::alloc();
+			// Write "Booted successfully" message
+			klib::kprintf(u8"Phys. page at:\t0x%p", pg);
+
+			reinterpret_cast<dword_t*>(pg)[0] = 45u;
+
+			// Free page
+			mem::phys::free(pg);
+			// Write "Booted successfully" message
+			klib::kprintf(u8"Phys. page at:\t0x%p\r\n", pg);
+
+		}
+
+		// Enable interrupts
+		arch::irqDisable();
 
 		// Dividy by zero exception test
 		//testDivideByZero();
