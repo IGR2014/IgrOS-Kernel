@@ -5,6 +5,7 @@
 
 IgrOS-Kernel is a simple **OS kernel** written in **C++17**.
 Currently supports **i386** and **x86_64** platforms. **ARM** is the next aim.
+
 ---
 
 ### Implemented features:
@@ -27,6 +28,7 @@ Currently supports **i386** and **x86_64** platforms. **ARM** is the next aim.
 | **Kernel drivers**         |                    |
 | **User programs**          |                    |
 | **GUI**                    |                    |
+
 ---
 
 ### ***P.S.:***
