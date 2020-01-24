@@ -3,7 +3,7 @@
 //	Device operations description
 //
 //	File:	device.hpp
-//	Date:	21 Jan 2020
+//	Date:	22 Jan 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -12,8 +12,8 @@
 
 
 #pragma once
-#ifndef IGROS_SYS_DEVICE_HPP
-#define IGROS_SYS_DEVICE_HPP
+#ifndef IGROS_DEV_DEVICE_HPP
+#define IGROS_DEV_DEVICE_HPP
 
 
 #include <type_traits>
@@ -48,7 +48,7 @@ namespace sys {
 	// Device description structure
 	struct device {
 
-		const char*     	name;		// Get device name
+		const char		name[64];	// Get device name
 
 		devFuncInit_t		init;		// Init device
 		devFuncDeinit_t		deinit;		// Deinit device
@@ -74,5 +74,5 @@ namespace sys {
 }	// namespace sys
 
 
-#endif	// IGROS_SYS_DEVICE_HPP
+#endif	// IGROS_DEV_DEVICE_HPP
 
