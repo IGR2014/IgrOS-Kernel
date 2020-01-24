@@ -1,28 +1,28 @@
 /****************************************************
 **
-**	Kernel linker script
+**	i386 kernel linker script
 **
 **	File:	link.ld
-**	Date:	04 Oct 2019
+**	Date:	24 Jan 2020
 **
 **	Copyright (c) 2017 - 2020, Igor Baklykov
 **	All rights reserved.
 **
 */
 
-/* Create i386 kernel. Then just jump to x86_64 in code */
+
+/* Create i386 kernel */
 OUTPUT_FORMAT(elf32-i386)
-/*OUTPUT_FORMAT(elf64-x86-64)*/
-OUTPUT_ARCH(i386:x86-64)
+OUTPUT_ARCH(i386)
 
 /* Kernel entry function. Bootloader will jump here to run kernel */
 ENTRY(kernelStart)
 
-/* Kernel virtual offset = MAX-2Gb from the end of address space */
-KERNEL_OFFSET_VIRT	= 0xFFFFFFFF80000000;
+/* Kernel virtual offset = 3Gb */
+KERNEL_OFFSET_VIRT	= 0xC0000000;
 /* Kernel physical address = 1Mb */
-KERNEL_ADDRESS_PHYS	= 0x0000000000100000;
-/* Kernel virtual address = 1Mb + MAX-2Gb */
+KERNEL_ADDRESS_PHYS	= 0x00100000;
+/* Kernel virtual address = 1Mb + 3Gb */
 KERNEL_ADDRESS_VIRT	= KERNEL_ADDRESS_PHYS + KERNEL_OFFSET_VIRT;
 
 /* Kernel sections */

@@ -3,7 +3,7 @@
 #	x86_64 folder Make script
 #
 #	File:	Makefile
-#	Date:	21 Jan 2020
+#	Date:	24 Jan 2020
 #
 #	Copyright (c) 2017 - 2020, Igor Baklykov
 #	All rights reserved.
@@ -16,7 +16,7 @@ export IGROS_DIR_TARGET_RELEASE		= $(IGROS_DIR_RELEASE)/$(IGROS_ARCH)
 
 BIN					= $(IGROS_DIR_TARGET_RELEASE)/$(BIN_NAME)
 
-LDSCRIPT				= link.ld
+LDSCRIPT				= ../../config/link/link-x86_64.ld
 
 OBJ		= $(IGROS_DIR_TARGET_BUILD)/boot/multiboot.o		\
 		  $(IGROS_DIR_TARGET_BUILD)/boot/boot.o			\
