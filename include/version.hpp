@@ -3,7 +3,7 @@
 //	IgrOS version info
 //
 //	File:	version.hpp
-//	Date:	23 Jan 2020
+//	Date:	12 Feb 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -16,7 +16,7 @@
 #define IGROS_VERSION_HPP
 
 
-#include <arch/types.hpp>
+#include <types.hpp>
 
 
 constexpr static byte_t IGROS_VERSION_MAJOR	= 0u;

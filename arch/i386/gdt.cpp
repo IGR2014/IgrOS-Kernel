@@ -3,7 +3,7 @@
 //	Global descriptor table low-level operations
 //
 //	File:	boot.cpp
-//	Date:	24 Jan 2020
+//	Date:	13 Feb 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -11,7 +11,7 @@
 //
 
 
-#include <arch/gdt.hpp>
+#include <gdt.hpp>
 
 
 // Arch-dependent code zone

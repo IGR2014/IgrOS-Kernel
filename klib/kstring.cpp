@@ -3,7 +3,7 @@
 //	Kernel string functions
 //
 //	File:	string.cpp
-//	Date:	21 Jan 2020
+//	Date:	10 Feb 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -50,10 +50,6 @@ namespace klib {
 
 	// Calculate string length
 	std::size_t kstrlen(const sbyte_t* src) noexcept {
-		// Check src pointer
-		if (nullptr == src) {
-			return 0u;
-		}
                 // Return string length
                 return kstrend(src) - src;
         }
@@ -108,9 +104,11 @@ namespace klib {
 	sbyte_t* kstrcat(const sbyte_t* src, sbyte_t* dst, std::size_t size) noexcept {
 		// Check src, dst pointers and size
 		if (nullptr == src || nullptr == dst || 0u == size) {
-			// return nothing
+			// Return nothing
 			return nullptr;
 		}
+		// Return nothing
+		return nullptr;
 	}
 
 

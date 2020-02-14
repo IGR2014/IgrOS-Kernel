@@ -3,7 +3,7 @@
 //	Exceptions low-level operations
 //
 //	File:	exceptions.cpp
-//	Date:	21 Jan 2020
+//	Date:	13 Feb 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -11,8 +11,8 @@
 //
 
 
-#include <arch/exceptions.hpp>
-#include <arch/taskRegs.hpp>
+#include <exceptions.hpp>
+#include <taskRegs.hpp>
 
 #include <klib/kprint.hpp>
 

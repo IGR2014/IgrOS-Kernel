@@ -3,7 +3,7 @@
 //	Kernel string functions
 //
 //	File:	string.hpp
-//	Date:	17 Jan 2020
+//	Date:	12 Feb 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -18,7 +18,7 @@
 
 #include <cstdint>
 
-#include <arch/types.hpp>
+#include <types.hpp>
 
 
 // Kernel library code zone

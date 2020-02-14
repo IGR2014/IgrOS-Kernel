@@ -3,7 +3,7 @@
 //	Interrupt service routines low-level operations
 //
 //	File:	isr.cpp
-//	Date:	20 Jan 2020
+//	Date:	13 Feb 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -11,9 +11,9 @@
 //
 
 
-#include <arch/taskRegs.hpp>
-#include <arch/isr.hpp>
-#include <arch/port.hpp>
+#include <taskRegs.hpp>
+#include <isr.hpp>
+#include <port.hpp>
 
 #include <klib/kprint.hpp>
 
