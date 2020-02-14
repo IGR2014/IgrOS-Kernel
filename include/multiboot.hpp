@@ -3,7 +3,7 @@
 //	Multiboot 1 header info
 //
 //	File:	multiboot.hpp
-//	Date:	17 Jan 2020
+//	Date:	12 Feb 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -16,7 +16,7 @@
 #define IGROS_ARCH_MULTIBOOT_1_HPP
 
 
-#include <arch/types.hpp>
+#include <types.hpp>
 
 
 // Multiboot code zone
@@ -24,26 +24,26 @@ namespace multiboot {
 
 
 	// Multiboot 1 header magic
-	constexpr static dword_t HEADER_MAGIC		= 0x1BADB002;
+	constexpr static auto HEADER_MAGIC	= 0x1BADB002;
 	// Multiboot 1 bootloader magic
-	constexpr static dword_t BOOTLOADER_MAGIC	= 0x2BADB002;
+	constexpr static auto BOOTLOADER_MAGIC	= 0x2BADB002;
 
 
 	// Multiboot header flags enumeration
 	enum FLAGS : dword_t {
-		MEM		= (1 << 0),			// Memory info available
-		BOOT_DEV	= (1 << 1),			// Boot device info available
-		CMD		= (1 << 2),			// Kernel command line available
-		MODULES		= (1 << 3),			// Kernel modules available
-		SYMS_AOUT	= (1 << 4),			// A.OUT info available
-		SYMS_ELF	= (1 << 5),			// ELF info available
-		MEM_MAP		= (1 << 6),			// Memory map available
-		DRIVES		= (1 << 7),			// Drives info available
-		TABLE_CONFIG	= (1 << 8),			// Configuration table available
-		LOADER_NAME	= (1 << 9),			// Bootloader name available
-		TABLE_APM	= (1 << 10),			// APM table available
-		VBE		= (1 << 11),			// VBE table available
-		FRAME_BUF	= (1 << 12)			// Frame buffer info available
+		MEM		= (1u << 0),			// Memory info available
+		BOOT_DEV	= (1u << 1),			// Boot device info available
+		CMD		= (1u << 2),			// Kernel command line available
+		MODULES		= (1u << 3),			// Kernel modules available
+		SYMS_AOUT	= (1u << 4),			// A.OUT info available
+		SYMS_ELF	= (1u << 5),			// ELF info available
+		MEM_MAP		= (1u << 6),			// Memory map available
+		DRIVES		= (1u << 7),			// Drives info available
+		TABLE_CONFIG	= (1u << 8),			// Configuration table available
+		LOADER_NAME	= (1u << 9),			// Bootloader name available
+		TABLE_APM	= (1u << 10),			// APM table available
+		VBE		= (1u << 11),			// VBE table available
+		FRAME_BUF	= (1u << 12)			// Frame buffer info available
 	};
 
 
@@ -103,45 +103,54 @@ namespace multiboot {
 
 		dword_t		bootloaderName;			// Multiboot kernel bootloader name
 
+		dword_t		apmTable;			// Multiboot APM table
+
+		dword_t		vbeControlInfo;			// Multiboot VBE control info
+		dword_t		vbeModeInfo;			// Multiboot VBE mode info
+		word_t		vbeModeCurrent;			// Multiboot VBE current mode
+		word_t		vbeInterfaceSeg;		// Multiboot VBE interface segment
+		word_t		vbeInterfaceOffset;		// Multiboot VBE interface offset
+		word_t		vbeInterfaceLen;		// Multiboot VBE interface length
+
 
 		// Multiboot contains valid memory info
-		inline bool		hasInfoMemory()		const noexcept;
+		inline bool	hasInfoMemory() const noexcept;
 		// Multiboot contains valid boot device info
-		inline bool		hasInfoBootDevice()	const noexcept;
+		inline bool	hasInfoBootDevice() const noexcept;
 		// Multiboot contains valid kernel command line info
-		inline bool		hasInfoCommandLine()	const noexcept;
+		inline bool	hasInfoCommandLine() const noexcept;
 		// Multiboot contains valid kernel modules info
-		inline bool		hasInfoModules()	const noexcept;
+		inline bool	hasInfoModules() const noexcept;
 		// Multiboot contains valid A.OUT sections info
-		inline bool		hasInfoAOUT()		const noexcept;
+		inline bool	hasInfoAOUT() const noexcept;
 		// Multiboot contains valid ELF sections info
-		inline bool		hasInfoELF()		const noexcept;
+		inline bool	hasInfoELF() const noexcept;
 		// Multiboot contains valid memory map info
-		inline bool		hasInfoMemoryMap()	const noexcept;
+		inline bool	hasInfoMemoryMap() const noexcept;
 		// Multiboot contains valid drives info
-		inline bool		hasInfoDrives()		const noexcept;
+		inline bool	hasInfoDrives() const noexcept;
 		// Multiboot contains valid config table info
-		inline bool		hasInfoConfig()		const noexcept;
+		inline bool	hasInfoConfig() const noexcept;
 		// Multiboot contains valid bootloader name info
-		inline bool		hasInfoBootloaderName()	const noexcept;
+		inline bool	hasInfoBootloaderName() const noexcept;
 		// Multiboot contains valid APM table info
-		inline bool		hasInfoAPM()		const noexcept;
+		inline bool	hasInfoAPM() const noexcept;
 		// Multiboot contains valid VBE info
-		inline bool		hasInfoVBE()		const noexcept;
+		inline bool	hasInfoVBE() const noexcept;
 		// Multiboot contains valid FrameBuffer info
-		inline bool		hasInfoFrameBuffer()	const noexcept;
+		inline bool	hasInfoFrameBuffer() const noexcept;
 
 		// Get multiboot command line
-		inline const sbyte_t*	commandLine()		const noexcept;
+		inline const sbyte_t*	commandLine() const noexcept;
 		// Get multiboot bootloader name
-		inline const sbyte_t*	loaderName()		const noexcept;
+		inline const sbyte_t*	loaderName() const noexcept;
 
 		// Dump multiboot flags
-		void			dumpFlags()		const noexcept;
+		void	dumpFlags() const noexcept;
 		// Dump multiboot memory info
-		void			dumpMemInfo()		const noexcept;
+		void	dumpMemInfo() const noexcept;
 		// Dump multiboot memory map
-		void			dumpMemMap()		const noexcept;
+		void	dumpMemMap() const noexcept;
 
 
 	};
@@ -227,11 +236,11 @@ namespace multiboot {
 
 	// Multiboot 1 memory entry type
 	enum class MEMORY_MAP_TYPE : dword_t {
-		AVAILABLE	= 1,			// Memory available
-		RESERVED	= 2,			// Memory reserved
-		ACPI		= 3,			// Memory is ACPI reclaimable
-		NVS		= 4,			// Memory is NVS
-		BAD		= 5			// BAD memory
+		AVAILABLE	= 1u,			// Memory available
+		RESERVED	= 2u,			// Memory reserved
+		ACPI		= 3u,			// Memory is ACPI reclaimable
+		NVS		= 4u,			// Memory is NVS
+		BAD		= 5u			// BAD memory
 	};
 
 	// Multiboot 1 memory map entry
@@ -240,6 +249,41 @@ namespace multiboot {
 		quad_t		address;		// Memory entry address
 		quad_t		length;			// Memory entry length
 		MEMORY_MAP_TYPE	type;			// Memory entry type
+	};
+
+
+	// VBE config
+	struct vbeConfig {
+		sbyte_t		signature[4];		// VBE signature ("VESA")
+		word_t		version;		// VBE version (e.g. 0x0300 = 3.0)
+		dword_t		oem;			// OEM string
+		byte_t		caps[4];
+		dword_t		modes;
+		word_t		memory;
+		word_t		rev;
+		dword_t		vendor;
+		dword_t		productName;
+		dword_t		productRev;
+	};
+
+	// VBE mode
+	struct vbeMode {
+		word_t		attr;
+		byte_t		winA;
+		byte_t		winB;
+		word_t		gran;
+		word_t		winSize;
+		word_t		segA;
+		word_t		segB;
+		dword_t		funcPtr;
+		word_t		pitch;
+		word_t		resX;
+		word_t		resY;
+		byte_t		charW;
+		byte_t		charH;
+		byte_t		planes;
+		byte_t		bpp;
+		byte_t		banks;
 	};
 
 #pragma pack(pop)

@@ -3,7 +3,7 @@
 //	Interrupts low-level operations
 //
 //	File:	irq.cpp
-//	Date:	20 Jan 2020
+//	Date:	13 Feb 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -11,15 +11,35 @@
 //
 
 
-#include <arch/isr.hpp>
-#include <arch/irq.hpp>
-#include <arch/port.hpp>
+#include <isr.hpp>
+#include <irq.hpp>
+#include <port.hpp>
 
 #include <klib/kprint.hpp>
 
 
 // Arch-dependent code zone
 namespace arch {
+
+
+#ifdef	__cplusplus
+
+	extern "C" {
+
+#endif	// __cplusplus
+
+
+		// Enable interrupts
+		constexpr void	irqEnable() noexcept;
+		// Disable interrupts
+		constexpr void	irqDisable() noexcept;
+
+
+#ifdef	__cplusplus
+
+	}	// extern "C"
+
+#endif	// __cplusplus
 
 
 	// Init IRQ
@@ -38,6 +58,18 @@ namespace arch {
 		inPort8(PIC_SLAVE_DATA, 0x01);
 		// Unmask all interrupts
 		irq::setMask();
+	}
+
+
+	// Enable interrupts
+	void irq::enable() noexcept {
+		irqEnable();
+
+	}
+
+	// Disable interrupts
+	void irq::disable() noexcept {
+		irqDisable();
 	}
 
 

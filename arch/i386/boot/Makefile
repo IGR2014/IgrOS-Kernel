@@ -3,7 +3,7 @@
 #	Boot folder Make script
 #
 #	File:	Makefile
-#	Date:	18 Jun. 2018
+#	Date:	12 Feb 2020
 #
 #	Copyright (c) 2017 - 2020, Igor Baklykov
 #	All rights reserved.
@@ -13,7 +13,7 @@
 
 IGROS_DIR_PREFIX	= boot
 
-IGROS_DIR_PATH		= $(IGROS_DIR_TARGET_BUILD)/$(IGROS_DIR_PREFIX)
+IGROS_DIR_PATH		= $(IGROS_DIR_BUILD)/$(IGROS_DIR_PREFIX)
 
 # Source files list
 SRCFILES		= $(wildcard *.s)

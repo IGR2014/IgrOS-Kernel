@@ -3,7 +3,7 @@
 //	Kernel-space memset for x86
 //
 //	File:	kmemset.hpp
-//	Date:	24 Jan 2020
+//	Date:	12 Feb 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -16,7 +16,7 @@
 #define IGROS_ARCH_KERNEL_MEMSET_HPP
 
 
-#include <arch/types.hpp>
+#include <types.hpp>
 
 
 // Kernel library code zone

@@ -3,7 +3,7 @@
 //	Multiboot 1 functions
 //
 //	File:	multiboot.cpp
-//	Date:	24 Jan 2020
+//	Date:	12 Feb 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -13,7 +13,7 @@
 
 #include <multiboot.hpp>
 
-#include <arch/types.hpp>
+#include <types.hpp>
 
 #include <drivers/vmem.hpp>
 

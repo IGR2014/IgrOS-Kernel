@@ -3,7 +3,7 @@
 //	IgrOS platform description
 //
 //	File:	platform.hpp
-//	Date:	21 Jan 2020
+//	Date:	12 Feb 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -18,7 +18,7 @@
 
 #include <type_traits>
 
-#include <arch/types.hpp>
+#include <types.hpp>
 
 
 // Platform init function pointer type

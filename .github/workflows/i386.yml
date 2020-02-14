@@ -12,4 +12,4 @@ jobs:
     - name: install g++ multilib
       run: sudo apt install -y gcc-multilib g++-multilib
     - name: make
-      run: ./build_i386.sh
+      run: ./build-i386.sh

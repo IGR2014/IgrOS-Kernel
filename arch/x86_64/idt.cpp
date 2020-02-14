@@ -3,7 +3,7 @@
 //	Interrupt descriptor table low-level operations
 //
 //	File:	idt.cpp
-//	Date:	20 Jan 2020
+//	Date:	13 Feb 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -11,7 +11,7 @@
 //
 
 
-#include <arch/idt.hpp>
+#include <idt.hpp>
 
 
 namespace arch {

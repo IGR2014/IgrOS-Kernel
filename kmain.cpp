@@ -3,7 +3,7 @@
 //	Boot low-level main setup function
 //
 //	File:	boot.cpp
-//	Date:	21 Jan 2020
+//	Date:	11 Feb 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -18,11 +18,11 @@
 #include <flags.hpp>
 
 // Architecture dependent
-#include <arch/types.hpp>
-#include <arch/gdt.hpp>
-#include <arch/idt.hpp>
-#include <arch/irq.hpp>
-#include <arch/paging.hpp>
+#include <types.hpp>
+#include <gdt.hpp>
+#include <idt.hpp>
+#include <irq.hpp>
+#include <paging.hpp>
 
 // Kernel drivers
 #include <drivers/vmem.hpp>
@@ -40,63 +40,6 @@
 // Kernel start and end
 extern const byte_t _SECTION_KERNEL_START_;
 extern const byte_t _SECTION_KERNEL_END_;
-
-
-// Dividy by zero exception test
-void testDivideByZero() noexcept {
-
-	volatile auto x = 10u;
-	volatile auto y = 0u;
-	volatile auto z = x / y;
-
-}
-
-// Page fault exception test (PFE)
-void testPageFaultException() noexcept {
-
-	volatile auto ptr2 = reinterpret_cast<word_t*>(0xA0000000);
-	*ptr2 = 0x4000;
-
-}
-
-// Test higher half virtual memory mapping
-void testHigherHalfMemory() noexcept {
-
-#if	defined(IGROS_ARCH_i386)
-	auto ptr = reinterpret_cast<word_t*>(0xC00B8006);
-#elif	defined(IGROS_ARCH_x86_64)
-	auto ptr = reinterpret_cast<word_t*>(0xFFFFFFFF800B8006);
-#endif
-
-	klib::kprintf(	u8"Paging test:\t0x%p = 0x%p\r\n",
-			ptr,
-			arch::paging::toPhys(static_cast<pointer_t>(ptr)));
-	*ptr = 0x0700 | u8'O';
-	++ptr;
-	*ptr = 0x0700 | u8'S';
-
-}
-
-// Test VGA draw
-void testDrawVGA() noexcept {
-
-#if	defined(IGROS_ARCH_i386)
-	auto ptr = reinterpret_cast<byte_t*>(0xC00A0000);
-#elif	defined(IGROS_ARCH_x86_64)
-	auto ptr = reinterpret_cast<byte_t*>(0xFFFFFFFF80A0000);
-#endif
-
-	for (auto x = 0u; x < 800u; x++) {
-		for (auto y = 0u; y < 600u; y++) {
-			auto id = x * 4u + y * 3200u;
-			ptr[id]		= 0xFF;
-			ptr[id + 1]	= 0x00;
-			ptr[id + 2]	= 0x00;
-			ptr[id + 3]	= 0x00;
-		}
-	}
-
-}
 
 
 #ifdef	__cplusplus
@@ -127,30 +70,17 @@ extern "C" {
 			while (true) {};
 		}
 
-		// Write Multiboot info message
-		klib::kprintf(	u8"BOOT INFO:\r\n"
-				u8"\tMAGIC:\t\t0x%08x\r\n"
-				u8"\tADDRESS:\t0x%p\r\n"
-				u8"\tCommands:\t%s\r\n"
-				u8"\tLoader:\t\t%s\r\n",
-				magic,
-				multiboot,
-				multiboot->commandLine(),
-				multiboot->loaderName());
-
-		// Dump memory info
-		multiboot->dumpMemInfo();
-		// Dump multiboot memory map
-		multiboot->dumpMemMap();
-
-		klib::kprintf(	u8"KERNEL INFO:\r\n"
+		// Write kernel info
+		klib::kprintf(	u8"Kernel info:\r\n"
 				u8"Arch:\t\t%s\r\n"
 				u8"Start addr:\t0x%p\r\n"
 				u8"End addr:\t0x%p\r\n"
 				u8"Size:\t\t%d Kb.\r\n"
 				u8"Build:\t\t" __DATE__ u8", " __TIME__ u8"\r\n"
 				u8"Version:\tv%d.%d.%d [%s]\r\n"
-				u8"Author:\t\tIgor Baklykov (c) %d - %d\r\n",
+				u8"Author:\t\tIgor Baklykov (c) %d - %d\r\n"
+				u8"Command line:\t%s\r\n"
+				u8"Loader:\t\t%s\r\n",
 				(IGROS_ARCH),
 				&_SECTION_KERNEL_START_,
 				&_SECTION_KERNEL_END_,
@@ -160,17 +90,14 @@ extern "C" {
 				IGROS_VERSION_BUILD,
 				IGROS_VERSION_NAME,
 				2017,
-				2020);
-
-		// Dump multiboot flags
-		//multiboot->dumpFlags();
+				2020,
+				multiboot->commandLine(),
+				multiboot->loaderName());
 
 		// Setup Interrupts Descriptor Table
 		arch::idt::init();
-
 		// Init exceptions
 		arch::except::init();
-
 		// Setup Global Descriptors Table
 		arch::gdt::init();
 
@@ -180,25 +107,65 @@ extern "C" {
 		// Init interrupts
 		arch::irq::init();
 		// Enable interrupts
-		arch::irqEnable();
+		arch::irq::enable();
 
 		// Setup PIT
-		arch::pitSetup();
+		//arch::pitSetup();
 		// Setup keyboard
-		arch::keyboardSetup();
+		//arch::keyboardSetup();
 
-		// Write "Booted successfully" message
-		klib::kprintf(u8"\r\nBooted successfully\r\n");
+		// Test VBE
+		if (multiboot->hasInfoVBE()) {
+			// Get VBE config info
+			auto config	= reinterpret_cast<multiboot::vbeConfig*>(multiboot->vbeControlInfo);
+			// Get current VBE mode
+			auto mode	= reinterpret_cast<multiboot::vbeMode*>(multiboot->vbeModeInfo);
+			// Get OEM string
+			auto oem	= reinterpret_cast<multiboot::vbeMode*>(((config->oem & 0xFFFF0000) >> 12) + (config->oem & 0xFFFF));
+			// Get available modes string
+			auto modes	= reinterpret_cast<multiboot::vbeMode*>(((config->modes & 0xFFFF0000) >> 12) + (config->modes & 0xFFFF));
+			// Get vendor string
+			auto vendor	= reinterpret_cast<const char* const>(((config->vendor & 0xFFFF0000) >> 12) + (config->vendor & 0xFFFF));
+			// Get product string
+			auto product	= reinterpret_cast<const char* const>(((config->productName & 0xFFFF0000) >> 12) + (config->productName & 0xFFFF));
+			// Get revision string
+			auto revision	= reinterpret_cast<const char* const>(((config->productRev & 0xFFFF0000) >> 12) + (config->productRev & 0xFFFF));
+			// Dump VBE
+			klib::kprintf(	u8"VBE:\r\n"
+					u8"Signature:\t%c%c%c%c\r\n"
+					u8"Version:\t%d.%d\r\n"
+					u8"OEM:\t\t%s\r\n"
+					u8"Vendor name:\t%s\r\n"
+					u8"Card name:\t%s\r\n"
+					u8"Card rev.:\t%s\r\n"
+					u8"Current mode:\t%d (%d x %d, %d bpp)\r\n",
+					config->signature[0],
+					config->signature[1],
+					config->signature[2],
+					config->signature[3],
+					(config->version >> 8) & 0xFF,
+					config->version & 0xFF,
+					oem,
+					vendor,
+					product,
+					revision,
+					multiboot->vbeModeCurrent,
+					mode->resX,
+					mode->resY,
+					mode->bpp);
+		}
+		if (multiboot->hasInfoFrameBuffer()) {
+			klib::kprintf(u8"FB!");
+		}
 
+/*
 		// Check if memory map exists
 		if (multiboot->hasInfoMemoryMap()) {
 
 			// Write "Booted successfully" message
 			klib::kprintf(u8"Memory page allocation...");
-
 			// Setup physical memory map
 			mem::phys::init(reinterpret_cast<multiboot::memoryMapEntry_t*>(multiboot->mmapAddr), multiboot->mmapAddr + multiboot->mmapLength);
-
 			// Allocate one page
 			auto pg = mem::phys::alloc();
 			// Write "Booted successfully" message
@@ -212,18 +179,10 @@ extern "C" {
 			klib::kprintf(u8"Phys. page at:\t0x%p\r\n", pg);
 
 		}
+*/
 
-		// Enable interrupts
-		arch::irqDisable();
-
-		// Dividy by zero exception test
-		//testDivideByZero();
-		// Page fault exception test (PFE)
-		//testPageFaultException();
-		// Test higher half virtual memory mapping
-		//testHigherHalfMemory();
-		// Test VGA draw
-		//testDrawVGA();
+		// Write "Booted successfully" message
+		klib::kprintf(u8"\r\nBooted successfully\r\n");
 
 	}
 
