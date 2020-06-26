@@ -3,7 +3,7 @@
 //	Programmable interrupt timer
 //
 //	File:	pit.cpp
-//	Date:	14 Feb 2020
+//	Date:	16 Jun 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -108,11 +108,8 @@ namespace arch {
 		irq::mask(arch::irqNumber_t::PIT);
 
 		// Print buffer
-		sbyte_t text[1024];
-		klib::ksprintf(	text,
-				"IRQ #%d [PIT] installed\r\n",
+		klib::kprintf(	"IRQ #%d [PIT] installed\r\n",
 				arch::irqNumber_t::PIT);
-		arch::vmemWrite(text);
 
 	}
 

@@ -3,7 +3,7 @@
 //	Boot low-level main setup function
 //
 //	File:	boot.cpp
-//	Date:	11 Feb 2020
+//	Date:	26 Jun 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -23,6 +23,7 @@
 #include <idt.hpp>
 #include <irq.hpp>
 #include <paging.hpp>
+#include <cpu.hpp>
 
 // Kernel drivers
 #include <drivers/vmem.hpp>
@@ -67,7 +68,7 @@ extern "C" {
 					magic,
 					multiboot);
 			// Hang CPU
-			while (true) {};
+			arch::cpuHalt();
 		}
 
 		// Write kernel info

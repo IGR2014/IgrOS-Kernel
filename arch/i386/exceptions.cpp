@@ -3,7 +3,7 @@
 //	Exceptions low-level operations
 //
 //	File:	exceptions.cpp
-//	Date:	13 Feb 2020
+//	Date:	26 Jun 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -13,6 +13,7 @@
 
 #include <exceptions.hpp>
 #include <taskRegs.hpp>
+#include <cpu.hpp>
 
 #include <klib/kprint.hpp>
 
@@ -51,7 +52,7 @@ namespace arch {
 		// Print exception name
 		klib::kprintf("Exception:\t%s", except::NAME[regs->number]);
 		// Hang CPU
-		while(true) {};
+		cpuHalt();
 	}
 
 

@@ -3,7 +3,7 @@
 //	Memory paging for x86
 //
 //	File:	paging.cpp
-//	Date:	13 Feb 2020
+//	Date:	26 Jun 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -15,6 +15,7 @@
 #include <exceptions.hpp>
 #include <paging.hpp>
 #include <taskRegs.hpp>
+#include <cpu.hpp>
 
 #include <klib/kprint.hpp>
 
@@ -137,7 +138,7 @@ namespace arch {
 				((regs->param & 0x01) == 0u) ? u8"PRESENT"		: u8"PRIVILEGED");
 
 		// Hang here
-		while (true) {};
+		cpuHalt();
 
 	}
 
