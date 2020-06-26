@@ -3,7 +3,7 @@
 //	Interrupt service routines low-level operations
 //
 //	File:	isr.cpp
-//	Date:	13 Feb 2020
+//	Date:	26 Jun 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -14,6 +14,7 @@
 #include <taskRegs.hpp>
 #include <isr.hpp>
 #include <port.hpp>
+#include <cpu.hpp>
 
 #include <klib/kprint.hpp>
 
@@ -45,7 +46,7 @@ namespace arch {
 			// Check if exception handler installed
 			if (nullptr == isr) {
 				// Hang CPU
-				while (true) {};
+				cpuHalt();
 			}
 		}
 
