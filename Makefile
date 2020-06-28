@@ -3,7 +3,7 @@
 #	Main Kernel Make script
 #
 #	File:	Makefile
-#	Date:	14 Feb 2020
+#	Date:	28 Jun 2020
 #
 #	Copyright (c) 2017 - 2020, Igor Baklykov
 #	All rights reserved.
@@ -99,15 +99,15 @@ rebuild: clean all
 
 # Run kernel
 run: all
-	@echo "	RUN	$(IGROS_ARCH)"
+	@echo "	RUN	$(IGROS_ARCH) ($(IGROS_ARCH))"
 
 # Test kernel
 test: all
-	@echo "	TEST	$(IGROS_ARCH)"
+	@echo "	TEST	$(IGROS_ARCH) ($(IGROS_ARCH))"
 
 # Deploy kernel iso
 deploy: all
-	@echo "	DEPLOY	$(BIN_NAME)"
+	@echo "	DEPLOY	$(BIN_NAME) ($(IGROS_ARCH))"
 	@echo "	MKDIR	$(IGROS_DIR_ISO)"
 	@mkdir -p $(IGROS_DIR_RELEASE)/$(IGROS_DIR_ISO)
 	@echo "	MKDIR	$(IGROS_DIR_ISO_BOOT)"

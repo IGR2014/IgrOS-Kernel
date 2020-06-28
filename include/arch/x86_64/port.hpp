@@ -3,7 +3,7 @@
 //	IO low-level port operations
 //
 //	File:	port.hpp
-//	Date:	12 Feb 2020
+//	Date:	28 Jun 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -34,6 +34,8 @@ namespace arch {
 		PIT_CONTROL		= 0x0043,
 		KEYBOARD_CONTROL	= 0x0064,
 		KEYBOARD_DATA		= 0x0060,
+		CMOS_COMMAND		= 0x0070,
+		CMOS_DATA		= 0x0071,
 		PIC_SLAVE_CONTROL	= 0x00A0,
 		PIC_SLAVE_DATA		= 0x00A1,
 		VGA_CURSOR_CONTROL	= 0x03D4,

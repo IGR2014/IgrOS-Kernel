@@ -3,7 +3,7 @@
 #	Kernel-space memset function implementation for x86
 #
 #	File:	memset.s
-#	Date:	06 Jun 2019
+#	Date:	28 Jun 2020
 #
 #	Copyright (c) 2017 - 2020, Igor Baklykov
 #	All rights reserved.
@@ -56,8 +56,8 @@ kmemset8:
 # MOVSB for size = [1 .. 127] bytes
 1:
 	movb	%al, (%edi)		# Move byte from AL to memory address from EDI
-	inc	%edi			# Move to next memory address
-	dec	%ecx			# Decrement bytes counter
+	incl	%edi			# Move to next memory address
+	decl	%ecx			# Decrement bytes counter
 	jnz	1b			# Repeat if byte counter is not zero
 
 # Exit from function
@@ -84,7 +84,7 @@ kmemset16:
 	jz	1f			# Go to STOSW if so
 
 # Deal with unaligned target address
-	dec	%ecx			# Decrement words counter
+	decl	%ecx			# Decrement words counter
 	movb	%al, (%edi, %ecx, 2)	# Copy last byte to the target
 	movb	%ah, (%edi)		# Move byte from AL to memory address from EDI
 	addl	$SIZEWORD, %edi		# Move to next target address
@@ -103,7 +103,7 @@ kmemset16:
 2:
 	movw	%ax, (%edi)		# Move word from AX to memory address from EDI
 	addl	$SIZEWORD, %edi		# Move to next memory address
-	dec	%ecx			# Decrement words counter
+	decl	%ecx			# Decrement words counter
 	jnz	2b			# Repeat if word counter is not zero
 
 # Exit from function
@@ -128,7 +128,7 @@ kmemset32:
 
 	test	$ALIGNDWORD, %edi	# Check if target address is DWORD-aligned
 	jz	3f			# Go to STOSL if so
-	dec	%ecx
+	decl	%ecx
 	test	$ALIGNWORD, %edi	# Check if target address is WORD-aligned
 	jz	2f			# Go to MOVW if so
 	test	$SIZEWORD, %edi		# Check if target address is BYTE-aligned
@@ -175,7 +175,7 @@ kmemset32:
 4:
 	movl	%eax, (%edi)		# Move double word from EAX to memory address from EDI
 	addl	$SIZEDWORD, %edi	# Move to next memory address
-	dec	%ecx			# Decrement double words counter
+	decl	%ecx			# Decrement double words counter
 	jnz	4b			# Repeat if double word counter is not zero
 
 # Exit from function

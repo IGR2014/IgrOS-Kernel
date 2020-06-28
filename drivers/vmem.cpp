@@ -3,7 +3,7 @@
 //	VGA memory low-level operations
 //
 //	File:	vmem.cpp
-//	Date:	14 Feb 2020
+//	Date:	28 Jun 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -23,7 +23,7 @@ namespace arch {
 
 
 	// Set cursor position
-	void vmemCursorSet(const byte_t &x, const byte_t &y) {
+	void vmemCursorSet(const byte_t &x, const byte_t &y) noexcept {
 		// Calculate VGA console offset
 		auto position = (y * VIDEO_MEM_WIDTH) + x;
 		// Choose cursor location high register
@@ -40,12 +40,12 @@ namespace arch {
 	}
 
 	// Set VGA memory cursor position
-	void vmemCursorSet(const vmemCursor &cursor) {
+	void vmemCursorSet(const vmemCursor &cursor) noexcept {
 		vmemCursorSet(cursor.x, cursor.y);
 	}
 
 	// Get VGA memory cursor position
-	vmemCursor vmemCursorGet() {
+	vmemCursor vmemCursorGet() noexcept {
 		// Choose cursor location high register
 		inPort8(VGA_CURSOR_CONTROL, 0x0E);
 		// Write cursor position high byte
@@ -63,7 +63,7 @@ namespace arch {
 
 
 	// Disable VGA memory cursor
-	void vmemCursorDisable() {
+	void vmemCursorDisable() noexcept {
 		// Choose cursor start register
 		inPort8(VGA_CURSOR_CONTROL, 0x0A);
 		// Send control word to disable cursor
@@ -71,7 +71,7 @@ namespace arch {
 	}
 
 	// Enable VGA memory cursor
-	void vmemCursorEnable() {
+	void vmemCursorEnable() noexcept {
 		// Choose cursor start register
 		inPort8(VGA_CURSOR_CONTROL, 0x0A);
 		// Get current register value
@@ -81,13 +81,13 @@ namespace arch {
 	}
 
 	// Set VGA memory color
-	void vmemSetColor(const byte_t &background, const byte_t &foreground) {
+	void vmemSetColor(const byte_t &background, const byte_t &foreground) noexcept {
 		// Background is first 4 bits and foreground is next 4
 		vmemBkgColor = (background << 4) | foreground;
 	}
 
 	// Write symbol to VGA memory
-	void vmemWrite(const sbyte_t &symbol) {
+	void vmemWrite(const sbyte_t &symbol) noexcept {
 
 		// Backspace symbol
 		if (symbol == u8'\b') {
@@ -149,7 +149,7 @@ namespace arch {
 	}
 
 	// Write string to VGA memory
-	void vmemWrite(const sbyte_t* message) {
+	void vmemWrite(const sbyte_t* message) noexcept {
 		// Cast const pointer to pointer
 		auto data = &message[0];
 		// Loop through message while \0 not found
@@ -160,7 +160,7 @@ namespace arch {
 	}
 
 	// Write fixed-width string to VGA memory
-	void vmemWrite(const sbyte_t* message, const dword_t &size) {
+	void vmemWrite(const sbyte_t* message, const dword_t &size) noexcept {
 		// Loop through message
 		for (auto i = 0u; i < size; ++i) {
 			// Write symbols one by one
@@ -170,14 +170,14 @@ namespace arch {
 
 
 	// Clear VGA memory
-	void vmemClear() {
+	void vmemClear() noexcept {
 		// Set whole screen with whitespace with default background
 		klib::kmemset16(vmemBase, VIDEO_MEM_SIZE, static_cast<word_t>(u8' ' | (vmemBkgColor << 8)));
 	}
 
 
 	// Init VGA memory
-	void vmemInit() {
+	void vmemInit() noexcept {
 		// Clear screen
 		vmemClear();
 		// Place cursor at (0, 0)

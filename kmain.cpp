@@ -3,12 +3,17 @@
 //	Boot low-level main setup function
 //
 //	File:	boot.cpp
-//	Date:	26 Jun 2020
+//	Date:	28 Jun 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
 //
 //
+
+
+#ifndef IGROS_ARCH
+#define IGROS_ARCH "Unknown"
+#endif	// IGROS_ARCH
 
 
 // Common
@@ -29,6 +34,7 @@
 #include <drivers/vmem.hpp>
 #include <drivers/keyboard.hpp>
 #include <drivers/pit.hpp>
+#include <drivers/rtc.hpp>
 
 // Kernel library
 #include <klib/kstring.hpp>
@@ -114,6 +120,8 @@ extern "C" {
 		//arch::pitSetup();
 		// Setup keyboard
 		//arch::keyboardSetup();
+		// Setup RTC
+		arch::rtcSetup();
 
 		// Test VBE
 		if (multiboot->hasInfoVBE()) {
@@ -156,14 +164,14 @@ extern "C" {
 					mode->bpp);
 		}
 		if (multiboot->hasInfoFrameBuffer()) {
-			klib::kprintf(u8"FB!");
+			klib::kprintf(u8"Framebuffer available\r\n");
 		}
 
 /*
 		// Check if memory map exists
 		if (multiboot->hasInfoMemoryMap()) {
 
-			// Write "Booted successfully" message
+			// Write pre-alloc message
 			klib::kprintf(u8"Memory page allocation...");
 			// Setup physical memory map
 			mem::phys::init(reinterpret_cast<multiboot::memoryMapEntry_t*>(multiboot->mmapAddr), multiboot->mmapAddr + multiboot->mmapLength);
@@ -183,7 +191,7 @@ extern "C" {
 */
 
 		// Write "Booted successfully" message
-		klib::kprintf(u8"\r\nBooted successfully\r\n");
+		klib::kprintf(u8"Booted successfully\r\n");
 
 	}
 

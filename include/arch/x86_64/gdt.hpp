@@ -3,7 +3,7 @@
 //	Global descriptor table low-level operations
 //
 //	File:	gdt.hpp
-//	Date:	12 Feb 2020
+//	Date:	28 Jun 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -12,8 +12,6 @@
 
 
 #pragma once
-#ifndef IGROS_ARCH_GDT_HPP
-#define IGROS_ARCH_GDT_HPP
 
 
 #include <flags.hpp>
@@ -135,26 +133,26 @@ namespace arch {
 		gdt& operator=(gdt &&other) = delete;
 
 		// Set GDT entry
-		constexpr static void	setEntry(const byte_t ID, const dword_t base, const dword_t &limit, const FLAGS flags) noexcept;
+		constexpr static gdtEntry_t	setEntry(const dword_t base, const dword_t &limit, const FLAGS flags) noexcept;
 		// Calc GDT size
 		[[nodiscard]] constexpr static word_t	calcSize() noexcept;
 
 		// Init GDT table
-		constexpr static void	init() noexcept;
+		inline static void	init() noexcept;
 
 
 	};
 
 
 	// Set GDT entry
-	constexpr void gdt::setEntry(const byte_t ID, const dword_t base, const dword_t &limit, const FLAGS flags) noexcept {
-		table[ID] = {
-			.limitLow	= word_t(limit & 0xFFFF),
-			.baseLow	= word_t(base & 0xFFFF),
-			.baseMid	= byte_t((base & 0xFF0000) >> 16),
-			.access		= byte_t(flags & 0x00FF),
-			.limitFlags	= byte_t(((limit & 0xF0000) >> 16) | (word_t(flags & 0x0F00) >> 4)),
-			.baseHigh	= byte_t((base & 0xFF000000) >> 24)
+	constexpr gdtEntry_t gdt::setEntry(const dword_t base, const dword_t &limit, const FLAGS flags) noexcept {
+		return {
+			.limitLow	= static_cast<word_t>(limit & 0xFFFF),
+			.baseLow	= static_cast<word_t>(base & 0xFFFF),
+			.baseMid	= static_cast<byte_t>((base & 0xFF0000) >> 16),
+			.access		= static_cast<byte_t>(flags & 0x00FF),
+			.limitFlags	= static_cast<byte_t>(((limit & 0xF0000) >> 16) | (static_cast<word_t>(flags & 0x0F00) >> 4)),
+			.baseHigh	= static_cast<byte_t>((base & 0xFF000000) >> 24)
 		};
 	}
 
@@ -186,17 +184,17 @@ namespace arch {
 
 
 	// Init GDT table
-	constexpr void gdt::init() noexcept {
+	inline void gdt::init() noexcept {
 		// Empty entry (should be there!)
-		gdt::setEntry(0x00, 0x00000000, 0x00000000, GDT_ENTRY_EMPTY);
+		table[0] = gdt::setEntry(0x00000000, 0x00000000, GDT_ENTRY_EMPTY);
 		// Kernel code
-		gdt::setEntry(0x01, 0x00000000, 0xFFFFFFFF, GDT_ENTRY_CODE_RING0);
+		table[1] = gdt::setEntry(0x00000000, 0xFFFFFFFF, GDT_ENTRY_CODE_RING0);
 		// Kernel data
-		gdt::setEntry(0x02, 0x00000000, 0xFFFFFFFF, GDT_ENTRY_DATA_RING0);
+		table[2] = gdt::setEntry(0x00000000, 0xFFFFFFFF, GDT_ENTRY_DATA_RING0);
 		// User code
-		gdt::setEntry(0x03, 0x00000000, 0xFFFFFFFF, GDT_ENTRY_CODE_RING3);
+		table[3] = gdt::setEntry(0x00000000, 0xFFFFFFFF, GDT_ENTRY_CODE_RING3);
 		// User data
-		gdt::setEntry(0x04, 0x00000000, 0xFFFFFFFF, GDT_ENTRY_DATA_RING3);
+		table[4] = gdt::setEntry(0x00000000, 0xFFFFFFFF, GDT_ENTRY_DATA_RING3);
 		// Set GDT size and data pointer
 		gdt::pointer.size	= gdt::calcSize();
 		gdt::pointer.pointer	= gdt::table;
@@ -206,7 +204,4 @@ namespace arch {
 
 
 }	// namespace arch
-
-
-#endif	// IGROS_ARCH_GDT_HPP
 

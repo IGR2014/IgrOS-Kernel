@@ -3,7 +3,7 @@
 //	Programmable interrupt timer
 //
 //	File:	pit.cpp
-//	Date:	16 Jun 2020
+//	Date:	28 Jun 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -34,7 +34,7 @@ namespace arch {
 
 
         // Setup PIT frequency
-	void pitSetupFrequency(word_t frequency) {
+	void pitSetupFrequency(const word_t frequency) noexcept {
 
 		// Calculate PIT divisor (Base PIT frequency / required frequency)
 		auto divisor	= PIT_MAIN_FREQUENCY / frequency;
@@ -56,7 +56,7 @@ namespace arch {
 
 
 	// Get expired ticks
-	quad_t pitGetTicks() {
+	quad_t pitGetTicks() noexcept {
 
 		// Send latch command for channel 0;
 		inPort8(PIT_CONTROL, 0x00);
@@ -72,7 +72,7 @@ namespace arch {
 
 
 	// PIT interrupt (#0) handler
-	void pitInterruptHandler(const taskRegs_t*) {
+	void pitInterruptHandler(const taskRegs_t*) noexcept {
 
 		// Output every N-th tick were N = frequency
 		if (0u == (++PIT_TICKS % PIT_FREQUENCY)) {
@@ -98,7 +98,7 @@ namespace arch {
 
 
 	// Setup programmable interrupt timer
-	void pitSetup() {
+	void pitSetup() noexcept {
 
 		// Setup PIT frequency to 100 HZ
 		pitSetupFrequency(PIT_DEFAULT_FREQUENCY);
