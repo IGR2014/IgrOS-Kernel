@@ -50,7 +50,7 @@ namespace arch {
 
 
 	// Setup paging
-	void paging::init() {
+	void paging::init() noexcept {
 
 		// Other page directories are unused
 		for (auto i = 0u; i < 512u; ++i) {
@@ -99,7 +99,7 @@ namespace arch {
 
 
 	// Convert virtual address to physical address
-	pointer_t paging::toPhys(const pointer_t virtAddr) {
+	pointer_t paging::toPhys(const pointer_t virtAddr) noexcept {
 
 		// Page map level 4 table table index from virtual address
 		auto pml4EntryIndex	= (reinterpret_cast<quad_t>(virtAddr) & 0xFF8000000000) >> 39;
@@ -145,7 +145,7 @@ namespace arch {
 
 
 	// Page Fault Exception handler
-	void paging::exHandler(const taskRegs_t* regs) {
+	void paging::exHandler(const taskRegs_t* regs) noexcept {
 
 		// Write Multiboot magic error message message
 		klib::kprintf(	u8"EXCEPTION [#%d]\t-> (%s)\r\n"

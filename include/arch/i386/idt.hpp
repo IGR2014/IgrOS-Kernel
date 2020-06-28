@@ -3,7 +3,7 @@
 //	Interrupt descriptor table low-level operations
 //
 //	File:	idt.hpp
-//	Date:	12 Feb 2020
+//	Date:	28 Jun 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -12,8 +12,6 @@
 
 
 #pragma once
-#ifndef IGROS_ARCH_IDT_HPP
-#define IGROS_ARCH_IDT_HPP
 
 
 #include <type_traits>
@@ -77,20 +75,20 @@ namespace arch {
 		idt& operator=(idt &&other) = delete;
 
 		// Set IDT entry
-		constexpr static void	setEntry(const byte_t ID, const isrPointer_t offset, const word_t selector, const byte_t type) noexcept;
+		inline static idtEntry_t	setEntry(const isrPointer_t offset, const word_t selector, const byte_t type) noexcept;
 		// Calc IDT size
 		[[nodiscard]] constexpr static word_t	calcSize() noexcept;
 
 		// Init IDT table
-		constexpr static void	init() noexcept;
+		inline static void	init() noexcept;
 
 
 	};
 
 
 	// Set IDT entry
-	constexpr void idt::setEntry(const byte_t ID, const isrPointer_t offset, const word_t selector, const byte_t type) noexcept {
-		table[ID] = {
+	inline idtEntry_t idt::setEntry(const isrPointer_t offset, const word_t selector, const byte_t type) noexcept {
+		return {
 			.offsetLow	= word_t(dword_t(offset) & 0xFFFF),
 			.selector	= selector,
 			.reserved	= 0x00,
@@ -124,57 +122,57 @@ namespace arch {
 
 
 	// Init IDT table
-	constexpr void idt::init() noexcept {
+	inline void idt::init() noexcept {
 		// Exceptions setup
-		idt::setEntry(0x00, exHandler00, 0x08, 0x8E);
-		idt::setEntry(0x01, exHandler01, 0x08, 0x8E);
-		idt::setEntry(0x02, exHandler02, 0x08, 0x8E);
-		idt::setEntry(0x03, exHandler03, 0x08, 0x8E);
-		idt::setEntry(0x04, exHandler04, 0x08, 0x8E);
-		idt::setEntry(0x05, exHandler05, 0x08, 0x8E);
-		idt::setEntry(0x06, exHandler06, 0x08, 0x8E);
-		idt::setEntry(0x07, exHandler07, 0x08, 0x8E);
-		idt::setEntry(0x08, exHandler08, 0x08, 0x8E);
-		idt::setEntry(0x09, exHandler09, 0x08, 0x8E);
-		idt::setEntry(0x0A, exHandler0A, 0x08, 0x8E);
-		idt::setEntry(0x0B, exHandler0B, 0x08, 0x8E);
-		idt::setEntry(0x0C, exHandler0C, 0x08, 0x8E);
-		idt::setEntry(0x0D, exHandler0D, 0x08, 0x8E);
-		idt::setEntry(0x0E, exHandler0E, 0x08, 0x8E);
-		idt::setEntry(0x0F, exHandler0F, 0x08, 0x8E);
-		idt::setEntry(0x10, exHandler10, 0x08, 0x8E);
-		idt::setEntry(0x11, exHandler11, 0x08, 0x8E);
-		idt::setEntry(0x12, exHandler12, 0x08, 0x8E);
-		idt::setEntry(0x13, exHandler13, 0x08, 0x8E);
-		idt::setEntry(0x14, exHandler14, 0x08, 0x8E);
-		idt::setEntry(0x15, exHandler15, 0x08, 0x8E);
-		idt::setEntry(0x16, exHandler16, 0x08, 0x8E);
-		idt::setEntry(0x17, exHandler17, 0x08, 0x8E);
-		idt::setEntry(0x18, exHandler18, 0x08, 0x8E);
-		idt::setEntry(0x19, exHandler19, 0x08, 0x8E);
-		idt::setEntry(0x1A, exHandler1A, 0x08, 0x8E);
-		idt::setEntry(0x1B, exHandler1B, 0x08, 0x8E);
-		idt::setEntry(0x1C, exHandler1C, 0x08, 0x8E);
-		idt::setEntry(0x1D, exHandler1D, 0x08, 0x8E);
-		idt::setEntry(0x1E, exHandler1E, 0x08, 0x8E);
-		idt::setEntry(0x1F, exHandler1F, 0x08, 0x8E);
+		table[0]  = idt::setEntry(exHandler00, 0x08, 0x8E);
+		table[1]  = idt::setEntry(exHandler01, 0x08, 0x8E);
+		table[2]  = idt::setEntry(exHandler02, 0x08, 0x8E);
+		table[3]  = idt::setEntry(exHandler03, 0x08, 0x8E);
+		table[4]  = idt::setEntry(exHandler04, 0x08, 0x8E);
+		table[5]  = idt::setEntry(exHandler05, 0x08, 0x8E);
+		table[6]  = idt::setEntry(exHandler06, 0x08, 0x8E);
+		table[7]  = idt::setEntry(exHandler07, 0x08, 0x8E);
+		table[8]  = idt::setEntry(exHandler08, 0x08, 0x8E);
+		table[9]  = idt::setEntry(exHandler09, 0x08, 0x8E);
+		table[10] = idt::setEntry(exHandler0A, 0x08, 0x8E);
+		table[11] = idt::setEntry(exHandler0B, 0x08, 0x8E);
+		table[12] = idt::setEntry(exHandler0C, 0x08, 0x8E);
+		table[13] = idt::setEntry(exHandler0D, 0x08, 0x8E);
+		table[14] = idt::setEntry(exHandler0E, 0x08, 0x8E);
+		table[15] = idt::setEntry(exHandler0F, 0x08, 0x8E);
+		table[16] = idt::setEntry(exHandler10, 0x08, 0x8E);
+		table[17] = idt::setEntry(exHandler11, 0x08, 0x8E);
+		table[18] = idt::setEntry(exHandler12, 0x08, 0x8E);
+		table[19] = idt::setEntry(exHandler13, 0x08, 0x8E);
+		table[20] = idt::setEntry(exHandler14, 0x08, 0x8E);
+		table[21] = idt::setEntry(exHandler15, 0x08, 0x8E);
+		table[22] = idt::setEntry(exHandler16, 0x08, 0x8E);
+		table[23] = idt::setEntry(exHandler17, 0x08, 0x8E);
+		table[24] = idt::setEntry(exHandler18, 0x08, 0x8E);
+		table[25] = idt::setEntry(exHandler19, 0x08, 0x8E);
+		table[26] = idt::setEntry(exHandler1A, 0x08, 0x8E);
+		table[27] = idt::setEntry(exHandler1B, 0x08, 0x8E);
+		table[28] = idt::setEntry(exHandler1C, 0x08, 0x8E);
+		table[29] = idt::setEntry(exHandler1D, 0x08, 0x8E);
+		table[30] = idt::setEntry(exHandler1E, 0x08, 0x8E);
+		table[31] = idt::setEntry(exHandler1F, 0x08, 0x8E);
 		// IRQs setup
-		idt::setEntry(0x20, irqHandler0, 0x08, 0x8E);
-		idt::setEntry(0x21, irqHandler1, 0x08, 0x8E);
-		idt::setEntry(0x22, irqHandler2, 0x08, 0x8E);
-		idt::setEntry(0x23, irqHandler3, 0x08, 0x8E);
-		idt::setEntry(0x24, irqHandler4, 0x08, 0x8E);
-		idt::setEntry(0x25, irqHandler5, 0x08, 0x8E);
-		idt::setEntry(0x26, irqHandler6, 0x08, 0x8E);
-		idt::setEntry(0x27, irqHandler7, 0x08, 0x8E);
-		idt::setEntry(0x28, irqHandler8, 0x08, 0x8E);
-		idt::setEntry(0x29, irqHandler9, 0x08, 0x8E);
-		idt::setEntry(0x2A, irqHandlerA, 0x08, 0x8E);
-		idt::setEntry(0x2B, irqHandlerB, 0x08, 0x8E);
-		idt::setEntry(0x2C, irqHandlerC, 0x08, 0x8E);
-		idt::setEntry(0x2D, irqHandlerD, 0x08, 0x8E);
-		idt::setEntry(0x2E, irqHandlerE, 0x08, 0x8E);
-		idt::setEntry(0x2F, irqHandlerF, 0x08, 0x8E);
+		table[32] = idt::setEntry(irqHandler0, 0x08, 0x8E);
+		table[33] = idt::setEntry(irqHandler1, 0x08, 0x8E);
+		table[34] = idt::setEntry(irqHandler2, 0x08, 0x8E);
+		table[35] = idt::setEntry(irqHandler3, 0x08, 0x8E);
+		table[36] = idt::setEntry(irqHandler4, 0x08, 0x8E);
+		table[37] = idt::setEntry(irqHandler5, 0x08, 0x8E);
+		table[38] = idt::setEntry(irqHandler6, 0x08, 0x8E);
+		table[39] = idt::setEntry(irqHandler7, 0x08, 0x8E);
+		table[40] = idt::setEntry(irqHandler8, 0x08, 0x8E);
+		table[41] = idt::setEntry(irqHandler9, 0x08, 0x8E);
+		table[42] = idt::setEntry(irqHandlerA, 0x08, 0x8E);
+		table[43] = idt::setEntry(irqHandlerB, 0x08, 0x8E);
+		table[44] = idt::setEntry(irqHandlerC, 0x08, 0x8E);
+		table[45] = idt::setEntry(irqHandlerD, 0x08, 0x8E);
+		table[46] = idt::setEntry(irqHandlerE, 0x08, 0x8E);
+		table[47] = idt::setEntry(irqHandlerF, 0x08, 0x8E);
 		// Set IDT size and data pointer
 		idt::pointer.size	= idt::calcSize();
 		idt::pointer.pointer	= idt::table;
@@ -184,7 +182,4 @@ namespace arch {
 
 
 }	// namespace arch
-
-
-#endif	// IGROS_ARCH_IDT_HPP
 

@@ -3,7 +3,7 @@
 //	Programmable interrupt timer
 //
 //	File:	pit.hpp
-//	Date:	12 Feb 2020
+//	Date:	28 Jun 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -12,8 +12,6 @@
 
 
 #pragma once
-#ifndef IGROS_ARCH_PIT_HPP
-#define IGROS_ARCH_PIT_HPP
 
 
 #include <types.hpp>
@@ -79,7 +77,4 @@ namespace arch {
 
 
 }	// namespace arch
-
-
-#endif	// IGROS_ARCH_PIT_HPP
 

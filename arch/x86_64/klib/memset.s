@@ -3,7 +3,7 @@
 #	Kernel-space memset function implementation for x86
 #
 #	File:	memset.s
-#	Date:	06 Jun 2019
+#	Date:	28 Jun 2020
 #
 #	Copyright (c) 2017 - 2020, Igor Baklykov
 #	All rights reserved.
@@ -40,16 +40,15 @@
 #	Memset for bytes function
 #
 kmemset8:
-	#movq	%rdi, %rdi		# Get pointer to the target memory
-	movl	%esi, %ecx		# Get size of target memory (in bytes)
+	movq	%rsi, %rcx		# Get size of target memory (in bytes)
 	movb	%dl, %al		# Get value to be set in target memory
 
 	test	%rdi, %rdi		# Null pointer test
 	jz	2f			# Exit if so
-	test	%ecx, %ecx		# Null size test
+	test	%rcx, %rcx		# Null size test
 	jz	2f			# Exit if so
 
-	test	$LIMITSTOSB, %ecx	# Check if filled size is more than 128 bytes
+	test	$LIMITSTOSB, %rcx	# Check if filled size is more than 128 bytes
 	jz	1f			# If not so - jump to MOVB method
 
 # STOSB for size > 127
@@ -61,7 +60,7 @@ kmemset8:
 1:
 	movb	%al, (%rdi)		# Move byte from AL to memory address from RDI
 	incq	%rdi			# Move to next memory address
-	dec	%ecx			# Decrement bytes counter
+	decq	%rcx			# Decrement bytes counter
 	jnz	1b			# Repeat if byte counter is not zero
 
 # Exit from function
@@ -75,27 +74,26 @@ kmemset8:
 #	Memset for words function
 #
 kmemset16:
-	#movq	%rdi, %rdi		# Get pointer to the target memory
-	movl	%esi, %ecx		# Get size of target memory (in words)
+	movq	%rsi, %rcx		# Get size of target memory (in words)
 	movw	%dx, %ax		# Get value to be set in target memory
 
 	test	%rdi, %rdi		# Null pointer test
 	jz	3f			# Exit if so
-	test	%ecx, %ecx		# Null size test
+	test	%rcx, %rcx		# Null size test
 	jz	3f			# Exit if so
 
 	test	$ALIGNWORD, %rdi	# Check if target address is WORD-aligned
 	jz	1f			# Go to STOSW if so
 
 # Deal with unaligned target address
-	dec	%ecx			# Decrement words counter
+	decq	%rcx			# Decrement words counter
 	movb	%al, (%rdi, %rcx, 2)	# Copy last byte to the target
 	movb	%ah, (%rdi)		# Move byte from AL to memory address from RDI
 	addq	$SIZEWORD, %rdi		# Move to next target address
 
 # Case for WORD-aligned target address
 1:
-	test	$LIMITSTOSW, %ecx	# Check if filled size is more than 128 bytes 
+	test	$LIMITSTOSW, %rcx	# Check if filled size is more than 128 bytes 
 	jz	2f			# Jump to MOVW method if not
 
 # STOSW method for size > 127
@@ -107,7 +105,7 @@ kmemset16:
 2:
 	movw	%ax, (%rdi)		# Move word from AX to memory address from RDI
 	addq	$SIZEWORD, %rdi		# Move to next memory address
-	dec	%ecx			# Decrement words counter
+	decq	%rcx			# Decrement words counter
 	jnz	2b			# Repeat if word counter is not zero
 
 # Exit from function
@@ -121,18 +119,17 @@ kmemset16:
 #	Memset for double words function
 #
 kmemset32:
-	#movq	%rdi, %rdi		# Get pointer to the target memory
-	movl	%esi, %ecx		# Get size of target memory (in double words)
+	movq	%rsi, %rcx		# Get size of target memory (in double words)
 	movl	%edx, %eax		# Get value to be set in target memory
 
 	test	%rdi, %rdi		# Null pointer test
 	jz	5f			# Exit if so
-	test	%ecx, %ecx		# Null size test
+	test	%rcx, %rcx		# Null size test
 	jz	5f			# Exit if so
 
 	test	$ALIGNDWORD, %rdi	# Check if target address is DWORD-aligned
 	jz	3f			# Go to STOSL if so
-	dec	%ecx
+	decq	%rcx
 	test	$ALIGNWORD, %rdi	# Check if target address is WORD-aligned
 	jz	2f			# Go to MOVW if so
 	test	$SIZEWORD, %rdi		# Check if target address is BYTE-aligned
@@ -167,7 +164,7 @@ kmemset32:
 # Case for DWORD-aligned target address
 3:
 	addq	$SIZEDWORD, %rdi	# Move to next target address
-	test	$LIMITSTOSL, %ecx	# Check if filled size is more than 128 bytes 
+	test	$LIMITSTOSL, %rcx	# Check if filled size is more than 128 bytes 
 	jz	4f			# Jump to MOVL method if not
 
 # STOSL method for size > 127
@@ -179,7 +176,7 @@ kmemset32:
 4:
 	movl	%eax, (%rdi)		# Move double word from EAX to memory address from RDI
 	addq	$SIZEDWORD, %rdi	# Move to next memory address
-	dec	%ecx			# Decrement double words counter
+	decq	%rcx			# Decrement double words counter
 	jnz	4b			# Repeat if double word counter is not zero
 
 # Exit from function
