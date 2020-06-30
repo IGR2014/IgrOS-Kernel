@@ -1,5 +1,8 @@
 image: gcc
 
+stages:
+    - build
+
 build i386:
     tags:
         - i386
