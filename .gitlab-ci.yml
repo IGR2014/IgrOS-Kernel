@@ -1,11 +1,18 @@
 image: gcc
 
+stages:
+    - build
+
 build i386:
+    tags:
+        - i386
     stage: build
     script:
         - ./build-i386.sh
 
 build x86_64:
+    tags:
+        - x86_64
     stage: build
     script:
         - ./build-x86_64.sh
