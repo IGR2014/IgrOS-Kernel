@@ -3,7 +3,7 @@
 //	CPU operations
 //
 //	File:	cpu.hpp
-//	Date:	26 Jun 2020
+//	Date:	30 Jun 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -18,7 +18,7 @@
 
 
 // Arch-dependent code zone
-namespace arch {
+namespace igros::arch {
 
 
 #ifdef	__cplusplus
@@ -39,5 +39,5 @@ namespace arch {
 #endif	// __cplusplus
 
 
-}	// namespace arch
+}	// namespace igros::arch
 

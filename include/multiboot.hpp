@@ -3,7 +3,7 @@
 //	Multiboot 1 header info
 //
 //	File:	multiboot.hpp
-//	Date:	12 Feb 2020
+//	Date:	30 Jun 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -12,15 +12,13 @@
 
 
 #pragma once
-#ifndef IGROS_ARCH_MULTIBOOT_1_HPP
-#define IGROS_ARCH_MULTIBOOT_1_HPP
 
 
 #include <types.hpp>
 
 
 // Multiboot code zone
-namespace multiboot {
+namespace igros::multiboot {
 
 
 	// Multiboot 1 header magic
@@ -284,6 +282,22 @@ namespace multiboot {
 		byte_t		planes;
 		byte_t		bpp;
 		byte_t		banks;
+		byte_t		memory_model;
+		byte_t		bank_size;
+		byte_t		image_pages;
+		byte_t		reserved0;
+		byte_t		red_mask;
+		byte_t		red_position;
+		byte_t		green_mask;
+		byte_t		green_position;
+		byte_t		blue_mask;
+		byte_t		blue_position;
+		byte_t		rsv_mask;
+		byte_t		rsv_position;
+		byte_t		directcolor_attributes;
+		dword_t		physbase;
+		dword_t		reserved1;
+		word_t		reserved2;
 	};
 
 #pragma pack(pop)
@@ -295,8 +309,5 @@ namespace multiboot {
 	}
 
 
-}	// namespace multiboot
-
-
-#endif	// IGROS_ARCH_MULTIBOOT_1_HPP
+}	// namespace igros::multiboot
 

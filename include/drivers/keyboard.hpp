@@ -3,7 +3,7 @@
 //	Keyboard generic handling
 //
 //	File:	keyboard.hpp
-//	Date:	12 Feb 2020
+//	Date:	30 Jun 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -12,15 +12,13 @@
 
 
 #pragma once
-#ifndef IGROS_ARCH_KEYBOARD_HPP
-#define IGROS_ARCH_KEYBOARD_HPP
 
 
 #include <types.hpp>
 
 
 // Arch-dependent code zone
-namespace arch {
+namespace igros::arch {
 
 
 	// Forward declaration
@@ -36,8 +34,5 @@ namespace arch {
 	void	keyboardSetup() noexcept;
 
 
-}	// namespace arch
-
-
-#endif	// IGROS_ARCH_KEYBOARD_HPP
+}	// namespace igros::arch
 

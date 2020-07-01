@@ -1,9 +1,9 @@
-########################################################
+################################################################
 #
-#	i386 clang make script
+#	x86_64 clang make script
 #
-#	File:	Makefile
-#	Date:	12 Feb 2020
+#	File:	Makefile-x86_64-clang++.in
+#	Date:	30 Jun 2020
 #
 #	Copyright (c) 2017 - 2020, Igor Baklykov
 #	All rights reserved.
@@ -39,9 +39,11 @@ export CXXFLAGS		= -std=c++17				\
 			  -mno-mmx				\
 			  -DIGROS_ARCH_$(IGROS_ARCH)		\
 			  -DIGROS_ARCH="\"$(IGROS_ARCH)"\"	\
-			  -m32					\
-			  -march=i386				\
-			  -mno-red-zone
+			  -m64					\
+			  -march=x86-64				\
+			  -mno-red-zone				\
+			  -mcmodel=large			\
+			  -target x86_64-linux-elf
 
 
 #########################################################
@@ -51,7 +53,7 @@ export CXXFLAGS		= -std=c++17				\
 # Assambler
 export AS		= as
 # Assambler flags
-export ASFLAGS		= --32
+export ASFLAGS		= --64
 
 
 #########################################################

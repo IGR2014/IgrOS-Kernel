@@ -3,7 +3,7 @@
 #	i386 folder Make script
 #
 #	File:	Makefile
-#	Date:	14 Feb 2020
+#	Date:	30 Jun 2020
 #
 #	Copyright (c) 2017 - 2020, Igor Baklykov
 #	All rights reserved.
@@ -13,8 +13,6 @@
 
 # Source files list
 CXXSRCFILES			= $(wildcard *.cpp)
-#ASSRCFILES			= $(wildcard boot/*.s)
-#ASSRCFILES			+= $(wildcard klib/*.s)
 # Convert sources names into object files names
 CXXOBJFILES			= $(patsubst %.cpp, %.o, $(CXXSRCFILES))
 # Specify path for object files
@@ -28,14 +26,10 @@ CXXOBJ				= $(addprefix $(IGROS_DIR_BUILD)/, $(CXXOBJFILES))
 all: $(CXXOBJ)
 	@echo "	MAKE	boot"
 	@$(MAKE) -C boot
-	@echo "	MAKE	klib"
-	@$(MAKE) -C klib
 
 clean:
 	@echo "	CLEAN	boot"
 	@$(MAKE) -C boot clean
-	@echo "	CLEAN	klib"
-	@$(MAKE) -C klib clean
 	@echo "	RM	$(CXXOBJFILES)"
 	@$(RM) $(CXXOBJ)
 

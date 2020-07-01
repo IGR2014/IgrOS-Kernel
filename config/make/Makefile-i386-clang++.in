@@ -1,0 +1,67 @@
+########################################################
+#
+#	i386 clang make script
+#
+#	File:	Makefile-i386-clang++.in
+#	Date:	30 Jun 2020
+#
+#	Copyright (c) 2017 - 2020, Igor Baklykov
+#	All rights reserved.
+#
+#
+
+
+#########################################################
+#
+#	Compiler configuration
+#
+# Compiler
+export CXX		= clang++
+# Compiler flags
+export CXXFLAGS		= -std=c++17				\
+			  -Wall					\
+			  -Wextra				\
+			  -w					\
+			  -pedantic				\
+			  -Werror				\
+			  -ffreestanding			\
+			  -fno-exceptions			\
+			  -fno-rtti				\
+			  -nostdlib				\
+			  -fno-pic				\
+			  -fno-pie				\
+			  -O3					\
+			  -s					\
+			  -mno-3dnow				\
+			  -mno-sse				\
+			  -mno-sse2				\
+			  -mno-sse3				\
+			  -mno-mmx				\
+			  -DIGROS_ARCH_$(IGROS_ARCH)		\
+			  -DIGROS_ARCH="\"$(IGROS_ARCH)"\"	\
+			  -m32					\
+			  -march=i386				\
+			  -mno-red-zone
+
+
+#########################################################
+#
+#	Assambler configuration
+#
+# Assambler
+export AS		= as
+# Assambler flags
+export ASFLAGS		= --32
+
+
+#########################################################
+#
+#	Linker configuration
+#
+# Linker
+export LD		= ld
+# Linker flags
+export LDFLAGS		= -n					\
+			  -m elf_$(IGROS_ARCH)			\
+			  -z max-page-size=0x1000
+

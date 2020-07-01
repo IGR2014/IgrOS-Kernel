@@ -3,7 +3,7 @@
 //	IgrOS platform description
 //
 //	File:	platform.hpp
-//	Date:	12 Feb 2020
+//	Date:	30 Jun 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -12,8 +12,6 @@
 
 
 #pragma once
-#ifndef IGROS_PLATFORM_HPP
-#define IGROS_PLATFORM_HPP
 
 
 #include <type_traits>
@@ -21,29 +19,33 @@
 #include <types.hpp>
 
 
-// Platform init function pointer type
-using funcInit_t	= std::add_pointer_t<void()>;
-// Platform shutdown function pointer type
-using funcShutdown_t	= std::add_pointer_t<void()>;
-// Platform reboot function pointer type
-using funcReboot_t	= std::add_pointer_t<void()>;
+// OS namespace
+namespace igros {
 
 
-// Platform desciption structure
-struct platform {
-
-	sbyte_t*		name;			// Platform name
-
-        funcInit_t		init;			// Init function
-        funcShutdown_t		shutdown;		// Shutdown function
-        funcReboot_t		reboot;			// Reboot function
-
-};
+        // Platform init function pointer type
+        using funcInit_t	= std::add_pointer_t<void()>;
+        // Platform shutdown function pointer type
+        using funcShutdown_t	= std::add_pointer_t<void()>;
+        // Platform reboot function pointer type
+        using funcReboot_t	= std::add_pointer_t<void()>;
 
 
-// Platform description
-extern const platform	platformDescription;
+        // Platform desciption structure
+        struct platform {
+
+                sbyte_t*		name;			// Platform name
+
+                funcInit_t		init;			// Init function
+                funcShutdown_t		shutdown;		// Shutdown function
+                funcReboot_t		reboot;			// Reboot function
+
+        };
 
 
-#endif	// IGROS_PLATFORM_HPP
+        // Platform description
+        extern const platform	platformDescription;
+
+
+}       // namespace igros
 

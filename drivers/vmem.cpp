@@ -3,7 +3,7 @@
 //	VGA memory low-level operations
 //
 //	File:	vmem.cpp
-//	Date:	28 Jun 2020
+//	Date:	30 Jun 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -15,11 +15,11 @@
 
 #include <drivers/vmem.hpp>
 
-#include <klib/kmemset.hpp>
+#include <klib/kmemory.hpp>
 
 
 // Arch-dependent code zone
-namespace arch {
+namespace igros::arch {
 
 
 	// Set cursor position
@@ -187,5 +187,5 @@ namespace arch {
 	}
 
 
-}	// namespace arch
+}	// namespace igros::arch
 

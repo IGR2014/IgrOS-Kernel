@@ -3,7 +3,7 @@
 //	Task switch registers data structure
 //
 //	File:	taskRegs.hpp
-//	Date:	12 Feb 2020
+//	Date:	30 Jun 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -12,15 +12,13 @@
 
 
 #pragma once
-#ifndef	IGROS_ARCH_TASK_REGS_HPP
-#define	IGROS_ARCH_TASK_REGS_HPP
 
 
 #include <types.hpp>
 
 
 // Arch-dependent code zone
-namespace arch {
+namespace igros::arch {
 
 
 #pragma pack(push, 1)
@@ -58,8 +56,5 @@ namespace arch {
 #pragma pack(pop)
 
 
-}	// namespace arch
-
-
-#endif	// IGROS_ARCH_TASK_REGS_HPP
+}	// namespace igros::arch
 

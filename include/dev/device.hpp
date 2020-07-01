@@ -3,7 +3,7 @@
 //	Device operations description
 //
 //	File:	device.hpp
-//	Date:	22 Jan 2020
+//	Date:	30 Jun 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -12,8 +12,6 @@
 
 
 #pragma once
-#ifndef IGROS_DEV_DEVICE_HPP
-#define IGROS_DEV_DEVICE_HPP
 
 
 #include <type_traits>
@@ -23,7 +21,7 @@
 
 
 // System code zone
-namespace sys {
+namespace igros::sys {
 
 
 	// Device init function pointer
@@ -71,8 +69,5 @@ namespace sys {
 	bool unregisterDevice(const device &dev) noexcept;
 
 
-}	// namespace sys
-
-
-#endif	// IGROS_DEV_DEVICE_HPP
+}	// namespace igros::sys
 

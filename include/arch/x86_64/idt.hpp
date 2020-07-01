@@ -3,7 +3,7 @@
 //	Interrupt descriptor table low-level operations
 //
 //	File:	idt.hpp
-//	Date:	28 Jun 2020
+//	Date:	30 Jun 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -22,7 +22,7 @@
 
 
 // Arch-dependent code zone
-namespace arch {
+namespace igros::arch {
 
 
 #pragma pack(push, 1)
@@ -185,5 +185,5 @@ namespace arch {
 	}
 
 
-}	// namespace arch
+}	// namespace igros::arch
 

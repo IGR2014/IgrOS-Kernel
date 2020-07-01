@@ -3,7 +3,7 @@
 //	Global descriptor table low-level operations
 //
 //	File:	gdt.cpp
-//	Date:	13 Feb 2020
+//	Date:	30 Jun 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -15,7 +15,7 @@
 
 
 // Arch-dependent code zone
-namespace arch {
+namespace igros::arch {
 
 
 	// Global descriptors table (GDT)
@@ -24,5 +24,5 @@ namespace arch {
 	gdtPointer_t	gdt::pointer;
 
 
-}	// namespace arch
+}	// namespace igros::arch
 

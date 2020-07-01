@@ -3,7 +3,7 @@
 //	Common C++ types redefinition
 //
 //	File:	types.hpp
-//	Date:	06 Jun 2019
+//	Date:	30 Jun 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -11,32 +11,35 @@
 //
 
 
-#ifndef IGROS_TYPES_HPP
-#define IGROS_TYPES_HPP
+#pragma once
 
 
-// Unsigned integer types
-typedef	unsigned char		byte_t;
-typedef	unsigned short		word_t;
-typedef	unsigned int		dword_t;
-typedef	unsigned long long	quad_t;
+// OS namespace
+namespace igros {
 
 
-// Signed integer types
-typedef	char			sbyte_t;
-typedef	short			sword_t;
-typedef	int			sdword_t;
-typedef	long long		squad_t;
+	// Unsigned integer types
+	using   byte_t          = unsigned char;
+	using	word_t          = unsigned short;
+	using	dword_t         = unsigned int;
+	using	quad_t          = unsigned long long int;
 
 
-// Floating point types
-typedef	float			real32_t;
-typedef	double			real64_t;
+	// Signed integer types
+	using	sbyte_t         = char;
+	using	sword_t         = short;
+	using	sdword_t        = int;
+	using	squad_t         = long long int;
 
 
-// Common pointer type
-typedef void*			pointer_t;
+	// Floating point types
+	using	real32_t        = float;
+	using   real64_t        = double;
 
 
-#endif	// IGROS_TYPES_HPP
+	// Common pointer type
+	using	pointer_t       = void*;
+
+
+}	// namespace igros
 

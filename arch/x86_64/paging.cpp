@@ -3,7 +3,7 @@
 //	Memory paging for x86
 //
 //	File:	paging.cpp
-//	Date:	26 Jun 2020
+//	Date:	31 Jun 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -13,6 +13,7 @@
 
 #include <msr.hpp>
 #include <cr.hpp>
+#include <irq.hpp>
 #include <exceptions.hpp>
 #include <paging.hpp>
 #include <taskRegs.hpp>
@@ -22,7 +23,7 @@
 
 
 // Arch-dependent code zone
-namespace arch {
+namespace igros::arch {
 
 
 #ifdef	__cplusplus
@@ -94,7 +95,37 @@ namespace arch {
 		// Setup page directory
 		// PD address bits ([0 .. 63] in cr3)
 		paging::setDirectory(pageMapLevel4Table);
+		// Enable Page Address Extension
+		paging::enablePAE();
+		// Enable paging
+		paging::enable();
 
+	}
+
+
+	// Enable paging
+	void paging::enable() noexcept {
+		// Set paging bit on in CR0
+		inCR0(outCR0() | 0x80000000);
+	}
+
+	// Disable paging
+	void paging::disable() noexcept {
+		// Set paging bit off in CR0
+		inCR0(outCR0() & 0x7FFFFFFF);
+	}
+
+
+	// Enable Page Address Extension
+	void paging::enablePAE() noexcept {
+		// Set paging bit on in CR0
+		inCR4(outCR4() | 0x00000020);
+	}
+
+	// Disable Page Address Extension
+	void paging::disablePAE() noexcept {
+		// Set paging bit off in CR0
+		inCR4(outCR4() & 0xFFFFFFDF);
 	}
 
 
@@ -139,13 +170,16 @@ namespace arch {
 		// Get physical offset from virtual address`s (12 LSB)
 		auto physPageOffset	= reinterpret_cast<quad_t>(virtAddr) & 0xFFFFF;
 		// Return physical address
-		return pointer_t(physPageAddr | physPageOffset);
+		return reinterpret_cast<pointer_t>(physPageAddr | physPageOffset);
 
 	}
 
 
 	// Page Fault Exception handler
 	void paging::exHandler(const taskRegs_t* regs) noexcept {
+
+		// Disable IRQ
+		irq::disable();
 
 		// Write Multiboot magic error message message
 		klib::kprintf(	u8"EXCEPTION [#%d]\t-> (%s)\r\n"
@@ -172,9 +206,10 @@ namespace arch {
 
 	// Set page directory
 	void paging::setDirectory(const pointer_t dir) noexcept {
-		inCR3(quad_t(dir) & 0x7FFFFFFF);
+		// Set page directory address to CR3
+		inCR3(reinterpret_cast<quad_t>(dir) & 0x7FFFFFFF);
 	}
 
 
-}	// namespace arch
+}	// namespace igros::arch
 

@@ -3,7 +3,7 @@
 //	Kernel math functions definitions
 //
 //	File:	kmath.hpp
-//	Date:	12 Feb 2020
+//	Date:	30 Jun 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -12,8 +12,6 @@
 
 
 #pragma once
-#ifndef IGROS_KLIB_KERNEL_MATH_HPP
-#define IGROS_KLIB_KERNEL_MATH_HPP
 
 
 #include <cstdint>
@@ -22,7 +20,7 @@
 
 
 // Kernel library code zone
-namespace klib {
+namespace igros::klib {
 
 
 	// Combined division & modulo result (unsigned)
@@ -47,8 +45,5 @@ namespace klib {
 	divmod_t	kdivmod(squad_t dividend, sdword_t divisor) noexcept;
 
 
-}	// namespace klib
-
-
-#endif	// IGROS_KLIB_KERNEL_MATH_HPP
+}	// namespace igros::klib
 
