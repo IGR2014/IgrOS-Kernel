@@ -3,7 +3,7 @@
 //	IO low-level port operations
 //
 //	File:	port.hpp
-//	Date:	28 Jun 2020
+//	Date:	30 Jun 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -12,15 +12,13 @@
 
 
 #pragma	once
-#ifndef IGROS_ARCH_PORT_HPP
-#define IGROS_ARCH_PORT_HPP
 
 
 #include <types.hpp>
 
 
 // Arch-dependent code zone
-namespace arch {
+namespace igros::arch {
 
 
 	// Machine ports enumeration
@@ -73,8 +71,5 @@ namespace arch {
 #endif	// __cplusplus
 
 
-}	// namespace arch
-
-
-#endif	// IGROS_ARCH_PORT_HPP
+}	// namespace igros::arch
 

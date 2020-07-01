@@ -3,7 +3,7 @@
 //	CR0 - CR4 registers operations
 //
 //	File:	cr.hpp
-//	Date:	12 Feb 2020
+//	Date:	30 Jun 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -12,15 +12,13 @@
 
 
 #pragma once
-#ifndef IGROS_ARCH_CONTROL_REGISTERS_HPP
-#define IGROS_ARCH_CONTROL_REGISTERS_HPP
 
 
 #include <types.hpp>
 
 
 // Arch-dependent code zone
-namespace arch {
+namespace igros::arch {
 
 
 #ifdef	__cplusplus
@@ -54,8 +52,5 @@ namespace arch {
 #endif	// __cplusplus
 
 
-}	// namespace arch
-
-
-#endif	// IGROS_ARCH_CONTROL_REGISTERS_HPP
+}	// namespace igros::arch
 

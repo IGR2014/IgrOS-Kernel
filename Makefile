@@ -25,8 +25,7 @@ export CXXINCLUDE		= -I$(CURDIR)/include/					\
 				  -I$(CURDIR)/include/arch/$(IGROS_ARCH)/
 
 # Import config Makefile
-IGROS_CXX			?= g++
-IGROS_CONFIG			= $(IGROS_CONFIG_MAKE_DIR)/Makefile-$(IGROS_ARCH)-$(IGROS_CXX).in
+IGROS_CONFIG			= $(IGROS_CONFIG_MAKE_DIR)/Makefile-$(IGROS_ARCH)-$(CXX).in
 include $(IGROS_CONFIG)
 
 # Source files list
@@ -67,7 +66,7 @@ IGROS_ISO			= os-$(IGROS_ARCH).iso
 
 
 # Phony targets
-.PHONY: all clean distclean rebuild run test deploy
+.PHONY: all-before all clean distclean rebuild run test deploy
 
 
 # Default build rule for all .cpp files
@@ -76,7 +75,12 @@ $(IGROS_DIR_BUILD)/%.o: %.cpp
 	@$(CXX) -c $< -o $@ $(CXXFLAGS) $(CXXINCLUDE)
 
 # Default make target
-all: $(BIN)#@echo "	OBJ2	$(OBJ2)"
+all: all-before $(BIN)
+
+# Print variables before build
+all-before:
+	@echo "	CXX:	$(CXX)"
+	@echo "	Script:	$(IGROS_CONFIG)"
 
 # Clean build
 clean:

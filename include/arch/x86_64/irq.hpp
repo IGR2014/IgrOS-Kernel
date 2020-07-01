@@ -3,7 +3,7 @@
 //	Interrupts low-level operations
 //
 //	File:	irq.hpp
-//	Date:	12 Feb 2020
+//	Date:	30 Jun 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -12,8 +12,6 @@
 
 
 #pragma once
-#ifndef IGROS_ARCH_INTERRUPTS_HPP
-#define IGROS_ARCH_INTERRUPTS_HPP
 
 
 #include <types.hpp>
@@ -21,7 +19,7 @@
 
 
 // Arch-dependent code zone
-namespace arch {
+namespace igros::arch {
 
 
 	// Interrupts number enumeration
@@ -137,8 +135,5 @@ namespace arch {
 	}
 
 
-}	// namespace arch
-
-
-#endif	// IGROS_ARCH_INTERRUPTS_HPP
+}	// namespace igros::arch
 

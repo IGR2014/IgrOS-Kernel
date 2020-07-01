@@ -3,7 +3,7 @@
 //	Memory paging for x86
 //
 //	File:	paging.hpp
-//	Date:	12 Feb 2020
+//	Date:	31 Jun 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -12,8 +12,6 @@
 
 
 #pragma once
-#ifndef IGROS_ARCH_PAGING_HPP
-#define IGROS_ARCH_PAGING_HPP
 
 
 #include <flags.hpp>
@@ -23,7 +21,7 @@
 
 
 // Arch-dependent code zone
-namespace arch {
+namespace igros::arch {
 
 
 	// Forward declaration
@@ -69,6 +67,14 @@ namespace arch {
 		// Init IDT table
 		static void init() noexcept;
 
+		// Enable paging
+		static void enable() noexcept;
+		// Disable paging
+		static void disable() noexcept;
+
+		// Map virtual page to physical page
+		static void map(const pointer_t phys, const pointer_t virt, const FLAGS flags) noexcept;
+
 		// Convert virtual address to physical address
 		[[nodiscard]] static pointer_t	toPhys(const pointer_t addr) noexcept;
 
@@ -82,8 +88,5 @@ namespace arch {
 	};
 
 
-}	// namespace arch
-
-
-#endif	// IGROS_ARCH_PAGING_HPP
+}	// namespace igros::arch
 

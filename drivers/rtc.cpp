@@ -3,7 +3,7 @@
 //	RTC clock driver
 //
 //	File:	rtc.cpp
-//	Date:	28 Jun 2020
+//	Date:	30 Jun 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -21,7 +21,7 @@
 
 
 // Arch-dependent code zone
-namespace arch {
+namespace igros::arch {
 
 
 	// Clock from RTC conversion
@@ -162,5 +162,5 @@ namespace arch {
 	}
 
 
-}	// namespace arch
+}	// namespace igros::arch
 

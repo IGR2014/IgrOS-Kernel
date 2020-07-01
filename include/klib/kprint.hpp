@@ -3,7 +3,7 @@
 //	Kernel text print functions
 //
 //	File:	kprint.hpp
-//	Date:	12 Feb 2020
+//	Date:	30 Jun 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -12,8 +12,6 @@
 
 
 #pragma once
-#ifndef IGROS_KLIB_KERNEL_PRINT_HPP
-#define IGROS_KLIB_KERNEL_PRINT_HPP
 
 
 #include <cstdint>
@@ -23,7 +21,7 @@
 
 
 // Kernel library code zone
-namespace klib {
+namespace igros::klib {
 
 
 	// Integer representation types
@@ -40,7 +38,7 @@ namespace klib {
 
 	// Kernel large integer to string function
 	inline sbyte_t* kitoa(sbyte_t* buffer, std::size_t size, const squad_t value, const base radix = base::DEC) noexcept {
-		return kitoa(buffer, size, quad_t(value), radix);
+		return kitoa(buffer, size, static_cast<quad_t>(value), radix);
 	}
 
 
@@ -49,29 +47,29 @@ namespace klib {
 
 	// Kernel integer to string function
 	inline sbyte_t* kitoa(sbyte_t* buffer, std::size_t size, const sdword_t value, const base radix = base::DEC) noexcept {
-		return kitoa(buffer, size, dword_t(value), radix);
+		return kitoa(buffer, size, static_cast<dword_t>(value), radix);
 	}
 
 
 	// Kernel integer to string function
 	inline sbyte_t* kitoa(sbyte_t* buffer, std::size_t size, const word_t value, const base radix = base::DEC) noexcept {
-		return kitoa(buffer, size, dword_t(value), radix);
+		return kitoa(buffer, size, static_cast<dword_t>(value), radix);
 	}
 
 	// Kernel integer to string function
 	inline sbyte_t* kitoa(sbyte_t* buffer, std::size_t size, const sword_t value, const base radix = base::DEC) noexcept {
-		return kitoa(buffer, size, dword_t(value), radix);
+		return kitoa(buffer, size, static_cast<dword_t>(value), radix);
 	}
 
 
 	// Kernel integer to string function
 	inline sbyte_t* kitoa(sbyte_t* buffer, std::size_t size, const byte_t value, const base radix = base::DEC) noexcept {
-		return kitoa(buffer, size, dword_t(value), radix);
+		return kitoa(buffer, size, static_cast<dword_t>(value), radix);
 	}
 
 	// Kernel integer to string function
 	inline sbyte_t* kitoa(sbyte_t* buffer, std::size_t size, const sbyte_t value, const base radix = base::DEC) noexcept {
-		return kitoa(buffer, size, sdword_t(value), radix);
+		return kitoa(buffer, size, static_cast<sdword_t>(value), radix);
 	}
 
 
@@ -81,7 +79,7 @@ namespace klib {
 
 	// Kernel pointer to string function
 	inline sbyte_t* kptoa(sbyte_t* buffer, std::size_t size, const void* value) noexcept {
-		return kstoa(buffer, size, std::size_t(value), base::HEX);
+		return kstoa(buffer, size, reinterpret_cast<std::size_t>(value), base::HEX);
 	}
 
 
@@ -136,8 +134,5 @@ namespace klib {
 	void kprintf(const sbyte_t* format, ...) noexcept;
 
 
-}	// namespace klib
-
-
-#endif	// IGROS_KLIB_KERNEL_PRINT_HPP
+}	// namespace igros::klib
 

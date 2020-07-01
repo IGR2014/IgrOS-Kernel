@@ -3,7 +3,7 @@
 //	ELF header info
 //
 //	File:	elf.hpp
-//	Date:	21 Jan 2020
+//	Date:	30 Jun 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -12,8 +12,6 @@
 
 
 #pragma once
-#ifndef IGROS_SYS_ELF_HPP
-#define IGROS_SYS_ELF_HPP
 
 
 #include <cstdint>
@@ -22,7 +20,7 @@
 
 
 // System code zone
-namespace sys {
+namespace igros::sys {
 
 
         // ELF identity magic
@@ -182,8 +180,5 @@ namespace sys {
 	};
 
 
-}	// namespace sys
-
-
-#endif	// IGROS_SYS_ELF_HPP
+}	// namespace igros::sys
 

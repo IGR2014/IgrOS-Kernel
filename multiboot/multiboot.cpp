@@ -3,7 +3,7 @@
 //	Multiboot 1 functions
 //
 //	File:	multiboot.cpp
-//	Date:	12 Feb 2020
+//	Date:	30 Jun 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -21,7 +21,7 @@
 
 
 // Multiboot code zone
-namespace multiboot {
+namespace igros::multiboot {
 
 
         // Dump multiboot flags
@@ -99,5 +99,5 @@ namespace multiboot {
 	}
 
 
-}	// namespace multiboot
+}	// namespace igros::multiboot
 

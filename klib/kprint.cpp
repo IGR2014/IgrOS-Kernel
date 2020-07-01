@@ -3,7 +3,7 @@
 //	Kernel text print functions
 //
 //	File:	kprint.cpp
-//	Date:	28 Jun 2020
+//	Date:	30 Jun 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -18,37 +18,40 @@
 #include <klib/kprint.hpp>
 #include <klib/kstring.hpp>
 #include <klib/kmath.hpp>
-#include <klib/kmemset.hpp>
+#include <klib/kmemory.hpp>
 
 
 // Kernel library code zone
-namespace klib {
+namespace igros::klib {
 
 
 	// Default temporary buffer for kitoa
 	constexpr std::size_t	KITOA_BUFF_LEN		= 65u;
 	// Constant integer symbols values buffer
-	static const sbyte_t	KITOA_CONST_BUFFER[]	= {u8"0123456789ABCDEF"};
+	constexpr sbyte_t	KITOA_CONST_BUFFER[]	= {u8"0123456789ABCDEF"};
 
 
 	// Kernel integer to string template function
-	inline static sbyte_t* kitoaHelper(sbyte_t* buffer, std::size_t size, dword_t value, const base radix) noexcept {
+	static sbyte_t* kitoaHelper(sbyte_t* buffer, std::size_t size, dword_t value, const base radix) noexcept {
 
 		// Temporary buffer for value text representation
-		sbyte_t tempBuffer[KITOA_BUFF_LEN] {};
-		// Setup counter to last - 1 position in temporary buffer
-		auto pos = KITOA_BUFF_LEN - 2u;
+		sbyte_t tempBuffer[KITOA_BUFF_LEN];
+		// Zero-initialize
+		kmemset8(tempBuffer, sizeof(tempBuffer), u8'\0');
+
 		// Check if sign is negative and value should be represented
 		// as decimal (binary, octal and hexidemical values have no sign)
 		if ((value < 0u) && (base::DEC == radix)) {
 			// Write minus sign to buffer
-			*buffer++ = '-';
+			*buffer++ = u8'-';
 			// Decrement size counter
 			--size;
 			// Made value positive
 			value = -value;
 		}
 
+		// Setup counter to last - 1 position in temporary buffer
+		auto pos = KITOA_BUFF_LEN - 2u;
 		// Loop through all digits while number is greater than base.
 		// Digits are stored from the end of the start of temporary buffer
 		// (this makes easier dealing with reverse routine by removing it)
@@ -64,35 +67,38 @@ namespace klib {
 		} while (value > 0u);
 
 		// Resulting string length
-		auto strLength = (KITOA_BUFF_LEN - pos);
+		auto strLength = (KITOA_BUFF_LEN - ++pos);
 		// Check size fit
 		if (strLength > size) {
 			return buffer;
 		}
 		// Revert temporary buffer we created from value to src buffer
-		return kstrcpy(&tempBuffer[++pos], buffer, strLength);
+		return kstrcpy(&tempBuffer[pos], buffer, strLength);
 
 	}
 
 
 	// Kernel long integer to string template function 
-	inline static sbyte_t* kltoaHelper(sbyte_t* buffer, std::size_t size, quad_t value, const base radix) noexcept {
+	static sbyte_t* kltoaHelper(sbyte_t* buffer, std::size_t size, quad_t value, const base radix) noexcept {
 
 		// Temporary buffer for value text representation
-		sbyte_t tempBuffer[KITOA_BUFF_LEN] {};
-		// Setup counter to last - 1 position in temporary buffer
-		auto pos = KITOA_BUFF_LEN - 2u;
+		sbyte_t tempBuffer[KITOA_BUFF_LEN];
+		// Zero-initialize
+		kmemset8(tempBuffer, sizeof(tempBuffer), u8'\0');
+
 		// Check if sign is negative and value should be represented
 		// as decimal (binary, octal and hexidemical values have no sign)
 		if ((value < 0u) && (base::DEC == radix)) {
 			// Write minus sign to buffer
-			*buffer++ = '-';
+			*buffer++ = u8'-';
 			// Decrement size counter
 			--size;
 			// Made value positive
 			value = -value;
 		}
 
+		// Setup counter to last - 1 position in temporary buffer
+		auto pos = KITOA_BUFF_LEN - 2u;
 		// Loop through all digits while number is greater than base.
 		// Digits are stored from the end of the start of temporary buffer
 		// (this makes easier dealing with reverse routine by removing it)
@@ -106,13 +112,13 @@ namespace klib {
 		} while (value > 0u);
 
 		// Resulting string length
-		auto strLength = (KITOA_BUFF_LEN - pos);
+		auto strLength = (KITOA_BUFF_LEN - ++pos);
 		// Check size fit
 		if (strLength > size) {
 			return buffer;
 		}
 		// Revert temporary buffer we created from value to src buffer
-		return kstrcpy(&tempBuffer[++pos], buffer, strLength);
+		return kstrcpy(&tempBuffer[pos], buffer, strLength);
 
 	}
 
@@ -133,11 +139,11 @@ namespace klib {
 
 #if defined(IGROS_ARCH_i386)
 
-		return kitoaHelper(buffer, size, dword_t(value), radix);
+		return kitoaHelper(buffer, size, static_cast<dword_t>(value), radix);
 
 #elif defined(IGROS_ARCH_x86_64)
 
-		return kltoaHelper(buffer, size, quad_t(value), radix);
+		return kltoaHelper(buffer, size, static_cast<quad_t>(value), radix);
 
 #else
 
@@ -160,8 +166,11 @@ namespace klib {
 		char*	str = nullptr;
 		// Numeric value holder
 		auto	len = 0ull;
+
 		// Number holder
-		sbyte_t	number[65u] {};
+		sbyte_t number[KITOA_BUFF_LEN];
+		// Zero-initialize
+		kmemset8(number, sizeof(number), u8'\0');
 
 		// Iterate through format string
 		while ((fmtIterator < size) && (format[fmtIterator] != u8'\0')) {
@@ -233,16 +242,16 @@ namespace klib {
 					// Check if quad specified
 					if (isQuad) {
 						// Get string length
-						len = kstrlen(kitoa(number, 64u, quad_t(va_arg(list, quad_t))/*list.arg<quad_t>()*/, base::BIN));
+						len = kstrlen(kitoa(number, 64u, static_cast<quad_t>(va_arg(list, quad_t))/*list.arg<quad_t>()*/, base::BIN));
 					} else if (isWord) {
 						// Get string length
-						len = kstrlen(kitoa(number, 64u, word_t(va_arg(list, dword_t))/*list.arg<word_t>()*/, base::BIN));
+						len = kstrlen(kitoa(number, 64u, static_cast<word_t>(va_arg(list, dword_t))/*list.arg<word_t>()*/, base::BIN));
 					} else if (isByte) {
 						// Get string length
-						len = kstrlen(kitoa(number, 64u, byte_t(va_arg(list, dword_t))/*list.arg<byte_t>()*/, base::BIN));
+						len = kstrlen(kitoa(number, 64u, static_cast<byte_t>(va_arg(list, dword_t))/*list.arg<byte_t>()*/, base::BIN));
 					} else {
 						// Get string length
-						len = kstrlen(kitoa(number, 64u, dword_t(va_arg(list, dword_t))/*list.arg<dword_t>()*/, base::BIN));
+						len = kstrlen(kitoa(number, 64u, static_cast<dword_t>(va_arg(list, dword_t))/*list.arg<dword_t>()*/, base::BIN));
 					}
 					// Check if value should be extended with fillChar
 					if (len < fillWidth) {
@@ -273,7 +282,7 @@ namespace klib {
 				// Character
 				case u8'c':
 					// Copy character to resulting string
-					*strIterator++ = sbyte_t(va_arg(list, dword_t));//list.arg<sbyte_t>();
+					*strIterator++ = static_cast<sbyte_t>(va_arg(list, dword_t));//list.arg<sbyte_t>();
 					break;
 
 				// Integer
@@ -282,16 +291,16 @@ namespace klib {
 					// Check if quad specified
 					if (isQuad) {
 						// Get string length
-						len = kstrlen(kitoa(number, 64u, quad_t(va_arg(list, quad_t))/*list.arg<squad_t>()*/));
+						len = kstrlen(kitoa(number, 64u, static_cast<quad_t>(va_arg(list, quad_t))/*list.arg<squad_t>()*/));
 					} else if (isWord) {
 						// Get string length
-						len = kstrlen(kitoa(number, 64u, word_t(va_arg(list, dword_t))/*list.arg<sword_t>()*/));
+						len = kstrlen(kitoa(number, 64u, static_cast<word_t>(va_arg(list, dword_t))/*list.arg<sword_t>()*/));
 					} else if (isByte) {
 						// Get string length
-						len = kstrlen(kitoa(number, 64u, byte_t(va_arg(list, dword_t))/*list.arg<sbyte_t>()*/));
+						len = kstrlen(kitoa(number, 64u, static_cast<byte_t>(va_arg(list, dword_t))/*list.arg<sbyte_t>()*/));
 					} else {
 						// Get string length
-						len = kstrlen(kitoa(number, 64u, dword_t(va_arg(list, dword_t))/*list.arg<sdword_t>()*/));
+						len = kstrlen(kitoa(number, 64u, static_cast<dword_t>(va_arg(list, dword_t))/*list.arg<sdword_t>()*/));
 					}
 					// Check if value should be extended with fillChar
 					if (len < fillWidth) {
@@ -318,16 +327,16 @@ namespace klib {
 					// Check if quad specified
 					if (isQuad) {
 						// Get string length
-						len = kstrlen(kitoa(number, 64u, quad_t(va_arg(list, quad_t))/*list.arg<quad_t>()*/, base::OCT));
+						len = kstrlen(kitoa(number, 64u, static_cast<quad_t>(va_arg(list, quad_t))/*list.arg<quad_t>()*/, base::OCT));
 					} else if (isWord) {
 						// Get string length
-						len = kstrlen(kitoa(number, 64u, word_t(va_arg(list, dword_t))/*list.arg<word_t>()*/, base::OCT));
+						len = kstrlen(kitoa(number, 64u, static_cast<word_t>(va_arg(list, dword_t))/*list.arg<word_t>()*/, base::OCT));
 					} else if (isByte) {
 						// Get string length
-						len = kstrlen(kitoa(number, 64u, byte_t(va_arg(list, dword_t))/*list.arg<byte_t>()*/, base::OCT));
+						len = kstrlen(kitoa(number, 64u, static_cast<byte_t>(va_arg(list, dword_t))/*list.arg<byte_t>()*/, base::OCT));
 					} else {
 						// Get string length
-						len = kstrlen(kitoa(number, 64u, dword_t(va_arg(list, dword_t))/*list.arg<dword_t>()*/, base::OCT));
+						len = kstrlen(kitoa(number, 64u, static_cast<dword_t>(va_arg(list, dword_t))/*list.arg<dword_t>()*/, base::OCT));
 					}
 					// Check if value should be extended with fillChar
 					if (len < fillWidth) {
@@ -356,7 +365,7 @@ namespace klib {
 					fillWidth	= sizeof(pointer_t) << 1;
 					fillChar	= u8'0';
 					// Get string length
-					len = kstrlen(kptoa(number, 64u, pointer_t(va_arg(list, pointer_t))/*list.arg<dword_t>()*/));
+					len = kstrlen(kptoa(number, 64u, static_cast<pointer_t>(va_arg(list, pointer_t))/*list.arg<dword_t>()*/));
 					// Check if value should be extended with fillChar
 					if (len < fillWidth) {
 						// Calc remaining length
@@ -394,16 +403,16 @@ namespace klib {
 					// Check if quad specified
 					if (isQuad) {
 						// Get string length
-						len = kstrlen(kitoa(number, 64u, quad_t(va_arg(list, quad_t))/*list.arg<quad_t>()*/));
+						len = kstrlen(kitoa(number, 64u, static_cast<quad_t>(va_arg(list, quad_t))/*list.arg<quad_t>()*/));
 					} else if (isWord) {
 						// Get string length
-						len = kstrlen(kitoa(number, 64u, word_t(va_arg(list, dword_t))/*list.arg<word_t>()*/));
+						len = kstrlen(kitoa(number, 64u, static_cast<word_t>(va_arg(list, dword_t))/*list.arg<word_t>()*/));
 					} else if (isByte) {
 						// Get string length
-						len = kstrlen(kitoa(number, 64u, byte_t(va_arg(list, dword_t))/*list.arg<byte_t>()*/));
+						len = kstrlen(kitoa(number, 64u, static_cast<byte_t>(va_arg(list, dword_t))/*list.arg<byte_t>()*/));
 					} else {
 						// Get string length
-						len = kstrlen(kitoa(number, 64u, dword_t(va_arg(list, dword_t))/*list.arg<dword_t>()*/));
+						len = kstrlen(kitoa(number, 64u, static_cast<dword_t>(va_arg(list, dword_t))/*list.arg<dword_t>()*/));
 					}
 					// Check if value should be extended with fillChar
 					if (len < fillWidth) {
@@ -430,16 +439,16 @@ namespace klib {
 					// Check if quad specified
 					if (isQuad) {
 						// Get string length
-						len = kstrlen(kitoa(number, 64u, quad_t(va_arg(list, quad_t))/*list.arg<quad_t>()*/, base::HEX));
+						len = kstrlen(kitoa(number, 64u, static_cast<quad_t>(va_arg(list, quad_t))/*list.arg<quad_t>()*/, base::HEX));
 					} else if (isWord) {
 						// Get string length
-						len = kstrlen(kitoa(number, 16u, word_t(va_arg(list, dword_t))/*list.arg<word_t>()*/, base::HEX));
+						len = kstrlen(kitoa(number, 16u, static_cast<word_t>(va_arg(list, dword_t))/*list.arg<word_t>()*/, base::HEX));
 					} else if (isByte) {
 						// Get string length
-						len = kstrlen(kitoa(number, 8u, byte_t(va_arg(list, dword_t))/*list.arg<byte_t>()*/, base::HEX));
+						len = kstrlen(kitoa(number, 8u, static_cast<byte_t>(va_arg(list, dword_t))/*list.arg<byte_t>()*/, base::HEX));
 					} else {
 						// Get string length
-						len = kstrlen(kitoa(number, 32u, dword_t(va_arg(list, dword_t))/*list.arg<dword_t>()*/, base::HEX));
+						len = kstrlen(kitoa(number, 32u, static_cast<dword_t>(va_arg(list, dword_t))/*list.arg<dword_t>()*/, base::HEX));
 					}
 					// Check if value should be extended with fillChar
 					if (len < fillWidth) {
@@ -514,7 +523,9 @@ namespace klib {
 	// Kernel printf function
 	void kprintf(const sbyte_t* format, ...) noexcept {
 		// Text buffer
-		static sbyte_t buffer[1024u] {};
+		static sbyte_t buffer[1024ull];
+		// Zero-initialize
+		kmemset8(buffer, sizeof(buffer), u8'\0');
 		// Kernel variadic argument list
 		va_list list;
 		// Initialize variadic arguments list
@@ -529,5 +540,5 @@ namespace klib {
 	}
 
 
-}	// namespace klib
+}	// namespace igros::klib
 

@@ -3,7 +3,7 @@
 //	Kernel math functions declarations
 //
 //	File:	kmath.hpp
-//	Date:	17 Jan 2020
+//	Date:	30 Jun 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -15,7 +15,7 @@
 
 
 // Kernel library code zone
-namespace klib {
+namespace igros::klib {
 
 
 #if defined(IGROS_ARCH_i386)
@@ -114,5 +114,5 @@ namespace klib {
 #endif
 
 
-}	// namespace klib
+}	// namespace igros::klib
 

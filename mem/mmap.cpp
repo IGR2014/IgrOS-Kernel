@@ -3,7 +3,7 @@
 //	Memory map operations definition
 //
 //	File:	mmap.cpp
-//	Date:	20 Jan 2020
+//	Date:	30 Jun 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -17,12 +17,12 @@
 
 
 // Kernel start and end
-extern const byte_t _SECTION_KERNEL_START_;
-extern const byte_t _SECTION_KERNEL_END_;
+extern const igros::byte_t _SECTION_KERNEL_START_;
+extern const igros::byte_t _SECTION_KERNEL_END_;
 
 
 // Memory code zone
-namespace mem {
+namespace igros::mem {
 
 
 	// Free pages pointer
@@ -93,5 +93,5 @@ namespace mem {
 	}
 
 
-}	// namespace mem
+}	// namespace igros::mem
 

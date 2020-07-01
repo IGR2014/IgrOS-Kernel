@@ -3,7 +3,7 @@
 //	Memory map operations
 //
 //	File:	mmap.hpp
-//	Date:	12 Feb 2020
+//	Date:	30 Jun 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -12,8 +12,6 @@
 
 
 #pragma once
-#ifndef IGROS_ARCH_MEMORY_MMAP_HPP
-#define IGROS_ARCH_MEMORY_MMAP_HPP
 
 
 #include <cstdint>
@@ -24,7 +22,7 @@
 
 
 // Memory code zone
-namespace mem {
+namespace igros::mem {
 
 
 	// Default page size constant
@@ -52,8 +50,5 @@ namespace mem {
 	};
 
 
-}	// namespace mem
-
-
-#endif	// IGROS_ARCH_MEMORY_MMAP_HPP
+}	// namespace igros::mem
 

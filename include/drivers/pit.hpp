@@ -3,7 +3,7 @@
 //	Programmable interrupt timer
 //
 //	File:	pit.hpp
-//	Date:	28 Jun 2020
+//	Date:	30 Jun 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -18,7 +18,7 @@
 
 
 // Arch-dependent code zone
-namespace arch {
+namespace igros::arch {
 
 
 	// Forward declaration
@@ -76,5 +76,5 @@ namespace arch {
 	void	pitSetup() noexcept;
 
 
-}	// namespace arch
+}	// namespace igros::arch
 

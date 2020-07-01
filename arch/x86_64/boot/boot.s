@@ -3,7 +3,7 @@
 #	Low-level boot setup function
 #
 #	File:	boot.s
-#	Date:	20 Jan 2020
+#	Date:	31 Jun 2020
 #
 #	Copyright (c) 2017 - 2020, Igor Baklykov
 #	All rights reserved.
@@ -71,7 +71,7 @@ kernelStart:						# Kernel starts here
 	leal	bootPageMapLevel4 - KERNEL_VMA, %eax	# Load address of Page Map Level 4 table
 	movl	%eax, %cr3				# Load page table
 
-	# 
+	# PAE
 	movl	%cr4, %eax				# Load CR4 value
 	orl	$PAGE_BIT_PAE, %eax			# Set Physical Address Extension bit
 	movl	%eax, %cr4				# Set new CR4 value

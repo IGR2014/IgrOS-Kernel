@@ -3,7 +3,7 @@
 //	CPUID detection
 //
 //	File:	cpuid.hpp
-//	Date:	12 Feb 2020
+//	Date:	30 Jun 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -12,15 +12,13 @@
 
 
 #pragma once
-#ifndef IGROS_ARCH_CPUID_HPP
-#define IGROS_ARCH_CPUID_HPP
 
 
 #include <types.hpp>
 
 
 // Arch-dependent code zone
-namespace arch {
+namespace igros::arch {
 
 
 	// CPUID EAX value (e.g. flag)
@@ -54,8 +52,5 @@ namespace arch {
         cpuidRegs_t	cpuid(const cpuidFlags_t flag) noexcept;
 
 
-}	// namespace arch
-
-
-#endif	// IGROS_ARCH_CPUID_HPP
+}	// namespace igros::arch
 

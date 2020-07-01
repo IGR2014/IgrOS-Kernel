@@ -3,7 +3,7 @@
 //	Exceptions low-level operations
 //
 //	File:	exceptions.hpp
-//	Date:	12 Feb 2020
+//	Date:	30 Jun 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -12,8 +12,6 @@
 
 
 #pragma once
-#ifndef IGROS_ARCH_EXCEPTIONS_HPP
-#define IGROS_ARCH_EXCEPTIONS_HPP
 
 
 #include <types.hpp>
@@ -21,7 +19,7 @@
 
 
 // Arch-dependent code zone
-namespace arch {
+namespace igros::arch {
 
 
 #ifdef	__cplusplus
@@ -214,8 +212,5 @@ namespace arch {
 	}
 
 
-}	// namespace arch
-
-
-#endif	// IGROS_ARCH_EXCEPTIONS_HPP
+}	// namespace igros::arch
 

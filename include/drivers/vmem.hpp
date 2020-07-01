@@ -3,7 +3,7 @@
 //	VGA memory low-level operations
 //
 //	File:	vmem.hpp
-//	Date:	28 Jun 2020
+//	Date:	30 Jun 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -18,7 +18,7 @@
 
 
 // Arch-dependent code zone
-namespace arch {
+namespace igros::arch {
 
 
 	// VGA console max width
@@ -107,5 +107,5 @@ namespace arch {
 	void		vmemInit() noexcept;
 
 
-}	// namespace arch
+}	// namespace igros::arch
 

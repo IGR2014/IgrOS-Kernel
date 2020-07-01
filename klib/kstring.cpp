@@ -3,7 +3,7 @@
 //	Kernel string functions
 //
 //	File:	string.cpp
-//	Date:	10 Feb 2020
+//	Date:	30 Jun 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -12,17 +12,16 @@
 
 
 #include <cstdint>
-//#include <algorithm>
 
 #include <klib/kstring.hpp>
 
 
 // Kernel library code zone
-namespace klib {
+namespace igros::klib {
 
 
 	// Find string end
-	sbyte_t* kstrend(sbyte_t* src) noexcept {
+	[[nodiscard]] sbyte_t* kstrend(sbyte_t* src) noexcept {
 		// Check src pointer
 		if (nullptr == src) {
 			return nullptr;
@@ -34,7 +33,7 @@ namespace klib {
 	}
 
 	// Find string end
-	const sbyte_t* kstrend(const sbyte_t* src) noexcept {
+	[[nodiscard]] const sbyte_t* kstrend(const sbyte_t* src) noexcept {
 		// Check src pointer
 		if (nullptr == src) {
 			return nullptr;
@@ -49,14 +48,14 @@ namespace klib {
 
 
 	// Calculate string length
-	std::size_t kstrlen(const sbyte_t* src) noexcept {
+	[[nodiscard]] std::size_t kstrlen(const sbyte_t* src) noexcept {
                 // Return string length
                 return kstrend(src) - src;
         }
 
 
 	// Copy string from one to other
-	sbyte_t* kstrcpy(sbyte_t* src, sbyte_t* dst, std::size_t size) noexcept {
+	[[maybe_unused]] sbyte_t* kstrcpy(sbyte_t* src, sbyte_t* dst, std::size_t size) noexcept {
 		// Check src, dst pointers and size
 		if (nullptr == src || nullptr == dst || 0u == size) {
 			// Pointer to empty dst
@@ -78,7 +77,7 @@ namespace klib {
 	}
 
 	// Copy string from one to other
-	const sbyte_t* kstrcpy(const sbyte_t* src, sbyte_t* dst, std::size_t size) noexcept {
+	[[maybe_unused]] const sbyte_t* kstrcpy(const sbyte_t* src, sbyte_t* dst, std::size_t size) noexcept {
 		// Check src, dst pointers and size
 		if (nullptr == src || nullptr == dst || 0u == size) {
 			// Pointer to empty dst
@@ -101,7 +100,7 @@ namespace klib {
 
 
 	// Concatenate string
-	sbyte_t* kstrcat(const sbyte_t* src, sbyte_t* dst, std::size_t size) noexcept {
+	[[maybe_unused]] sbyte_t* kstrcat(const sbyte_t* src, sbyte_t* dst, std::size_t size) noexcept {
 		// Check src, dst pointers and size
 		if (nullptr == src || nullptr == dst || 0u == size) {
 			// Return nothing
@@ -113,7 +112,7 @@ namespace klib {
 
 
 	// Compare strings
-	sdword_t kstrcmp(const sbyte_t* src1, const sbyte_t* src2, std::size_t size) noexcept {
+	[[nodiscard]] sdword_t kstrcmp(const sbyte_t* src1, const sbyte_t* src2, std::size_t size) noexcept {
 		// Check src1 and src2 pointers
 		if (nullptr == src1 || nullptr == src2 || 0u == size) {
 			// Handle wrong input
@@ -127,7 +126,7 @@ namespace klib {
 
 
 	// Find char occurrence in string
-	sbyte_t* kstrchr(sbyte_t* src, sbyte_t chr, std::size_t size) noexcept {
+	[[nodiscard]] sbyte_t* kstrchr(sbyte_t* src, sbyte_t chr, std::size_t size) noexcept {
 		// Check src pointer and size
 		if (nullptr == src || 0u == size) {
 			return nullptr;
@@ -139,7 +138,7 @@ namespace klib {
 	}
 
 	// Find char occurrence in string
-	const sbyte_t* kstrchr(const sbyte_t* src, sbyte_t chr, std::size_t size) noexcept {
+	[[nodiscard]] const sbyte_t* kstrchr(const sbyte_t* src, sbyte_t chr, std::size_t size) noexcept {
 		// Check src pointer and size
 		if (nullptr == src || 0u == size) {
 			return nullptr;
@@ -152,7 +151,7 @@ namespace klib {
 
 
 	// Invert string
-	sbyte_t* kstrinv(sbyte_t* src, std::size_t size) noexcept {
+	[[maybe_unused]] sbyte_t* kstrinv(sbyte_t* src, std::size_t size) noexcept {
 		// Check src pointer and size
 		if (nullptr == src) {
 			return nullptr;
@@ -177,5 +176,5 @@ namespace klib {
 	}
 
 
-}	// namespace klib
+}	// namespace igros::klib
 
