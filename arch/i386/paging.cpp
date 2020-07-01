@@ -119,7 +119,7 @@ namespace igros::arch {
 
 		// Physical pointer to page
 		auto pagePtr		= (pdEntryIndex << 10) + 0xFFC00000;
-		auto pageFlags		= static_cast<FLAGS>(pagePtr) & FLAGS::FLAGS_MASK;
+		pageFlags		= static_cast<FLAGS>(pagePtr) & FLAGS::FLAGS_MASK;
 		// Check if page table is present or not
 		if (FLAGS::CLEAR == (pageFlags & FLAGS::PRESENT)) {
 			// Page table is not present
