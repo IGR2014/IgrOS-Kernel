@@ -31,7 +31,7 @@ namespace igros::arch {
 	class paging final {
 
 		// Page flags
-		enum class FLAGS : dword_t {
+		enum class flags_t : dword_t {
 			CLEAR			= 0x00000000,
 			PRESENT			= 0x00000001,
 			WRITABLE		= 0x00000002,
@@ -76,8 +76,10 @@ namespace igros::arch {
 		// Disable Page Address Extension
 		static void disablePAE() noexcept;
 
+		// Identity map kernel + map higher-half
+		static void mapKernel() noexcept;
 		// Map virtual page to physical page
-		static void map(const pointer_t phys, const pointer_t virt, const FLAGS flags) noexcept;
+		static void map(const pointer_t phys, const pointer_t virt, const flags_t flags) noexcept;
 
 		// Convert virtual address to physical address
 		[[nodiscard]] static pointer_t	toPhys(const pointer_t addr) noexcept;

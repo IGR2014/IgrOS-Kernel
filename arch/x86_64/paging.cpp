@@ -52,54 +52,8 @@ namespace igros::arch {
 
 	// Setup paging
 	void paging::init() noexcept {
-
-		// Other page directories are unused
-		for (auto i = 0u; i < 512u; ++i) {
-			// Pages marked as clear
-			pageMapLevel4Table[i] = static_cast<quad_t>(FLAGS::CLEAR);
-		}
-		// Map first 1 GB of physical RAM to first 1 GB of virtual RAM
-		pageMapLevel4Table[0]		 = reinterpret_cast<quad_t>(pageDirectoryPointer) & 0x7FFFFFFF;
-		// Page marked as present and writable
-		pageMapLevel4Table[0]		|= static_cast<quad_t>(FLAGS::WRITABLE | FLAGS::PRESENT);
-		// Map first 1 GB of physical RAM to first 1 GB of virtual RAM
-		pageMapLevel4Table[511]		 = reinterpret_cast<quad_t>(pageDirectoryPointer) & 0x7FFFFFFF;
-		// Page marked as present and writable
-		pageMapLevel4Table[511]		|= static_cast<quad_t>(FLAGS::WRITABLE | FLAGS::PRESENT);
-
-		// Other page directories are unused
-		for (auto j = 0u; j < 512u; ++j) {
-			// Pages marked as clear
-			pageDirectoryPointer[j] = static_cast<quad_t>(FLAGS::CLEAR);
-		}
-		// Map first 1 GB of physical RAM to first 1 GB of virtual RAM
-		pageDirectoryPointer[0]		 = reinterpret_cast<quad_t>(pageDirectory) & 0x7FFFFFFF;
-		// Page marked as present and writable
-		pageDirectoryPointer[0]		|= static_cast<quad_t>(FLAGS::WRITABLE | FLAGS::PRESENT);
-		// Map first 1 GB of physical RAM to first 1 GB of virtual RAM
-		pageDirectoryPointer[510]	 = reinterpret_cast<quad_t>(pageDirectory) & 0x7FFFFFFF;
-		// Page marked as present and writable
-		pageDirectoryPointer[510]	|= static_cast<quad_t>(FLAGS::WRITABLE | FLAGS::PRESENT);
-
-		// Map all pages of first 1 GB to first page table
-		// Note 2 MB pages!
-		for (auto k = 0u; k < 2u; k++) {
-			pageDirectory[k]	 = (k << 21);
-			// Page marked as present and writable
-			pageDirectory[k]	|= static_cast<quad_t>(FLAGS::HUGE | FLAGS::WRITABLE | FLAGS::PRESENT);
-		}
-
-		// Install exception handler for page fault
-		except::install(except::NUMBER::PAGE_FAULT, paging::exHandler);
-
-		// Setup page directory
-		// PD address bits ([0 .. 63] in cr3)
-		paging::setDirectory(pageMapLevel4Table);
-		// Enable Page Address Extension
-		paging::enablePAE();
-		// Enable paging
-		paging::enable();
-
+		// Map kernel memory
+		paging::mapKernel();
 	}
 
 
@@ -129,6 +83,59 @@ namespace igros::arch {
 	}
 
 
+	// Identity map kernel + map higher-half
+	void paging::mapKernel() noexcept {
+
+		// Other page directories are unused
+		for (auto i = 0u; i < 512u; ++i) {
+			// Pages marked as clear
+			pageMapLevel4Table[i] = static_cast<quad_t>(flags_t::CLEAR);
+		}
+		// Map first 1 GB of physical RAM to first 1 GB of virtual RAM
+		pageMapLevel4Table[0]		 = reinterpret_cast<quad_t>(pageDirectoryPointer) & 0x7FFFFFFF;
+		// Page marked as present and writable
+		pageMapLevel4Table[0]		|= static_cast<quad_t>(flags_t::WRITABLE | flags_t::PRESENT);
+		// Map first 1 GB of physical RAM to first 1 GB of virtual RAM
+		pageMapLevel4Table[511]		 = reinterpret_cast<quad_t>(pageDirectoryPointer) & 0x7FFFFFFF;
+		// Page marked as present and writable
+		pageMapLevel4Table[511]		|= static_cast<quad_t>(flags_t::WRITABLE | flags_t::PRESENT);
+
+		// Other page directories are unused
+		for (auto j = 0u; j < 512u; ++j) {
+			// Pages marked as clear
+			pageDirectoryPointer[j] = static_cast<quad_t>(flags_t::CLEAR);
+		}
+		// Map first 1 GB of physical RAM to first 1 GB of virtual RAM
+		pageDirectoryPointer[0]		 = reinterpret_cast<quad_t>(pageDirectory) & 0x7FFFFFFF;
+		// Page marked as present and writable
+		pageDirectoryPointer[0]		|= static_cast<quad_t>(flags_t::WRITABLE | flags_t::PRESENT);
+		// Map first 1 GB of physical RAM to first 1 GB of virtual RAM
+		pageDirectoryPointer[510]	 = reinterpret_cast<quad_t>(pageDirectory) & 0x7FFFFFFF;
+		// Page marked as present and writable
+		pageDirectoryPointer[510]	|= static_cast<quad_t>(flags_t::WRITABLE | flags_t::PRESENT);
+
+		// Map all pages of first 1 GB to first page table
+		// Note 2 MB pages!
+		for (auto k = 0u; k < 2u; k++) {
+			pageDirectory[k]	 = (k << 21);
+			// Page marked as present and writable
+			pageDirectory[k]	|= static_cast<quad_t>(flags_t::HUGE | flags_t::WRITABLE | flags_t::PRESENT);
+		}
+
+		// Install exception handler for page fault
+		except::install(except::NUMBER::PAGE_FAULT, paging::exHandler);
+
+		// Setup page directory
+		// PD address bits ([0 .. 63] in cr3)
+		paging::setDirectory(pageMapLevel4Table);
+		// Enable Page Address Extension
+		paging::enablePAE();
+		// Enable paging
+		paging::enable();
+
+	}
+
+
 	// Convert virtual address to physical address
 	pointer_t paging::toPhys(const pointer_t virtAddr) noexcept {
 
@@ -140,27 +147,27 @@ namespace igros::arch {
 		auto pdEntryIndex	= (reinterpret_cast<quad_t>(virtAddr) & 0x3FE00000) >> 21;
 		// Physical pointer to page table
 		auto pageDirectoryPtr	= pageMapLevel4Table[pml4EntryIndex];
-		auto pageFlags		= static_cast<FLAGS>(pageDirectoryPtr);
+		auto pageFlags		= static_cast<flags_t>(pageDirectoryPtr);
 		// Check if page table is present or not
-		if (FLAGS::CLEAR == (pageFlags & FLAGS::PRESENT)) {
+		if (flags_t::CLEAR == (pageFlags & flags_t::PRESENT)) {
 			// Page or table is not present
 			return nullptr;
 		}
 
 		// Physical pointer to page table
-		auto pageTablePtr	= reinterpret_cast<quad_t*>(static_cast<FLAGS>(pageDirectoryPtr) & FLAGS::PHYS_ADDR_MASK)[pdpEntryIndex];
-		pageFlags		= static_cast<FLAGS>(pageTablePtr);
+		auto pageTablePtr	= reinterpret_cast<quad_t*>(static_cast<flags_t>(pageDirectoryPtr) & flags_t::PHYS_ADDR_MASK)[pdpEntryIndex];
+		pageFlags		= static_cast<flags_t>(pageTablePtr);
 		// Check if page table is present or not
-		if (FLAGS::CLEAR == (pageFlags & FLAGS::PRESENT)) {
+		if (flags_t::CLEAR == (pageFlags & flags_t::PRESENT)) {
 			// Page or table is not present
 			return nullptr;
 		}
 
 		// Physical pointer to page
-		auto pagePtr	= reinterpret_cast<quad_t*>(static_cast<FLAGS>(pageTablePtr) & FLAGS::PHYS_ADDR_MASK)[pdEntryIndex];
-		pageFlags	= static_cast<FLAGS>(pagePtr);
+		auto pagePtr	= reinterpret_cast<quad_t*>(static_cast<flags_t>(pageTablePtr) & flags_t::PHYS_ADDR_MASK)[pdEntryIndex];
+		pageFlags	= static_cast<flags_t>(pagePtr);
 		// Check if page is present or not
-		if (FLAGS::CLEAR == (pageFlags & FLAGS::PRESENT)) {
+		if (flags_t::CLEAR == (pageFlags & flags_t::PRESENT)) {
 			// Page or table is not present
 			return nullptr;
 		}
