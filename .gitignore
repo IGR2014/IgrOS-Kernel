@@ -12,6 +12,7 @@
 
 # Build folder
 build
+builds
 # Release folder
 release
 

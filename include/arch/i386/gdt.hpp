@@ -48,7 +48,7 @@ namespace igros::arch {
 	class gdt final {
 
 		// GDT flags enum
-		enum FLAGS : word_t {
+		enum flags_t : word_t {
 			// GDT empty segment
 			GDT_SEG_EMPTY		= 0x0000,
 			// GDT access page
@@ -98,15 +98,15 @@ namespace igros::arch {
 
 
 		// Empty GDT entry (the first one)
-		constexpr static FLAGS GDT_ENTRY_EMPTY		= FLAGS::GDT_SEG_EMPTY;
+		constexpr static flags_t GDT_ENTRY_EMPTY		= flags_t::GDT_SEG_EMPTY;
 		// Kernel code page (4 Mb page, ring 0, code)
-		constexpr static FLAGS GDT_ENTRY_CODE_RING0	= FLAGS::GDT_SEG_RING0_CODE;
+		constexpr static flags_t GDT_ENTRY_CODE_RING0	= flags_t::GDT_SEG_RING0_CODE;
 		// Kernel data page (4 Mb page, ring 0, data)
-		constexpr static FLAGS GDT_ENTRY_DATA_RING0	= FLAGS::GDT_SEG_RING0_DATA;
+		constexpr static flags_t GDT_ENTRY_DATA_RING0	= flags_t::GDT_SEG_RING0_DATA;
 		// User code page (4 Mb page, ring 3, code)
-		constexpr static FLAGS GDT_ENTRY_CODE_RING3	= FLAGS::GDT_SEG_RING3_CODE;
+		constexpr static flags_t GDT_ENTRY_CODE_RING3	= flags_t::GDT_SEG_RING3_CODE;
 		// User data page (4 Mb page, ring 3, data)
-		constexpr static FLAGS GDT_ENTRY_DATA_RING3	= FLAGS::GDT_SEG_RING3_DATA;
+		constexpr static flags_t GDT_ENTRY_DATA_RING3	= flags_t::GDT_SEG_RING3_DATA;
 
 		// Number of GDT entries
 		constexpr static dword_t GDT_SIZE		= 5u;
@@ -133,7 +133,7 @@ namespace igros::arch {
 		gdt& operator=(gdt &&other) = delete;
 
 		// Set GDT entry
-		constexpr static gdtEntry_t	setEntry(const dword_t base, const dword_t &limit, const FLAGS flags) noexcept;
+		constexpr static gdtEntry_t	setEntry(const dword_t base, const dword_t &limit, const flags_t flags) noexcept;
 		// Calc GDT size
 		[[nodiscard]] constexpr static word_t	calcSize() noexcept;
 
@@ -145,7 +145,7 @@ namespace igros::arch {
 
 
 	// Set GDT entry
-	constexpr gdtEntry_t gdt::setEntry(const dword_t base, const dword_t &limit, const FLAGS flags) noexcept {
+	constexpr gdtEntry_t gdt::setEntry(const dword_t base, const dword_t &limit, const flags_t flags) noexcept {
 		return {
 			.limitLow	= word_t(limit & 0xFFFF),
 			.baseLow	= word_t(base & 0xFFFF),

@@ -3,7 +3,7 @@
 //	Multiboot 1 header info
 //
 //	File:	multiboot.hpp
-//	Date:	30 Jun 2020
+//	Date:	02 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -28,7 +28,7 @@ namespace igros::multiboot {
 
 
 	// Multiboot header flags enumeration
-	enum FLAGS : dword_t {
+	enum flags_t : dword_t {
 		MEM		= (1u << 0),			// Memory info available
 		BOOT_DEV	= (1u << 1),			// Boot device info available
 		CMD		= (1u << 2),			// Kernel command line available
@@ -155,80 +155,80 @@ namespace igros::multiboot {
 
 	// Multiboot contains valid memory info
 	bool info_t::hasInfoMemory() const noexcept {
-		return flags & FLAGS::MEM;
+		return flags & flags_t::MEM;
 	}
 
 	// Multiboot contains valid boot device info
 	bool info_t::hasInfoBootDevice() const noexcept {
-		return flags & FLAGS::BOOT_DEV;
+		return flags & flags_t::BOOT_DEV;
 	}
 
 	// Multiboot contains valid command line info
 	bool info_t::hasInfoCommandLine() const noexcept {
-		return flags & FLAGS::CMD;
+		return flags & flags_t::CMD;
 	}
 
 	// Multiboot contains valid kernel modules info
 	bool info_t::hasInfoModules() const noexcept {
-		return flags & FLAGS::MODULES;
+		return flags & flags_t::MODULES;
 	}
 
 	// Multiboot contains valid A.OUT sections info
 	bool info_t::hasInfoAOUT() const noexcept {
 		// A.OUT but not ELF
-		return (flags & FLAGS::SYMS_AOUT) && !(flags & FLAGS::SYMS_ELF);
+		return (flags & flags_t::SYMS_AOUT) && !(flags & flags_t::SYMS_ELF);
 	}
 
 	// Multiboot contains valid ELF sections info
 	bool info_t::hasInfoELF() const noexcept {
 		// ELF but not A.OUT
-		return (flags & FLAGS::SYMS_ELF) && !(flags & FLAGS::SYMS_AOUT);
+		return (flags & flags_t::SYMS_ELF) && !(flags & flags_t::SYMS_AOUT);
 	}
 
 	// Multiboot contains valid memory map info
 	bool info_t::hasInfoMemoryMap() const noexcept {
-		return flags & FLAGS::MEM_MAP;
+		return flags & flags_t::MEM_MAP;
 	}
 
 	// Multiboot contains valid drives info
 	bool info_t::hasInfoDrives() const noexcept {
-		return flags & FLAGS::DRIVES;
+		return flags & flags_t::DRIVES;
 	}
 
 	// Multiboot contains valid config table info
 	bool info_t::hasInfoConfig() const noexcept {
-		return flags & FLAGS::TABLE_CONFIG;
+		return flags & flags_t::TABLE_CONFIG;
 	}
 
 	// Multiboot contains valid bootloader name info
 	bool info_t::hasInfoBootloaderName() const noexcept {
-		return flags & FLAGS::LOADER_NAME;
+		return flags & flags_t::LOADER_NAME;
 	}
 
 	// Multiboot contains valid APM table info
 	bool info_t::hasInfoAPM() const noexcept {
-		return flags & FLAGS::TABLE_APM;
+		return flags & flags_t::TABLE_APM;
 	}
 
 	// Multiboot contains valid VBE info
 	bool info_t::hasInfoVBE() const noexcept {
-		return flags & FLAGS::VBE;
+		return flags & flags_t::VBE;
 	}
 
 	// Multiboot contains valid FrameBuffer info
 	bool info_t::hasInfoFrameBuffer() const noexcept {
-		return flags & FLAGS::FRAME_BUF;
+		return flags & flags_t::FRAME_BUF;
 	}
 
 
 	// Get multiboot command line
 	const sbyte_t* info_t::commandLine() const noexcept {
-		return (flags & FLAGS::CMD) ? reinterpret_cast<const sbyte_t*>(cmdLine) : nullptr;
+		return (flags & flags_t::CMD) ? reinterpret_cast<const sbyte_t*>(cmdLine) : nullptr;
 	}
 
 	// Get multiboot bootloader name
 	const sbyte_t* info_t::loaderName() const noexcept {
-		return (flags & FLAGS::LOADER_NAME) ? reinterpret_cast<const sbyte_t*>(bootloaderName) : nullptr;
+		return (flags & flags_t::LOADER_NAME) ? reinterpret_cast<const sbyte_t*>(bootloaderName) : nullptr;
 	}
 
 
