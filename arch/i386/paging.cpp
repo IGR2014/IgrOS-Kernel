@@ -31,12 +31,6 @@ extern const igros::byte_t _SECTION_KERNEL_END_;
 namespace igros::arch {
 
 
-	// Page directory
-	static directory_t	gPageDirectory;
-	// Page table
-	static table_t		gPageTable;
-
-
 	// Free pages list
 	page_t* paging::mFreePages = reinterpret_cast<page_t*>(&paging::mFreePages);
 
@@ -91,6 +85,32 @@ namespace igros::arch {
 	void paging::disable() noexcept {
 		// Set paging bit off in CR0
 		inCR0(outCR0() & 0x7FFFFFFF);
+	}
+
+
+	// Enable Physical Address Extension
+	void paging::enablePAE() noexcept {
+		// Set PAE bit on in CR4
+		inCR4(outCR4() | 0x00000020);
+	}
+
+	// Disable Physical Address Extension
+	void paging::disablePAE() noexcept {
+		// Set PAE bit off in CR4
+		inCR4(outCR4() & 0xFFFFFFDF);
+	}
+
+
+	// Enable Page Size Extension
+	void paging::enablePSE() noexcept {
+		// Set PSE bit on in CR4
+		inCR4(outCR4() | 0x00000010);
+	}
+
+	// Disable Page Size Extension
+	void paging::disablePSE() noexcept {
+		// Set PSE bit on in CR4
+		inCR4(outCR4() | 0xFFFFFFEF);
 	}
 
 
@@ -202,7 +222,7 @@ namespace igros::arch {
 
 
 	// Convert virtual address to physical address
-	const pointer_t paging::toPhys(const pointer_t virt) noexcept {
+	pointer_t paging::toPhys(const pointer_t virt) noexcept {
 
 		// Page directory entry index from virtual address
 		auto pdIndex	= (reinterpret_cast<dword_t>(virt) & 0xFFC00000) >> 22;

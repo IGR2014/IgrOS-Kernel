@@ -112,6 +112,16 @@ namespace igros::arch {
 		// Disable paging
 		static void disable() noexcept;
 
+		// Enable Physical Address Extension
+		static void enablePAE() noexcept;
+		// Disable Physical Address Extension
+		static void disablePAE() noexcept;
+
+		// Enable Page Size Extension
+		static void enablePSE() noexcept;
+		// Disable Page Size Extension
+		static void disablePSE() noexcept;
+
 		// Initialize paging memory
 		static void heap(const pointer_t phys, const std::size_t size) noexcept;
 
@@ -124,7 +134,7 @@ namespace igros::arch {
 		static void map(const page_t* phys, const pointer_t virt, const flags_t flags) noexcept;
 
 		// Convert virtual address to physical address
-		[[nodiscard]] static const pointer_t	toPhys(const pointer_t addr) noexcept;
+		[[nodiscard]] static pointer_t	toPhys(const pointer_t addr) noexcept;
 
 		// Page Fault Exception handler
 		static void exHandler(const taskRegs_t* regs) noexcept;
