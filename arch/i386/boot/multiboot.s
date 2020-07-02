@@ -20,7 +20,7 @@
 .set	MULTIBOOT_MEMORY_INFO,		1<<1
 .set	MULTIBOOT_GRAPHICS,		1<<2
 
-.set	MULTIBOOT_FLAGS,		(MULTIBOOT_ALIGN | MULTIBOOT_MEMORY_INFO | MULTIBOOT_GRAPHICS)
+.set	MULTIBOOT_FLAGS,		(MULTIBOOT_ALIGN | MULTIBOOT_MEMORY_INFO)# | MULTIBOOT_GRAPHICS)
 
 .set	MULTIBOOT_CHECKSUM,		-(MULTIBOOT_MAGIC + MULTIBOOT_FLAGS)
 
@@ -35,12 +35,12 @@
 	.long	0			# Multiboot File load end address
 	.long	0			# Multiboot File BSS end address
 	.long	0			# Multiboot File Entry point address
-	.long	0			# Multiboot Graphics mode
-	.long	800			# Multiboot Graphics width
-	.long	600			# Multiboot Graphics height
-	.long	24			# Multiboot Graphics depth
-#	.long	1			# Multiboot Graphics mode
-#	.long	80			# Multiboot Graphics width
-#	.long	25			# Multiboot Graphics height
-#	.long	0			# Multiboot Graphics depth
+#	.long	0			# Multiboot Graphics mode
+#	.long	800			# Multiboot Graphics width
+#	.long	600			# Multiboot Graphics height
+#	.long	24			# Multiboot Graphics depth
+	.long	1			# Multiboot Graphics mode
+	.long	80			# Multiboot Graphics width
+	.long	25			# Multiboot Graphics height
+	.long	0			# Multiboot Graphics depth
 

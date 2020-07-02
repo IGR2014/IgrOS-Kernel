@@ -3,7 +3,7 @@
 //	Boot low-level main setup function
 //
 //	File:	boot.cpp
-//	Date:	28 Jun 2020
+//	Date:	02 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -168,6 +168,7 @@ namespace igros {
 						mode->bpp,
 						mode->physbase);
 
+				/*
 				// Get video memory
 				auto vMem	= reinterpret_cast<byte_t*>(mode->physbase);//reinterpret_cast<byte_t*>(((mode->physbase & 0xFFFF0000) >> 12) + (mode->physbase & 0xFFFF));
 				//
@@ -177,35 +178,20 @@ namespace igros {
 					vMem[j + 1]	= 0xFF;
 					vMem[j + 2]	= 0x00;
 				}
+				*/
 
 			}
-			// Check framebuffer
-			if (multiboot->hasInfoFrameBuffer()) {
-				klib::kprintf(u8"Framebuffer available\r\n");
-			}
 
-	/*
 			// Check if memory map exists
 			if (multiboot->hasInfoMemoryMap()) {
-
 				// Write pre-alloc message
-				klib::kprintf(u8"Memory page allocation...");
-				// Setup physical memory map
-				mem::phys::init(reinterpret_cast<multiboot::memoryMapEntry_t*>(multiboot->mmapAddr), multiboot->mmapAddr + multiboot->mmapLength);
-				// Allocate one page
-				auto pg = mem::phys::alloc();
-				// Write "Booted successfully" message
-				klib::kprintf(u8"Phys. page at:\t0x%p", pg);
-
-				reinterpret_cast<dword_t*>(pg)[0] = 45u;
-
-				// Free page
-				mem::phys::free(pg);
-				// Write "Booted successfully" message
-				klib::kprintf(u8"Phys. page at:\t0x%p\r\n", pg);
-
+				klib::kprintf(u8"Memory map available");
 			}
-	*/
+
+			// Check framebuffer
+			if (multiboot->hasInfoFrameBuffer()) {
+				klib::kprintf(u8"Framebuffer available");
+			}
 
 			// Write "Booted successfully" message
 			klib::kprintf(u8"Booted successfully\r\n");

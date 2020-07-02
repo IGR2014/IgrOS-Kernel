@@ -3,7 +3,7 @@
 //	Memory paging for x86
 //
 //	File:	paging.hpp
-//	Date:	31 Jun 2020
+//	Date:	02 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -28,11 +28,48 @@ namespace igros::arch {
 	struct taskRegs_t;
 
 
+	// Page directory max entries count
+	constexpr auto	PAGE_DIRECTORY_SIZE	= 1024ull;
+	// Page table max entries count
+	constexpr auto	PAGE_TABLE_SIZE		= PAGE_DIRECTORY_SIZE;
+	// Page shift
+	constexpr auto	PAGE_SHIFT		= 12;
+	// Page size
+	constexpr auto	PAGE_SIZE		= 1u << PAGE_SHIFT;
+	// Page mask
+	constexpr auto	PAGE_MASK		= PAGE_SIZE - 1u;
+
+
+#pragma push(pack, 1)
+
+
+	// Page
+	union alignas(PAGE_SIZE) page_t {
+		page_t*		next;					// Pointer to next page
+		byte_t		bytes[PAGE_SIZE];			// Page raw bytes
+	};
+
+
+	// Page table
+	struct alignas(PAGE_SIZE) table_t {
+		page_t*		pages[PAGE_TABLE_SIZE];			// Page table entries
+	};
+
+
+	// Page directory
+	struct alignas(PAGE_SIZE) directory_t {
+		table_t*	tables[PAGE_DIRECTORY_SIZE];		// Page directory entries
+	};
+
+
+#pragma pop(pack)
+
+
 	// Paging structure
 	class paging final {
 
 		// Page flags
-		enum class FLAGS : dword_t {
+		enum class flags_t : dword_t {
 			CLEAR			= 0x00000000,
 			PRESENT			= 0x00000001,
 			WRITABLE		= 0x00000002,
@@ -44,9 +81,12 @@ namespace igros::arch {
 			HUGE			= 0x00000080,
 			GLOBAL			= 0x00000100,
 			USER_DEFINED		= 0x00000E00,
-			FLAGS_MASK		= 0x00000FFF,
-			PHYS_ADDR_MASK		= 0xFFFFF000
+			FLAGS_MASK		= PAGE_MASK,
+			PHYS_ADDR_MASK		= ~PAGE_MASK
 		};
+
+
+		static page_t*	mFreePages;		// Free pages list
 
 
 	public:
@@ -64,7 +104,7 @@ namespace igros::arch {
 		// Move assignment
 		paging& operator=(paging &&other) = delete;
 
-		// Init IDT table
+		// Identity map kernel + map higher-half + self-map page directory
 		static void init() noexcept;
 
 		// Enable paging
@@ -72,17 +112,25 @@ namespace igros::arch {
 		// Disable paging
 		static void disable() noexcept;
 
+		// Initialize paging memory
+		static void heap(const pointer_t phys, const std::size_t size) noexcept;
+
+		// Allocate page
+		[[nodiscard]] static page_t*	allocate() noexcept;
+		// Deallocate page
+		static void			deallocate(const page_t* page) noexcept;
+
 		// Map virtual page to physical page
-		static void map(const pointer_t phys, const pointer_t virt, const FLAGS flags) noexcept;
+		static void map(const page_t* phys, const pointer_t virt, const flags_t flags) noexcept;
 
 		// Convert virtual address to physical address
-		[[nodiscard]] static pointer_t	toPhys(const pointer_t addr) noexcept;
+		[[nodiscard]] static const pointer_t	toPhys(const pointer_t addr) noexcept;
 
 		// Page Fault Exception handler
 		static void exHandler(const taskRegs_t* regs) noexcept;
 
 		// Set page directory
-		static void setDirectory(const pointer_t dir) noexcept;
+		static void setDirectory(const directory_t* dir) noexcept;
 
 
 	};

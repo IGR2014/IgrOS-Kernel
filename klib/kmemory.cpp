@@ -3,7 +3,7 @@
 //	Kernel mem functions
 //
 //	File:	kmemory.cpp
-//	Date:	30 Jun 2020
+//	Date:	02 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -121,10 +121,9 @@ namespace igros::klib {
 		if (nullptr == dst || nullptr == src || dst == src || 0ull == size) {
 			return nullptr;
 		}
-		// TODO: align!!!
 		// Do actual memcpy
 		for (auto i = 0ull; i < size; i++) {
-			static_cast<dword_t*>(dst)[i] = static_cast<dword_t*>(src)[i];
+			static_cast<byte_t*>(dst)[i] = static_cast<byte_t*>(src)[i];
 		}
 		// Return pointer to dst
 		return dst;
