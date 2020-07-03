@@ -51,13 +51,14 @@ namespace igros::arch {
 
 
 	// Page table
-	struct alignas(PAGE_SIZE) table_t {
+	union alignas(PAGE_SIZE) table_t {
+		table_t*	next;					// Pointer to next table
 		page_t*		pages[PAGE_TABLE_SIZE];			// Page table entries
 	};
 
 
 	// Page directory
-	struct alignas(PAGE_SIZE) directory_t {
+	union alignas(PAGE_SIZE) directory_t {
 		table_t*	tables[PAGE_DIRECTORY_SIZE];		// Page directory entries
 	};
 
@@ -67,6 +68,12 @@ namespace igros::arch {
 
 	// Paging structure
 	class paging final {
+
+
+		static page_t*	mFreePages;		// Free pages list
+
+
+	public:
 
 		// Page flags
 		enum class flags_t : dword_t {
@@ -84,12 +91,6 @@ namespace igros::arch {
 			FLAGS_MASK		= PAGE_MASK,
 			PHYS_ADDR_MASK		= ~PAGE_MASK
 		};
-
-
-		static page_t*	mFreePages;		// Free pages list
-
-
-	public:
 
 		// Default c-tor
 		paging() noexcept = default;
