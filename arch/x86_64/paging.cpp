@@ -33,55 +33,17 @@ namespace igros::arch {
 
 
 	// Free pages list
-	page_t* paging::mFreePages = reinterpret_cast<page_t*>(&paging::mFreePages);
+	table_t* paging::mFreePages = reinterpret_cast<table_t*>(&paging::mFreePages);
 
 
 	// Setup paging
 	void paging::init() noexcept {
 
-		/*
-		// Other page directories are unused
-		for (auto i = 0u; i < 512u; ++i) {
-			// Pages marked as clear
-			pageMapLevel4Table[i] = static_cast<quad_t>(flags_t::CLEAR);
-		}
-		// Map first 1 GB of physical RAM to first 1 GB of virtual RAM
-		pageMapLevel4Table[0]		 = reinterpret_cast<quad_t>(pageDirectoryPointer) & 0x7FFFFFFF;
-		// Page marked as present and writable
-		pageMapLevel4Table[0]		|= static_cast<quad_t>(flags_t::WRITABLE | flags_t::PRESENT);
-		// Map first 1 GB of physical RAM to first 1 GB of virtual RAM
-		pageMapLevel4Table[511]		 = reinterpret_cast<quad_t>(pageDirectoryPointer) & 0x7FFFFFFF;
-		// Page marked as present and writable
-		pageMapLevel4Table[511]		|= static_cast<quad_t>(flags_t::WRITABLE | flags_t::PRESENT);
-
-		// Other page directories are unused
-		for (auto j = 0u; j < 512u; ++j) {
-			// Pages marked as clear
-			pageDirectoryPointer[j] = static_cast<quad_t>(flags_t::CLEAR);
-		}
-		// Map first 1 GB of physical RAM to first 1 GB of virtual RAM
-		pageDirectoryPointer[0]		 = reinterpret_cast<quad_t>(pageDirectory) & 0x7FFFFFFF;
-		// Page marked as present and writable
-		pageDirectoryPointer[0]		|= static_cast<quad_t>(flags_t::WRITABLE | flags_t::PRESENT);
-		// Map first 1 GB of physical RAM to first 1 GB of virtual RAM
-		pageDirectoryPointer[510]	 = reinterpret_cast<quad_t>(pageDirectory) & 0x7FFFFFFF;
-		// Page marked as present and writable
-		pageDirectoryPointer[510]	|= static_cast<quad_t>(flags_t::WRITABLE | flags_t::PRESENT);
-
-		// Map all pages of first 1 GB to first page table
-		// Note 2 MB pages!
-		for (auto k = 0u; k < 2u; k++) {
-			pageDirectory[k]	 = (k << 21);
-			// Page marked as present and writable
-			pageDirectory[k]	|= static_cast<quad_t>(flags_t::HUGE | flags_t::WRITABLE | flags_t::PRESENT);
-		}
-		*/
-
 		// Install exception handler for page fault
 		except::install(except::NUMBER::PAGE_FAULT, paging::exHandler);
 
 		// Initialize pages for page tables
-		paging::heap(const_cast<byte_t*>(&_SECTION_KERNEL_END_), PAGE_SIZE << 6);
+		paging::heap(const_cast<byte_t*>(&_SECTION_KERNEL_END_), 4096ull << 6);
 
 		// Get old page map level 4
 		auto pageMapLvl4Old	= reinterpret_cast<pml4_t*>(outCR3());
@@ -93,18 +55,13 @@ namespace igros::arch {
 		// PD address bits ([0 .. 31] in cr3)
 		paging::setDirectory(pageMapLvl4);
 
-		/*
 		// Map first 4 MB of physical RAM to first 4 MB of virtual RAM
-		for (auto j = 0u; j < 1024u; j++) {
+		for (auto j = 0ull; j < 512ull; j++) {
 			// Create page table index
 			auto id = reinterpret_cast<const pointer_t>(j << PAGE_SHIFT);
 			// Map page to 
-			paging::map(reinterpret_cast<const page_t*>(id), id, flags_t::WRITABLE | flags_t::PRESENT);
+			paging::map(reinterpret_cast<const page_t*>(id), id, flags_t::HUGE | flags_t::WRITABLE | flags_t::PRESENT);
 		}
-		*/
-
-		// Map first 4 MB of physical RAM to first 4 MB of virtual RAM
-		paging::map(nullptr, nullptr, flags_t::HUGE | flags_t::WRITABLE | flags_t::PRESENT);
 		// Also map first 4MB of physical RAM to first 4MB after 3GB in virtual memory
 		paging::map(nullptr, reinterpret_cast<const pointer_t>(0xFFFFFFFF80000000), flags_t::HUGE | flags_t::WRITABLE | flags_t::PRESENT);
 		// Map page directory to itself
@@ -151,14 +108,14 @@ namespace igros::arch {
 	void paging::heap(const pointer_t phys, const std::size_t size) noexcept {
 
 		// Temporary data
-		auto tempPtr	= reinterpret_cast<quad_t>(phys);
+		auto tempPhys	= reinterpret_cast<quad_t>(phys);
 		auto tempSize	= size;
 		// Check alignment
-		if (0x00 != (tempPtr & 4096ull)) {
+		if (0x00 != (tempPhys & 4095ull)) {
 			// Align pointer at page size alignment
-			tempPtr		= ((tempPtr >> 12) << 12);
+			tempPhys	= ((tempPhys + 4096ull) & 0xFFFFFFFFFFFFF000);
 			// Adjust size
-			tempSize	-= (tempPtr - reinterpret_cast<quad_t>(phys));
+			tempSize	-= (tempPhys - reinterpret_cast<quad_t>(phys));
 		}
 		// Get number of pages
 		auto numOfPages = (tempSize >> 12);
@@ -168,7 +125,7 @@ namespace igros::arch {
 		}
 
 		// Convert to page pointer
-		auto page	= reinterpret_cast<page_t*>(tempPtr);
+		auto page	= reinterpret_cast<table_t*>(tempPhys);
 		// Link first page to free pages list
 		page[0ull].next	= paging::mFreePages;
 		// Create linked list of free pages
@@ -191,7 +148,7 @@ namespace igros::arch {
 			// Update free pages list
 			paging::mFreePages	= addr->next;
 			// Return pointer to free page
-			return addr;
+			return reinterpret_cast<page_t*>(addr);
 		}
 		// Nothing to return
 		return nullptr;
@@ -206,8 +163,8 @@ namespace igros::arch {
 			return;
 		}
 		// Deallocate page back to heap free list
-		const_cast<page_t*>(page)->next = paging::mFreePages;
-		paging::mFreePages		= const_cast<page_t*>(page);
+		reinterpret_cast<table_t*>(const_cast<page_t*>(page))->next = paging::mFreePages;
+		paging::mFreePages = reinterpret_cast<table_t*>(const_cast<page_t*>(page));
 	}
 
 
@@ -239,7 +196,7 @@ namespace igros::arch {
 		// Check if page directory pointer is present or not
 		if (flags_t::CLEAR == (pageFlags & flags_t::PRESENT)) {
 			// Allocate page table
-			pageDirP = reinterpret_cast<directoryPointer_t*>(reinterpret_cast<quad_t>(paging::allocate()) & 0x7FFFFFFF);
+			pageDirP = reinterpret_cast<directoryPointer_t*>(paging::allocate());
 		}
 
 		// Get page directory
@@ -249,7 +206,7 @@ namespace igros::arch {
 		// Check if page directory is present or not
 		if (flags_t::CLEAR == (pageFlags & flags_t::PRESENT)) {
 			// Allocate page table
-			pageDir = reinterpret_cast<directory_t*>(reinterpret_cast<quad_t>(paging::allocate()) & 0x7FFFFFFF);
+			pageDir = reinterpret_cast<directory_t*>(paging::allocate());
 		}
 
 		// Get page table pointer

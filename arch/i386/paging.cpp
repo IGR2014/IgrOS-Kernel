@@ -123,7 +123,7 @@ namespace igros::arch {
 		// Check alignment
 		if (0x00 != (tempPtr & PAGE_MASK)) {
 			// Align pointer at page size alignment
-			tempPtr		= ((tempPtr >> PAGE_SHIFT) << PAGE_SHIFT);
+			tempPtr		= ((tempPtr + PAGE_SIZE) & ~PAGE_MASK);
 			// Adjust size
 			tempSize	-= (tempPtr - reinterpret_cast<dword_t>(phys));
 		}
@@ -204,7 +204,7 @@ namespace igros::arch {
 		// Check if page table is present or not
 		if (flags_t::CLEAR == (pageFlags & flags_t::PRESENT)) {
 			// Allocate page table
-			pageTable = reinterpret_cast<table_t*>(reinterpret_cast<dword_t>(paging::allocate()) & 0x3FFFFFFF);
+			pageTable = reinterpret_cast<table_t*>(paging::allocate());
 		}
 
 		// Get page pointer

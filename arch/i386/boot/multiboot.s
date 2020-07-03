@@ -35,12 +35,8 @@
 	.long	0			# Multiboot File load end address
 	.long	0			# Multiboot File BSS end address
 	.long	0			# Multiboot File Entry point address
-#	.long	0			# Multiboot Graphics mode
-#	.long	800			# Multiboot Graphics width
-#	.long	600			# Multiboot Graphics height
-#	.long	24			# Multiboot Graphics depth
-	.long	1			# Multiboot Graphics mode
-	.long	80			# Multiboot Graphics width
-	.long	25			# Multiboot Graphics height
-	.long	0			# Multiboot Graphics depth
+	.long	0			# Multiboot Graphics mode
+	.long	800			# Multiboot Graphics width
+	.long	600			# Multiboot Graphics height
+	.long	24			# Multiboot Graphics depth
 

@@ -28,6 +28,7 @@
 #include <idt.hpp>
 #include <irq.hpp>
 #include <paging.hpp>
+#include <cr.hpp>
 #include <cpu.hpp>
 
 // Kernel drivers
@@ -134,9 +135,9 @@ namespace igros {
 				// Get current VBE mode
 				auto mode	= reinterpret_cast<multiboot::vbeMode*>(multiboot->vbeModeInfo);
 				// Get OEM string
-				auto oem	= reinterpret_cast<multiboot::vbeMode*>(((config->oem & 0xFFFF0000) >> 12) + (config->oem & 0xFFFF));
+				auto oem	= reinterpret_cast<const char* const>(((config->oem & 0xFFFF0000) >> 12) + (config->oem & 0xFFFF));
 				// Get available modes string
-				auto modes	= reinterpret_cast<multiboot::vbeMode*>(((config->modes & 0xFFFF0000) >> 12) + (config->modes & 0xFFFF));
+				auto modes	= reinterpret_cast<const char* const>(((config->modes & 0xFFFF0000) >> 12) + (config->modes & 0xFFFF));
 				// Get vendor string
 				auto vendor	= reinterpret_cast<const char* const>(((config->vendor & 0xFFFF0000) >> 12) + (config->vendor & 0xFFFF));
 				// Get product string
@@ -168,15 +169,18 @@ namespace igros {
 						mode->bpp,
 						mode->physbase);
 
-				/*
 				// Get video memory
-				auto vMem	= reinterpret_cast<byte_t*>(mode->physbase);//reinterpret_cast<byte_t*>(((mode->physbase & 0xFFFF0000) >> 12) + (mode->physbase & 0xFFFF));
+				auto pvMem = reinterpret_cast<byte_t*>(((mode->physbase & 0xFFFF0000) >> 12) + (mode->physbase & 0xFFFF));
+				auto vvMem = reinterpret_cast<byte_t*>(0xFFFFFFFFE0000000);
 				//
-				for (int i = 0; i < 100000; i++) {
+				arch::paging::map(reinterpret_cast<arch::page_t*>(pvMem), vvMem, arch::paging::flags_t::HUGE | arch::paging::flags_t::WRITABLE | arch::paging::flags_t::PRESENT);
+
+				/*
+				for (int i = 0; i < 100; i++) {
 					auto j		= i * 3;
-					vMem[j + 0]	= 0x00;
-					vMem[j + 1]	= 0xFF;
-					vMem[j + 2]	= 0x00;
+					vvMem[j + 0]	= 0xFF;
+					vvMem[j + 1]	= 0xFF;
+					vvMem[j + 2]	= 0xFF;
 				}
 				*/
 
@@ -184,7 +188,6 @@ namespace igros {
 
 			// Check if memory map exists
 			if (multiboot->hasInfoMemoryMap()) {
-				// Write pre-alloc message
 				klib::kprintf(u8"Memory map available");
 			}
 
