@@ -50,7 +50,7 @@ namespace igros::arch {
 
 		// Allocate page directory
 		auto pageDirectory = static_cast<directory_t*>(paging::allocate());
-		// 
+		// Identity map first 4MB of physical memory to first 4Mb in virtual memory
 		for (auto i = 0ull; i < 2ull; i++) {
 			// Create page table index
 			auto page = static_cast<flags_t>(i << PAGE_SHIFT);
@@ -63,9 +63,9 @@ namespace igros::arch {
 		// Zero PD
 		klib::kmemset(pageDirectoryPtr, 512u, static_cast<const quad_t>(flags_t::CLEAR));
 
-		// 
+		// Identity map first 4MB of physical memory to first 4Mb in virtual memory
 		pageDirectoryPtr->directories[0]	= reinterpret_cast<directory_t*>(reinterpret_cast<quad_t>(pageDirectory) & 0x7FFFFFFF | static_cast<quad_t>(flags));
-		// Map page directory to itself
+		// Alos map first 4MB of physical memory to first 4MB in virtual memory
 		pageDirectoryPtr->directories[510]	= reinterpret_cast<directory_t*>(reinterpret_cast<quad_t>(pageDirectory) & 0x7FFFFFFF | static_cast<quad_t>(flags));
 
 		// Allocate page map level 4

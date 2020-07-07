@@ -64,7 +64,7 @@ namespace igros::arch {
 
 		// Identity map first 4MB of physical memory to first 4Mb in virtual memory
 		pageDir->tables[0]	= reinterpret_cast<table_t*>(reinterpret_cast<dword_t>(pageTable) & 0x3FFFFFFF | static_cast<dword_t>(flags));
-		// Map first 4MB of physical memory to 3Gb offset in virtual memory
+		// Also map first 4MB of physical memory to 3Gb offset in virtual memory
 		pageDir->tables[768]	= reinterpret_cast<table_t*>(reinterpret_cast<dword_t>(pageTable) & 0x3FFFFFFF | static_cast<dword_t>(flags));
 		// Map page directory to itself
 		pageDir->tables[1023]	= reinterpret_cast<table_t*>(reinterpret_cast<dword_t>(pageDir) & 0x3FFFFFFF | static_cast<dword_t>(flags));
