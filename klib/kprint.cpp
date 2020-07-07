@@ -3,7 +3,7 @@
 //	Kernel text print functions
 //
 //	File:	kprint.cpp
-//	Date:	30 Jun 2020
+//	Date:	07 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -37,7 +37,7 @@ namespace igros::klib {
 		// Temporary buffer for value text representation
 		sbyte_t tempBuffer[KITOA_BUFF_LEN];
 		// Zero-initialize
-		kmemset8(tempBuffer, sizeof(tempBuffer), u8'\0');
+		kmemset(tempBuffer, sizeof(tempBuffer), static_cast<byte_t>(u8'\0'));
 
 		// Check if sign is negative and value should be represented
 		// as decimal (binary, octal and hexidemical values have no sign)
@@ -84,7 +84,7 @@ namespace igros::klib {
 		// Temporary buffer for value text representation
 		sbyte_t tempBuffer[KITOA_BUFF_LEN];
 		// Zero-initialize
-		kmemset8(tempBuffer, sizeof(tempBuffer), u8'\0');
+		kmemset(tempBuffer, sizeof(tempBuffer), static_cast<byte_t>(u8'\0'));
 
 		// Check if sign is negative and value should be represented
 		// as decimal (binary, octal and hexidemical values have no sign)
@@ -170,7 +170,7 @@ namespace igros::klib {
 		// Number holder
 		sbyte_t number[KITOA_BUFF_LEN];
 		// Zero-initialize
-		kmemset8(number, sizeof(number), u8'\0');
+		kmemset(number, sizeof(number), static_cast<byte_t>(u8'\0'));
 
 		// Iterate through format string
 		while ((fmtIterator < size) && (format[fmtIterator] != u8'\0')) {
@@ -262,7 +262,7 @@ namespace igros::klib {
 							*strIterator = fillChar;
 						} else {
 							// Copy string
-							kmemset8(strIterator, sz, fillChar);
+							kmemset(strIterator, sz, static_cast<byte_t>(fillChar));
 						}
 						// Move iterator to string's end
 						strIterator += sz;
@@ -311,7 +311,7 @@ namespace igros::klib {
 							*strIterator = fillChar;
 						} else {
 							// Copy string
-							kmemset8(strIterator, sz, fillChar);
+							kmemset(strIterator, sz, static_cast<byte_t>(fillChar));
 						}
 						// Move iterator to string's end
 						strIterator += sz;
@@ -347,7 +347,7 @@ namespace igros::klib {
 							*strIterator = fillChar;
 						} else {
 							// Copy string
-							kmemset8(strIterator, sz, fillChar);
+							kmemset(strIterator, sz, static_cast<byte_t>(fillChar));
 						}
 						// Move iterator to string's end
 						strIterator += sz;
@@ -375,7 +375,7 @@ namespace igros::klib {
 							*strIterator = fillChar;
 						} else {
 							// Copy string
-							kmemset8(strIterator, sz, fillChar);
+							kmemset(strIterator, sz, static_cast<byte_t>(fillChar));
 						}
 						// Move iterator to string's end
 						strIterator += sz;
@@ -423,7 +423,7 @@ namespace igros::klib {
 							*strIterator = fillChar;
 						} else {
 							// Copy string
-							kmemset8(strIterator, sz, fillChar);
+							kmemset(strIterator, sz, static_cast<byte_t>(fillChar));
 						}
 						// Move iterator to string's end
 						strIterator += sz;
@@ -459,7 +459,7 @@ namespace igros::klib {
 							*strIterator = fillChar;
 						} else {
 							// Copy string
-							kmemset8(strIterator, sz, fillChar);
+							kmemset(strIterator, sz, static_cast<byte_t>(fillChar));
 						}
 						// Move iterator to string's end
 						strIterator += sz;
@@ -525,7 +525,7 @@ namespace igros::klib {
 		// Text buffer
 		static sbyte_t buffer[1024ull];
 		// Zero-initialize
-		kmemset8(buffer, sizeof(buffer), u8'\0');
+		kmemset(buffer, sizeof(buffer), static_cast<byte_t>(u8'\0'));
 		// Kernel variadic argument list
 		va_list list;
 		// Initialize variadic arguments list
