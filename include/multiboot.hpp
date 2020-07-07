@@ -110,6 +110,14 @@ namespace igros::multiboot {
 		word_t		vbeInterfaceOffset;		// Multiboot VBE interface offset
 		word_t		vbeInterfaceLen;		// Multiboot VBE interface length
 
+		quad_t		fbAddress;			// Multiboot FB address
+		dword_t		fbPitch;			// Multiboot FB pitch
+		dword_t		fbWidth;			// Multiboot FB width
+		dword_t		fbHeight;			// Multiboot FB height
+		byte_t		fbBpp;				// Multiboot FB bpp
+		byte_t		fbType;				// Multiboot FB type
+		byte_t		fbColorInfo[6];			// Multiboot FB color info
+
 
 		// Multiboot contains valid memory info
 		inline bool	hasInfoMemory() const noexcept;
@@ -255,46 +263,48 @@ namespace igros::multiboot {
 		sbyte_t		signature[4];		// VBE signature ("VESA")
 		word_t		version;		// VBE version (e.g. 0x0300 = 3.0)
 		dword_t		oem;			// OEM string
-		byte_t		caps[4];
-		dword_t		modes;
-		word_t		memory;
-		word_t		rev;
-		dword_t		vendor;
-		dword_t		productName;
-		dword_t		productRev;
+		dword_t		caps;			// VBE capabilities
+		dword_t		modes;			// VBE modes pointer
+		word_t		memory;			// VBE video memory size in 64 Kb. blocks
+		word_t		rev;			// VBE revision string
+		dword_t		vendor;			// VBE vendor string
+		dword_t		productName;		// VBE product name string
+		dword_t		productRev;		// VBE product revision string
+		byte_t		reserved[222];		// VBE reserved
+		byte_t		oemData[256];		// VBE OEM data
 	};
 
 	// VBE mode
 	struct vbeMode {
-		word_t		attr;
-		byte_t		winA;
-		byte_t		winB;
-		word_t		gran;
-		word_t		winSize;
-		word_t		segA;
-		word_t		segB;
+		word_t		attributes;
+		byte_t		windowA;
+		byte_t		windowB;
+		word_t		granularity;
+		word_t		windowSize;
+		word_t		segmentA;
+		word_t		segmentB;
 		dword_t		funcPtr;
 		word_t		pitch;
-		word_t		resX;
-		word_t		resY;
+		word_t		width;
+		word_t		height;
 		byte_t		charW;
 		byte_t		charH;
 		byte_t		planes;
 		byte_t		bpp;
 		byte_t		banks;
-		byte_t		memory_model;
-		byte_t		bank_size;
-		byte_t		image_pages;
+		byte_t		memoryModel;
+		byte_t		bankSize;
+		byte_t		imagePages;
 		byte_t		reserved0;
-		byte_t		red_mask;
-		byte_t		red_position;
-		byte_t		green_mask;
-		byte_t		green_position;
-		byte_t		blue_mask;
-		byte_t		blue_position;
-		byte_t		rsv_mask;
-		byte_t		rsv_position;
-		byte_t		directcolor_attributes;
+		byte_t		redMask;
+		byte_t		redPosition;
+		byte_t		greenMask;
+		byte_t		greenPosition;
+		byte_t		blueMask;
+		byte_t		bluePosition;
+		byte_t		reservedMask;
+		byte_t		reservedPosition;
+		byte_t		directColorAttributes;
 		dword_t		physbase;
 		dword_t		reserved1;
 		word_t		reserved2;

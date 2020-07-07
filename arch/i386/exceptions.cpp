@@ -3,7 +3,7 @@
 //	Exceptions low-level operations
 //
 //	File:	exceptions.cpp
-//	Date:	30 Jun 2020
+//	Date:	06 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -12,6 +12,7 @@
 
 
 #include <exceptions.hpp>
+#include <irq.hpp>
 #include <taskRegs.hpp>
 #include <cpu.hpp>
 
@@ -49,6 +50,8 @@ namespace igros::arch {
 
 	// Default exception handler
 	void except::exDefaultHandler(const taskRegs_t* regs) noexcept {
+		// Disable interrupts
+		irq::disable();
 		// Print exception name
 		klib::kprintf("Exception:\t%s", except::NAME[regs->number]);
 		// Hang CPU

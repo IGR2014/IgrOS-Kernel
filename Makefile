@@ -121,7 +121,10 @@ deploy: all
 	@echo "	MKDIR	$(IGROS_DIR_ISO_GRUB)"
 	@mkdir -p $(IGROS_DIR_RELEASE)/$(IGROS_DIR_ISO_GRUB)
 	@echo "	GEN	$(IGROS_GRUB_CONFIG)"
-	@echo 'set timeout=0'			 > $(IGROS_DIR_RELEASE)/$(IGROS_GRUB_CONFIG)
+	@echo 'insmod vbe'			 > $(IGROS_DIR_RELEASE)/$(IGROS_GRUB_CONFIG)
+	@echo 'insmod vga'			>> $(IGROS_DIR_RELEASE)/$(IGROS_GRUB_CONFIG)
+	@echo ''				>> $(IGROS_DIR_RELEASE)/$(IGROS_GRUB_CONFIG)
+	@echo 'set timeout=0'			>> $(IGROS_DIR_RELEASE)/$(IGROS_GRUB_CONFIG)
 	@echo 'set default=0'			>> $(IGROS_DIR_RELEASE)/$(IGROS_GRUB_CONFIG)
 	@echo ''				>> $(IGROS_DIR_RELEASE)/$(IGROS_GRUB_CONFIG)
 	@echo 'menuentry "IgrOS-Kernel" {'	>> $(IGROS_DIR_RELEASE)/$(IGROS_GRUB_CONFIG)

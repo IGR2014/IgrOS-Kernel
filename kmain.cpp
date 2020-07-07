@@ -3,7 +3,7 @@
 //	Boot low-level main setup function
 //
 //	File:	boot.cpp
-//	Date:	02 Jul 2020
+//	Date:	07 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -128,6 +128,7 @@ namespace igros {
 			// Setup RTC
 			arch::rtcSetup();
 
+/*
 			// Test VBE
 			if (multiboot->hasInfoVBE()) {
 				// Get VBE config info
@@ -137,7 +138,7 @@ namespace igros {
 				// Get OEM string
 				auto oem	= reinterpret_cast<const char* const>(((config->oem & 0xFFFF0000) >> 12) + (config->oem & 0xFFFF));
 				// Get available modes string
-				auto modes	= reinterpret_cast<const char* const>(((config->modes & 0xFFFF0000) >> 12) + (config->modes & 0xFFFF));
+				auto modes	= reinterpret_cast<multiboot::vbeMode*>(((config->modes & 0xFFFF0000) >> 12) + (config->modes & 0xFFFF));
 				// Get vendor string
 				auto vendor	= reinterpret_cast<const char* const>(((config->vendor & 0xFFFF0000) >> 12) + (config->vendor & 0xFFFF));
 				// Get product string
@@ -152,48 +153,66 @@ namespace igros {
 						u8"Vendor name:\t%s\r\n"
 						u8"Card name:\t%s\r\n"
 						u8"Card rev.:\t%s\r\n"
-						u8"Current mode:\t#%d (%dx%d, %dbpp, 0x%p)\r\n",
+						u8"Current mode:\t#%d (%dx%d, %dbpp, 0x%p)\r\n"
+						u8"Video memory:\t%d Kb.\r\n",
 						config->signature[0],
 						config->signature[1],
 						config->signature[2],
 						config->signature[3],
 						(config->version >> 8) & 0xFF,
 						config->version & 0xFF,
-						oem,
-						vendor,
-						product,
-						revision,
+						(nullptr != oem) ? oem : "Unknown",
+						(nullptr != vendor) ? vendor : "Unknown",
+						(nullptr != product) ? product : "Unknown",
+						(nullptr != revision) ? revision : "Unknown",
 						multiboot->vbeModeCurrent,
-						mode->resX,
-						mode->resY,
+						mode->width,
+						mode->height,
 						mode->bpp,
-						mode->physbase);
-
-				// Get video memory
-				auto pvMem = reinterpret_cast<byte_t*>(((mode->physbase & 0xFFFF0000) >> 12) + (mode->physbase & 0xFFFF));
-				auto vvMem = reinterpret_cast<byte_t*>(0xFFFFFFFFE0000000);
-				//
-				arch::paging::map(reinterpret_cast<arch::page_t*>(pvMem), vvMem, arch::paging::flags_t::HUGE | arch::paging::flags_t::WRITABLE | arch::paging::flags_t::PRESENT);
-
-				/*
-				for (int i = 0; i < 100; i++) {
-					auto j		= i * 3;
-					vvMem[j + 0]	= 0xFF;
-					vvMem[j + 1]	= 0xFF;
-					vvMem[j + 2]	= 0xFF;
-				}
-				*/
+						mode->physbase,
+						static_cast<dword_t>(config->memory) * 64);
 
 			}
 
 			// Check if memory map exists
 			if (multiboot->hasInfoMemoryMap()) {
-				klib::kprintf(u8"Memory map available");
+				klib::kprintf(u8"Memory map available\r\n");
 			}
+*/
 
 			// Check framebuffer
 			if (multiboot->hasInfoFrameBuffer()) {
-				klib::kprintf(u8"Framebuffer available");
+				// Dump FB
+				klib::kprintf(	u8"FB:\r\n"
+						u8"Current mode:\t(%dx%d, %dbpp, %d, %s)\r\n"
+						u8"Address:\t0x%p\r\n",
+						multiboot->fbWidth,
+						multiboot->fbHeight,
+						multiboot->fbBpp,
+						multiboot->fbPitch,
+						((0u == multiboot->fbType) ? u8"Indexed" : ((1u == multiboot->fbType) ? u8"RGB" : u8"Text")),
+						static_cast<std::size_t>(multiboot->fbAddress));
+
+/*
+				// Get video memory
+				auto pvMem = reinterpret_cast<byte_t*>(multiboot->fbAddress);
+				auto vvMem = static_cast<byte_t*>(nullptr);
+				//
+				if (nullptr != pvMem) {
+					//
+					vvMem = reinterpret_cast<byte_t*>(0xFFFFFFFFE0000000);
+					//
+					arch::paging::map(reinterpret_cast<arch::page_t*>(pvMem), vvMem, arch::paging::flags_t::WRITABLE | arch::paging::flags_t::PRESENT);
+					//
+					for (auto i = 0; i < 10; i++) {
+						auto j		= i * 3;
+						vvMem[j + 0]	= 0xFF;
+						vvMem[j + 1]	= 0xFF;
+						vvMem[j + 2]	= 0xFF;
+					}
+				}
+*/
+
 			}
 
 			// Write "Booted successfully" message

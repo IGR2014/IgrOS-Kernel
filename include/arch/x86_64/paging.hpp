@@ -3,7 +3,7 @@
 //	Memory paging for x86
 //
 //	File:	paging.hpp
-//	Date:	02 Jul 2020
+//	Date:	07 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -48,28 +48,28 @@ namespace igros::arch {
 
 	// Page
 	union alignas(4096ull) page_t {
-		page_t*			next;					// Pointer to next page
+		pointer_t		next;					// Pointer to next page
 		byte_t			bytes[PAGE_SIZE];			// Page raw bytes
 	};
 
 
 	// Page table
 	union alignas(4096ull) table_t {
-		table_t*		next;					// Pointer to next table
+		pointer_t		next;					// Pointer to next table
 		page_t*			pages[PAGE_TABLE_SIZE];			// Page table entries
 	};
 
 
 	// Page directory
 	union alignas(4096ull) directory_t {
-		directory_t*		next;					// Pointer to next directory
+		pointer_t		next;					// Pointer to next directory
 		table_t*		tables[PAGE_DIRECTORY_SIZE];		// Page directory entries
 	};
 
 
 	// Page directory pointer
 	union alignas(4096ull) directoryPointer_t {
-		directoryPointer_t*	next;					// Pointer to next directory pointer
+		pointer_t		next;					// Pointer to next directory pointer
 		directory_t*		directories[PAGE_DIRECTORY_SIZE];	// Page directory entries
 	};
 
@@ -140,10 +140,12 @@ namespace igros::arch {
 		static void heap(const pointer_t phys, const std::size_t size) noexcept;
 
 		// Allocate page
-		[[nodiscard]] static page_t*	allocate() noexcept;
+		[[nodiscard]] static pointer_t	allocate() noexcept;
 		// Deallocate page
-		static void			deallocate(const page_t* page) noexcept;
+		static void			deallocate(const pointer_t page) noexcept;
 
+		// Map virtual page to physical page
+		static void map(pml4_t* pml4, const page_t* phys, const pointer_t virt, const flags_t flags) noexcept;
 		// Map virtual page to physical page
 		static void map(const page_t* phys, const pointer_t virt, const flags_t flags) noexcept;
 

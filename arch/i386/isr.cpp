@@ -12,6 +12,7 @@
 
 
 #include <taskRegs.hpp>
+#include <irq.hpp>
 #include <isr.hpp>
 #include <port.hpp>
 #include <cpu.hpp>
@@ -54,11 +55,15 @@ namespace igros::arch {
 		if (nullptr != isr) {
 			isr(regs);
 		} else {
+			// Disable interrupts
+			irq::disable();
 			// Debug
 			klib::kprintf(	u8"%s -> [#%d]\r\n"
 					u8"State:\t\tUNHANDLED! CPU halted!\r\n",
 					((regs->number >= IRQ_OFFSET) ? u8"IRQ" : u8"EXCEPTION"),
 					((regs->number >= IRQ_OFFSET) ? (regs->number - IRQ_OFFSET) : regs->number));
+			// Hang CPU
+			cpuHalt();
 		}
 
 	}
