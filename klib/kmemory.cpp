@@ -84,44 +84,61 @@ namespace igros::klib {
 		auto mDest = dst;
 		auto mSize = size;
 
-		// Handle first unaligned byte + word (if unaligned)
-		if (0x03 == (reinterpret_cast<std::size_t>(dst) & 0x03)) {
-			// Get byte pointer to array
-			auto byte	= reinterpret_cast<byte_t*>(dst);
-			auto last	= (mSize << 2) - 1ull;
-			// Get word pointer to array
-			auto word	= reinterpret_cast<word_t*>(&byte[1]);
-			// Set unaligned data at the start and end of interval
-			byte[0]		= static_cast<byte_t>((val >> 16) & 0xFF);
-			word[0]		= static_cast<word_t>(val & 0xFFFF);
-			byte[last]	= static_cast<byte_t>((val >> 24) & 0xFF);
-			// Update address
-			mDest		= reinterpret_cast<dword_t*>(&word[1ull]);
-			// Update size
-			--mSize;
-		// Handle first unaligned word (if unaligned)
-		} else if (0x02 == (reinterpret_cast<std::size_t>(dst) & 0x03)) {
-			// Get word pointer to array
-			auto word	= reinterpret_cast<word_t*>(dst);
-			auto last	= (mSize << 1) - 1ull;
-			// Set unaligned data at the start and end of interval
-			word[0]		= static_cast<word_t>(val & 0xFFFF);
-			word[last]	= static_cast<word_t>((val >> 16) & 0xFFFF);
-			// Update address
-			mDest		= reinterpret_cast<dword_t*>(&word[1ull]);
-			// Update size
-			--mSize;
-		// Handle first unaligned byte (if unaligned)
-		} else if (0x01 == (reinterpret_cast<std::size_t>(dst) & 0x03)) {
-			// Get byte pointer to array
-			auto byte	= reinterpret_cast<byte_t*>(dst);
-			auto last	= (mSize << 2) - 1ull;
-			// Get word pointer to array
-			auto word	= reinterpret_cast<word_t*>(&byte[last - 2ull]);
-			// Set unaligned data at the start and end of interval
-			byte[0]		= static_cast<byte_t>(val & 0xFF);
-			word[0]		= static_cast<word_t>((val >> 8) & 0xFFFF);
-			byte[last]	= static_cast<byte_t>((val >> 24) & 0xFF);
+		// Check alignment
+		switch (reinterpret_cast<std::size_t>(dst) & 0x03) {
+
+			// Handle first unaligned byte + word (if unaligned)
+			case 0x03: {
+				// Get byte pointer to array
+				auto byte	= reinterpret_cast<byte_t*>(dst);
+				auto last	= (mSize << 2) - 1ull;
+				// Get word pointer to array
+				auto word	= reinterpret_cast<word_t*>(&byte[1]);
+				// Set unaligned data at the start and end of interval
+				byte[0]		= static_cast<byte_t>((val >> 16) & 0xFF);
+				word[0]		= static_cast<word_t>(val & 0xFFFF);
+				byte[last]	= static_cast<byte_t>((val >> 24) & 0xFF);
+				// Update address
+				mDest		= reinterpret_cast<dword_t*>(&word[1ull]);
+				// Update size
+				--mSize;
+			} break;
+
+			// Handle first unaligned word (if unaligned)
+			case 0x02: {
+				// Get word pointer to array
+				auto word	= reinterpret_cast<word_t*>(dst);
+				auto last	= (mSize << 1) - 1ull;
+				// Set unaligned data at the start and end of interval
+				word[0]		= static_cast<word_t>(val & 0xFFFF);
+				word[last]	= static_cast<word_t>((val >> 16) & 0xFFFF);
+				// Update address
+				mDest		= reinterpret_cast<dword_t*>(&word[1ull]);
+				// Update size
+				--mSize;
+			} break;
+
+			// Handle first unaligned byte (if unaligned)
+			case 0x01: {
+				// Get byte pointer to array
+				auto byte	= reinterpret_cast<byte_t*>(dst);
+				auto last	= (mSize << 2) - 1ull;
+				// Get word pointer to array
+				auto word	= reinterpret_cast<word_t*>(&byte[last - 2ull]);
+				// Set unaligned data at the start and end of interval
+				byte[0]		= static_cast<byte_t>(val & 0xFF);
+				word[0]		= static_cast<word_t>((val >> 8) & 0xFFFF);
+				byte[last]	= static_cast<byte_t>((val >> 24) & 0xFF);
+				// Update address
+				mDest		= reinterpret_cast<dword_t*>(&byte[1ull]);
+				// Update size
+				--mSize;
+			} break;
+
+			// Default
+			default:
+				break;
+
 		}
 
 		// Do actual memset
