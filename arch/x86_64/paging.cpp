@@ -11,8 +11,6 @@
 //
 
 
-#include <memory>
-
 #include <msr.hpp>
 #include <cr.hpp>
 #include <irq.hpp>
