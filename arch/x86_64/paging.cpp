@@ -11,6 +11,8 @@
 //
 
 
+#include <memory>
+
 #include <msr.hpp>
 #include <cr.hpp>
 #include <irq.hpp>
@@ -19,8 +21,9 @@
 #include <taskRegs.hpp>
 #include <cpu.hpp>
 
-#include <klib/kprint.hpp>
+#include <klib/kalign.hpp>
 #include <klib/kmemory.hpp>
+#include <klib/kprint.hpp>
 
 
 // Kernel start and end
@@ -65,7 +68,7 @@ namespace igros::arch {
 
 		// Identity map first 4MB of physical memory to first 4Mb in virtual memory
 		pageDirectoryPtr->directories[0]	= reinterpret_cast<directory_t*>(reinterpret_cast<quad_t>(pageDirectory) & 0x7FFFFFFF | static_cast<quad_t>(flags));
-		// Alos map first 4MB of physical memory to first 4MB in virtual memory
+		// Also map first 4MB of physical memory to first 4MB in virtual memory
 		pageDirectoryPtr->directories[510]	= reinterpret_cast<directory_t*>(reinterpret_cast<quad_t>(pageDirectory) & 0x7FFFFFFF | static_cast<quad_t>(flags));
 
 		// Allocate page map level 4
@@ -73,9 +76,9 @@ namespace igros::arch {
 		// Zero PD
 		klib::kmemset(pml4, 512u, static_cast<const quad_t>(flags_t::CLEAR));
 
-		// 
+		// Identity map first 4MB of physical memory to first 4Mb in virtual memory
 		pml4->pointers[0]	= reinterpret_cast<directoryPointer_t*>(reinterpret_cast<quad_t>(pageDirectoryPtr) & 0x7FFFFFFF | static_cast<quad_t>(flags));
-		// 
+		// Also map first 4MB of physical memory to first 4MB in virtual memory
 		pml4->pointers[511]	= reinterpret_cast<directoryPointer_t*>(reinterpret_cast<quad_t>(pageDirectoryPtr) & 0x7FFFFFFF | static_cast<quad_t>(flags));
 
 		// Setup page directory
@@ -119,24 +122,18 @@ namespace igros::arch {
 	void paging::heap(const pointer_t phys, const std::size_t size) noexcept {
 
 		// Temporary data
-		auto tempPhys	= reinterpret_cast<quad_t>(phys);
-		auto tempSize	= size;
-		// Check alignment
-		if (0x00 != (tempPhys & 4095ull)) {
-			// Align pointer at page size alignment
-			tempPhys	= ((tempPhys + 4096ull) & 0xFFFFFFFFFFFFF000);
-			// Adjust size
-			tempSize	-= (tempPhys - reinterpret_cast<quad_t>(phys));
-		}
+		auto tempPhys	= klib::kalignUp(phys, 12ull);
+		auto tempSize	= size - (reinterpret_cast<std::size_t>(tempPhys) - reinterpret_cast<std::size_t>(phys));
+
 		// Get number of pages
-		auto numOfPages = (tempSize >> 12);
+		auto numOfPages = (tempSize >> 12ull);
 		// Check input
 		if (0ull == numOfPages) {
 			return;
 		}
 
 		// Convert to page pointer
-		auto page	= reinterpret_cast<table_t*>(tempPhys);
+		auto page	= static_cast<table_t*>(tempPhys);
 		// Link first page to free pages list
 		page[0ull].next	= paging::mFreePages;
 		// Create linked list of free pages
@@ -168,14 +165,12 @@ namespace igros::arch {
 	// Deallocate page
 	void paging::deallocate(const pointer_t page) noexcept {
 		// Check alignment
-		auto tempPage = reinterpret_cast<quad_t>(page);
-		if (0x00 != (tempPage & PAGE_MASK)) {
-			// Bad align detected
+		if (!klib::kalignCheck(page, 12ull)) {
 			return;
 		}
 		// Deallocate page back to heap free list
-		reinterpret_cast<table_t*>(page)->next = paging::mFreePages;
-		paging::mFreePages = reinterpret_cast<table_t*>(page);
+		static_cast<table_t*>(page)->next = paging::mFreePages;
+		paging::mFreePages = static_cast<table_t*>(page);
 	}
 
 
@@ -183,10 +178,8 @@ namespace igros::arch {
 	void paging::map(pml4_t* pml4, const page_t* phys, const pointer_t virt, const flags_t flags) noexcept {
 
 		// Check alignment
-		auto tempPhys = reinterpret_cast<quad_t>(phys);
-		auto tempVirt = reinterpret_cast<quad_t>(virt);
-		if (	(0x00 != (tempPhys & PAGE_MASK)
-			|| (0x00 != (tempVirt & PAGE_MASK)))) {
+		if (	!klib::kalignCheck(phys, 12ull)
+			|| !klib::kalignCheck(virt, 12ull)) {
 			// Bad align detected
 			return;
 		}
