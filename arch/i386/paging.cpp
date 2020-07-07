@@ -18,8 +18,9 @@
 #include <taskRegs.hpp>
 #include <cpu.hpp>
 
-#include <klib/kprint.hpp>
+#include <klib/kalign.hpp>
 #include <klib/kmemory.hpp>
+#include <klib/kprint.hpp>
 
 
 // Kernel start and end
@@ -123,15 +124,9 @@ namespace igros::arch {
 	void paging::heap(const pointer_t phys, const std::size_t size) noexcept {
 
 		// Temporary data
-		auto tempPtr	= reinterpret_cast<dword_t>(phys);
-		auto tempSize	= size;
-		// Check alignment
-		if (0x00 != (tempPtr & PAGE_MASK)) {
-			// Align pointer at page size alignment
-			tempPtr		= ((tempPtr + PAGE_SIZE) & ~PAGE_MASK);
-			// Adjust size
-			tempSize	-= (tempPtr - reinterpret_cast<dword_t>(phys));
-		}
+		auto tempPhys	= klib::kalignUp(phys, PAGE_SHIFT);
+		auto tempSize	= size - (reinterpret_cast<std::size_t>(tempPhys) - reinterpret_cast<std::size_t>(phys));
+
 		// Get number of pages
 		auto numOfPages = (tempSize >> PAGE_SHIFT);
 		// Check input
@@ -140,7 +135,7 @@ namespace igros::arch {
 		}
 
 		// Convert to page pointer
-		auto page	= reinterpret_cast<page_t*>(tempPtr);
+		auto page	= static_cast<page_t*>(tempPhys);
 		// Link first page to free pages list
 		page[0ull].next	= paging::mFreePages;
 		// Create linked list of free pages
@@ -172,9 +167,7 @@ namespace igros::arch {
 	// Deallocate page
 	void paging::deallocate(const pointer_t page) noexcept {
 		// Check alignment
-		auto tempPage = reinterpret_cast<dword_t>(page);
-		if (0x00 != (tempPage & PAGE_MASK)) {
-			// Bad align detected
+		if (!klib::kalignCheck(page, PAGE_SHIFT)) {
 			return;
 		}
 		// Deallocate page back to heap free list
@@ -187,10 +180,8 @@ namespace igros::arch {
 	void paging::map(directory_t* dir, const page_t* phys, const pointer_t virt, const flags_t flags) noexcept {
 
 		// Check alignment
-		auto tempPhys = reinterpret_cast<dword_t>(phys);
-		auto tempVirt = reinterpret_cast<dword_t>(virt);
-		if (	(0x00 != (tempPhys & PAGE_MASK)
-			|| (0x00 != (tempVirt & PAGE_MASK)))) {
+		if (	!klib::kalignCheck(phys, PAGE_SHIFT)
+			|| !klib::kalignCheck(virt, PAGE_SHIFT)) {
 			// Bad align detected
 			return;
 		}
