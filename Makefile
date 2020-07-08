@@ -28,7 +28,8 @@ export CXXINCLUDE		= -I$(CURDIR)/include/					\
 				  -I$(CURDIR)/include/arch/$(IGROS_ARCH)/
 
 # Import config Makefile
-IGROS_CONFIG			= $(IGROS_CONFIG_MAKE_DIR)/Makefile-$(IGROS_ARCH)-$(IGROS_CXX).in
+IGROS_CONFIG_FILE		= Makefile-$(IGROS_ARCH)-$(IGROS_CXX).in
+IGROS_CONFIG			= $(IGROS_CONFIG_MAKE_DIR)/$(IGROS_CONFIG_FILE)
 include $(IGROS_CONFIG)
 
 # Source files list
@@ -68,8 +69,31 @@ IGROS_GRUB_CONFIG		= $(IGROS_DIR_ISO_GRUB)/grub.cfg
 IGROS_ISO			= os-$(IGROS_ARCH).iso
 
 
+# Build script header
+define	IGROS_HEADER
+
+===============================
+IgrOS Kernel Build Script v1.0
+
+Architecture:	$(IGROS_ARCH)
+Assembler:	$(AS)
+	flags:	$(ASFLAGS)
+Compiler:	$(CXX)
+	flags:	$(CXXFLAGS)
+Linker:		$(LD)
+	flags:	$(LDFLAGS)
+Script:		$(IGROS_CONFIG_FILE)
+Binary:		$(BIN_NAME)
+
+endef
+
+
+# Print variables before build
+$(info $(IGROS_HEADER))
+
+
 # Phony targets
-.PHONY: all-before all clean distclean rebuild run test deploy
+.PHONY: all clean distclean rebuild run test deploy
 
 
 # Default build rule for all .cpp files
@@ -78,12 +102,11 @@ $(IGROS_DIR_BUILD)/%.o: %.cpp
 	@$(CXX) -c $< -o $@ $(CXXFLAGS) $(CXXINCLUDE)
 
 # Default make target
-all: all-before $(BIN)
-
-# Print variables before build
-all-before:
-	@echo "	CXX:	$(CXX)"
-	@echo "	Script:	$(IGROS_CONFIG)"
+all: $(BIN)
+	@echo "	DONE"
+	@echo ""
+	@echo "Build Duration:	"
+	@echo "==============================="
 
 # Clean build
 clean:
@@ -124,10 +147,7 @@ deploy: all
 	@echo "	MKDIR	$(IGROS_DIR_ISO_GRUB)"
 	@mkdir -p $(IGROS_DIR_RELEASE)/$(IGROS_DIR_ISO_GRUB)
 	@echo "	GEN	$(IGROS_GRUB_CONFIG)"
-	@echo 'insmod vbe'			 > $(IGROS_DIR_RELEASE)/$(IGROS_GRUB_CONFIG)
-	@echo 'insmod vga'			>> $(IGROS_DIR_RELEASE)/$(IGROS_GRUB_CONFIG)
-	@echo ''				>> $(IGROS_DIR_RELEASE)/$(IGROS_GRUB_CONFIG)
-	@echo 'set timeout=0'			>> $(IGROS_DIR_RELEASE)/$(IGROS_GRUB_CONFIG)
+	@echo 'set timeout=0'			 > $(IGROS_DIR_RELEASE)/$(IGROS_GRUB_CONFIG)
 	@echo 'set default=0'			>> $(IGROS_DIR_RELEASE)/$(IGROS_GRUB_CONFIG)
 	@echo ''				>> $(IGROS_DIR_RELEASE)/$(IGROS_GRUB_CONFIG)
 	@echo 'menuentry "IgrOS-Kernel" {'	>> $(IGROS_DIR_RELEASE)/$(IGROS_GRUB_CONFIG)

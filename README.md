@@ -26,6 +26,7 @@ Currently supports **i386** and **x86_64** platforms. **ARM** is the next aim.
 | **VGA driver (text mode)** | :heavy_check_mark: |
 | **PIT driver**             | :heavy_check_mark: |
 | **Keyboard driver (read)** | :heavy_check_mark: |
+| **CMOS RTC driver (read)** | :heavy_check_mark: |
 | **User mode**              |                    |
 | **Kernel drivers**         |                    |
 | **User programs**          |                    |
