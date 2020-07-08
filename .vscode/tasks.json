@@ -1,0 +1,197 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		// Clean i386 build
+		{
+			"label": "Clean i386",
+			"type": "shell",
+			"linux": {
+				"command": "rm",
+				"args": [
+					"-rf",
+					"./build/i386"
+				]
+			},
+			"windows": {
+				"command": "rd",
+				"args": [
+					"/q",
+					"/s",
+					"./build/i386"
+				]
+			},
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		// Clean x86_64 build
+		{
+			"label": "Clean x86_64",
+			"type": "shell",
+			"linux": {
+				"command": "rm",
+				"args": [
+					"-rf",
+					"./build/x86_64"
+				]
+			},
+			"windows": {
+				"command": "rd",
+				"args": [
+					"/q",
+					"/s",
+					"./build/x86_64"
+				]
+			},
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		// Clean all builds
+		{
+			"label": "Clean all",
+			"dependsOn": [
+				"Clean i386",
+				"Clean x86_64"
+			],
+			"dependsOrder": "parallel",
+			"problemMatcher": []
+		},
+		// Clean i386 release
+		{
+			"label": "Distclean i386",
+			"type": "shell",
+			"linux": {
+				"command": "rm",
+				"args": [
+					"-rf",
+					"./release/i386"
+				]
+			},
+			"windows": {
+				"command": "rd",
+				"args": [
+					"/q",
+					"/s",
+					"./release/i386"
+				]
+			},
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		// Clean x86_64 release
+		{
+			"label": "Distclean x86_64",
+			"type": "shell",
+			"linux": {
+				"command": "rm",
+				"args": [
+					"-rf",
+					"./release/x86_64"
+				]
+			},
+			"windows": {
+				"command": "rd",
+				"args": [
+					"/q",
+					"/s",
+					"./release/x86_64"
+				]
+			},
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		// Clean all release
+		{
+			"label": "Distclean all",
+			"dependsOn": [
+				"Distclean i386",
+				"Distclean x86_64"
+			],
+			"dependsOrder": "parallel",
+			"problemMatcher": []
+		},
+		// Build i386
+		{
+			"label": "Build i386",
+			"type": "shell",
+			"linux": {
+				"command": "make",
+				"args": [
+					"IGROS_ARCH=i386"
+				]
+			},
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": ["$gcc"]
+		},
+		// Build x86_64
+		{
+			"label": "Build x86_64",
+			"type": "shell",
+			"linux": {
+				"command": "make",
+				"args": [
+					"IGROS_ARCH=x86_64"
+				]
+			},
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": ["$gcc"]
+		},
+		// Build all
+		{
+			"label": "Build all",
+			"dependsOn": [
+				"Build i386",
+				"Build x86_64"
+			],
+			"dependsOrder": "parallel",
+			"problemMatcher": []
+		},
+		// Rebuild i386
+		{
+			"label": "Rebuild i386",
+			"dependsOn": [
+				"Distclean i386",
+				"Clean i386",
+				"Build i386"
+			],
+			"dependsOrder": "sequence",
+			"problemMatcher": []
+		},
+		// Rebuild x86_64
+		{
+			"label": "Rebuild x86_64",
+			"dependsOn": [
+				"Distclean x86_64",
+				"Clean x86_64",
+				"Build x86_64"
+			],
+			"dependsOrder": "sequence",
+			"problemMatcher": []
+		},
+		// Rebuild all
+		{
+			"label": "Rebuild all",
+			"dependsOn": [
+				"Rebuild i386",
+				"Rebuild x86_64"
+			],
+			"dependsOrder": "parallel",
+			"problemMatcher": [],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+		}
+	]
+}
