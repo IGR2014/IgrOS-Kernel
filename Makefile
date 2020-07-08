@@ -3,13 +3,16 @@
 #	Main Kernel Make script
 #
 #	File:	Makefile
-#	Date:	28 Jun 2020
+#	Date:	08 Jul 2020
 #
 #	Copyright (c) 2017 - 2020, Igor Baklykov
 #	All rights reserved.
 #
 #
 
+
+# Compiler
+IGROS_CXX			?= clang++
 
 # Config directory path
 IGROS_CONFIG_DIR		= config
@@ -25,7 +28,7 @@ export CXXINCLUDE		= -I$(CURDIR)/include/					\
 				  -I$(CURDIR)/include/arch/$(IGROS_ARCH)/
 
 # Import config Makefile
-IGROS_CONFIG			= $(IGROS_CONFIG_MAKE_DIR)/Makefile-$(IGROS_ARCH)-$(CXX).in
+IGROS_CONFIG			= $(IGROS_CONFIG_MAKE_DIR)/Makefile-$(IGROS_ARCH)-$(IGROS_CXX).in
 include $(IGROS_CONFIG)
 
 # Source files list

@@ -3,7 +3,7 @@
 //	Kernel math functions declarations
 //
 //	File:	kmath.hpp
-//	Date:	30 Jun 2020
+//	Date:	07 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -36,7 +36,7 @@ namespace igros::klib {
 			return res;
 		}
 
-		while (0 <= sdword_t(divisor)) {
+		while (0 <= static_cast<sdword_t>(divisor)) {
 			divisor <<= 1ULL;
 			qbit	<<= 1ULL;
 		}
@@ -96,8 +96,8 @@ namespace igros::klib {
 	// Returns 64-bit quotient and 64-bit reminder
 	udivmod_t kudivmod(quad_t dividend, dword_t divisor) noexcept {
 		return {
-			quad_t(dividend / divisor),
-			quad_t(dividend % divisor)
+			static_cast<quad_t>(dividend / divisor),
+			static_cast<quad_t>(dividend % divisor)
 		};
 	}
 
@@ -106,8 +106,8 @@ namespace igros::klib {
 	// Returns 64-bit quotient and 64-bit reminder
 	divmod_t kdivmod(squad_t dividend, sdword_t divisor) noexcept {
 		return {
-			squad_t(dividend / divisor),
-			squad_t(dividend % divisor)
+			static_cast<squad_t>(dividend / divisor),
+			static_cast<squad_t>(dividend % divisor)
 		};
 	}
 
