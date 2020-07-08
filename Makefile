@@ -104,8 +104,6 @@ $(IGROS_DIR_BUILD)/%.o: %.cpp
 # Default make target
 all: $(BIN)
 	@echo "	DONE"
-	@echo ""
-	@echo "Build Duration:	"
 	@echo "==============================="
 
 # Clean build
