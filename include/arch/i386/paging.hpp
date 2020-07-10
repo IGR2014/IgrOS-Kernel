@@ -3,7 +3,7 @@
 //	Memory paging for x86
 //
 //	File:	paging.hpp
-//	Date:	07 Jul 2020
+//	Date:	10 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -45,7 +45,7 @@ namespace igros::arch {
 
 	// Page
 	union alignas(PAGE_SIZE) page_t {
-		pointer_t		next;					// Pointer to next page
+		pointer_t	next;					// Pointer to next page
 		byte_t		bytes[PAGE_SIZE];			// Page raw bytes
 	};
 
@@ -131,10 +131,25 @@ namespace igros::arch {
 		// Deallocate page
 		static void			deallocate(const pointer_t page) noexcept;
 
-		// Map virtual page to physical page (explicit page directory)
-		static void map(directory_t* dir, const page_t* phys, const pointer_t virt, const flags_t flags) noexcept;
-		// Map virtual page to physical page
-		static void map(const page_t* phys, const pointer_t virt, const flags_t flags) noexcept;
+		// Make page directory
+		static directory_t*	makeDirectory() noexcept;
+		// Make page table
+		static table_t*		makeTable() noexcept;
+
+		// Check table flags
+		static bool checkFlags(const table_t* table, const flags_t &flags) noexcept;
+		// Check page flags
+		static bool checkFlags(const page_t* page, const flags_t &flags) noexcept;
+
+		// Map virtual page to physical page (whole table, explicit page directory)
+		static void mapTable(directory_t* dir, const page_t* phys, const pointer_t virt, const flags_t flags) noexcept;
+		// Map virtual page to physical page (whole table)
+		static void mapTable(const page_t* phys, const pointer_t virt, const flags_t flags) noexcept;
+
+		// Map virtual page to physical page (single page, explicit page directory)
+		static void mapPage(directory_t* dir, const page_t* phys, const pointer_t virt, const flags_t flags) noexcept;
+		// Map virtual page to physical page (single page)
+		static void mapPage(const page_t* phys, const pointer_t virt, const flags_t flags) noexcept;
 
 		// Convert virtual address to physical address
 		[[nodiscard]] static pointer_t	toPhys(const pointer_t addr) noexcept;

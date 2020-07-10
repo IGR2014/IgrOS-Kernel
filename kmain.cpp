@@ -3,7 +3,7 @@
 //	Boot low-level main setup function
 //
 //	File:	boot.cpp
-//	Date:	07 Jul 2020
+//	Date:	10 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -128,7 +128,6 @@ namespace igros {
 			// Setup RTC
 			arch::rtcSetup();
 
-/*
 			// Test VBE
 			if (multiboot->hasInfoVBE()) {
 				// Get VBE config info
@@ -172,13 +171,34 @@ namespace igros {
 						mode->physbase,
 						static_cast<dword_t>(config->memory) * 64);
 
+/*
+				// Get video memory
+				auto pvMem = reinterpret_cast<byte_t*>(mode->physbase);
+				auto vvMem = static_cast<byte_t*>(nullptr);
+				//
+				if (nullptr != pvMem) {
+					//
+					vvMem = reinterpret_cast<byte_t*>(0xE0000000);
+					//
+					arch::paging::mapPage(reinterpret_cast<arch::page_t*>(pvMem), vvMem, arch::paging::flags_t::WRITABLE | arch::paging::flags_t::PRESENT);
+					//
+					for (auto i = 0; i < 1024; i++) {
+						auto j		= i * 3;
+						vvMem[j + 0]	= 0x00;
+						vvMem[j + 1]	= 0xFF;
+						vvMem[j + 2]	= 0x00;
+					}
+				}
+*/
+
 			}
 
+			/*
 			// Check if memory map exists
 			if (multiboot->hasInfoMemoryMap()) {
 				klib::kprintf(u8"Memory map available\r\n");
 			}
-*/
+			*/
 
 			// Check framebuffer
 			if (multiboot->hasInfoFrameBuffer()) {
@@ -193,7 +213,7 @@ namespace igros {
 						((0u == multiboot->fbType) ? u8"Indexed" : ((1u == multiboot->fbType) ? u8"RGB" : u8"Text")),
 						static_cast<std::size_t>(multiboot->fbAddress));
 
-/*
+				/*
 				// Get video memory
 				auto pvMem = reinterpret_cast<byte_t*>(multiboot->fbAddress);
 				auto vvMem = static_cast<byte_t*>(nullptr);
@@ -202,21 +222,25 @@ namespace igros {
 					//
 					vvMem = reinterpret_cast<byte_t*>(0xFFFFFFFFE0000000);
 					//
-					arch::paging::map(reinterpret_cast<arch::page_t*>(pvMem), vvMem, arch::paging::flags_t::WRITABLE | arch::paging::flags_t::PRESENT);
+					arch::paging::mapPage(reinterpret_cast<arch::page_t*>(pvMem), vvMem, arch::paging::flags_t::WRITABLE | arch::paging::flags_t::PRESENT);
 					//
-					for (auto i = 0; i < 10; i++) {
-						auto j		= i * 3;
-						vvMem[j + 0]	= 0xFF;
+					for (auto i = 0; i < 1024; i++) {
+						auto j		= i * 4;
+						vvMem[j + 0]	= 0x00;
 						vvMem[j + 1]	= 0xFF;
-						vvMem[j + 2]	= 0xFF;
+						vvMem[j + 2]	= 0x00;
+						vvMem[j + 3]	= 0x00;
 					}
 				}
-*/
+				*/
 
 			}
 
 			// Write "Booted successfully" message
 			klib::kprintf(u8"Booted successfully\r\n");
+
+			// Halt CPU
+			arch::cpuHalt();
 
 		}
 
