@@ -3,7 +3,7 @@
 //	Memory paging for x86
 //
 //	File:	paging.hpp
-//	Date:	07 Jul 2020
+//	Date:	10 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -144,10 +144,43 @@ namespace igros::arch {
 		// Deallocate page
 		static void			deallocate(const pointer_t page) noexcept;
 
-		// Map virtual page to physical page
-		static void map(pml4_t* pml4, const page_t* phys, const pointer_t virt, const flags_t flags) noexcept;
-		// Map virtual page to physical page
-		static void map(const page_t* phys, const pointer_t virt, const flags_t flags) noexcept;
+		// Make PML4
+		static pml4_t*			makePML4() noexcept;
+		// Make page directory pointer
+		static directoryPointer_t*	makeDirectoryPointer() noexcept;
+		// Make page directory
+		static directory_t*		makeDirectory() noexcept;
+		// Make page table
+		static table_t*			makeTable() noexcept;
+
+		// Check directory pointer flags
+		static bool checkFlags(const directoryPointer_t* dirPtr, const flags_t &flags) noexcept;
+		// Check directory flags
+		static bool checkFlags(const directory_t* dir, const flags_t &flags) noexcept;
+		// Check table flags
+		static bool checkFlags(const table_t* table, const flags_t &flags) noexcept;
+		// Check page flags
+		static bool checkFlags(const page_t* page, const flags_t &flags) noexcept;
+
+		// Map virtual page to physical page (whole pml4, explicit pml4)
+		static void mapPML4(pml4_t* pml4, const page_t* phys, const pointer_t virt, const flags_t flags) noexcept;
+		// Map virtual page to physical page (whole pml4)
+		static void mapPML4(const page_t* phys, const pointer_t virt, const flags_t flags) noexcept;
+
+		// Map virtual page to physical page (single directory pointer, explicit pml4)
+		static void mapDirectoryPointer(pml4_t* pml4, const page_t* phys, const pointer_t virt, const flags_t flags) noexcept;
+		// Map virtual page to physical page (single directory pointer)
+		static void mapDirectoryPointer(const page_t* phys, const pointer_t virt, const flags_t flags) noexcept;
+
+		// Map virtual page to physical page (single directory, explicit pml4)
+		static void mapDirectory(pml4_t* pml4, const page_t* phys, const pointer_t virt, const flags_t flags) noexcept;
+		// Map virtual page to physical page (single directory)
+		static void mapDirectory(const page_t* phys, const pointer_t virt, const flags_t flags) noexcept;
+
+		// Map virtual page to physical page (single page, explicit page directory)
+		static void mapPage(pml4_t* dir, const page_t* phys, const pointer_t virt, const flags_t flags) noexcept;
+		// Map virtual page to physical page (single page)
+		static void mapPage(const page_t* phys, const pointer_t virt, const flags_t flags) noexcept;
 
 		// Convert virtual address to physical address
 		[[nodiscard]] static pointer_t	toPhys(const pointer_t addr) noexcept;
