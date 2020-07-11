@@ -3,7 +3,7 @@
 //	Kernel text print functions
 //
 //	File:	kprint.cpp
-//	Date:	08 Jul 2020
+//	Date:	11 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -394,6 +394,8 @@ namespace igros::klib {
 
 					// Character
 					case u8'c':
+						// Fill with preceding symbols
+						fillPreceding(strIterator, sizeof(sbyte_t), fillWidth, fillChar);
 						// Copy character to resulting string
 						*strIterator++ = static_cast<sbyte_t>(va_arg(list, dword_t));
 						break;
