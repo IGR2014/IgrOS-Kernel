@@ -205,34 +205,32 @@ namespace igros {
 				// Dump FB
 				klib::kprintf(	u8"FB:\r\n"
 						u8"Current mode:\t(%dx%d, %dbpp, %d, %s)\r\n"
-						u8"Address:\t0x%p\r\n",
+						u8"Address:\t0x%p\r\n"
+						u8"Size:\t\t%z\r\n",
 						multiboot->fbWidth,
 						multiboot->fbHeight,
 						multiboot->fbBpp,
 						multiboot->fbPitch,
 						((0u == multiboot->fbType) ? u8"Indexed" : ((1u == multiboot->fbType) ? u8"RGB" : u8"Text")),
-						static_cast<std::size_t>(multiboot->fbAddress));
+						static_cast<std::size_t>(multiboot->fbAddress),
+						multiboot->fbWidth * (multiboot->fbBpp >> 3) * multiboot->fbHeight * multiboot->fbPitch);
 
-				/*
-				// Get video memory
+				// Get video memory phys address
 				auto pvMem = reinterpret_cast<byte_t*>(multiboot->fbAddress);
-				auto vvMem = static_cast<byte_t*>(nullptr);
-				//
+				// Check phys address
 				if (nullptr != pvMem) {
-					//
-					vvMem = reinterpret_cast<byte_t*>(0xFFFFFFFFE0000000);
-					//
+					// Set virtual address
+					auto vvMem = reinterpret_cast<byte_t*>(0xFFFFFFFFE0000000);
+					// Map video memory phys address to virtual
 					arch::paging::mapPage(reinterpret_cast<arch::page_t*>(pvMem), vvMem, arch::paging::flags_t::WRITABLE | arch::paging::flags_t::PRESENT);
-					//
-					for (auto i = 0; i < 1024; i++) {
-						auto j		= i * 4;
+					// Try to draw RGB
+					for (auto i = 0u; i < 1024u; i++) {
+						auto j		= i * 3;
 						vvMem[j + 0]	= 0x00;
 						vvMem[j + 1]	= 0xFF;
 						vvMem[j + 2]	= 0x00;
-						vvMem[j + 3]	= 0x00;
 					}
 				}
-				*/
 
 			}
 

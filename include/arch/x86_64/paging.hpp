@@ -36,11 +36,11 @@ namespace igros::arch {
 	// Page Table max entries count
 	constexpr auto	PAGE_TABLE_SIZE			= PAGE_MAP_LEVEL_4_SIZE;
 	// Page shift
-	constexpr auto	PAGE_SHIFT			= 21;
+	constexpr auto	PAGE_SHIFT			= 12;
 	// Page size
-	constexpr auto	PAGE_SIZE			= 1u << PAGE_SHIFT;
+	constexpr auto	PAGE_SIZE			= 1ull << PAGE_SHIFT;
 	// Page mask
-	constexpr auto	PAGE_MASK			= PAGE_SIZE - 1u;
+	constexpr auto	PAGE_MASK			= PAGE_SIZE - 1ull;
 
 
 #pragma push(pack, 1)
@@ -163,22 +163,27 @@ namespace igros::arch {
 		static bool checkFlags(const page_t* page, const flags_t &flags) noexcept;
 
 		// Map virtual page to physical page (whole pml4, explicit pml4)
-		static void mapPML4(pml4_t* pml4, const page_t* phys, const pointer_t virt, const flags_t flags) noexcept;
+		static void mapPML4(pml4_t* const  pml4, const page_t* phys, const pointer_t virt, const flags_t flags) noexcept;
 		// Map virtual page to physical page (whole pml4)
 		static void mapPML4(const page_t* phys, const pointer_t virt, const flags_t flags) noexcept;
 
 		// Map virtual page to physical page (single directory pointer, explicit pml4)
-		static void mapDirectoryPointer(pml4_t* pml4, const page_t* phys, const pointer_t virt, const flags_t flags) noexcept;
+		static void mapDirectoryPointer(pml4_t* const pml4, const page_t* phys, const pointer_t virt, const flags_t flags) noexcept;
 		// Map virtual page to physical page (single directory pointer)
 		static void mapDirectoryPointer(const page_t* phys, const pointer_t virt, const flags_t flags) noexcept;
 
 		// Map virtual page to physical page (single directory, explicit pml4)
-		static void mapDirectory(pml4_t* pml4, const page_t* phys, const pointer_t virt, const flags_t flags) noexcept;
+		static void mapDirectory(pml4_t* const pml4, const page_t* phys, const pointer_t virt, const flags_t flags) noexcept;
 		// Map virtual page to physical page (single directory)
 		static void mapDirectory(const page_t* phys, const pointer_t virt, const flags_t flags) noexcept;
 
+		// Map virtual page to physical page (single table, explicit pml4)
+		static void mapTable(pml4_t* const pml4, const page_t* phys, const pointer_t virt, const flags_t flags) noexcept;
+		// Map virtual page to physical page (single table)
+		static void mapTable(const page_t* phys, const pointer_t virt, const flags_t flags) noexcept;
+
 		// Map virtual page to physical page (single page, explicit page directory)
-		static void mapPage(pml4_t* dir, const page_t* phys, const pointer_t virt, const flags_t flags) noexcept;
+		static void mapPage(pml4_t* const dir, const page_t* phys, const pointer_t virt, const flags_t flags) noexcept;
 		// Map virtual page to physical page (single page)
 		static void mapPage(const page_t* phys, const pointer_t virt, const flags_t flags) noexcept;
 
@@ -189,7 +194,7 @@ namespace igros::arch {
 		static void exHandler(const taskRegs_t* regs) noexcept;
 
 		// Set page directory
-		static void setDirectory(const pml4_t* dir) noexcept;
+		static void setDirectory(const pml4_t* const dir) noexcept;
 
 
 	};

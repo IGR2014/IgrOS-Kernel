@@ -142,12 +142,12 @@ namespace igros::arch {
 		static bool checkFlags(const page_t* page, const flags_t &flags) noexcept;
 
 		// Map virtual page to physical page (whole table, explicit page directory)
-		static void mapTable(directory_t* dir, const page_t* phys, const pointer_t virt, const flags_t flags) noexcept;
+		static void mapTable(directory_t* const dir, const page_t* phys, const pointer_t virt, const flags_t flags) noexcept;
 		// Map virtual page to physical page (whole table)
 		static void mapTable(const page_t* phys, const pointer_t virt, const flags_t flags) noexcept;
 
 		// Map virtual page to physical page (single page, explicit page directory)
-		static void mapPage(directory_t* dir, const page_t* phys, const pointer_t virt, const flags_t flags) noexcept;
+		static void mapPage(directory_t* const dir, const page_t* phys, const pointer_t virt, const flags_t flags) noexcept;
 		// Map virtual page to physical page (single page)
 		static void mapPage(const page_t* phys, const pointer_t virt, const flags_t flags) noexcept;
 
@@ -158,7 +158,7 @@ namespace igros::arch {
 		static void exHandler(const taskRegs_t* regs) noexcept;
 
 		// Set page directory
-		static void setDirectory(const directory_t* dir) noexcept;
+		static void setDirectory(const directory_t* const dir) noexcept;
 
 
 	};
