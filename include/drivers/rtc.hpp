@@ -3,7 +3,7 @@
 //	RTC clock driver
 //
 //	File:	rtc.hpp
-//	Date:	30 Jun 2020
+//	Date:	14 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -14,7 +14,7 @@
 #pragma once
 
 
-#include <types.hpp>
+#include <arch/types.hpp>
 
 
 // Arch-dependent code zone

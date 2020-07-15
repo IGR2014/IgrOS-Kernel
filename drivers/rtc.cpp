@@ -3,7 +3,7 @@
 //	RTC clock driver
 //
 //	File:	rtc.cpp
-//	Date:	30 Jun 2020
+//	Date:	14 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -12,7 +12,7 @@
 
 
 #include <port.hpp>
-#include <irq.hpp>
+#include <arch/irq.hpp>
 
 #include <drivers/vmem.hpp>
 #include <drivers/rtc.hpp>
@@ -22,6 +22,11 @@
 
 // Arch-dependent code zone
 namespace igros::arch {
+
+
+	// CMOS ports
+	constexpr auto CMOS_COMMAND	= static_cast<port_t>(0x0070);
+	constexpr auto CMOS_DATA	= static_cast<port_t>(CMOS_COMMAND + 1);
 
 
 	// Clock from RTC conversion
@@ -117,13 +122,13 @@ namespace igros::arch {
 		rtcDateTime_t rtcDateTime;
 		rtcReadDateTime(rtcDateTime);
 		// Get RTC flags
-		auto flags	= rtcRead(RTC_REGISTER_B);
+		const auto flags	= rtcRead(RTC_REGISTER_B);
 		// Get RTC century
-		auto century	= rtcRead(RTC_CENTURY);
+		auto century		= rtcRead(RTC_CENTURY);
 		// Check data format
 		if (0x00 == (flags & RTC_IS_BINARY)) {
 			// Chech hours format
-			auto hourModeBit = static_cast<byte_t>(rtcDateTime.time.hour & 0x80);
+			const auto hourModeBit = static_cast<byte_t>(rtcDateTime.time.hour & 0x80);
 			// Drop highest bit from hours
 			rtcDateTime.time.hour &= 0x7F;
 			// Convert from BCD

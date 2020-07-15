@@ -3,7 +3,7 @@
 //	VGA memory low-level operations
 //
 //	File:	vmem.cpp
-//	Date:	30 Jun 2020
+//	Date:	11 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -20,6 +20,11 @@
 
 // Arch-dependent code zone
 namespace igros::arch {
+
+
+	// VGA cursor control ports
+	constexpr auto VGA_CURSOR_CONTROL	= static_cast<port_t>(0x03D4);
+	constexpr auto VGA_CURSOR_DATA		= static_cast<port_t>(VGA_CURSOR_CONTROL + 1);
 
 
 	// Set cursor position
