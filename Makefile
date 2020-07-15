@@ -3,7 +3,7 @@
 #	Main Kernel Make script
 #
 #	File:	Makefile
-#	Date:	08 Jul 2020
+#	Date:	13 Jul 2020
 #
 #	Copyright (c) 2017 - 2020, Igor Baklykov
 #	All rights reserved.
@@ -32,6 +32,8 @@ IGROS_CONFIG_FILE		= Makefile-$(IGROS_ARCH)-$(IGROS_CXX).in
 IGROS_CONFIG			= $(IGROS_CONFIG_MAKE_DIR)/$(IGROS_CONFIG_FILE)
 include $(IGROS_CONFIG)
 
+CXXFLAGS			+= -D IGROS_ARCH_$(IGROS_ARCH) -D IGROS_ARCH=$(IGROS_ARCH)
+
 # Source files list
 CXXSRCFILES			= $(wildcard *.cpp)
 # Convert sources names into object files names
@@ -42,7 +44,6 @@ CXXOBJ				= $(addprefix $(IGROS_DIR_BUILD)/, $(CXXOBJFILES))
 #
 LDSRCFILES			= $(wildcard *.cpp)
 LDSRCFILES			+= $(subst arch/$(IGROS_ARCH)/,,$(wildcard arch/$(IGROS_ARCH)/boot/*.s))
-LDSRCFILES			+= $(subst arch/$(IGROS_ARCH)/,,$(wildcard arch/$(IGROS_ARCH)/klib/*.s))
 LDSRCFILES			+= $(subst arch/$(IGROS_ARCH)/,,$(wildcard arch/$(IGROS_ARCH)/*.cpp))
 LDSRCFILES			+= $(wildcard multiboot/*.cpp)
 LDSRCFILES			+= $(wildcard klib/*.cpp)

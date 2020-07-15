@@ -3,7 +3,7 @@
 #	i386 g++ make script
 #
 #	File:	Makefile
-#	Date:	12 Feb 2020
+#	Date:	13 Jul 2020
 #
 #	Copyright (c) 2017 - 2020, Igor Baklykov
 #	All rights reserved.
@@ -37,8 +37,6 @@ export CXXFLAGS		= -std=c++17				\
 			  -mno-sse2				\
 			  -mno-sse3				\
 			  -mno-mmx				\
-			  -DIGROS_ARCH_$(IGROS_ARCH)		\
-			  -DIGROS_ARCH="\"$(IGROS_ARCH)"\"	\
 			  -m32					\
 			  -march=i386				\
 			  -mno-red-zone
