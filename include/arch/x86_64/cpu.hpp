@@ -3,7 +3,7 @@
 //	CPU operations
 //
 //	File:	cpu.hpp
-//	Date:	30 Jun 2020
+//	Date:	13 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -14,11 +14,11 @@
 #pragma once
 
 
-#include <types.hpp>
+#include <arch/x86_64/types.hpp>
 
 
-// Arch-dependent code zone
-namespace igros::arch {
+// x86_64 namespace
+namespace igros::x86_64 {
 
 
 #ifdef	__cplusplus
@@ -39,5 +39,34 @@ namespace igros::arch {
 #endif	// __cplusplus
 
 
-}	// namespace igros::arch
+	// CPU representation
+	struct cpu final {
+
+		// Default c-tor
+		cpu() noexcept = default;
+
+		// Copy c-tor
+		cpu(const cpu &other) = delete;
+		// Copy assignment
+		cpu& operator=(const cpu &other) = delete;
+
+		// Move c-tor
+		cpu(cpu &&other) = delete;
+		// Move assignment
+		cpu& operator=(cpu &&other) = delete;
+
+		// Halt CPU
+		inline static void	halt() noexcept;
+
+
+	};
+
+
+	// Halt CPU
+	inline void cpu::halt() noexcept {
+		cpuHalt();
+	}
+
+
+}	// namespace igros::x86_64
 

@@ -3,7 +3,7 @@
 //	Bit flags template datatype
 //
 //	File:	flags.hpp
-//	Date:	30 Jun 2020
+//	Date:	11 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -19,8 +19,8 @@
 #include <types.hpp>
 
 
-// Arch-dependent code zone
-namespace igros::arch {
+// OS namespace
+namespace igros {
 
 /*
         // Flags wrapper struct
@@ -176,5 +176,5 @@ namespace igros::arch {
 	}
 
 
-}       // namespace igros::arch
+}       // namespace igros
 

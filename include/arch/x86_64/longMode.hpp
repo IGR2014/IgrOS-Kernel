@@ -3,7 +3,7 @@
 //	Long mode low-level preparation operations
 //
 //	File:	longMode.hpp
-//	Date:	30 Jun 2020
+//	Date:	13 Jul 2020
 //
 //	Copyright (c) 2017, Igor Baklykov
 //	All rights reserved.
@@ -14,11 +14,11 @@
 #pragma	once
 
 
-#include <types.hpp>
+#include <arch/x86_64/types.hpp>
 
 
-// Arch-dependent code zone
-namespace igros::arch {
+// x86_64 namespace
+namespace igros::x86_64 {
 
 
 #ifdef	__cplusplus
@@ -29,11 +29,11 @@ namespace igros::arch {
 
 
 		// Check if loaded with multiboot loader
-		constexpr byte_t checkMultiboot() noexcept;
+		[[nodiscard]] constexpr byte_t checkMultiboot() noexcept;
 		// Check CPUID is extended
-		constexpr byte_t checkCPUID() noexcept;
+		[[nodiscard]] constexpr byte_t checkCPUID() noexcept;
 		// Check CPUID for long mode existance
-		constexpr byte_t checkLongMode() noexcept;
+		[[nodiscard]] constexpr byte_t checkLongMode() noexcept;
 
 		// Setup page tables
 		constexpr void	setupPageTables() noexcept;
@@ -51,5 +51,5 @@ namespace igros::arch {
 #endif	// __cplusplus
 
 
-}	// namespace igros::arch
+}	// namespace igros::x86_64
 

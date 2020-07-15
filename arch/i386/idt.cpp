@@ -3,7 +3,7 @@
 //	Interrupt descriptor table low-level operations
 //
 //	File:	idt.cpp
-//	Date:	30 Jun 2020
+//	Date:	11 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -11,10 +11,11 @@
 //
 
 
-#include <idt.hpp>
+#include <arch/i386/idt.hpp>
 
 
-namespace igros::arch {
+// i386 namespace
+namespace igros::i386 {
 
 
 	// Exceptions and IRQ descriptors table (IDT)
@@ -24,5 +25,5 @@ namespace igros::arch {
 
 
 
-}	// namespace igros::arch
+}	// namespace igros::i386
 

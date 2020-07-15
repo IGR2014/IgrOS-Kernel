@@ -3,17 +3,12 @@
 //	Boot low-level main setup function
 //
 //	File:	boot.cpp
-//	Date:	10 Jul 2020
+//	Date:	15 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
 //
 //
-
-
-#ifndef IGROS_ARCH
-#define IGROS_ARCH "Unknown"
-#endif	// IGROS_ARCH
 
 
 // Common
@@ -23,13 +18,9 @@
 #include <flags.hpp>
 
 // Architecture dependent
-#include <types.hpp>
-#include <gdt.hpp>
-#include <idt.hpp>
-#include <irq.hpp>
-#include <paging.hpp>
-#include <cr.hpp>
-#include <cpu.hpp>
+#include <arch/types.hpp>
+#include <arch/irq.hpp>
+#include <arch/cpu.hpp>
 
 // Kernel drivers
 #include <drivers/vmem.hpp>
@@ -79,7 +70,7 @@ namespace igros {
 						magic,
 						multiboot);
 				// Hang CPU
-				arch::cpuHalt();
+				arch::cpu::halt();
 			}
 
 			// Write kernel info
@@ -93,7 +84,7 @@ namespace igros {
 					u8"Author:\t\tIgor Baklykov (c) %d - %d\r\n"
 					u8"Command line:\t%s\r\n"
 					u8"Loader:\t\t%s\r\n",
-					(IGROS_ARCH),
+					platform::name(),
 					&_SECTION_KERNEL_START_,
 					&_SECTION_KERNEL_END_,
 					static_cast<dword_t>(&_SECTION_KERNEL_END_ - &_SECTION_KERNEL_START_) >> 10,
@@ -106,20 +97,8 @@ namespace igros {
 					multiboot->commandLine(),
 					multiboot->loaderName());
 
-			// Setup Interrupts Descriptor Table
-			arch::idt::init();
-			// Init exceptions
-			arch::except::init();
-			// Setup Global Descriptors Table
-			arch::gdt::init();
-
-			// Setup paging (And identity map first 4MB where kernel physically is)
-			arch::paging::init();
-
-			// Init interrupts
-			arch::irq::init();
-			// Enable interrupts
-			arch::irq::enable();
+			// Initialize platform
+			platform::initialize();
 
 			// Setup PIT
 			//arch::pitSetup();
@@ -128,6 +107,10 @@ namespace igros {
 			// Setup RTC
 			arch::rtcSetup();
 
+			//
+			multiboot->dumpFlags();
+
+/*
 			// Test VBE
 			if (multiboot->hasInfoVBE()) {
 				// Get VBE config info
@@ -191,7 +174,7 @@ namespace igros {
 				}
 */
 
-			}
+			//}
 
 			/*
 			// Check if memory map exists
@@ -200,6 +183,7 @@ namespace igros {
 			}
 			*/
 
+/*
 			// Check framebuffer
 			if (multiboot->hasInfoFrameBuffer()) {
 				// Dump FB
@@ -215,6 +199,7 @@ namespace igros {
 						static_cast<std::size_t>(multiboot->fbAddress),
 						multiboot->fbWidth * (multiboot->fbBpp >> 3) * multiboot->fbHeight * multiboot->fbPitch);
 
+/*
 				// Get video memory phys address
 				auto pvMem = reinterpret_cast<byte_t*>(multiboot->fbAddress);
 				// Check phys address
@@ -222,7 +207,7 @@ namespace igros {
 					// Set virtual address
 					auto vvMem = reinterpret_cast<byte_t*>(0xFFFFFFFFE0000000);
 					// Map video memory phys address to virtual
-					arch::paging::mapPage(reinterpret_cast<arch::page_t*>(pvMem), vvMem, arch::paging::flags_t::WRITABLE | arch::paging::flags_t::PRESENT);
+					i386::paging::mapPage(reinterpret_cast<arch::page_t*>(pvMem), vvMem, arch::paging::flags_t::WRITABLE | arch::paging::flags_t::PRESENT);
 					// Try to draw RGB
 					for (auto i = 0u; i < 1024u; i++) {
 						auto j		= i * 3;
@@ -231,14 +216,15 @@ namespace igros {
 						vvMem[j + 2]	= 0x00;
 					}
 				}
+*/
 
-			}
+			//}
 
 			// Write "Booted successfully" message
 			klib::kprintf(u8"Booted successfully\r\n");
 
 			// Halt CPU
-			arch::cpuHalt();
+			arch::cpu::halt();
 
 		}
 

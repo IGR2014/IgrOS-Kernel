@@ -3,7 +3,7 @@
 //	Interrupts low-level operations
 //
 //	File:	isr.hpp
-//	Date:	30 Jun 2020
+//	Date:	13 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -16,25 +16,21 @@
 
 #include <type_traits>
 
-#include <types.hpp>
+#include <arch/i386/types.hpp>
+#include <arch/i386/register.hpp>
 
 
-// Arch-dependent code zone
-namespace igros::arch {
+// i386 namespace
+namespace igros::i386 {
 
 
 	// IRQ offset in ISR list
-	constexpr static dword_t IRQ_OFFSET	= 32u;
+	constexpr auto IRQ_OFFSET	= 32u;
 	// ISR list size
-	constexpr static dword_t ISR_SIZE	= 256u;
+	constexpr auto ISR_SIZE		= 256u;
 
-	// Forward declaration
-	struct taskRegs_t;
 	// Interrupt service routine handler type
-	using isrHandler_t = std::add_pointer_t<void(const taskRegs_t*)>;
-
-	// Interrupt handlers
-	extern isrHandler_t isrList[ISR_SIZE];
+	using isr_t = std::add_pointer_t<void(const register_t*)>;
 
 
 #ifdef	__cplusplus
@@ -45,7 +41,7 @@ namespace igros::arch {
 
 
 		// Interrupts handler function
-		void	isrHandler(const taskRegs_t* regs) noexcept;
+		void	isrHandler(const register_t* regs) noexcept;
 
 
 #ifdef	__cplusplus
@@ -56,17 +52,10 @@ namespace igros::arch {
 
 
 	// Install interrupt service routine handler
-	constexpr void isrHandlerInstall(const dword_t isrNumber, const isrHandler_t isrHandler) noexcept{
-		// Put interrupt service routine handler in ISRs list
-		isrList[isrNumber] = isrHandler;
-	}
-
+	void isrHandlerInstall(const dword_t isrNumber, const isr_t isrHandler) noexcept;
 	// Uninstall interrupt service routine handler
-	constexpr void isrHandlerUninstall(const dword_t isrNumber) noexcept {
-		// Remove interrupt service routine handler from ISRs list
-		isrList[isrNumber] = nullptr;
-	}
+	void isrHandlerUninstall(const dword_t isrNumber) noexcept;
 
 
-}	// namespace igros::arch
+}	// namespace igros::i386
 

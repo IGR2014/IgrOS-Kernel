@@ -3,7 +3,7 @@
 //	Memory paging for x86
 //
 //	File:	paging.cpp
-//	Date:	11 Jul 2020
+//	Date:	14 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -11,13 +11,13 @@
 //
 
 
-#include <msr.hpp>
-#include <cr.hpp>
-#include <irq.hpp>
-#include <exceptions.hpp>
-#include <paging.hpp>
-#include <taskRegs.hpp>
-#include <cpu.hpp>
+#include <arch/x86_64/msr.hpp>
+#include <arch/x86_64/cr.hpp>
+#include <arch/x86_64/irq.hpp>
+#include <arch/x86_64/exceptions.hpp>
+#include <arch/x86_64/paging.hpp>
+#include <arch/x86_64/register.hpp>
+#include <arch/x86_64/cpu.hpp>
 
 #include <klib/kalign.hpp>
 #include <klib/kmemory.hpp>
@@ -29,8 +29,8 @@ extern const igros::byte_t _SECTION_KERNEL_START_;
 extern const igros::byte_t _SECTION_KERNEL_END_;
 
 
-// Arch-dependent code zone
-namespace igros::arch {
+// x86_64 namespace
+namespace igros::x86_64 {
 
 
 	// Free pages list
@@ -51,27 +51,31 @@ namespace igros::arch {
 		// Create page map level 4
 		const auto pml4		= paging::makePML4();
 
-		// Kernel memory map
-		static const struct {
+		// Kernel memory mapping
+		static const struct mapping_t {
+
 			const	page_t*		phys;
 			const	pointer_t	virt;
+
 		} PAGE_MAP[] = {
+			// Identity map first 4MB of physical memory to first 4MB in virtual memory
 			// 0Mb					->	0Mb
 			{nullptr,				nullptr},
 			// 2Mb					->	2Mb
 			{reinterpret_cast<page_t*>(0x2000000),	reinterpret_cast<pointer_t>(0x2000000)},
+			// Also map first 4MB of physical memory to 128TB offset in virtual memory
 			// 0Mb					->	128Tb + 0Mb
 			{nullptr,				reinterpret_cast<pointer_t>(0xFFFFFFFF80000000)},
 			// 2Mb					->	128Tb + 2Mb
 			{reinterpret_cast<page_t*>(0x2000000),	reinterpret_cast<pointer_t>(0xFFFFFFFF82000000)}
 		};
 
-		// Identity map first 4MB of physical memory to first 4MB in virtual memory
-		paging::mapTable(pml4, PAGE_MAP[0].phys, PAGE_MAP[0].virt, flags);
-		paging::mapTable(pml4, PAGE_MAP[1].phys, PAGE_MAP[1].virt, flags);
-		// Also map first 4MB of physical memory to 128TB offset in virtual memory
-		paging::mapTable(pml4, PAGE_MAP[2].phys, PAGE_MAP[2].virt, flags);
-		paging::mapTable(pml4, PAGE_MAP[3].phys, PAGE_MAP[3].virt, flags);
+		// Map memory
+		for (const auto &m : PAGE_MAP) {
+			// Map page tables
+			paging::mapTable(pml4, m.phys, m.virt, flags);
+		}
+
 		// Map page directory to itself
 		//paging::mapPage(pml4, reinterpret_cast<page_t*>(pml4), reinterpret_cast<pointer_t>(0xFFFFFFFFFFFFF000), flags);
 
@@ -169,7 +173,7 @@ namespace igros::arch {
 
 
 	// Make PML4
-	pml4_t* paging::makePML4() noexcept {
+	[[nodiscard]] pml4_t* paging::makePML4() noexcept {
 		// Allocate page map level 4
 		const auto pml4 = static_cast<pml4_t*>(paging::allocate());
 		// Zero enties of page map level 4
@@ -179,7 +183,7 @@ namespace igros::arch {
 	}
 
 	// Make page directory pointer
-	directoryPointer_t* paging::makeDirectoryPointer() noexcept {
+	[[nodiscard]] directoryPointer_t* paging::makeDirectoryPointer() noexcept {
 		// Allocate page directory pointer
 		const auto dirPtr = static_cast<directoryPointer_t*>(paging::allocate());
 		// Zero enties of page directory pointer
@@ -189,7 +193,7 @@ namespace igros::arch {
 	}
 
 	// Make page directory
-	directory_t* paging::makeDirectory() noexcept {
+	[[nodiscard]] directory_t* paging::makeDirectory() noexcept {
 		// Allocate page directory
 		const auto dir = static_cast<directory_t*>(paging::allocate());
 		// Zero enties of page directory
@@ -199,7 +203,7 @@ namespace igros::arch {
 	}
 
 	// Make page table
-	table_t* paging::makeTable() noexcept {
+	[[nodiscard]] table_t* paging::makeTable() noexcept {
 		// Allocate page table
 		const auto table = static_cast<table_t*>(paging::allocate());
 		// Zero enties of page table
@@ -210,7 +214,7 @@ namespace igros::arch {
 
 
 	// Check directory pointer flags
-	bool paging::checkFlags(const directoryPointer_t* dirPtr, const flags_t &flags) noexcept {
+	[[nodiscard]] bool paging::checkFlags(const directoryPointer_t* dirPtr, const flags_t &flags) noexcept {
 		// Mask flags
 		auto maskedFlags = flags & flags_t::FLAGS_MASK;
 		// Check flags
@@ -218,7 +222,7 @@ namespace igros::arch {
 	}
 
 	// Check directory flags
-	bool paging::checkFlags(const directory_t* dir, const flags_t &flags) noexcept {
+	[[nodiscard]] bool paging::checkFlags(const directory_t* dir, const flags_t &flags) noexcept {
 		// Mask flags
 		const auto maskedFlags = flags & flags_t::FLAGS_MASK;
 		// Check flags
@@ -226,7 +230,7 @@ namespace igros::arch {
 	}
 
 	// Check table flags
-	bool paging::checkFlags(const table_t* table, const flags_t &flags) noexcept {
+	[[nodiscard]] bool paging::checkFlags(const table_t* table, const flags_t &flags) noexcept {
 		// Mask flags
 		const auto maskedFlags = flags & flags_t::FLAGS_MASK;
 		// Check flags
@@ -234,7 +238,7 @@ namespace igros::arch {
 	}
 
 	// Check page flags
-	bool paging::checkFlags(const page_t* page, const flags_t &flags) noexcept {
+	[[nodiscard]] bool paging::checkFlags(const page_t* page, const flags_t &flags) noexcept {
 		// Mask flags
 		const auto maskedFlags = flags & flags_t::FLAGS_MASK;
 		// Check flags
@@ -439,7 +443,7 @@ namespace igros::arch {
 		table	= reinterpret_cast<table_t*>((reinterpret_cast<std::size_t>(table) & 0x7FFFFFFF) | static_cast<std::size_t>(flags & flags_t::FLAGS_MASK));
 
 		//
-		klib::kprintf(u8"Table mapped:\t0x%p -> 0x%p [%3d, %3d, %3d, %3c]", phys, virt, pml4ID, dirPtrID, dirID, u8'-');
+		//klib::kprintf(u8"Table mapped:\t0x%p -> 0x%p [%3d, %3d, %3d, %3c]", phys, virt, pml4ID, dirPtrID, dirID, u8'-');
 
 	}
 
@@ -510,7 +514,7 @@ namespace igros::arch {
 		table	= reinterpret_cast<table_t*>((reinterpret_cast<std::size_t>(table) & 0x7FFFFFFF) | static_cast<std::size_t>(flags & flags_t::FLAGS_MASK));
 
 		//
-		klib::kprintf(u8"Page mapped:\t0x%p -> 0x%p [%3d, %3d, %3d, %3d]", phys, virt, pml4ID, dirPtrID, dirID, tabID);
+		//klib::kprintf(u8"Page mapped:\t0x%p -> 0x%p [%3d, %3d, %3d, %3d]", phys, virt, pml4ID, dirPtrID, dirID, tabID);
 
 	}
 
@@ -529,7 +533,7 @@ namespace igros::arch {
 
 
 	// Convert virtual address to physical address
-	pointer_t paging::toPhys(const pointer_t virt) noexcept {
+	[[nodiscard]] pointer_t paging::toPhys(const pointer_t virt) noexcept {
 
 		// Page map level 4 table table index from virtual address
 		const auto pml4ID	= (reinterpret_cast<std::size_t>(virt) >> 39) & 0x1FF;
@@ -586,7 +590,7 @@ namespace igros::arch {
 
 
 	// Page Fault Exception handler
-	void paging::exHandler(const taskRegs_t* regs) noexcept {
+	void paging::exHandler(const register_t* regs) noexcept {
 
 		// Disable IRQ
 		irq::disable();
@@ -621,5 +625,5 @@ namespace igros::arch {
 	}
 
 
-}	// namespace igros::arch
+}	// namespace igros::x86_64
 

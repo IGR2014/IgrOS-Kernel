@@ -3,7 +3,7 @@
 //	Exceptions low-level operations
 //
 //	File:	exceptions.cpp
-//	Date:	30 Jun 2020
+//	Date:	11 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -11,15 +11,15 @@
 //
 
 
-#include <exceptions.hpp>
-#include <taskRegs.hpp>
-#include <cpu.hpp>
+#include <arch/x86_64/exceptions.hpp>
+#include <arch/x86_64/register.hpp>
+#include <arch/x86_64/cpu.hpp>
 
 #include <klib/kprint.hpp>
 
 
-// Arch-dependent code zone
-namespace igros::arch {
+// x86_64 platform
+namespace igros::x86_64 {
 
 
 	// Init exceptions
@@ -48,7 +48,7 @@ namespace igros::arch {
 
 
 	// Default exception handler
-	void except::exDefaultHandler(const taskRegs_t* regs) noexcept {
+	void except::exDefaultHandler(const register_t* regs) noexcept {
 		// Print exception name
 		klib::kprintf("Exception:\t%s", except::NAME[regs->number]);
 		// Hang CPU
@@ -56,5 +56,5 @@ namespace igros::arch {
 	}
 
 
-}	// namespace igros::arch
+}	// namespace igros::x86_64
 

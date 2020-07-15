@@ -3,7 +3,7 @@
 //	Global descriptor table low-level operations
 //
 //	File:	boot.cpp
-//	Date:	30 Jun 2020
+//	Date:	11 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -11,11 +11,11 @@
 //
 
 
-#include <gdt.hpp>
+#include <arch/i386/gdt.hpp>
 
 
-// Arch-dependent code zone
-namespace igros::arch {
+// i386 namespace
+namespace igros::i386 {
 
 
 	// Global descriptors table (GDT)
@@ -24,5 +24,5 @@ namespace igros::arch {
 	gdtPointer_t	gdt::pointer;
 
 
-}	// namespace igros::arch
+}	// namespace igros::i386
 
