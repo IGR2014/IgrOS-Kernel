@@ -3,7 +3,7 @@
 #	x86_64 clang make script
 #
 #	File:	Makefile-x86_64-clang++.in
-#	Date:	30 Jun 2020
+#	Date:	13 Jul 2020
 #
 #	Copyright (c) 2017 - 2020, Igor Baklykov
 #	All rights reserved.
@@ -37,8 +37,6 @@ export CXXFLAGS		= -std=c++17				\
 			  -mno-sse2				\
 			  -mno-sse3				\
 			  -mno-mmx				\
-			  -DIGROS_ARCH_$(IGROS_ARCH)		\
-			  -DIGROS_ARCH="\"$(IGROS_ARCH)"\"	\
 			  -m64					\
 			  -march=x86-64				\
 			  -mno-red-zone				\
