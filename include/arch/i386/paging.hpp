@@ -3,7 +3,7 @@
 //	Memory paging for x86
 //
 //	File:	paging.hpp
-//	Date:	10 Jul 2020
+//	Date:	11 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -16,28 +16,32 @@
 
 #include <flags.hpp>
 
-#include <types.hpp>
-#include <cr.hpp>
+#include <arch/i386/types.hpp>
+#include <arch/i386/cr.hpp>
+#include <arch/i386/register.hpp>
 
 
-// Arch-dependent code zone
-namespace igros::arch {
+// i386 namespace
+namespace igros::i386 {
 
 
-	// Forward declaration
-	struct taskRegs_t;
-
-
-	// Page directory max entries count
-	constexpr auto	PAGE_DIRECTORY_SIZE	= 1024ull;
+	// Page directory/table max entries count
+	constexpr auto	PAGE_ENTRY_SHIFT	= 10;
+	// Page directory/table max entries count
+	constexpr auto	PAGE_ENTRY_SIZE		= 1u << PAGE_ENTRY_SHIFT;
 	// Page table max entries count
-	constexpr auto	PAGE_TABLE_SIZE		= PAGE_DIRECTORY_SIZE;
+	constexpr auto	PAGE_ENTRY_MASK		= PAGE_ENTRY_SIZE - 1u;
 	// Page shift
 	constexpr auto	PAGE_SHIFT		= 12;
 	// Page size
 	constexpr auto	PAGE_SIZE		= 1u << PAGE_SHIFT;
 	// Page mask
 	constexpr auto	PAGE_MASK		= PAGE_SIZE - 1u;
+
+	// Page directory ID shift
+	constexpr auto	PAGE_DIRECTORY_SHIFT	= PAGE_SHIFT + PAGE_ENTRY_SHIFT;
+	// Page table ID shift
+	constexpr auto	PAGE_TABLE_SHIFT	= PAGE_SHIFT;
 
 
 #pragma push(pack, 1)
@@ -53,13 +57,13 @@ namespace igros::arch {
 	// Page table
 	union alignas(PAGE_SIZE) table_t {
 		pointer_t	next;					// Pointer to next table
-		page_t*		pages[PAGE_TABLE_SIZE];			// Page table entries
+		page_t*		pages[PAGE_ENTRY_SIZE];			// Page table entries
 	};
 
 
 	// Page directory
 	union alignas(PAGE_SIZE) directory_t {
-		table_t*	tables[PAGE_DIRECTORY_SIZE];		// Page directory entries
+		table_t*	tables[PAGE_ENTRY_SIZE];		// Page directory entries
 	};
 
 
@@ -132,14 +136,14 @@ namespace igros::arch {
 		static void			deallocate(const pointer_t page) noexcept;
 
 		// Make page directory
-		static directory_t*	makeDirectory() noexcept;
+		[[nodiscard]] static directory_t*	makeDirectory() noexcept;
 		// Make page table
-		static table_t*		makeTable() noexcept;
+		[[nodiscard]] static table_t*		makeTable() noexcept;
 
 		// Check table flags
-		static bool checkFlags(const table_t* table, const flags_t &flags) noexcept;
+		[[nodiscard]] static bool checkFlags(const table_t* table, const flags_t &flags) noexcept;
 		// Check page flags
-		static bool checkFlags(const page_t* page, const flags_t &flags) noexcept;
+		[[nodiscard]] static bool checkFlags(const page_t* page, const flags_t &flags) noexcept;
 
 		// Map virtual page to physical page (whole table, explicit page directory)
 		static void mapTable(directory_t* const dir, const page_t* phys, const pointer_t virt, const flags_t flags) noexcept;
@@ -155,7 +159,7 @@ namespace igros::arch {
 		[[nodiscard]] static pointer_t	toPhys(const pointer_t addr) noexcept;
 
 		// Page Fault Exception handler
-		static void exHandler(const taskRegs_t* regs) noexcept;
+		static void exHandler(const register_t* regs) noexcept;
 
 		// Set page directory
 		static void setDirectory(const directory_t* const dir) noexcept;
@@ -164,5 +168,5 @@ namespace igros::arch {
 	};
 
 
-}	// namespace igros::arch
+}	// namespace igros::i386
 

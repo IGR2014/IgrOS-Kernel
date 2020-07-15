@@ -3,7 +3,7 @@
 //	Memory paging for x86
 //
 //	File:	paging.hpp
-//	Date:	10 Jul 2020
+//	Date:	13 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -16,15 +16,15 @@
 
 #include <flags.hpp>
 
-#include <types.hpp>
+#include <arch/x86_64/types.hpp>
 
 
-// Arch-dependent code zone
-namespace igros::arch {
+// x86_64 namespace
+namespace igros::x86_64 {
 
 
 	// Forward declaration
-	struct taskRegs_t;
+	struct register_t;
 
 
 	// Page Map Level 4 max entries count
@@ -191,7 +191,7 @@ namespace igros::arch {
 		[[nodiscard]] static pointer_t	toPhys(const pointer_t addr) noexcept;
 
 		// Page Fault Exception handler
-		static void exHandler(const taskRegs_t* regs) noexcept;
+		static void exHandler(const register_t* regs) noexcept;
 
 		// Set page directory
 		static void setDirectory(const pml4_t* const dir) noexcept;
@@ -200,5 +200,5 @@ namespace igros::arch {
 	};
 
 
-}	// namespace igros::arch
+}	// namespace igros::x86_64
 

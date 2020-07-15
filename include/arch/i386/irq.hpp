@@ -3,7 +3,7 @@
 //	Interrupts low-level operations
 //
 //	File:	irq.hpp
-//	Date:	30 Jun 2020
+//	Date:	13 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -14,16 +14,25 @@
 #pragma once
 
 
-#include <types.hpp>
-#include <isr.hpp>
+#include <arch/i386/types.hpp>
+#include <arch/i386/port.hpp>
+#include <arch/i386/isr.hpp>
 
 
-// Arch-dependent code zone
-namespace igros::arch {
+// i386 namespace
+namespace igros::i386 {
+
+
+	// Master PIC ports
+	constexpr auto PIC_MASTER_CONTROL	= static_cast<port_t>(0x0020);
+	constexpr auto PIC_MASTER_DATA		= static_cast<port_t>(PIC_MASTER_CONTROL + 1);
+	// Slave PIC ports
+	constexpr auto PIC_SLAVE_CONTROL	= static_cast<port_t>(0x00A0);
+	constexpr auto PIC_SLAVE_DATA		= static_cast<port_t>(PIC_SLAVE_CONTROL + 1);
 
 
 	// Interrupts number enumeration
-	enum class irqNumber_t : dword_t {
+	enum class irq_t : dword_t {
 		PIT		= 0u,
 		KEYBOARD	= 1u
 	};
@@ -37,37 +46,37 @@ namespace igros::arch {
 
 
 		// Interrupt 0 handler
-		void	irqHandler0();
+		constexpr void	irqHandler0() noexcept;
 		// Interrupt 1 handler
-		void	irqHandler1();
+		constexpr void	irqHandler1() noexcept;
 		// Interrupt 2 handler
-		void	irqHandler2();
+		constexpr void	irqHandler2() noexcept;
 		// Interrupt 3 handler
-		void	irqHandler3();
+		constexpr void	irqHandler3() noexcept;
 		// Interrupt 4 handler
-		void	irqHandler4();
+		constexpr void	irqHandler4() noexcept;
 		// Interrupt 5 handler
-		void	irqHandler5();
+		constexpr void	irqHandler5() noexcept;
 		// Interrupt 6 handler
-		void	irqHandler6();
+		constexpr void	irqHandler6() noexcept;
 		// Interrupt 7 handler
-		void	irqHandler7();
+		constexpr void	irqHandler7() noexcept;
 		// Interrupt 8 handler
-		void	irqHandler8();
+		constexpr void	irqHandler8() noexcept;
 		// Interrupt 9 handler
-		void	irqHandler9();
+		constexpr void	irqHandler9() noexcept;
 		// Interrupt 10 handler
-		void	irqHandlerA();
+		constexpr void	irqHandlerA() noexcept;
 		// Interrupt 11 handler
-		void	irqHandlerB();
+		constexpr void	irqHandlerB() noexcept;
 		// Interrupt 12 handler
-		void	irqHandlerC();
+		constexpr void	irqHandlerC() noexcept;
 		// Interrupt 13 handler
-		void	irqHandlerD();
+		constexpr void	irqHandlerD() noexcept;
 		// Interrupt 14 handler
-		void	irqHandlerE();
+		constexpr void	irqHandlerE() noexcept;
 		// Interrupt 15 handler
-		void	irqHandlerF();
+		constexpr void	irqHandlerF() noexcept;
 
 
 #ifdef	__cplusplus
@@ -104,9 +113,9 @@ namespace igros::arch {
 		static void disable() noexcept;
 
 		// Mask interrupt
-		static void mask(const irqNumber_t irqNumber) noexcept;
+		static void mask(const irq_t number) noexcept;
 		// Unmask interrupt
-		static void unmask(const irqNumber_t irqNumber) noexcept;
+		static void unmask(const irq_t number) noexcept;
 
 		// Set interrupts mask
 		static void			setMask(const word_t mask = 0xFFFF) noexcept;
@@ -114,26 +123,13 @@ namespace igros::arch {
 		[[nodiscard]] static word_t	getMask() noexcept;
 
 		// Install IRQ handler
-		constexpr static void install(const irqNumber_t irqNumber, const isrHandler_t irqHandler) noexcept;
+		static void install(const irq_t number, const isr_t handler) noexcept;
 		// Uninstall IRQ handler
-		constexpr static void uninstall(const irqNumber_t irqNumber) noexcept;
+		static void uninstall(const irq_t number) noexcept;
 
 
 	};
 
 
-	// Install handler
-	constexpr void irq::install(const irqNumber_t irqNumber, const isrHandler_t irqHandler) noexcept {
-		// Install ISR
-		isrHandlerInstall(dword_t(irqNumber) + IRQ_OFFSET, irqHandler);
-	}
-
-	// Uninstall handler
-	constexpr void irq::uninstall(const irqNumber_t irqNumber) noexcept {
-		// Uninstall ISR
-		isrHandlerUninstall(dword_t(irqNumber) + IRQ_OFFSET);
-	}
-
-
-}	// namespace igros::arch
+}	// namespace igros::i386
 

@@ -3,7 +3,7 @@
 //	Exceptions low-level operations
 //
 //	File:	exceptions.hpp
-//	Date:	30 Jun 2020
+//	Date:	13 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -14,12 +14,13 @@
 #pragma once
 
 
-#include <types.hpp>
-#include <isr.hpp>
+#include <arch/x86_64/types.hpp>
+#include <arch/x86_64/isr.hpp>
+#include <arch/x86_64/register.hpp>
 
 
-// Arch-dependent code zone
-namespace igros::arch {
+// x86_64 namespace
+namespace igros::x86_64 {
 
 
 #ifdef	__cplusplus
@@ -103,7 +104,7 @@ namespace igros::arch {
 
 
 	// Task registers structure forward declaration
-	struct taskRegs_t;
+	struct register_t;
 
 
 	// Exceptions structure
@@ -188,29 +189,29 @@ namespace igros::arch {
 		static void init() noexcept;
 
 		// Install exceptions handler
-		constexpr static void install(const NUMBER irqNumber, const isrHandler_t irqHandler) noexcept;
+		inline static void install(const NUMBER irqNumber, const x86_64::isr_t irqHandler) noexcept;
 		// Uninstall exceptions handler
-		constexpr static void uninstall(const NUMBER irqNumber) noexcept;
+		inline static void uninstall(const NUMBER irqNumber) noexcept;
 
 		// Default exception handler
-		static void exDefaultHandler(const taskRegs_t* regs) noexcept;
+		static void exDefaultHandler(const register_t* regs) noexcept;
 
 
 	};
 
 
 	// Install handler
-	constexpr void except::install(const NUMBER exNumber, const isrHandler_t handler) noexcept {
+	inline void except::install(const NUMBER exNumber, const x86_64::isr_t handler) noexcept {
 		// Install ISR
-		isrHandlerInstall(static_cast<dword_t>(exNumber), handler);
+		x86_64::isrHandlerInstall(static_cast<dword_t>(exNumber), handler);
 	}
 
 	// Uninstall handler
-	constexpr void except::uninstall(const NUMBER exNumber) noexcept {
+	inline void except::uninstall(const NUMBER exNumber) noexcept {
 		// Uninstall ISR
-		isrHandlerUninstall(static_cast<dword_t>(exNumber));
+		x86_64::isrHandlerUninstall(static_cast<dword_t>(exNumber));
 	}
 
 
-}	// namespace igros::arch
+}	// namespace igros::x86_64
 

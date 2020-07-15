@@ -3,7 +3,7 @@
 //	CPUID detection
 //
 //	File:	cpuid.hpp
-//	Date:	30 Jun 2020
+//	Date:	13 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -14,11 +14,11 @@
 #pragma once
 
 
-#include <types.hpp>
+#include <arch/x86_64/types.hpp>
 
 
-// Arch-dependent code zone
-namespace igros::arch {
+// x86_64 namespace
+namespace igros::x86_64 {
 
 
 	// CPUID EAX value (e.g. flag)
@@ -46,11 +46,11 @@ namespace igros::arch {
 
 
 	// Check if CPUID exists (Looks like on i386 not)
-	bool		cpuidCheck() noexcept;
+	[[nodiscard]] bool cpuidCheck() noexcept;
 
 	// CPUID instruction call
-        cpuidRegs_t	cpuid(const cpuidFlags_t flag) noexcept;
+	[[nodiscard]] cpuidRegs_t cpuid(const cpuidFlags_t flag) noexcept;
 
 
-}	// namespace igros::arch
+}	// namespace igros::x86_64
 

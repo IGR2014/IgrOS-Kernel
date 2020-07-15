@@ -2,8 +2,8 @@
 //
 //	Task switch registers data structure
 //
-//	File:	taskRegs.hpp
-//	Date:	30 Jun 2020
+//	File:	register.hpp
+//	Date:	13 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -14,17 +14,17 @@
 #pragma once
 
 
-#include <types.hpp>
+#include <arch/x86_64/types.hpp>
 
 
-// Arch-dependent code zone
-namespace igros::arch {
+// x86_64 namespace
+namespace igros::x86_64 {
 
 
 #pragma pack(push, 1)
 
 	// x86_64 task switch registers save
-	struct taskRegs_t {
+	struct register_t {
 
 		// "All" registers pushed by us
 		quad_t	r15;		// Register r15
@@ -53,10 +53,10 @@ namespace igros::arch {
 		quad_t	userRsp;	// User stack pointer register
 		quad_t	ss;		// Stack segment register
 
-	};	// taskRegs
+	};
 
 #pragma pack(pop)
 
 
-}	// namespace igros::arch
+}	// namespace igros::x86_64
 

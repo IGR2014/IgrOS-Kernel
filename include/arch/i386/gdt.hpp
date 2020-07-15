@@ -3,7 +3,7 @@
 //	Global descriptor table low-level operations
 //
 //	File:	gdt.hpp
-//	Date:	30 Jun 2020
+//	Date:	13 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -16,11 +16,11 @@
 
 #include <flags.hpp>
 
-#include <types.hpp>
+#include <arch/i386/types.hpp>
 
 
-// Arch-dependent code zone
-namespace igros::arch {
+// i386 namespace
+namespace igros::i386 {
 
 
 #pragma pack(push, 1)
@@ -203,5 +203,5 @@ namespace igros::arch {
 	}
 
 
-}	// namespace igros::arch
+}	// namespace igros::i386
 

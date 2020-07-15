@@ -3,7 +3,7 @@
 //	Exceptions low-level operations
 //
 //	File:	exceptions.hpp
-//	Date:	30 Jun 2020
+//	Date:	13 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -14,12 +14,13 @@
 #pragma once
 
 
-#include <types.hpp>
-#include <isr.hpp>
+#include <arch/i386/types.hpp>
+#include <arch/i386/isr.hpp>
+#include <arch/i386/register.hpp>
 
 
-// Arch-dependent code zone
-namespace igros::arch {
+// i386 namespace
+namespace igros::i386 {
 
 
 #ifdef	__cplusplus
@@ -100,10 +101,6 @@ namespace igros::arch {
 	}	// extern "C"
 
 #endif	// __cplusplus
-
-
-	// Task registers structure forward declaration
-	struct taskRegs_t;
 
 
 	// Exceptions structure
@@ -188,29 +185,16 @@ namespace igros::arch {
 		static void init() noexcept;
 
 		// Install exceptions handler
-		constexpr static void install(const NUMBER irqNumber, const isrHandler_t irqHandler) noexcept;
+		static void install(const NUMBER irqNumber, const isr_t irqHandler) noexcept;
 		// Uninstall exceptions handler
-		constexpr static void uninstall(const NUMBER irqNumber) noexcept;
+		static void uninstall(const NUMBER irqNumber) noexcept;
 
 		// Default exception handler
-		static void exDefaultHandler(const taskRegs_t* regs) noexcept;
+		static void exDefaultHandler(const register_t* regs) noexcept;
 
 
 	};
 
 
-	// Install handler
-	constexpr void except::install(const NUMBER exNumber, const isrHandler_t handler) noexcept {
-		// Install ISR
-		isrHandlerInstall(static_cast<dword_t>(exNumber), handler);
-	}
-
-	// Uninstall handler
-	constexpr void except::uninstall(const NUMBER exNumber) noexcept {
-		// Uninstall ISR
-		isrHandlerUninstall(static_cast<dword_t>(exNumber));
-	}
-
-
-}	// namespace igros::arch
+}	// namespace igros::i386
 

@@ -11,12 +11,12 @@
 //
 
 
-#include <cr.hpp>
-#include <irq.hpp>
-#include <exceptions.hpp>
-#include <paging.hpp>
-#include <taskRegs.hpp>
-#include <cpu.hpp>
+#include <arch/i386/cr.hpp>
+#include <arch/i386/irq.hpp>
+#include <arch/i386/exceptions.hpp>
+#include <arch/i386/paging.hpp>
+#include <arch/i386/register.hpp>
+#include <arch/i386/cpu.hpp>
 
 #include <klib/kalign.hpp>
 #include <klib/kmemory.hpp>
@@ -29,7 +29,7 @@ extern const igros::byte_t _SECTION_KERNEL_END_;
 
 
 // Arch-dependent code zone
-namespace igros::arch {
+namespace igros::i386 {
 
 
 	// Free pages list
@@ -55,16 +55,20 @@ namespace igros::arch {
 			const	page_t*		phys;
 			const	pointer_t	virt;
 		} PAGE_MAP[] = {
-			// 0Mb					->	0Mb
-			{nullptr,				nullptr},
-			// 0Mb					->	3Gb + 0Mb
-			{nullptr,				reinterpret_cast<pointer_t>(0xC0000000)}
+			// Identity map first 4MB of physical memory to first 4Mb in virtual memory
+			// 0Mb		->	0Mb
+			{nullptr,	nullptr},
+			// Also map first 4MB of physical memory to 3Gb offset in virtual memory
+			// 0Mb		->	3Gb + 0Mb
+			{nullptr,	reinterpret_cast<pointer_t>(0xC0000000)}
 		};
 
-		// Identity map first 4MB of physical memory to first 4Mb in virtual memory
-		paging::mapTable(dir, PAGE_MAP[0].phys, PAGE_MAP[0].virt, flags);
-		// Also map first 4MB of physical memory to 3Gb offset in virtual memory
-		paging::mapTable(dir, PAGE_MAP[1].phys, PAGE_MAP[1].virt, flags);
+		// Map memory
+		for (const auto &m : PAGE_MAP) {
+			// Map page tables
+			paging::mapTable(dir, m.phys, m.virt, flags);
+		}
+
 		// Map page directory to itself
 		paging::mapPage(dir, reinterpret_cast<page_t*>(dir), reinterpret_cast<pointer_t>(0xFFFFF000), flags);
 
@@ -175,7 +179,7 @@ namespace igros::arch {
 
 
 	// Make page directory
-	directory_t* paging::makeDirectory() noexcept {
+	[[nodiscard]] directory_t* paging::makeDirectory() noexcept {
 		// Allocate page directory
 		const auto dir = static_cast<directory_t*>(paging::allocate());
 		// Zero enties of page directory
@@ -185,7 +189,7 @@ namespace igros::arch {
 	}
 
 	// Make page table
-	table_t* paging::makeTable() noexcept {
+	[[nodiscard]] table_t* paging::makeTable() noexcept {
 		// Allocate page table
 		const auto table = static_cast<table_t*>(paging::allocate());
 		// Zero enties of page table
@@ -196,7 +200,7 @@ namespace igros::arch {
 
 
 	// Check table flags
-	bool paging::checkFlags(const table_t* table, const flags_t &flags) noexcept {
+	[[nodiscard]] bool paging::checkFlags(const table_t* table, const flags_t &flags) noexcept {
 		// Mask flags
 		const auto maskedFlags = flags & flags_t::FLAGS_MASK;
 		// Check flags
@@ -204,7 +208,7 @@ namespace igros::arch {
 	}
 
 	// Check page flags
-	bool paging::checkFlags(const page_t* page, const flags_t &flags) noexcept {
+	[[nodiscard]] bool paging::checkFlags(const page_t* page, const flags_t &flags) noexcept {
 		// Mask flags
 		const auto maskedFlags = flags & flags_t::FLAGS_MASK;
 		// Check flags
@@ -269,9 +273,9 @@ namespace igros::arch {
 		}
 
 		// Page directory entry index from virtual address
-		const auto dirID = (reinterpret_cast<std::size_t>(virt) >> 22) & 0x3FF;
+		const auto dirID = (reinterpret_cast<std::size_t>(virt) >> PAGE_DIRECTORY_SHIFT) & PAGE_ENTRY_MASK;
 		// Page table entry index from virtual address
-		const auto tabID = (reinterpret_cast<std::size_t>(virt) >> PAGE_SHIFT) & 0x3FF;
+		const auto tabID = (reinterpret_cast<std::size_t>(virt) >> PAGE_TABLE_SHIFT) & PAGE_ENTRY_MASK;
 
 		// Get page table pointer
 		auto &table = dir->tables[dirID];
@@ -304,12 +308,12 @@ namespace igros::arch {
 
 
 	// Convert virtual address to physical address
-	pointer_t paging::toPhys(const pointer_t virt) noexcept {
+	[[nodiscard]] pointer_t paging::toPhys(const pointer_t virt) noexcept {
 
 		// Page directory entry index from virtual address
-		const auto dirID = (reinterpret_cast<std::size_t>(virt) >> 22) & 0x3FF;
+		const auto dirID = (reinterpret_cast<std::size_t>(virt) >> PAGE_DIRECTORY_SHIFT) & PAGE_ENTRY_MASK;
 		// Page table entry index from virtual address
-		const auto tabID = (reinterpret_cast<std::size_t>(virt) >> PAGE_SHIFT) & 0x3FF;
+		const auto tabID = (reinterpret_cast<std::size_t>(virt) >> PAGE_TABLE_SHIFT) & PAGE_ENTRY_MASK;
 
 		// Get pointer to page directory
 		const auto dir = reinterpret_cast<const directory_t*>(outCR3());
@@ -341,7 +345,7 @@ namespace igros::arch {
 
 
 	// Page Fault Exception handler
-	void paging::exHandler(const taskRegs_t* regs) noexcept {
+	void paging::exHandler(const register_t* regs) noexcept {
 
 		// Disable IRQ
 		irq::disable();

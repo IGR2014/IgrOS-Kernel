@@ -3,7 +3,7 @@
 //	Exceptions low-level operations
 //
 //	File:	exceptions.cpp
-//	Date:	06 Jul 2020
+//	Date:	11 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -11,16 +11,16 @@
 //
 
 
-#include <exceptions.hpp>
-#include <irq.hpp>
-#include <taskRegs.hpp>
-#include <cpu.hpp>
+#include <arch/i386/exceptions.hpp>
+#include <arch/i386/irq.hpp>
+#include <arch/i386/register.hpp>
+#include <arch/i386/cpu.hpp>
 
 #include <klib/kprint.hpp>
 
 
-// Arch-dependent code zone
-namespace igros::arch {
+// i386 namespace
+namespace igros::i386 {
 
 
 	// Init exceptions
@@ -49,7 +49,7 @@ namespace igros::arch {
 
 
 	// Default exception handler
-	void except::exDefaultHandler(const taskRegs_t* regs) noexcept {
+	void except::exDefaultHandler(const register_t* regs) noexcept {
 		// Disable interrupts
 		irq::disable();
 		// Print exception name
@@ -59,5 +59,18 @@ namespace igros::arch {
 	}
 
 
-}	// namespace igros::arch
+	// Install handler
+	void except::install(const NUMBER exNumber, const isr_t handler) noexcept {
+		// Install ISR
+		isrHandlerInstall(static_cast<dword_t>(exNumber), handler);
+	}
+
+	// Uninstall handler
+	void except::uninstall(const NUMBER exNumber) noexcept {
+		// Uninstall ISR
+		isrHandlerUninstall(static_cast<dword_t>(exNumber));
+	}
+
+
+}	// namespace igros::i386
 
