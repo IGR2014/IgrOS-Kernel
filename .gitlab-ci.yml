@@ -8,12 +8,12 @@ build i386:
         - i386
     stage: build
     script:
-        - ./build-i386.sh
+        - ./config/script/build-i386.sh
 
 build x86_64:
     tags:
         - x86_64
     stage: build
     script:
-        - ./build-x86_64.sh
+        - ./config/script/build-x86_64.sh
 
