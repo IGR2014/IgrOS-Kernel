@@ -3,7 +3,7 @@
 //	Keyboard generic handling
 //
 //	File:	keyboard.cpp
-//	Date:	30 Jun 2020
+//	Date:	11 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -11,8 +11,10 @@
 //
 
 
+#include <arch/types.hpp>
 #include <port.hpp>
-#include <irq.hpp>
+#include <arch/irq.hpp>
+#include <arch/register.hpp>
 
 #include <drivers/vmem.hpp>
 
@@ -23,8 +25,13 @@
 namespace igros::arch {
 
 
+	// Keyboard ports
+	constexpr auto KEYBOARD_CONTROL	= static_cast<port_t>(0x0064);
+	constexpr auto KEYBOARD_DATA	= static_cast<port_t>(0x0060);
+
+
 	// Keyboard interrupt (#1) handler
-	void keyboardInterruptHandler(const taskRegs_t* regs) {
+	void keyboardInterruptHandler(const register_t* regs) {
 
 		// Check keyboard status
 		auto keyStatus = outPort8(KEYBOARD_CONTROL);
@@ -35,7 +42,7 @@ namespace igros::arch {
 			klib::kprintf(	u8"IRQ #%d\t[Keyboard]\r\n"
 					u8"Key:\t%s\r\n"
 					u8"Code:\t0x%x\r\n",
-					arch::irqNumber_t::KEYBOARD,
+					irq_t::KEYBOARD,
 					(keyCode > 0x80) ? u8"RELEASED" : u8"PRESSED",
 					keyCode);
 		}
@@ -47,12 +54,11 @@ namespace igros::arch {
 	void keyboardSetup() {
 
 		// Install keyboard interrupt handler
-		irq::install(arch::irqNumber_t::KEYBOARD, arch::keyboardInterruptHandler);
+		irq::install(irq_t::KEYBOARD, keyboardInterruptHandler);
 		// Mask Keyboard interrupts
-		irq::mask(arch::irqNumber_t::KEYBOARD);
+		irq::mask(irq_t::KEYBOARD);
 
-		klib::kprintf(	u8"IRQ #%d [Keyboard] installed",
-				arch::irqNumber_t::KEYBOARD);
+		klib::kprintf(u8"IRQ #%d [Keyboard] installed", irq_t::KEYBOARD);
 
 	}
 

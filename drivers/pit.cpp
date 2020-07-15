@@ -3,7 +3,7 @@
 //	Programmable interrupt timer
 //
 //	File:	pit.cpp
-//	Date:	30 Jun 2020
+//	Date:	13 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -11,8 +11,10 @@
 //
 
 
+#include <arch/types.hpp>
 #include <port.hpp>
-#include <irq.hpp>
+#include <arch/irq.hpp>
+#include <arch/register.hpp>
 
 #include <drivers/vmem.hpp>
 #include <drivers/pit.hpp>
@@ -23,6 +25,13 @@
 
 // Arch-dependent code zone
 namespace igros::arch {
+
+
+	// PIT ports
+	constexpr auto	PIT_CONTROL	= static_cast<port_t>(0x0043);
+	constexpr auto	PIT_CHANNEL_0	= static_cast<port_t>(0x0040);
+	constexpr auto	PIT_CHANNEL_1	= static_cast<port_t>(PIT_CHANNEL_0 + 1);
+	constexpr auto	PIT_CHANNEL_2	= static_cast<port_t>(PIT_CHANNEL_1 + 1);
 
 
 	// Ticks count
@@ -37,7 +46,7 @@ namespace igros::arch {
 	void pitSetupFrequency(const word_t frequency) noexcept {
 
 		// Calculate PIT divisor (Base PIT frequency / required frequency)
-		auto divisor	= PIT_MAIN_FREQUENCY / frequency;
+		const auto divisor = PIT_MAIN_FREQUENCY / frequency;
 		// Save divisor value
 		PIT_DIVISOR	= divisor;
 		// Save current real frequency value
@@ -61,10 +70,10 @@ namespace igros::arch {
 		// Send latch command for channel 0;
 		inPort8(PIT_CONTROL, 0x00);
 		// Get number of elapsed ticks since last IRQ
-		auto lowByte		= outPort8(PIT_CHANNEL_0);
-		auto highByte		= outPort8(PIT_CHANNEL_0);
+		const auto loByte = outPort8(PIT_CHANNEL_0);
+		const auto hiByte = outPort8(PIT_CHANNEL_0);
 		// Total elapsed ticks value
-		auto elapsedSinceIRQ	= (highByte << 8) | lowByte;
+		const auto elapsedSinceIRQ = (hiByte << 8) | loByte;
 		// Return full expired ticks count
 		return PIT_TICKS * PIT_DIVISOR + elapsedSinceIRQ;
 
@@ -72,21 +81,21 @@ namespace igros::arch {
 
 
 	// PIT interrupt (#0) handler
-	void pitInterruptHandler(const taskRegs_t*) noexcept {
+	void pitInterruptHandler(const register_t*) noexcept {
 
 		// Output every N-th tick were N = frequency
 		if (0u == (++PIT_TICKS % PIT_FREQUENCY)) {
 
-			auto elapsed		= pitGetTicks();
-			auto res		= klib::kudivmod(elapsed, PIT_MAIN_FREQUENCY);
-			auto nanoseconds	= dword_t(res.reminder);
-			auto seconds		= dword_t(res.quotient);
-			auto minutes		= seconds / 60;
-			auto hours		= minutes / 60;
+			const auto elapsed	= pitGetTicks();
+			const auto res		= klib::kudivmod(elapsed, PIT_MAIN_FREQUENCY);
+			const auto nanoseconds	= static_cast<dword_t>(res.reminder);
+			const auto seconds	= static_cast<dword_t>(res.quotient);
+			const auto minutes	= seconds / 60;
+			const auto hours	= minutes / 60;
 
 			klib::kprintf(	u8"IRQ #%d\t[PIT]\r\n"
 					u8"Time:\t%d:%d:%d.%d (~1 sec.)\r\n",
-					arch::irqNumber_t::PIT,
+					irq_t::PIT,
 					hours % 24,
 					minutes % 60,
 					seconds % 60,
@@ -103,13 +112,12 @@ namespace igros::arch {
 		// Setup PIT frequency to 100 HZ
 		pitSetupFrequency(PIT_DEFAULT_FREQUENCY);
 		// Install PIT interrupt handler
-		irq::install(arch::irqNumber_t::PIT, arch::pitInterruptHandler);
+		irq::install(irq_t::PIT, pitInterruptHandler);
 		// Mask PIT interrupts
-		irq::mask(arch::irqNumber_t::PIT);
+		irq::mask(irq_t::PIT);
 
 		// Print buffer
-		klib::kprintf(	"IRQ #%d [PIT] installed\r\n",
-				arch::irqNumber_t::PIT);
+		klib::kprintf("IRQ #%d [PIT] installed\r\n", irq_t::PIT);
 
 	}
 

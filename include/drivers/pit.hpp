@@ -3,7 +3,7 @@
 //	Programmable interrupt timer
 //
 //	File:	pit.hpp
-//	Date:	30 Jun 2020
+//	Date:	11 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -14,15 +14,11 @@
 #pragma once
 
 
-#include <types.hpp>
+#include <arch/types.hpp>
 
 
 // Arch-dependent code zone
 namespace igros::arch {
-
-
-	// Forward declaration
-	struct	taskRegs_t;
 
 
 #pragma pack(push, 1)
@@ -58,16 +54,13 @@ namespace igros::arch {
 
 
 	// PIT frequency (1.193181(3) MHz)
-	constexpr static dword_t PIT_MAIN_FREQUENCY	= 1193181u;
+	constexpr auto PIT_MAIN_FREQUENCY	= 1193181u;
 	// Default pit frequency (100 Hz)
-	constexpr static dword_t PIT_DEFAULT_FREQUENCY	= 100u;
+	constexpr auto PIT_DEFAULT_FREQUENCY	= 100u;
 
 
 	// Setup PIT frequency
 	void	pitSetupFrequency(const word_t frequency) noexcept;
-
-	// PIT interrupt (#0) handler
-	void	pitInterruptHandler(const taskRegs_t* regs) noexcept;
 
 	// Get expired ticks
 	[[nodiscard]] quad_t	pitGetTicks() noexcept;
