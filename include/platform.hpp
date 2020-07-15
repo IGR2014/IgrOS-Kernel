@@ -3,7 +3,7 @@
 //	IgrOS platform description
 //
 //	File:	platform.hpp
-//	Date:	15 Jul 2020
+//	Date:	16 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -96,37 +96,37 @@ namespace igros::platform {
 
 
 	// Get platform name
-	[[nodiscard]] constexpr auto name() noexcept {
+	[[nodiscard]] inline auto name() noexcept {
 		return CURRENT_PLATFORM.mName;
 	}
 
 	// Initialize platform
-	constexpr void initialize() noexcept {
+	inline void initialize() noexcept {
 		CURRENT_PLATFORM.mInit();
 	}
 
 	// Finalize platform
-	constexpr void finalize() noexcept {
+	inline void finalize() noexcept {
 		CURRENT_PLATFORM.mFinalzie();
 	}
 
 	// Shutdown platform
-	constexpr void shutdown() noexcept {
+	inline void shutdown() noexcept {
 		CURRENT_PLATFORM.mShutdown();
 	}
 
 	// Reboot platform
-	constexpr void reboot() noexcept {
+	inline void reboot() noexcept {
 		CURRENT_PLATFORM.mReboot();
 	}
 
 	// Suspend platform
-	constexpr void suspend() noexcept {
+	inline void suspend() noexcept {
 		CURRENT_PLATFORM.mSuspend();
 	}
 
 	// Wakeup platform
-	constexpr void wakeup() noexcept {
+	inline void wakeup() noexcept {
 		CURRENT_PLATFORM.mWakeup();
 	}
 
