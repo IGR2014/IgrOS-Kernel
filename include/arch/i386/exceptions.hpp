@@ -3,7 +3,7 @@
 //	Exceptions low-level operations
 //
 //	File:	exceptions.hpp
-//	Date:	13 Jul 2020
+//	Date:	16 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -16,7 +16,6 @@
 
 #include <arch/i386/types.hpp>
 #include <arch/i386/isr.hpp>
-#include <arch/i386/register.hpp>
 
 
 // i386 namespace
@@ -103,8 +102,23 @@ namespace igros::i386 {
 #endif	// __cplusplus
 
 
+	// Task registers structure forward declaration
+	struct register_t;
+
+
 	// Exceptions structure
 	class except final {
+
+		// Copy c-tor
+		except(const except &other) = delete;
+		// Copy assignment
+		except& operator=(const except &other) = delete;
+
+		// Move c-tor
+		except(except &&other) = delete;
+		// Move assignment
+		except& operator=(except &&other) = delete;
+
 
 	public:
 
@@ -170,16 +184,6 @@ namespace igros::i386 {
 
 		// Default c-tor
 		except() noexcept = default;
-
-		// Copy c-tor
-		except(const except &other) = delete;
-		// Copy assignment
-		except& operator=(const except &other) = delete;
-
-		// Move c-tor
-		except(except &&other) = delete;
-		// Move assignment
-		except& operator=(except &&other) = delete;
 
 		// Init exceptions
 		static void init() noexcept;

@@ -3,7 +3,7 @@
 //	Interrupts low-level operations
 //
 //	File:	isr.hpp
-//	Date:	13 Jul 2020
+//	Date:	16 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -31,25 +31,6 @@ namespace igros::i386 {
 
 	// Interrupt service routine handler type
 	using isr_t = std::add_pointer_t<void(const register_t*)>;
-
-
-#ifdef	__cplusplus
-
-	extern "C" {
-
-#endif	// __cplusplus
-
-
-		// Interrupts handler function
-		void	isrHandler(const register_t* regs) noexcept;
-
-
-#ifdef	__cplusplus
-
-	}	// extern "C"
-
-#endif	// __cplusplus
-
 
 	// Install interrupt service routine handler
 	void isrHandlerInstall(const dword_t isrNumber, const isr_t isrHandler) noexcept;

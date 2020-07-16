@@ -3,7 +3,7 @@
 //	IgrOS version info
 //
 //	File:	version.hpp
-//	Date:	30 Jun 2020
+//	Date:	16 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -14,18 +14,18 @@
 #pragma once
 
 
-#include <types.hpp>
+#include <arch/types.hpp>
 
 
 // OS namespace
 namespace igros {
 
 
-	constexpr static byte_t	IGROS_VERSION_MAJOR	= 0u;
-	constexpr static byte_t	IGROS_VERSION_MINOR	= 1u;
-	constexpr static word_t	IGROS_VERSION_BUILD	= 0u;
+	constexpr auto	IGROS_VERSION_MAJOR	= 0u;
+	constexpr auto	IGROS_VERSION_MINOR	= 1u;
+	constexpr auto	IGROS_VERSION_BUILD	= 5u;
 
-	constexpr static auto	IGROS_VERSION_NAME	= u8"ALPHA";
+	constexpr auto	IGROS_VERSION_NAME	= u8"BETA";
 
 
 	// Kernel version integer

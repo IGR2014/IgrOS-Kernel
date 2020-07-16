@@ -3,7 +3,7 @@
 //	Interrupts low-level operations
 //
 //	File:	irq.hpp
-//	Date:	14 Jul 2020
+//	Date:	16 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -89,11 +89,6 @@ namespace igros::x86_64 {
 	// IRQ structure
 	class irq final {
 
-	public:
-
-		// Default c-tor
-		irq() noexcept = default;
-
 		// Copy c-tor
 		irq(const irq &other) = delete;
 		// Copy assignment
@@ -103,6 +98,12 @@ namespace igros::x86_64 {
 		irq(irq &&other) = delete;
 		// Move assignment
 		irq& operator=(irq &&other) = delete;
+
+
+	public:
+
+		// Default c-tor
+		irq() noexcept = default;
 
 		// Init IRQ
 		static void init() noexcept;
