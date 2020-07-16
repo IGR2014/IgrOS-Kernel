@@ -3,7 +3,7 @@
 //	Keyboard generic handling
 //
 //	File:	keyboard.cpp
-//	Date:	11 Jul 2020
+//	Date:	16 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -42,7 +42,7 @@ namespace igros::arch {
 			klib::kprintf(	u8"IRQ #%d\t[Keyboard]\r\n"
 					u8"Key:\t%s\r\n"
 					u8"Code:\t0x%x\r\n",
-					irq_t::KEYBOARD,
+					irq::irq_t::KEYBOARD,
 					(keyCode > 0x80) ? u8"RELEASED" : u8"PRESSED",
 					keyCode);
 		}
@@ -54,11 +54,11 @@ namespace igros::arch {
 	void keyboardSetup() {
 
 		// Install keyboard interrupt handler
-		irq::install(irq_t::KEYBOARD, keyboardInterruptHandler);
+		irq::get().install(irq::irq_t::KEYBOARD, keyboardInterruptHandler);
 		// Mask Keyboard interrupts
-		irq::mask(irq_t::KEYBOARD);
+		irq::get().mask(irq::irq_t::KEYBOARD);
 
-		klib::kprintf(u8"IRQ #%d [Keyboard] installed", irq_t::KEYBOARD);
+		klib::kprintf(u8"IRQ #%d [Keyboard] installed", irq::irq_t::KEYBOARD);
 
 	}
 

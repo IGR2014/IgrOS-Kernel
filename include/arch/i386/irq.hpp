@@ -89,11 +89,6 @@ namespace igros::i386 {
 	// IRQ structure
 	class irq final {
 
-	public:
-
-		// Default c-tor
-		irq() noexcept = default;
-
 		// Copy c-tor
 		irq(const irq &other) = delete;
 		// Copy assignment
@@ -103,6 +98,12 @@ namespace igros::i386 {
 		irq(irq &&other) = delete;
 		// Move assignment
 		irq& operator=(irq &&other) = delete;
+
+
+	public:
+
+		// Default c-tor
+		irq() noexcept = default;
 
 		// Init IRQ
 		static void init() noexcept;

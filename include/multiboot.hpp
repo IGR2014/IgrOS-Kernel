@@ -3,7 +3,7 @@
 //	Multiboot 1 header info
 //
 //	File:	multiboot.hpp
-//	Date:	02 Jul 2020
+//	Date:	16 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -14,7 +14,7 @@
 #pragma once
 
 
-#include <types.hpp>
+#include <arch/types.hpp>
 
 
 // Multiboot code zone
@@ -89,7 +89,7 @@ namespace igros::multiboot {
 		dword_t		modulesCount;			// Multiboot kernel modules count
 		dword_t		modulesAddr;			// Multiboot kernel modules address
 
-		dword_t		syms[4];
+		dword_t		syms[4];			// Multiboot kernel symbols
 
 		dword_t		mmapLength;			// Multiboot kernel memory map length
 		dword_t		mmapAddr;			// Multiboot kernel memory map start address
@@ -120,31 +120,31 @@ namespace igros::multiboot {
 
 
 		// Multiboot contains valid memory info
-		inline bool	hasInfoMemory() const noexcept;
+		inline bool hasInfoMemory() const noexcept;
 		// Multiboot contains valid boot device info
-		inline bool	hasInfoBootDevice() const noexcept;
+		inline bool hasInfoBootDevice() const noexcept;
 		// Multiboot contains valid kernel command line info
-		inline bool	hasInfoCommandLine() const noexcept;
+		inline bool hasInfoCommandLine() const noexcept;
 		// Multiboot contains valid kernel modules info
-		inline bool	hasInfoModules() const noexcept;
+		inline bool hasInfoModules() const noexcept;
 		// Multiboot contains valid A.OUT sections info
-		inline bool	hasInfoAOUT() const noexcept;
+		inline bool hasInfoAOUT() const noexcept;
 		// Multiboot contains valid ELF sections info
-		inline bool	hasInfoELF() const noexcept;
+		inline bool hasInfoELF() const noexcept;
 		// Multiboot contains valid memory map info
-		inline bool	hasInfoMemoryMap() const noexcept;
+		inline bool hasInfoMemoryMap() const noexcept;
 		// Multiboot contains valid drives info
-		inline bool	hasInfoDrives() const noexcept;
+		inline bool hasInfoDrives() const noexcept;
 		// Multiboot contains valid config table info
-		inline bool	hasInfoConfig() const noexcept;
+		inline bool hasInfoConfig() const noexcept;
 		// Multiboot contains valid bootloader name info
-		inline bool	hasInfoBootloaderName() const noexcept;
+		inline bool hasInfoBootloaderName() const noexcept;
 		// Multiboot contains valid APM table info
-		inline bool	hasInfoAPM() const noexcept;
+		inline bool hasInfoAPM() const noexcept;
 		// Multiboot contains valid VBE info
-		inline bool	hasInfoVBE() const noexcept;
+		inline bool hasInfoVBE() const noexcept;
 		// Multiboot contains valid FrameBuffer info
-		inline bool	hasInfoFrameBuffer() const noexcept;
+		inline bool hasInfoFrameBuffer() const noexcept;
 
 		// Get multiboot command line
 		inline const sbyte_t*	commandLine() const noexcept;
@@ -152,11 +152,11 @@ namespace igros::multiboot {
 		inline const sbyte_t*	loaderName() const noexcept;
 
 		// Dump multiboot flags
-		void	dumpFlags() const noexcept;
+		void dumpFlags() const noexcept;
 		// Dump multiboot memory info
-		void	dumpMemInfo() const noexcept;
+		void dumpMemInfo() const noexcept;
 		// Dump multiboot memory map
-		void	dumpMemMap() const noexcept;
+		void dumpMemMap() const noexcept;
 
 
 	};

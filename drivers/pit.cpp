@@ -3,7 +3,7 @@
 //	Programmable interrupt timer
 //
 //	File:	pit.cpp
-//	Date:	13 Jul 2020
+//	Date:	16 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -95,7 +95,7 @@ namespace igros::arch {
 
 			klib::kprintf(	u8"IRQ #%d\t[PIT]\r\n"
 					u8"Time:\t%d:%d:%d.%d (~1 sec.)\r\n",
-					irq_t::PIT,
+					irq::irq_t::PIT,
 					hours % 24,
 					minutes % 60,
 					seconds % 60,
@@ -111,13 +111,14 @@ namespace igros::arch {
 
 		// Setup PIT frequency to 100 HZ
 		pitSetupFrequency(PIT_DEFAULT_FREQUENCY);
+
 		// Install PIT interrupt handler
-		irq::install(irq_t::PIT, pitInterruptHandler);
+		irq::get().install(irq::irq_t::PIT, pitInterruptHandler);
 		// Mask PIT interrupts
-		irq::mask(irq_t::PIT);
+		irq::get().mask(irq::irq_t::PIT);
 
 		// Print buffer
-		klib::kprintf("IRQ #%d [PIT] installed\r\n", irq_t::PIT);
+		klib::kprintf("IRQ #%d [PIT] installed\r\n", irq::irq_t::PIT);
 
 	}
 

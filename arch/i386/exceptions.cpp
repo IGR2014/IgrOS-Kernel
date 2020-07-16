@@ -3,7 +3,7 @@
 //	Exceptions low-level operations
 //
 //	File:	exceptions.cpp
-//	Date:	11 Jul 2020
+//	Date:	16 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -55,7 +55,7 @@ namespace igros::i386 {
 		// Print exception name
 		klib::kprintf("Exception:\t%s", except::NAME[regs->number]);
 		// Hang CPU
-		cpuHalt();
+		cpu::halt();
 	}
 
 

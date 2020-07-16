@@ -70,7 +70,8 @@ namespace igros {
 						magic,
 						multiboot);
 				// Hang CPU
-				arch::cpu::halt();
+				//arch::cpu::halt();
+				arch::cpu::get().halt();
 			}
 
 			// Write kernel info
@@ -103,14 +104,13 @@ namespace igros {
 			// Setup PIT
 			//arch::pitSetup();
 			// Setup keyboard
-			//arch::keyboardSetup();
+			arch::keyboardSetup();
 			// Setup RTC
 			arch::rtcSetup();
 
 			//
-			multiboot->dumpFlags();
+			//multiboot->dumpFlags();
 
-/*
 			// Test VBE
 			if (multiboot->hasInfoVBE()) {
 				// Get VBE config info
@@ -174,7 +174,7 @@ namespace igros {
 				}
 */
 
-			//}
+			}
 
 			/*
 			// Check if memory map exists
@@ -183,7 +183,6 @@ namespace igros {
 			}
 			*/
 
-/*
 			// Check framebuffer
 			if (multiboot->hasInfoFrameBuffer()) {
 				// Dump FB
@@ -207,7 +206,7 @@ namespace igros {
 					// Set virtual address
 					auto vvMem = reinterpret_cast<byte_t*>(0xFFFFFFFFE0000000);
 					// Map video memory phys address to virtual
-					i386::paging::mapPage(reinterpret_cast<arch::page_t*>(pvMem), vvMem, arch::paging::flags_t::WRITABLE | arch::paging::flags_t::PRESENT);
+					arch::paging::mapPage(reinterpret_cast<arch::page_t*>(pvMem), vvMem, arch::paging::flags_t::WRITABLE | arch::paging::flags_t::PRESENT);
 					// Try to draw RGB
 					for (auto i = 0u; i < 1024u; i++) {
 						auto j		= i * 3;
@@ -218,13 +217,14 @@ namespace igros {
 				}
 */
 
-			//}
+			}
 
 			// Write "Booted successfully" message
 			klib::kprintf(u8"Booted successfully\r\n");
 
 			// Halt CPU
-			arch::cpu::halt();
+			//arch::cpu::halt();
+			arch::cpu::get().halt();
 
 		}
 

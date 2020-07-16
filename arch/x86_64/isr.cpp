@@ -3,7 +3,7 @@
 //	Interrupt service routines low-level operations
 //
 //	File:	isr.cpp
-//	Date:	11 Jul 2020
+//	Date:	16 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -28,42 +28,56 @@ namespace igros::x86_64 {
 	static isr_t isrList[ISR_SIZE] {nullptr};
 
 
-	// Interrupts handler function
-	void isrHandler(const register_t* regs) noexcept {
+#ifdef	__cplusplus
 
-		// Acquire irq handler from list
-		auto isr = isrList[regs->number];
+	extern "C" {
 
-		// It`s an interrupt
-		if (regs->number >= IRQ_OFFSET) {
-			// Notify slave PIC if needed
-			if (regs->number > 39) {
-				inPort8(PIC_SLAVE_CONTROL, 0x20);
+#endif	// __cplusplus
+
+
+		// Interrupts handler function
+		void isrHandler(const register_t* regs) noexcept {
+
+			// Acquire irq handler from list
+			auto isr = isrList[regs->number];
+
+			// It`s an interrupt
+			if (regs->number >= IRQ_OFFSET) {
+				// Notify slave PIC if needed
+				if (regs->number > 39) {
+					inPort8(PIC_SLAVE_CONTROL, 0x20);
+				} else {
+					// Notify master PIC
+					inPort8(PIC_MASTER_CONTROL, 0x20);
+				}
+			// Otherwise it's exception
 			} else {
-				// Notify master PIC
-				inPort8(PIC_MASTER_CONTROL, 0x20);
+				// Check if exception handler installed
+				if (nullptr == isr) {
+					// Hang CPU
+					cpuHalt();
+				}
 			}
-		// Otherwise it's exception
-		} else {
+
 			// Check if exception handler installed
-			if (nullptr == isr) {
-				// Hang CPU
-				cpuHalt();
+			if (nullptr != isr) {
+				isr(regs);
+			} else {
+				// Debug
+				klib::kprintf(	u8"%s -> [#%d]\r\n"
+						u8"State:\t\tUNHANDLED! CPU halted!\r\n",
+						((regs->number >= IRQ_OFFSET) ? u8"IRQ" : u8"EXCEPTION"),
+						((regs->number >= IRQ_OFFSET) ? (regs->number - IRQ_OFFSET) : regs->number));
 			}
+
 		}
 
-		// Check if exception handler installed
-		if (nullptr != isr) {
-			isr(regs);
-		} else {
-			// Debug
-			klib::kprintf(	u8"%s -> [#%d]\r\n"
-					u8"State:\t\tUNHANDLED! CPU halted!\r\n",
-					((regs->number >= IRQ_OFFSET) ? u8"IRQ" : u8"EXCEPTION"),
-					((regs->number >= IRQ_OFFSET) ? (regs->number - IRQ_OFFSET) : regs->number));
-		}
 
-	}
+#ifdef	__cplusplus
+
+	}	// extern "C"
+
+#endif	// __cplusplus
 
 
 	// Install interrupt service routine handler
