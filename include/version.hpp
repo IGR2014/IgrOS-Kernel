@@ -3,7 +3,7 @@
 //	IgrOS version info
 //
 //	File:	version.hpp
-//	Date:	16 Jul 2020
+//	Date:	17 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -21,21 +21,28 @@
 namespace igros {
 
 
-	constexpr auto	IGROS_VERSION_MAJOR	= 0u;
-	constexpr auto	IGROS_VERSION_MINOR	= 1u;
-	constexpr auto	IGROS_VERSION_BUILD	= 5u;
+	// Kernel version constants
+	constexpr auto VERSION_MAJOR	= static_cast<byte_t>(0u);
+	constexpr auto VERSION_MINOR	= static_cast<byte_t>(1u);
+	constexpr auto VERSION_BUILD	= static_cast<word_t>(34u);
 
-	constexpr auto	IGROS_VERSION_NAME	= u8"BETA";
+	// Kernel version name
+	constexpr auto VERSION_NAME	= u8"BETA";
 
 
 	// Kernel version integer
-	constexpr dword_t IGROS_KERNEL_VERSION(const byte_t major, const byte_t minor, const dword_t build) noexcept {
-		return (build | (static_cast<dword_t>(minor) << 16u) | (static_cast<dword_t>(major) << 24u));
+	constexpr auto KERNEL_VERSION(const byte_t major, const byte_t minor, const dword_t build) noexcept {
+		return (build | (static_cast<dword_t>(minor) << 16) | (static_cast<dword_t>(major) << 24));
 	}
 
 	// Kernel current version integer
-	constexpr dword_t IGROS_KERNEL_VERSION_CURRENT() noexcept {
-		return IGROS_KERNEL_VERSION(IGROS_VERSION_MAJOR, IGROS_VERSION_MINOR, IGROS_VERSION_BUILD);
+	constexpr auto KERNEL_VERSION() noexcept {
+		return KERNEL_VERSION(VERSION_MAJOR, VERSION_MINOR, VERSION_BUILD);
+	}
+
+	// Kernel version to string
+	constexpr auto KERNEL_VERSION_STRING() noexcept {
+		return u8"v0.1.34 [ BETA ]";
 	}
 
 
