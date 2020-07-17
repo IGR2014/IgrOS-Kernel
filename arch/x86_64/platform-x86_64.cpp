@@ -3,7 +3,7 @@
 //	Platform description for x86_64
 //
 //	File:	platform-x86_64.cpp
-//	Date:	14 Jul 2020
+//	Date:	17 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -21,11 +21,6 @@
 #include <arch/x86_64/irq.hpp>
 
 #include <klib/kprint.hpp>
-
-
-// Kernel start and end
-extern const igros::byte_t _SECTION_KERNEL_START_;
-extern const igros::byte_t _SECTION_KERNEL_END_;
 
 
 // x86_64 namespace

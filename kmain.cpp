@@ -3,7 +3,7 @@
 //	Boot low-level main setup function
 //
 //	File:	boot.cpp
-//	Date:	15 Jul 2020
+//	Date:	17 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -19,7 +19,6 @@
 
 // Architecture dependent
 #include <arch/types.hpp>
-#include <arch/irq.hpp>
 #include <arch/cpu.hpp>
 
 // Kernel drivers
@@ -36,13 +35,33 @@
 #include <mem/mmap.hpp>
 
 
-// Kernel start and end
-extern const igros::byte_t _SECTION_KERNEL_START_;
-extern const igros::byte_t _SECTION_KERNEL_END_;
-
-
 // OS namesapce
 namespace igros {
+
+
+	// Print kernel header
+	void printHeader(const multiboot::info_t* const multiboot) noexcept {
+		// Write kernel info
+		klib::kprintf(	u8"Kernel info:\r\n"
+				u8"Arch:\t\t%s\r\n"
+				u8"Start addr:\t0x%p\r\n"
+				u8"End addr:\t0x%p\r\n"
+				u8"Size:\t\t%d Kb.\r\n"
+				u8"Build:\t\t" __DATE__ u8", " __TIME__ u8"\r\n"
+				u8"Version:\t%s\r\n"
+				u8"Author:\t\tIgor Baklykov (c) %d - %d\r\n"
+				u8"Command line:\t%s\r\n"
+				u8"Loader:\t\t%s\r\n",
+				platform::name(),
+				platform::KERNEL_START(),
+				platform::KERNEL_END(),
+				platform::KERNEL_SIZE() >> 10,
+				KERNEL_VERSION_STRING(),
+				2017,
+				2020,
+				multiboot->commandLine(),
+				multiboot->loaderName());
+	}
 
 
 #ifdef	__cplusplus
@@ -61,42 +80,11 @@ namespace igros {
 			// Write Multiboot magic error message message
 			klib::kprintf(u8"IgrOS kernel\r\n");
 
-			// Check multiboot magic
-			if (!multiboot::check(magic)) {
-				// Write Multiboot magic error message message
-				klib::kprintf(	u8"BAD MULTIBOOT MAGIC!!!\r\n"
-						u8"\tMAGIC:\t\t0x%08x\r\n"
-						u8"\tADDRESS:\t0x%p\r\n",
-						magic,
-						multiboot);
-				// Hang CPU
-				//arch::cpu::halt();
-				arch::cpu::get().halt();
-			}
+			// Test multiboot (Hang on error)
+			multiboot::test(multiboot, magic);
 
-			// Write kernel info
-			klib::kprintf(	u8"Kernel info:\r\n"
-					u8"Arch:\t\t%s\r\n"
-					u8"Start addr:\t0x%p\r\n"
-					u8"End addr:\t0x%p\r\n"
-					u8"Size:\t\t%d Kb.\r\n"
-					u8"Build:\t\t" __DATE__ u8", " __TIME__ u8"\r\n"
-					u8"Version:\tv%d.%d.%d [%s]\r\n"
-					u8"Author:\t\tIgor Baklykov (c) %d - %d\r\n"
-					u8"Command line:\t%s\r\n"
-					u8"Loader:\t\t%s\r\n",
-					platform::name(),
-					&_SECTION_KERNEL_START_,
-					&_SECTION_KERNEL_END_,
-					static_cast<dword_t>(&_SECTION_KERNEL_END_ - &_SECTION_KERNEL_START_) >> 10,
-					IGROS_VERSION_MAJOR,
-					IGROS_VERSION_MINOR,
-					IGROS_VERSION_BUILD,
-					IGROS_VERSION_NAME,
-					2017,
-					2020,
-					multiboot->commandLine(),
-					multiboot->loaderName());
+			// Print kernel header
+			printHeader(multiboot);
 
 			// Initialize platform
 			platform::initialize();
@@ -108,122 +96,21 @@ namespace igros {
 			// Setup RTC
 			arch::rtcSetup();
 
-			//
-			//multiboot->dumpFlags();
-
-			// Test VBE
-			if (multiboot->hasInfoVBE()) {
-				// Get VBE config info
-				auto config	= reinterpret_cast<multiboot::vbeConfig*>(multiboot->vbeControlInfo);
-				// Get current VBE mode
-				auto mode	= reinterpret_cast<multiboot::vbeMode*>(multiboot->vbeModeInfo);
-				// Get OEM string
-				auto oem	= reinterpret_cast<const char* const>(((config->oem & 0xFFFF0000) >> 12) + (config->oem & 0xFFFF));
-				// Get available modes string
-				auto modes	= reinterpret_cast<multiboot::vbeMode*>(((config->modes & 0xFFFF0000) >> 12) + (config->modes & 0xFFFF));
-				// Get vendor string
-				auto vendor	= reinterpret_cast<const char* const>(((config->vendor & 0xFFFF0000) >> 12) + (config->vendor & 0xFFFF));
-				// Get product string
-				auto product	= reinterpret_cast<const char* const>(((config->productName & 0xFFFF0000) >> 12) + (config->productName & 0xFFFF));
-				// Get revision string
-				auto revision	= reinterpret_cast<const char* const>(((config->productRev & 0xFFFF0000) >> 12) + (config->productRev & 0xFFFF));
-				// Dump VBE
-				klib::kprintf(	u8"VBE:\r\n"
-						u8"Signature:\t%c%c%c%c\r\n"
-						u8"Version:\t%d.%d\r\n"
-						u8"OEM:\t\t%s\r\n"
-						u8"Vendor name:\t%s\r\n"
-						u8"Card name:\t%s\r\n"
-						u8"Card rev.:\t%s\r\n"
-						u8"Current mode:\t#%d (%dx%d, %dbpp, 0x%p)\r\n"
-						u8"Video memory:\t%d Kb.\r\n",
-						config->signature[0],
-						config->signature[1],
-						config->signature[2],
-						config->signature[3],
-						(config->version >> 8) & 0xFF,
-						config->version & 0xFF,
-						(nullptr != oem) ? oem : "Unknown",
-						(nullptr != vendor) ? vendor : "Unknown",
-						(nullptr != product) ? product : "Unknown",
-						(nullptr != revision) ? revision : "Unknown",
-						multiboot->vbeModeCurrent,
-						mode->width,
-						mode->height,
-						mode->bpp,
-						mode->physbase,
-						static_cast<dword_t>(config->memory) * 64);
-
 /*
-				// Get video memory
-				auto pvMem = reinterpret_cast<byte_t*>(mode->physbase);
-				auto vvMem = static_cast<byte_t*>(nullptr);
-				//
-				if (nullptr != pvMem) {
-					//
-					vvMem = reinterpret_cast<byte_t*>(0xE0000000);
-					//
-					arch::paging::mapPage(reinterpret_cast<arch::page_t*>(pvMem), vvMem, arch::paging::flags_t::WRITABLE | arch::paging::flags_t::PRESENT);
-					//
-					for (auto i = 0; i < 1024; i++) {
-						auto j		= i * 3;
-						vvMem[j + 0]	= 0x00;
-						vvMem[j + 1]	= 0xFF;
-						vvMem[j + 2]	= 0x00;
-					}
-				}
+			// Show multiboot flags
+			multiboot->printFlags();
+			// Show VBE info
+			multiboot->printVBEInfo();
+			// Show memory map
+			multiboot->printMemMap();
+			// Show framebuffer info
+			multiboot->printFBInfo();
 */
-
-			}
-
-			/*
-			// Check if memory map exists
-			if (multiboot->hasInfoMemoryMap()) {
-				klib::kprintf(u8"Memory map available\r\n");
-			}
-			*/
-
-			// Check framebuffer
-			if (multiboot->hasInfoFrameBuffer()) {
-				// Dump FB
-				klib::kprintf(	u8"FB:\r\n"
-						u8"Current mode:\t(%dx%d, %dbpp, %d, %s)\r\n"
-						u8"Address:\t0x%p\r\n"
-						u8"Size:\t\t%z\r\n",
-						multiboot->fbWidth,
-						multiboot->fbHeight,
-						multiboot->fbBpp,
-						multiboot->fbPitch,
-						((0u == multiboot->fbType) ? u8"Indexed" : ((1u == multiboot->fbType) ? u8"RGB" : u8"Text")),
-						static_cast<std::size_t>(multiboot->fbAddress),
-						multiboot->fbWidth * (multiboot->fbBpp >> 3) * multiboot->fbHeight * multiboot->fbPitch);
-
-/*
-				// Get video memory phys address
-				auto pvMem = reinterpret_cast<byte_t*>(multiboot->fbAddress);
-				// Check phys address
-				if (nullptr != pvMem) {
-					// Set virtual address
-					auto vvMem = reinterpret_cast<byte_t*>(0xFFFFFFFFE0000000);
-					// Map video memory phys address to virtual
-					arch::paging::mapPage(reinterpret_cast<arch::page_t*>(pvMem), vvMem, arch::paging::flags_t::WRITABLE | arch::paging::flags_t::PRESENT);
-					// Try to draw RGB
-					for (auto i = 0u; i < 1024u; i++) {
-						auto j		= i * 3;
-						vvMem[j + 0]	= 0x00;
-						vvMem[j + 1]	= 0xFF;
-						vvMem[j + 2]	= 0x00;
-					}
-				}
-*/
-
-			}
 
 			// Write "Booted successfully" message
 			klib::kprintf(u8"Booted successfully\r\n");
 
 			// Halt CPU
-			//arch::cpu::halt();
 			arch::cpu::get().halt();
 
 		}

@@ -3,7 +3,7 @@
 //	IgrOS platform description
 //
 //	File:	platform.hpp
-//	Date:	16 Jul 2020
+//	Date:	17 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -19,8 +19,29 @@
 #include <arch/types.hpp>
 
 
+// Kernel start and end
+extern const igros::byte_t _SECTION_KERNEL_START_;
+extern const igros::byte_t _SECTION_KERNEL_END_;
+
+
 // OS platform namespace
 namespace igros::platform {
+
+
+	// Get kernel start address
+	inline static const auto KERNEL_START() noexcept {
+		return &_SECTION_KERNEL_START_;
+	}
+
+	// Get kernel end address
+	inline static const auto KERNEL_END() noexcept {
+		return &_SECTION_KERNEL_END_;
+	}
+
+	// Get kernel size
+	inline static const auto KERNEL_SIZE() noexcept {
+		return (KERNEL_END() - KERNEL_START());
+	}
 
 
 	// Platform name ID
@@ -34,17 +55,14 @@ namespace igros::platform {
 
 
 #if	defined (IGROS_ARCH_i386)
-
+	// i386 platform
 	constexpr auto PLATFORM_NAME = name_t::I386;
-
 #elif	defined (IGROS_ARCH_x86_64)
-
+	// x86_64 platform
 	constexpr auto PLATFORM_NAME = name_t::X86_64;
-
 #else
-
+	// Unknown platform
 	constexpr auto PLATFORM_NAME = name_t::UNKNOWN;
-
 #endif
 
 	// Check if i386
