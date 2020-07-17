@@ -3,7 +3,7 @@
 //	Keyboard generic handling
 //
 //	File:	keyboard.cpp
-//	Date:	16 Jul 2020
+//	Date:	18 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -12,11 +12,9 @@
 
 
 #include <arch/types.hpp>
-#include <port.hpp>
+#include <arch/io.hpp>
 #include <arch/irq.hpp>
 #include <arch/register.hpp>
-
-#include <drivers/vmem.hpp>
 
 #include <klib/kprint.hpp>
 
@@ -26,19 +24,19 @@ namespace igros::arch {
 
 
 	// Keyboard ports
-	constexpr auto KEYBOARD_CONTROL	= static_cast<port_t>(0x0064);
-	constexpr auto KEYBOARD_DATA	= static_cast<port_t>(0x0060);
+	constexpr auto KEYBOARD_CONTROL	= static_cast<io::port_t>(0x0064);
+	constexpr auto KEYBOARD_DATA	= static_cast<io::port_t>(0x0060);
 
 
 	// Keyboard interrupt (#1) handler
 	void keyboardInterruptHandler(const register_t* regs) {
 
 		// Check keyboard status
-		auto keyStatus = outPort8(KEYBOARD_CONTROL);
+		auto keyStatus = io::get().readPort8(KEYBOARD_CONTROL);
 		// Check keyboard data port
 		if (keyStatus & 0x01) {
 			// Read keyboard data
-			auto keyCode = outPort8(KEYBOARD_DATA);
+			auto keyCode = io::get().readPort8(KEYBOARD_DATA);
 			klib::kprintf(	u8"IRQ #%d\t[Keyboard]\r\n"
 					u8"Key:\t%s\r\n"
 					u8"Code:\t0x%x\r\n",

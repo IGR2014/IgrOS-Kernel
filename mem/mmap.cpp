@@ -3,7 +3,7 @@
 //	Memory map operations definition
 //
 //	File:	mmap.cpp
-//	Date:	30 Jun 2020
+//	Date:	17 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -13,12 +13,9 @@
 
 #include <cstdint>
 
+#include <platform.hpp>
+
 #include <mem/mmap.hpp>
-
-
-// Kernel start and end
-extern const igros::byte_t _SECTION_KERNEL_START_;
-extern const igros::byte_t _SECTION_KERNEL_END_;
 
 
 // Memory code zone
@@ -30,18 +27,18 @@ namespace igros::mem {
 
 
 	// Initialize physical memory
-	void phys::init(const multiboot::memoryMapEntry_t* map, const std::size_t size) noexcept {
+	void phys::init(const multiboot::memoryMapEntry* map, const std::size_t size) noexcept {
 
 		// Memory map entries iterator
-		auto entry		= map;
+		auto entry	= map;
 		// Previous entry pointer
-		pointer_t prevEntry	= nullptr;
+		auto prevEntry	= static_cast<pointer_t>(nullptr);
 		// Loop through memory map
-		while (std::size_t(entry) < size) {
+		while (reinterpret_cast<std::size_t>(entry) < size) {
 			// Check if entry is available
 			if (	(multiboot::MEMORY_MAP_TYPE::AVAILABLE == entry->type)
-				&& ((std::size_t(entry) < std::size_t(&_SECTION_KERNEL_START_))
-				|| (std::size_t(entry) > std::size_t(&_SECTION_KERNEL_END_)))) {
+				&& ((reinterpret_cast<std::size_t>(entry) < reinterpret_cast<std::size_t>(platform::KERNEL_START()))
+				|| (reinterpret_cast<std::size_t>(entry) > reinterpret_cast<std::size_t>(platform::KERNEL_END())))) {
 				// Initial entry's memory offset
 				auto entrySize = 0ULL;
 				// Loop through entry's memory
@@ -57,7 +54,7 @@ namespace igros::mem {
 				}
 			}
 			// Move to next memory map entry
-			entry = reinterpret_cast<multiboot::memoryMapEntry_t*>(std::size_t(entry) + entry->size + sizeof(entry->size));
+			entry = reinterpret_cast<multiboot::memoryMapEntry*>(std::size_t(entry) + entry->size + sizeof(entry->size));
 		}
 		// Linked list of free pages 
 		phys::freePageList = prevEntry;

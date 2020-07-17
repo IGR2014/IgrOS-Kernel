@@ -3,7 +3,7 @@
 //	Memory map operations
 //
 //	File:	mmap.hpp
-//	Date:	30 Jun 2020
+//	Date:	17 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -16,8 +16,6 @@
 
 #include <cstdint>
 
-#include <types.hpp>
-
 #include <multiboot.hpp>
 
 
@@ -26,7 +24,7 @@ namespace igros::mem {
 
 
 	// Default page size constant
-	constexpr static std::size_t DEFAULT_PAGE_SIZE = 0x1000;
+	constexpr auto DEFAULT_PAGE_SIZE = 0x1000;
 
 
 	// Phyical memory structure
@@ -39,7 +37,7 @@ namespace igros::mem {
 	public:
 
 		// Initialize physical memory
-		static void init(const multiboot::memoryMapEntry_t* map, const std::size_t size) noexcept;
+		static void init(const multiboot::memoryMapEntry* map, const std::size_t size) noexcept;
 
 		// Allcoate physical page
    		[[nodiscard]] static pointer_t	alloc() noexcept;
