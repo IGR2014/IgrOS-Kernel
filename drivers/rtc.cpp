@@ -3,7 +3,7 @@
 //	RTC clock driver
 //
 //	File:	rtc.cpp
-//	Date:	14 Jul 2020
+//	Date:	18 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -11,10 +11,8 @@
 //
 
 
-#include <port.hpp>
-#include <arch/irq.hpp>
+#include <arch/io.hpp>
 
-#include <drivers/vmem.hpp>
 #include <drivers/rtc.hpp>
 
 #include <klib/kprint.hpp>
@@ -25,8 +23,8 @@ namespace igros::arch {
 
 
 	// CMOS ports
-	constexpr auto CMOS_COMMAND	= static_cast<port_t>(0x0070);
-	constexpr auto CMOS_DATA	= static_cast<port_t>(CMOS_COMMAND + 1);
+	constexpr auto CMOS_COMMAND	= static_cast<io::port_t>(0x0070);
+	constexpr auto CMOS_DATA	= static_cast<io::port_t>(CMOS_COMMAND + 1);
 
 
 	// Clock from RTC conversion
@@ -62,9 +60,9 @@ namespace igros::arch {
 	// Read CMOS register
 	byte_t rtcRead(const byte_t cmd) noexcept {
 		// Write command
-		inPort8(CMOS_COMMAND, cmd);
+		io::get().writePort8(CMOS_COMMAND, cmd);
 		// Read data
-		return outPort8(CMOS_DATA);
+		return io::get().readPort8(CMOS_DATA);
 	}
 
 	// Read CMOS date

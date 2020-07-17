@@ -3,7 +3,7 @@
 //	Multiboot 1 header info
 //
 //	File:	multiboot.hpp
-//	Date:	16 Jul 2020
+//	Date:	17 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -27,6 +27,12 @@ namespace igros::multiboot {
 	constexpr static auto BOOTLOADER_MAGIC	= 0x2BADB002;
 
 
+	// Multiboot 1 header signature check function
+	inline static bool check(const dword_t signature) noexcept {
+		return (BOOTLOADER_MAGIC == signature);
+	}
+
+
 	// Multiboot header flags enumeration
 	enum flags_t : dword_t {
 		MEM		= (1u << 0),			// Memory info available
@@ -48,7 +54,7 @@ namespace igros::multiboot {
 #pragma pack(push, 1)
 
 	// Kernel sections info
-	struct infoSections {
+	struct infoSections final {
 		dword_t		header;				// Kernel header section address
 		dword_t		loadStart;			// Kernel load address start
 		dword_t		loadEnd;			// Kernel load address end
@@ -57,7 +63,7 @@ namespace igros::multiboot {
 	};
 
 	// Multiboot video info
-	struct infoVideo {
+	struct infoVideo final {
 		dword_t		mode;				// Video mode
 		dword_t		width;				// Video mode width
 		dword_t		height;				// Video mode height
@@ -65,7 +71,7 @@ namespace igros::multiboot {
 	};
 
 	// Multiboot 1 header
-	struct header_t {
+	struct header_t final {
 		dword_t		magic;				// Multiboot header magic - must be equal to HEADER_MAGIC
 		dword_t		flags;				// Multiboot header flag
 		dword_t		checksum;			// Multiboot header checksum
@@ -75,31 +81,31 @@ namespace igros::multiboot {
 
 
 	// Multiboot 1 information from bootloader
-	struct info_t {
+	struct info_t final {
 
 		dword_t		flags;				// Multiboot present features flag
 
-		dword_t		memLow;				// Multiboot low memory bios info
-		dword_t		memHigh;			// Multiboot high memory bios info
+		dword_t		memLow;				// Multiboot bios memory low info
+		dword_t		memHigh;			// Multiboot bios memory high info
 
 		dword_t		bootDevice;			// Multiboot boot device
 
-		dword_t		cmdLine;			// Multiboot kernel command line
+		dword_t		cmdLine;			// Multiboot bootloader command line
 
 		dword_t		modulesCount;			// Multiboot kernel modules count
 		dword_t		modulesAddr;			// Multiboot kernel modules address
 
 		dword_t		syms[4];			// Multiboot kernel symbols
 
-		dword_t		mmapLength;			// Multiboot kernel memory map length
-		dword_t		mmapAddr;			// Multiboot kernel memory map start address
+		dword_t		mmapLength;			// Multiboot memory map length
+		dword_t		mmapAddr;			// Multiboot memory map start address
 
-		dword_t		drivesLength;			// Multiboot kernel drives info length
-		dword_t		drivesAddr;			// Multiboot kernel drives info start address
+		dword_t		drivesLength;			// Multiboot drives info length
+		dword_t		drivesAddr;			// Multiboot drives info start address
 
-		dword_t		configTable;			// Multiboot kernel config table
+		dword_t		configTable;			// Multiboot config table
 
-		dword_t		bootloaderName;			// Multiboot kernel bootloader name
+		dword_t		bootloaderName;			// Multiboot bootloader name
 
 		dword_t		apmTable;			// Multiboot APM table
 
@@ -151,12 +157,16 @@ namespace igros::multiboot {
 		// Get multiboot bootloader name
 		inline const sbyte_t*	loaderName() const noexcept;
 
-		// Dump multiboot flags
-		void dumpFlags() const noexcept;
-		// Dump multiboot memory info
-		void dumpMemInfo() const noexcept;
-		// Dump multiboot memory map
-		void dumpMemMap() const noexcept;
+		// Print multiboot flags
+		void printFlags() const noexcept;
+		// Print multiboot memory info
+		void printMemInfo() const noexcept;
+		// Print multiboot memory map
+		void printMemMap() const noexcept;
+		// Print multiboot VBE info
+		void printVBEInfo() const noexcept;
+		// Print multiboot FB info
+		void printFBInfo() const noexcept;
 
 
 	};
@@ -250,7 +260,7 @@ namespace igros::multiboot {
 	};
 
 	// Multiboot 1 memory map entry
-	struct memoryMapEntry_t {
+	struct memoryMapEntry final {
 		dword_t		size;			// Memory entry size
 		quad_t		address;		// Memory entry address
 		quad_t		length;			// Memory entry length
@@ -259,7 +269,7 @@ namespace igros::multiboot {
 
 
 	// VBE config
-	struct vbeConfig {
+	struct vbeConfig final {
 		sbyte_t		signature[4];		// VBE signature ("VESA")
 		word_t		version;		// VBE version (e.g. 0x0300 = 3.0)
 		dword_t		oem;			// OEM string
@@ -275,7 +285,7 @@ namespace igros::multiboot {
 	};
 
 	// VBE mode
-	struct vbeMode {
+	struct vbeMode final {
 		word_t		attributes;
 		byte_t		windowA;
 		byte_t		windowB;
@@ -313,10 +323,8 @@ namespace igros::multiboot {
 #pragma pack(pop)
 
 
-	// Multiboot 1 header signature check function
-	inline static bool check(const dword_t signature) noexcept {
-		return (BOOTLOADER_MAGIC == signature);
-	}
+	// Test multiboot
+	void test(const info_t* const multiboot, const dword_t magic) noexcept;
 
 
 }	// namespace igros::multiboot

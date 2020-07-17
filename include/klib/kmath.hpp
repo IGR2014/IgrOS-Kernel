@@ -3,7 +3,7 @@
 //	Kernel math functions definitions
 //
 //	File:	kmath.hpp
-//	Date:	08 Jul 2020
+//	Date:	17 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -16,7 +16,7 @@
 
 #include <cstdint>
 
-#include <types.hpp>
+#include <arch/types.hpp>
 
 
 // Kernel library code zone

@@ -3,7 +3,7 @@
 //	Programmable interrupt timer
 //
 //	File:	pit.cpp
-//	Date:	16 Jul 2020
+//	Date:	18 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -12,11 +12,10 @@
 
 
 #include <arch/types.hpp>
-#include <port.hpp>
+#include <arch/io.hpp>
 #include <arch/irq.hpp>
 #include <arch/register.hpp>
 
-#include <drivers/vmem.hpp>
 #include <drivers/pit.hpp>
 
 #include <klib/kmath.hpp>
@@ -28,10 +27,10 @@ namespace igros::arch {
 
 
 	// PIT ports
-	constexpr auto	PIT_CONTROL	= static_cast<port_t>(0x0043);
-	constexpr auto	PIT_CHANNEL_0	= static_cast<port_t>(0x0040);
-	constexpr auto	PIT_CHANNEL_1	= static_cast<port_t>(PIT_CHANNEL_0 + 1);
-	constexpr auto	PIT_CHANNEL_2	= static_cast<port_t>(PIT_CHANNEL_1 + 1);
+	constexpr auto PIT_CONTROL	= static_cast<io::port_t>(0x0043);
+	constexpr auto PIT_CHANNEL_0	= static_cast<io::port_t>(0x0040);
+	constexpr auto PIT_CHANNEL_1	= static_cast<io::port_t>(PIT_CHANNEL_0 + 1);
+	constexpr auto PIT_CHANNEL_2	= static_cast<io::port_t>(PIT_CHANNEL_1 + 1);
 
 
 	// Ticks count
@@ -46,7 +45,7 @@ namespace igros::arch {
 	void pitSetupFrequency(const word_t frequency) noexcept {
 
 		// Calculate PIT divisor (Base PIT frequency / required frequency)
-		const auto divisor = PIT_MAIN_FREQUENCY / frequency;
+		const auto divisor = static_cast<word_t>(PIT_MAIN_FREQUENCY / frequency);
 		// Save divisor value
 		PIT_DIVISOR	= divisor;
 		// Save current real frequency value
@@ -56,27 +55,25 @@ namespace igros::arch {
 				PIT_FREQUENCY);
 
 		// Tell pit we want to change divisor for channel 0
-		inPort8(PIT_CONTROL,	0x36);
+		io::get().writePort8(PIT_CONTROL,	0x36);
 		// Set divisor (LOW first, then HIGH)
-		inPort8(PIT_CHANNEL_0,	divisor & 0xFF);
-		inPort8(PIT_CHANNEL_0,	(divisor & 0xFF00) >> 8);
+		io::get().writePort8(PIT_CHANNEL_0,	divisor & 0xFF);
+		io::get().writePort8(PIT_CHANNEL_0,	(divisor & 0xFF00) >> 8);
 
         }
 
 
 	// Get expired ticks
 	quad_t pitGetTicks() noexcept {
-
 		// Send latch command for channel 0;
-		inPort8(PIT_CONTROL, 0x00);
+		io::get().writePort8(PIT_CONTROL, 0x00);
 		// Get number of elapsed ticks since last IRQ
-		const auto loByte = outPort8(PIT_CHANNEL_0);
-		const auto hiByte = outPort8(PIT_CHANNEL_0);
+		const auto loByte = io::get().readPort8(PIT_CHANNEL_0);
+		const auto hiByte = io::get().readPort8(PIT_CHANNEL_0);
 		// Total elapsed ticks value
 		const auto elapsedSinceIRQ = (hiByte << 8) | loByte;
 		// Return full expired ticks count
 		return PIT_TICKS * PIT_DIVISOR + elapsedSinceIRQ;
-
 	}
 
 

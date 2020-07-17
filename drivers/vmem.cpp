@@ -3,7 +3,7 @@
 //	VGA memory low-level operations
 //
 //	File:	vmem.cpp
-//	Date:	11 Jul 2020
+//	Date:	18 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -11,7 +11,7 @@
 //
 
 
-#include <port.hpp>
+#include <arch/io.hpp>
 
 #include <drivers/vmem.hpp>
 
@@ -23,22 +23,22 @@ namespace igros::arch {
 
 
 	// VGA cursor control ports
-	constexpr auto VGA_CURSOR_CONTROL	= static_cast<port_t>(0x03D4);
-	constexpr auto VGA_CURSOR_DATA		= static_cast<port_t>(VGA_CURSOR_CONTROL + 1);
+	constexpr auto VGA_CURSOR_CONTROL	= static_cast<io::port_t>(0x03D4);
+	constexpr auto VGA_CURSOR_DATA		= static_cast<io::port_t>(VGA_CURSOR_CONTROL + 1);
 
 
 	// Set cursor position
 	void vmemCursorSet(const byte_t &x, const byte_t &y) noexcept {
 		// Calculate VGA console offset
-		auto position = (y * VIDEO_MEM_WIDTH) + x;
+		const auto position = (y * VIDEO_MEM_WIDTH) + x;
 		// Choose cursor location high register
-		inPort8(VGA_CURSOR_CONTROL, 0x0E);
+		io::get().writePort8(VGA_CURSOR_CONTROL, 0x0E);
 		// Write cursor position high byte
-		inPort8(VGA_CURSOR_DATA, ((position & 0xFF00) >> 8));
+		io::get().writePort8(VGA_CURSOR_DATA, ((position & 0xFF00) >> 8));
 		// Choose cursor location low register
-		inPort8(VGA_CURSOR_CONTROL, 0x0F);
+		io::get().writePort8(VGA_CURSOR_CONTROL, 0x0F);
 		// Write cursor position low byte
-		inPort8(VGA_CURSOR_DATA, (position & 0x00FF));
+		io::get().writePort8(VGA_CURSOR_DATA, (position & 0x00FF));
 		// Save cursor data
 		cursorPos.x = x;
 		cursorPos.y = y;
@@ -52,13 +52,13 @@ namespace igros::arch {
 	// Get VGA memory cursor position
 	vmemCursor vmemCursorGet() noexcept {
 		// Choose cursor location high register
-		inPort8(VGA_CURSOR_CONTROL, 0x0E);
+		io::get().writePort8(VGA_CURSOR_CONTROL, 0x0E);
 		// Write cursor position high byte
-		auto position = static_cast<word_t>(outPort8(VGA_CURSOR_DATA));
+		auto position = static_cast<word_t>(io::get().readPort8(VGA_CURSOR_DATA));
 		// Choose cursor location low register
-		inPort8(VGA_CURSOR_CONTROL, 0x0F);
+		io::get().writePort8(VGA_CURSOR_CONTROL, 0x0F);
 		// Write cursor position low byte
-		(position <<= 8) |= outPort8(VGA_CURSOR_DATA);
+		(position <<= 8) |= io::get().readPort8(VGA_CURSOR_DATA);
 		// Return cursor data
 		return	{
 			.x = static_cast<byte_t>(position % VIDEO_MEM_WIDTH),
@@ -70,19 +70,19 @@ namespace igros::arch {
 	// Disable VGA memory cursor
 	void vmemCursorDisable() noexcept {
 		// Choose cursor start register
-		inPort8(VGA_CURSOR_CONTROL, 0x0A);
+		io::get().writePort8(VGA_CURSOR_CONTROL, 0x0A);
 		// Send control word to disable cursor
-		inPort8(VGA_CURSOR_DATA, 0x20);
+		io::get().writePort8(VGA_CURSOR_DATA, 0x20);
 	}
 
 	// Enable VGA memory cursor
 	void vmemCursorEnable() noexcept {
 		// Choose cursor start register
-		inPort8(VGA_CURSOR_CONTROL, 0x0A);
+		io::get().writePort8(VGA_CURSOR_CONTROL, 0x0A);
 		// Get current register value
-		auto cursorStartReg = outPort8(VGA_CURSOR_DATA);
+		const auto cursorStartReg = io::get().readPort8(VGA_CURSOR_DATA);
 		// Send control word to disable cursor
-		inPort8(VGA_CURSOR_DATA, cursorStartReg & ~0x20);
+		io::get().writePort8(VGA_CURSOR_DATA, cursorStartReg & ~0x20);
 	}
 
 	// Set VGA memory color
@@ -120,7 +120,7 @@ namespace igros::arch {
 		// If non-control (printable) character
 		} else if (symbol >= u8' ') {
 			// Calculate offset in VGA console
-			auto pos = cursorPos.y * VIDEO_MEM_WIDTH + cursorPos.x;
+			const auto pos = cursorPos.y * VIDEO_MEM_WIDTH + cursorPos.x;
 			// Write symbol to VGA console
 			vmemBase[pos].symbol	= symbol;
 			vmemBase[pos].color	= vmemBkgColor;
@@ -144,7 +144,7 @@ namespace igros::arch {
 				vmemBase[i - VIDEO_MEM_WIDTH] = vmemBase[i];
 			}
 			// Calculate offset in VGA console
-			auto pos = cursorPos.y * VIDEO_MEM_WIDTH + cursorPos.x;
+			const auto pos = cursorPos.y * VIDEO_MEM_WIDTH + cursorPos.x;
 			// Clear bottom line
 			klib::kmemset(&vmemBase[pos], VIDEO_MEM_WIDTH, static_cast<word_t>(u8' ' | (vmemBkgColor << 8)));
 		}

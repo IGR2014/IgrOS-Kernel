@@ -3,7 +3,7 @@
 //	Bit flags template datatype
 //
 //	File:	flags.hpp
-//	Date:	11 Jul 2020
+//	Date:	17 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -16,7 +16,7 @@
 
 #include <type_traits>
 
-#include <types.hpp>
+#include <arch/types.hpp>
 
 
 // OS namespace
