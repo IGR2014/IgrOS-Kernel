@@ -1,15 +1,17 @@
 ////////////////////////////////////////////////////////////////
 //
-//	Memory paging for x86
+//	Memory paging for x86_64
 //
 //	File:	paging.cpp
-//	Date:	14 Jul 2020
+//	Date:	17 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
 //
 //
 
+
+#include <platform.hpp>
 
 #include <arch/x86_64/msr.hpp>
 #include <arch/x86_64/cr.hpp>
@@ -22,11 +24,6 @@
 #include <klib/kalign.hpp>
 #include <klib/kmemory.hpp>
 #include <klib/kprint.hpp>
-
-
-// Kernel start and end
-extern const igros::byte_t _SECTION_KERNEL_START_;
-extern const igros::byte_t _SECTION_KERNEL_END_;
 
 
 // x86_64 namespace
@@ -44,7 +41,7 @@ namespace igros::x86_64 {
 		except::install(except::NUMBER::PAGE_FAULT, paging::exHandler);
 
 		// Initialize pages for page tables
-		paging::heap(const_cast<byte_t*>(&_SECTION_KERNEL_END_), PAGE_SIZE << 6);
+		paging::heap(const_cast<byte_t*>(platform::KERNEL_END()), PAGE_SIZE << 6);
 
 		// Create flags
 		constexpr auto flags	= flags_t::WRITABLE | flags_t::PRESENT;
@@ -339,8 +336,6 @@ namespace igros::x86_64 {
 		const auto pml4ID	= (reinterpret_cast<std::size_t>(virt) >> 39) & 0x1FF;
 		// Page directory pointer table index from virtual address
 		const auto dirPtrID	= (reinterpret_cast<std::size_t>(virt) >> 30) & 0x1FF;
-		// Page directory table entry index from virtual address
-		const auto dirID	= (reinterpret_cast<std::size_t>(virt) >> 21) & 0x1FF;
 
 		// Get page directory pointer
 		auto &dirPtr = pml4->pointers[pml4ID];

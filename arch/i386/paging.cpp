@@ -3,13 +3,15 @@
 //	Memory paging for x86
 //
 //	File:	paging.cpp
-//	Date:	11 Jul 2020
+//	Date:	17 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
 //
 //
 
+
+#include <platform.hpp>
 
 #include <arch/i386/cr.hpp>
 #include <arch/i386/irq.hpp>
@@ -21,11 +23,6 @@
 #include <klib/kalign.hpp>
 #include <klib/kmemory.hpp>
 #include <klib/kprint.hpp>
-
-
-// Kernel start and end
-extern const igros::byte_t _SECTION_KERNEL_START_;
-extern const igros::byte_t _SECTION_KERNEL_END_;
 
 
 // Arch-dependent code zone
@@ -43,7 +40,7 @@ namespace igros::i386 {
 		except::install(except::NUMBER::PAGE_FAULT, paging::exHandler);
 
 		// Initialize pages for page tables
-		paging::heap(const_cast<byte_t*>(&_SECTION_KERNEL_END_), PAGE_SIZE << 6);
+		paging::heap(const_cast<byte_t*>(platform::KERNEL_END()), PAGE_SIZE << 6);
 
 		// Create flags
 		constexpr auto flags	= flags_t::WRITABLE | flags_t::PRESENT;
