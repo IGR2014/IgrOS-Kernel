@@ -3,7 +3,7 @@
 //	Interrupts low-level operations
 //
 //	File:	irq.hpp
-//	Date:	16 Jul 2020
+//	Date:	21 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -114,9 +114,9 @@ namespace igros::x86_64 {
 		static void disable() noexcept;
 
 		// Mask interrupt
-		static void mask(const irq_t irqNumber) noexcept;
+		static void mask(const irq_t number) noexcept;
 		// Unmask interrupt
-		static void unmask(const irq_t irqNumber) noexcept;
+		static void unmask(const irq_t number) noexcept;
 
 		// Set interrupts mask
 		static void			setMask(const word_t mask = 0xFFFF) noexcept;
@@ -124,9 +124,12 @@ namespace igros::x86_64 {
 		[[nodiscard]] static word_t	getMask() noexcept;
 
 		// Install IRQ handler
-		static void install(const irq_t irqNumber, const isr_t irqHandler) noexcept;
+		static void install(const irq_t number, const isr_t handler) noexcept;
 		// Uninstall IRQ handler
-		static void uninstall(const irq_t irqNumber) noexcept;
+		static void uninstall(const irq_t number) noexcept;
+
+		// Send EOI (IRQ done)
+		static void eoi(const irq_t number) noexcept;
 
 
 	};

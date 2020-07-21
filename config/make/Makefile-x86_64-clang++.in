@@ -27,6 +27,7 @@ export CXXFLAGS		= -std=c++17				\
 			  -ffreestanding			\
 			  -fno-exceptions			\
 			  -fno-rtti				\
+			  -fno-threadsafe-statics		\
 			  -nostdlib				\
 			  -fno-pic				\
 			  -fno-pie				\
