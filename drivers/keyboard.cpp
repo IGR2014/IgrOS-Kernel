@@ -3,7 +3,7 @@
 //	Keyboard generic handling
 //
 //	File:	keyboard.cpp
-//	Date:	18 Jul 2020
+//	Date:	21 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -30,13 +30,12 @@ namespace igros::arch {
 
 	// Keyboard interrupt (#1) handler
 	void keyboardInterruptHandler(const register_t* regs) {
-
 		// Check keyboard status
-		auto keyStatus = io::get().readPort8(KEYBOARD_CONTROL);
+		const auto keyStatus = io::get().readPort8(KEYBOARD_CONTROL);
 		// Check keyboard data port
 		if (keyStatus & 0x01) {
 			// Read keyboard data
-			auto keyCode = io::get().readPort8(KEYBOARD_DATA);
+			const auto keyCode = io::get().readPort8(KEYBOARD_DATA);
 			klib::kprintf(	u8"IRQ #%d\t[Keyboard]\r\n"
 					u8"Key:\t%s\r\n"
 					u8"Code:\t0x%x\r\n",
@@ -44,7 +43,8 @@ namespace igros::arch {
 					(keyCode > 0x80) ? u8"RELEASED" : u8"PRESSED",
 					keyCode);
 		}
-
+		// IRQ EOI
+		irq::get().eoi(static_cast<irq::irq_t>(regs->number));
 	}
 
 

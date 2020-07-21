@@ -3,7 +3,7 @@
 //	Interrupts low-level operations
 //
 //	File:	irq.cpp
-//	Date:	13 Jul 2020
+//	Date:	21 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -74,20 +74,20 @@ namespace igros::x86_64 {
 
 
 	// Mask interrupt
-	void irq::mask(const irq_t irqNumber) noexcept {
+	void irq::mask(const irq_t number) noexcept {
 		// Chech if it's hardware interrupt
-		if (static_cast<dword_t>(irqNumber) < 16u) {
+		if (static_cast<dword_t>(number) < 16u) {
 			// Set interrupts mask
-			irq::setMask(irq::getMask() & ~(1u << static_cast<dword_t>(irqNumber)));
+			irq::setMask(irq::getMask() & ~(1u << static_cast<dword_t>(number)));
 		}
 	}
 
 	// Unmask interrupt
-	void irq::unmask(const irq_t irqNumber) noexcept {
+	void irq::unmask(const irq_t number) noexcept {
 		// Chech if it's hardware interrupt
-		if (static_cast<dword_t>(irqNumber) < 16u) {
+		if (static_cast<dword_t>(number) < 16u) {
 			// Set interrupts mask
-			irq::setMask(irq::getMask() | (1u << static_cast<dword_t>(irqNumber)));
+			irq::setMask(irq::getMask() | (1u << static_cast<dword_t>(number)));
 		}
 	}
 
@@ -112,15 +112,30 @@ namespace igros::x86_64 {
 
 
 	// Install handler
-	void irq::install(const irq_t irqNumber, const isr_t irqHandler) noexcept {
+	void irq::install(const irq_t number, const isr_t handler) noexcept {
 		// Install ISR
-		isrHandlerInstall(static_cast<dword_t>(irqNumber) + IRQ_OFFSET, irqHandler);
+		isrHandlerInstall(static_cast<dword_t>(number) + IRQ_OFFSET, handler);
 	}
 
 	// Uninstall handler
-	void irq::uninstall(const irq_t irqNumber) noexcept {
+	void irq::uninstall(const irq_t number) noexcept {
 		// Uninstall ISR
-		isrHandlerUninstall(static_cast<dword_t>(irqNumber) + IRQ_OFFSET);
+		isrHandlerUninstall(static_cast<dword_t>(number) + IRQ_OFFSET);
+	}
+
+
+	// Send EOI (IRQ done)
+	void irq::eoi(const irq_t number) noexcept {
+		// If it`s an interrupt
+		if (static_cast<dword_t>(number) >= IRQ_OFFSET) {
+			// Notify slave PIC if needed
+			if (static_cast<dword_t>(number) > 39) {
+				inPort8(PIC_SLAVE_CONTROL, 0x20);
+			} else {
+				// Notify master PIC
+				inPort8(PIC_MASTER_CONTROL, 0x20);
+			}
+		}
 	}
 
 

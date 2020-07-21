@@ -3,7 +3,7 @@
 //	CPU operations
 //
 //	File:	cpu.hpp
-//	Date:	16 Jul 2020
+//	Date:	21 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -29,7 +29,7 @@ namespace igros::arch {
 
 	// CPU description type
 	template<typename T>
-	class tCPU final : public singleton<T> {
+	class tCPU final : public singleton<tCPU<T>> {
 
 		// No copy construction
 		tCPU(const tCPU &other) noexcept = delete;
@@ -43,6 +43,9 @@ namespace igros::arch {
 
 
 	public:
+
+		// Default c-tor
+		tCPU() noexcept = default;
 
 		// Halt CPU
 	inline	void halt() const noexcept;

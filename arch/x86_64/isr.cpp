@@ -3,7 +3,7 @@
 //	Interrupt service routines low-level operations
 //
 //	File:	isr.cpp
-//	Date:	16 Jul 2020
+//	Date:	18 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -37,39 +37,22 @@ namespace igros::x86_64 {
 
 		// Interrupts handler function
 		void isrHandler(const register_t* regs) noexcept {
-
 			// Acquire irq handler from list
-			auto isr = isrList[regs->number];
-
-			// It`s an interrupt
-			if (regs->number >= IRQ_OFFSET) {
-				// Notify slave PIC if needed
-				if (regs->number > 39) {
-					inPort8(PIC_SLAVE_CONTROL, 0x20);
-				} else {
-					// Notify master PIC
-					inPort8(PIC_MASTER_CONTROL, 0x20);
-				}
-			// Otherwise it's exception
-			} else {
-				// Check if exception handler installed
-				if (nullptr == isr) {
-					// Hang CPU
-					cpuHalt();
-				}
-			}
-
-			// Check if exception handler installed
+			const auto isr = isrList[regs->number];
+			// Check if irq/exception handler installed
 			if (nullptr != isr) {
 				isr(regs);
 			} else {
+				// Disable interrupts
+				irq::disable();
 				// Debug
 				klib::kprintf(	u8"%s -> [#%d]\r\n"
 						u8"State:\t\tUNHANDLED! CPU halted!\r\n",
 						((regs->number >= IRQ_OFFSET) ? u8"IRQ" : u8"EXCEPTION"),
 						((regs->number >= IRQ_OFFSET) ? (regs->number - IRQ_OFFSET) : regs->number));
+				// Hang CPU
+				cpu::halt();
 			}
-
 		}
 
 

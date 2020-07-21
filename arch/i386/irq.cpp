@@ -3,7 +3,7 @@
 //	Interrupts low-level operations
 //
 //	File:	irq.cpp
-//	Date:	13 Jul 2020
+//	Date:	21 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -121,6 +121,21 @@ namespace igros::i386 {
 	void irq::uninstall(const irq_t number) noexcept {
 		// Uninstall ISR
 		isrHandlerUninstall(static_cast<dword_t>(number) + IRQ_OFFSET);
+	}
+
+
+	// Send EOI (IRQ done)
+	void irq::eoi(const irq_t number) noexcept {
+		// If it`s an interrupt
+		if (static_cast<dword_t>(number) >= IRQ_OFFSET) {
+			// Notify slave PIC if needed
+			if (static_cast<dword_t>(number) > 39) {
+				inPort8(PIC_SLAVE_CONTROL, 0x20);
+			} else {
+				// Notify master PIC
+				inPort8(PIC_MASTER_CONTROL, 0x20);
+			}
+		}
 	}
 
 

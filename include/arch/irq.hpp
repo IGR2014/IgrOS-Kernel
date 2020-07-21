@@ -3,7 +3,7 @@
 //	Architecture interrupts type deduction
 //
 //	File:	types.hpp
-//	Date:	16 Jul 2020
+//	Date:	21 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -32,7 +32,7 @@ namespace igros::arch {
 
 	// Interrupts description type
 	template<typename T, typename T2>
-	class tInterrupts final : public singleton<T> {
+	class tInterrupts final : public singleton<tInterrupts<T, T2>> {
 
 		// No copy construction
 		tInterrupts(const tInterrupts &other) noexcept = delete;
@@ -52,25 +52,32 @@ namespace igros::arch {
 		// IRQ ISR type
 		using isr_t = std::add_pointer_t<void(const register_t*)>;
 
+		// Default c-tor
+		tInterrupts() noexcept = default;
+
 		// Enable interrupts
-	inline	void enable() noexcept;
+	inline	void enable() const noexcept;
 		// Disable interrupts
-	inline	void disable() noexcept;
+	inline	void disable() const noexcept;
 
 		// Mask interrupt
-	inline	void mask(const irq_t number) noexcept;
+	inline	void mask(const irq_t number) const noexcept;
 		// Unmask interrupt
-	inline	void unmask(const irq_t number) noexcept;
+	inline	void unmask(const irq_t number) const noexcept;
 
 		// Set interrupts mask
-	inline	void			setMask(const word_t mask = 0xFFFF) noexcept;
+	inline	void	setMask(const word_t mask = 0xFFFF) const noexcept;
 		// Get interrupts mask
-	[[nodiscard]] inline	word_t	getMask() noexcept;
+		[[nodiscard]]
+	inline	word_t	getMask() const noexcept;
 
 		// Install IRQ handler
-	inline	void install(const irq_t number, const isr_t handler) noexcept;
+	inline	void install(const irq_t number, const isr_t handler) const noexcept;
 		// Uninstall IRQ handler
-	inline	void uninstall(const irq_t number) noexcept;
+	inline	void uninstall(const irq_t number) const noexcept;
+
+		// IRQ done (EOI)
+	inline	void eoi(const irq_t number) const noexcept;
 
 
 	};
@@ -78,53 +85,61 @@ namespace igros::arch {
 
 	// Enable interrupts
 	template<typename T, typename T2>
-	void tInterrupts<T, T2>::enable() noexcept {
+	inline void tInterrupts<T, T2>::enable() const noexcept {
 		T::enable();
 	}
 
 	// Disable interrupts
 	template<typename T, typename T2>
-	void tInterrupts<T, T2>::disable() noexcept {
+	inline void tInterrupts<T, T2>::disable() const noexcept {
 		T::disable();
 	}
 
 
 	// Mask interrupt
 	template<typename T, typename T2>
-	void tInterrupts<T, T2>::mask(const irq_t number) noexcept {
+	inline void tInterrupts<T, T2>::mask(const irq_t number) const noexcept {
 		T::mask(number);
 	}
 
 	// Unmask interrupt
 	template<typename T, typename T2>
-	void tInterrupts<T, T2>::unmask(const irq_t number) noexcept {
+	inline void tInterrupts<T, T2>::unmask(const irq_t number) const noexcept {
 		T::unmask(number);
 	}
 
 
 	// Set interrupts mask
 	template<typename T, typename T2>
-	void tInterrupts<T, T2>::setMask(const word_t mask) noexcept {
+	inline void tInterrupts<T, T2>::setMask(const word_t mask) const noexcept {
 		T::setMask(mask);
 	}
 
 	// Get interrupts mask
 	template<typename T, typename T2>
-	[[nodiscard]] word_t tInterrupts<T, T2>::getMask() noexcept {
+	[[nodiscard]]
+	inline word_t tInterrupts<T, T2>::getMask() const noexcept {
 		return T::getMask();
 	}
 
 
 	// Install IRQ handler
 	template<typename T, typename T2>
-	void tInterrupts<T, T2>::install(const irq_t number, const isr_t handler) noexcept {
+	inline void tInterrupts<T, T2>::install(const irq_t number, const isr_t handler) const noexcept {
 		T::install(number, handler);
 	}
 
 	// Uninstall IRQ handler
 	template<typename T, typename T2>
-	void tInterrupts<T, T2>::uninstall(const irq_t number) noexcept {
+	inline void tInterrupts<T, T2>::uninstall(const irq_t number) const noexcept {
 		T::uninstall(number);
+	}
+
+
+	// IRQ done (EOI)
+	template<typename T, typename T2>
+	inline void tInterrupts<T, T2>::eoi(const irq_t number) const noexcept {
+		T::eoi(number);
 	}
 
 

@@ -3,7 +3,7 @@
 //	I/O operations
 //
 //	File:	io.hpp
-//	Date:	18 Jul 2020
+//	Date:	21 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -32,7 +32,7 @@ namespace igros::arch {
 
 	// I/O description type
 	template<typename T, typename T2>
-	class tIO final : public singleton<T> {
+	class tIO final : public singleton<tIO<T, T2>> {
 
 		// No copy construction
 		tIO(const tIO &other) noexcept = delete;
@@ -49,6 +49,9 @@ namespace igros::arch {
 
 		// Port address type
 		using port_t = T2;
+
+		// Default c-tor
+		tIO() noexcept = default;
 
 		// Read byte from port
 		[[nodiscard]]

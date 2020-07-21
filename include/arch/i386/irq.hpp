@@ -3,7 +3,7 @@
 //	Interrupts low-level operations
 //
 //	File:	irq.hpp
-//	Date:	13 Jul 2020
+//	Date:	21 Jul 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -127,6 +127,9 @@ namespace igros::i386 {
 		static void install(const irq_t number, const isr_t handler) noexcept;
 		// Uninstall IRQ handler
 		static void uninstall(const irq_t number) noexcept;
+
+		// Send EOI (IRQ done)
+		static void eoi(const irq_t number) noexcept;
 
 
 	};
