@@ -24,11 +24,11 @@ namespace igros::i386 {
 
 
 	// Master PIC ports
-	constexpr auto PIC_MASTER_CONTROL	= static_cast<port_t>(0x0020);
-	constexpr auto PIC_MASTER_DATA		= static_cast<port_t>(PIC_MASTER_CONTROL + 1);
+	constexpr auto PIC_MASTER_CONTROL	= port_t {0x0020};
+	constexpr auto PIC_MASTER_DATA		= port_t {PIC_MASTER_CONTROL + 1};
 	// Slave PIC ports
-	constexpr auto PIC_SLAVE_CONTROL	= static_cast<port_t>(0x00A0);
-	constexpr auto PIC_SLAVE_DATA		= static_cast<port_t>(PIC_SLAVE_CONTROL + 1);
+	constexpr auto PIC_SLAVE_CONTROL	= port_t {0x00A0};
+	constexpr auto PIC_SLAVE_DATA		= port_t {PIC_SLAVE_CONTROL + 1};
 
 
 	// Interrupts number enumeration

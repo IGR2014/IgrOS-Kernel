@@ -3,7 +3,7 @@
 //	Memory paging for x86
 //
 //	File:	paging.cpp
-//	Date:	24 Jul 2020
+//	Date:	21 Dec 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -57,9 +57,12 @@ namespace igros::i386 {
 		paging::heap(const_cast<byte_t*>(platform::KERNEL_END()), PAGE_SIZE << 6);
 
 		// Create flags
-		constexpr auto flags	= static_cast<kflags<flags_t>>(flags_t::WRITABLE) | static_cast<kflags<flags_t>>(flags_t::PRESENT);
+		const auto flags = kflags<flags_t> {
+			flags_t::WRITABLE,
+			flags_t::PRESENT
+		};
 		// Create page directory
-		const auto dir		= paging::makeDirectory();
+		const auto dir = paging::makeDirectory();
 		// Map memory
 		for (const auto &m : PAGE_MAP) {
 			// Map page tables
@@ -70,7 +73,7 @@ namespace igros::i386 {
 
 		// Setup page directory
 		// PD address bits ([0 .. 31] in cr3)
-		paging::setDirectory(dir);
+		paging::flush(dir);
 		// Disable PSE
 		paging::disablePSE();
 		// Enable paging
@@ -181,7 +184,7 @@ namespace igros::i386 {
 		// Allocate page directory
 		const auto dir = static_cast<directory_t*>(paging::allocate());
 		// Zero enties of page directory
-		klib::kmemset(dir, (sizeof(directory_t) >> 2), static_cast<dword_t>(flags_t::CLEAR));
+		klib::kmemset(dir, (sizeof(directory_t) >> 2), kflags(flags_t::CLEAR).value());
 		// Return page directory
 		return dir;
 	}
@@ -192,7 +195,7 @@ namespace igros::i386 {
 		// Allocate page table
 		const auto table = static_cast<table_t*>(paging::allocate());
 		// Zero enties of page table
-		klib::kmemset(table, (sizeof(table_t) >> 2), static_cast<dword_t>(flags_t::CLEAR));
+		klib::kmemset(table, (sizeof(table_t) >> 2), kflags(flags_t::CLEAR).value());
 		// Return page table
 		return table;
 	}
@@ -202,18 +205,26 @@ namespace igros::i386 {
 	[[nodiscard]]
 	bool paging::checkFlags(const table_t* table, const kflags<flags_t> flags) noexcept {
 		// Mask flags
-		const auto maskedFlags = flags & flags_t::FLAGS_MASK;
+		const auto maskedFlags	= flags & flags_t::FLAGS_MASK;
+		// Get table flags
+		const auto tableFlags	= kflags<flags_t> {
+			reinterpret_cast<std::size_t>(table)
+		};
 		// Check flags
-		return maskedFlags != (static_cast<kflags<flags_t>>(reinterpret_cast<dword_t>(table)) & maskedFlags);
+		return maskedFlags != (tableFlags & maskedFlags);
 	}
 
 	// Check page flags
 	[[nodiscard]]
 	bool paging::checkFlags(const page_t* page, const kflags<flags_t> flags) noexcept {
 		// Mask flags
-		const auto maskedFlags = flags & flags_t::FLAGS_MASK;
+		const auto maskedFlags	= flags & flags_t::FLAGS_MASK;
+		// Get page flags
+		const auto pageFlags	= kflags<flags_t> {
+			reinterpret_cast<std::size_t>(page)
+		};
 		// Check flags
-		return maskedFlags != (static_cast<kflags<flags_t>>(reinterpret_cast<dword_t>(page)) & maskedFlags);
+		return maskedFlags != (pageFlags & maskedFlags);
 	}
 
 
@@ -221,7 +232,8 @@ namespace igros::i386 {
 	void paging::mapTable(directory_t* const dir, const page_t* phys, const pointer_t virt, const kflags<flags_t> flags) noexcept {
 
 		// Check alignment
-		if (!klib::kalignCheck(phys, PAGE_SHIFT) || !klib::kalignCheck(virt, PAGE_SHIFT)) {
+		if (	!klib::kalignCheck(phys, PAGE_SHIFT)	||
+			!klib::kalignCheck(virt, PAGE_SHIFT)) {
 			// Bad align detected
 			return;
 		}
@@ -240,13 +252,21 @@ namespace igros::i386 {
 		// Get page pointer and map physical page
 		for (auto i = 0u; i < (sizeof(page_t) >> 2); i++) {
 			// Get phys page ID
-			auto page	= static_cast<kflags<flags_t>>(reinterpret_cast<std::size_t>(phys) + (i << PAGE_SHIFT));
+			const auto page	= kflags<flags_t> {
+				reinterpret_cast<std::size_t>(phys) + (i << PAGE_SHIFT),
+				flags & flags_t::FLAGS_MASK
+			};
 			// Map page
-			table->pages[i]	= reinterpret_cast<page_t*>(static_cast<dword_t>(page | (flags & flags_t::FLAGS_MASK)));
+			table->pages[i]	= reinterpret_cast<page_t*>(page.value());
 		}
 
+		// Get table flags
+		const auto tableFlags = kflags<flags_t> {
+			reinterpret_cast<std::size_t>(table) & 0x3FFFFFFF,
+			flags & flags_t::FLAGS_MASK
+		};
 		// Set new page table flags
-		table = reinterpret_cast<table_t*>(static_cast<dword_t>(static_cast<kflags<flags_t>>(reinterpret_cast<dword_t>(table) & 0x3FFFFFFF) | (flags & flags_t::FLAGS_MASK)));
+		table = reinterpret_cast<table_t*>(tableFlags.value());
 
 	}
 
@@ -258,7 +278,7 @@ namespace igros::i386 {
 		paging::mapTable(dir, phys, virt, flags);
 		// Setup page directory
 		// PD address bits ([0 .. 31] in cr3)
-		paging::setDirectory(dir);
+		paging::flush(dir);
 		// Enable paging
 		paging::enable();
 	}
@@ -286,10 +306,24 @@ namespace igros::i386 {
 			table = paging::makeTable();
 		}
 
-		// Get page pointer
-		table->pages[tabID] = reinterpret_cast<page_t*>(static_cast<dword_t>(static_cast<kflags<flags_t>>(reinterpret_cast<std::size_t>(phys)) | (flags & flags_t::FLAGS_MASK)));
+		// Get page
+		auto &page = table->pages[tabID];
+
+		// Get table flags
+		const auto tableFlags = kflags<flags_t> {
+			reinterpret_cast<std::size_t>(table) & 0x3FFFFFFF,
+			flags & flags_t::FLAGS_MASK
+		};
+		// Get page flags
+		const auto pageFlags = kflags<flags_t> {
+			reinterpret_cast<std::size_t>(page) & 0x3FFFFFFF,
+			flags & flags_t::FLAGS_MASK
+		};
+
 		// Insert page table
-		table = reinterpret_cast<table_t*>(static_cast<dword_t>(static_cast<kflags<flags_t>>(reinterpret_cast<std::size_t>(table) & 0x3FFFFFFF) | (flags & flags_t::FLAGS_MASK)));
+		table	= reinterpret_cast<table_t*>(tableFlags.value());
+		// Insert page pointer
+		page	= reinterpret_cast<page_t*>(pageFlags.value());
 
 	}
 
@@ -301,7 +335,7 @@ namespace igros::i386 {
 		paging::mapPage(dir, phys, virt, flags);
 		// Setup page directory
 		// PD address bits ([0 .. 31] in cr3)
-		paging::setDirectory(dir);
+		paging::flush(dir);
 		// Enable paging
 		paging::enable();
 
@@ -310,7 +344,7 @@ namespace igros::i386 {
 
 	// Convert virtual address to physical address
 	[[nodiscard]]
-	pointer_t paging::toPhys(const pointer_t virt) noexcept {
+	pointer_t paging::translate(const pointer_t virt) noexcept {
 
 		// Page directory entry index from virtual address
 		const auto dirID = (reinterpret_cast<std::size_t>(virt) >> PAGE_DIRECTORY_SHIFT) & PAGE_ENTRY_MASK;
@@ -337,11 +371,15 @@ namespace igros::i386 {
 		}
 
 		// Get physical address of page from page table (20 MSB)
-		const auto address	= reinterpret_cast<std::size_t>(page) & static_cast<std::size_t>(flags_t::PHYS_ADDR_MASK);
+		const auto address	= kflags<flags_t> {
+			reinterpret_cast<std::size_t>(page)
+		};
 		// Get physical offset in psge from virtual address`s (12 LSB)
-		const auto offset	= reinterpret_cast<std::size_t>(virt) & static_cast<std::size_t>(flags_t::FLAGS_MASK);
+		const auto offset	= kflags<flags_t> {
+			reinterpret_cast<std::size_t>(virt)
+		};
 		// Return physical address
-		return reinterpret_cast<pointer_t>(address | offset);
+		return reinterpret_cast<pointer_t>(((address & flags_t::PHYS_ADDR_MASK) | (offset & flags_t::FLAGS_MASK)).value());
 
 	}
 
@@ -376,7 +414,7 @@ namespace igros::i386 {
 
 
 	// Set page directory
-	void paging::setDirectory(const directory_t* const dir) noexcept {
+	void paging::flush(const directory_t* const dir) noexcept {
 		// Set page directory address to CR3
 		inCR3(reinterpret_cast<dword_t>(dir) & 0x3FFFFFFF);
 	}

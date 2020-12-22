@@ -3,7 +3,7 @@
 //	Memory paging for x86
 //
 //	File:	paging.hpp
-//	Date:	24 Jul 2020
+//	Date:	21 Dec 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -96,7 +96,7 @@ namespace igros::i386 {
 		};
 
 		// Default c-tor
-		paging() noexcept = default;
+		paging() = default;
 
 		// Copy c-tor
 		paging(const paging &other) = delete;
@@ -109,25 +109,25 @@ namespace igros::i386 {
 		paging& operator=(paging &&other) = delete;
 
 		// Identity map kernel + map higher-half + self-map page directory
-		static void init() noexcept;
+		static void	init() noexcept;
 
 		// Enable paging
-		static void enable() noexcept;
+		static void	enable() noexcept;
 		// Disable paging
-		static void disable() noexcept;
+		static void	disable() noexcept;
 
 		// Enable Physical Address Extension
-		static void enablePAE() noexcept;
+		static void	enablePAE() noexcept;
 		// Disable Physical Address Extension
-		static void disablePAE() noexcept;
+		static void	disablePAE() noexcept;
 
 		// Enable Page Size Extension
-		static void enablePSE() noexcept;
+		static void	enablePSE() noexcept;
 		// Disable Page Size Extension
-		static void disablePSE() noexcept;
+		static void	disablePSE() noexcept;
 
 		// Initialize paging memory
-		static void heap(const pointer_t phys, const std::size_t size) noexcept;
+		static void	heap(const pointer_t phys, const std::size_t size) noexcept;
 
 		// Allocate page
 		[[nodiscard]]
@@ -144,30 +144,30 @@ namespace igros::i386 {
 
 		// Check table flags
 		[[nodiscard]]
-		static bool checkFlags(const table_t* table, const kflags<flags_t> flags) noexcept;
+		static bool	checkFlags(const table_t* table, const kflags<flags_t> flags) noexcept;
 		// Check page flags
 		[[nodiscard]]
-		static bool checkFlags(const page_t* page, const kflags<flags_t> flags) noexcept;
+		static bool	checkFlags(const page_t* page, const kflags<flags_t> flags) noexcept;
 
 		// Map virtual page to physical page (whole table, explicit page directory)
-		static void mapTable(directory_t* const dir, const page_t* phys, const pointer_t virt, const kflags<flags_t> flags) noexcept;
+		static void	mapTable(directory_t* const dir, const page_t* phys, const pointer_t virt, const kflags<flags_t> flags) noexcept;
 		// Map virtual page to physical page (whole table)
-		static void mapTable(const page_t* phys, const pointer_t virt, const kflags<flags_t> flags) noexcept;
+		static void	mapTable(const page_t* phys, const pointer_t virt, const kflags<flags_t> flags) noexcept;
 
 		// Map virtual page to physical page (single page, explicit page directory)
-		static void mapPage(directory_t* const dir, const page_t* phys, const pointer_t virt, const kflags<flags_t> flags) noexcept;
+		static void	mapPage(directory_t* const dir, const page_t* phys, const pointer_t virt, const kflags<flags_t> flags) noexcept;
 		// Map virtual page to physical page (single page)
-		static void mapPage(const page_t* phys, const pointer_t virt, const kflags<flags_t> flags) noexcept;
+		static void	mapPage(const page_t* phys, const pointer_t virt, const kflags<flags_t> flags) noexcept;
 
 		// Convert virtual address to physical address
 		[[nodiscard]]
-		static pointer_t	toPhys(const pointer_t addr) noexcept;
+		static pointer_t	translate(const pointer_t addr) noexcept;
 
 		// Page Fault Exception handler
-		static void exHandler(const register_t* regs) noexcept;
+		static void	exHandler(const register_t* regs) noexcept;
 
 		// Set page directory
-		static void setDirectory(const directory_t* const dir) noexcept;
+		static void	flush(const directory_t* const dir) noexcept;
 
 
 	};
