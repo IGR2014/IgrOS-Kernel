@@ -4,10 +4,10 @@
 			"name": "Linux",
 			"includePath": ["${workspaceFolder}/**"],
 			"defines": ["IGROS_ARCH_i386"],
-			"compilerPath": "/usr/bin/clang++",
+			"compilerPath": "/usr/bin/g++",
 			"cStandard": "c11",
 			"cppStandard": "c++17",
-			"intelliSenseMode": "clang-x64"
+			"intelliSenseMode": "gcc-x64"
 		},
 		{
 			"name": "Win32",

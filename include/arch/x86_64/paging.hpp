@@ -3,7 +3,7 @@
 //	Memory paging for x86
 //
 //	File:	paging.hpp
-//	Date:	24 Jul 2020
+//	Date:	03 Aug 2020
 //
 //	Copyright (c) 2017 - 2020, Igor Baklykov
 //	All rights reserved.
@@ -198,13 +198,13 @@ namespace igros::x86_64 {
 
 		// Convert virtual address to physical address
 		[[nodiscard]]
-		static pointer_t	toPhys(const pointer_t addr) noexcept;
+		static pointer_t	translate(const pointer_t addr) noexcept;
 
 		// Page Fault Exception handler
 		static void exHandler(const register_t* regs) noexcept;
 
 		// Set page directory
-		static void setDirectory(const pml4_t* const dir) noexcept;
+		static void flush(const pml4_t* const dir) noexcept;
 
 
 	};

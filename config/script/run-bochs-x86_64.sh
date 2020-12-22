@@ -1,4 +1,4 @@
 #!/bin/sh
 
-bochs -f ./config/test/bochs-i386
+bochs -f ./config/test/bochs-x86_64
 
