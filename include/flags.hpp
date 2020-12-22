@@ -264,6 +264,7 @@ namespace igros {
 	template<typename T, typename U>
 	constexpr kflags<T, U>& kflags<T, U>::operator=(const T &value) noexcept {
 		mValue = value;
+		return *this;
 	}
 
 
@@ -276,6 +277,7 @@ namespace igros {
 	template<typename T, typename U>
 	constexpr kflags<T, U>& kflags<T, U>::operator=(T &&value) noexcept {
 		mValue = std::move(value);
+		return *this;
 	}
 
 
