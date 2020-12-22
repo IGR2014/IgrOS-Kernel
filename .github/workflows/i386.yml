@@ -10,6 +10,6 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: install g++ multilib
-      run: sudo apt install -y gcc-multilib g++-multilib
+      run: sudo apt install -y gcc-multilib g++-multilib -f
     - name: make
       run: ./config/script/build-i386.sh
