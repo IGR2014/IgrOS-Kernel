@@ -5,7 +5,7 @@
 //	File:	exceptions.cpp
 //	Date:	16 Jul 2020
 //
-//	Copyright (c) 2017 - 2020, Igor Baklykov
+//	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
 //
 //
