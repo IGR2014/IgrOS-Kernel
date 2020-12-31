@@ -35,5 +35,5 @@ Currently supports **i386** and **x86_64** platforms. **ARM** is the next aim.
 ---
 
 ### ***P.S.:***
-###### ***Developed and maintained by Igor Baklykov (c) 2017 - 2020***
+###### ***Developed and maintained by Igor Baklykov (c) 2017 - 2021***
 

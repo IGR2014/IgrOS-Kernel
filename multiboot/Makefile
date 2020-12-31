@@ -5,7 +5,7 @@
 #	File:	Makefile
 #	Date:	21 Jun 2019
 #
-#	Copyright (c) 2017 - 2020, Igor Baklykov
+#	Copyright (c) 2017 - 2021, Igor Baklykov
 #	All rights reserved.
 #
 #

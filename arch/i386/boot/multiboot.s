@@ -5,7 +5,7 @@
 #	File:	multiboot.s
 #	Date:	11 Feb 2020
 #
-#	Copyright (c) 2017 - 2020, Igor Baklykov
+#	Copyright (c) 2017 - 2021, Igor Baklykov
 #	All rights reserved.
 #
 #
