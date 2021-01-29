@@ -3,13 +3,15 @@
 //	Memory paging for x86_64
 //
 //	File:	paging.cpp
-//	Date:	21 Dec 2020
+//	Date:	29 Jan 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
 //
 //
 
+
+#include <array>
 
 #include <platform.hpp>
 #include <flags.hpp>
@@ -35,22 +37,25 @@ namespace igros::x86_64 {
 	table_t* paging::mFreePages = reinterpret_cast<table_t*>(&paging::mFreePages);
 
 
-	// Kernel memory mapping structure
-	inline static const struct mapping_t {
-		const	page_t*		phys;
-		const	pointer_t	virt;
-	} PAGE_MAP[] {
+	// Kernel memory map structure
+	const struct PAGE_MAP_t {
+		const page_t*	phys;
+		const pointer_t	virt;
+	};
+
+	// Kernel memory map
+	inline static const std::array<PAGE_MAP_t, 4ull> PAGE_MAP {{
 		// Identity map first 4MB of physical memory to first 4MB in virtual memory
 		// 0Mb					->	0Mb
 		{nullptr,				nullptr},
 		// 2Mb					->	2Mb
-		{reinterpret_cast<page_t*>(0x2000000),	reinterpret_cast<pointer_t>(0x2000000)},
+		{std::add_pointer_t<page_t>(0x2000000),	std::add_pointer_t<void>(0x2000000)},
 		// Also map first 4MB of physical memory to 128TB offset in virtual memory
 		// 0Mb					->	128Tb + 0Mb
-		{nullptr,				reinterpret_cast<pointer_t>(0xFFFFFFFF80000000)},
+		{nullptr,				std::add_pointer_t<void>(0xFFFFFFFF80000000)},
 		// 2Mb					->	128Tb + 2Mb
-		{reinterpret_cast<page_t*>(0x2000000),	reinterpret_cast<pointer_t>(0xFFFFFFFF82000000)}
-	};
+		{std::add_pointer_t<page_t>(0x2000000),	std::add_pointer_t<void>(0xFFFFFFFF82000000)}
+	}};
 
 
 	// Setup paging
@@ -59,8 +64,10 @@ namespace igros::x86_64 {
 		// Install exception handler for page fault
 		except::install(except::NUMBER::PAGE_FAULT, paging::exHandler);
 
+		// Get kernel end address
+		auto kernelEnd = const_cast<byte_t*>(platform::KERNEL_END());
 		// Initialize pages for page tables
-		paging::heap(const_cast<byte_t*>(platform::KERNEL_END()), PAGE_SIZE << 6);
+		paging::heap(kernelEnd, PAGE_SIZE << 6);
 
 		// Create flags
 		constexpr auto flags = kflags<flags_t> {

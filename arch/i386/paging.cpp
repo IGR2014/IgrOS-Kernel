@@ -3,13 +3,15 @@
 //	Memory paging for x86
 //
 //	File:	paging.cpp
-//	Date:	21 Dec 2020
+//	Date:	29 Jan 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
 //
 //
 
+
+#include <array>
 
 #include <platform.hpp>
 
@@ -33,18 +35,21 @@ namespace igros::i386 {
 	page_t* paging::mFreePages = reinterpret_cast<page_t*>(&paging::mFreePages);
 
 
+	// Kernel memory map structure
+	const struct PAGE_MAP_t {
+		const page_t*	phys;
+		const pointer_t	virt;
+	};
+
 	// Kernel memory map
-	inline static const struct {
-		const	page_t*		phys;
-		const	pointer_t	virt;
-	} PAGE_MAP[] {
+	inline static const std::array<PAGE_MAP_t, 2ull> PAGE_MAP {{
 		// Identity map first 4MB of physical memory to first 4Mb in virtual memory
 		// 0Mb		->	0Mb
 		{nullptr,	nullptr},
 		// Also map first 4MB of physical memory to 3Gb offset in virtual memory
 		// 0Mb		->	3Gb + 0Mb
-		{nullptr,	reinterpret_cast<pointer_t>(0xC0000000)}
-	};
+		{nullptr,	std::add_pointer_t<void>(0xC0000000)}
+	}};
 
 
 	// Identity map kernel + map higher-half + self-map page directory
@@ -53,8 +58,10 @@ namespace igros::i386 {
 		// Install exception handler for page fault
 		except::install(except::NUMBER::PAGE_FAULT, paging::exHandler);
 
+		// Get kernel end address
+		auto kernelEnd = const_cast<byte_t*>(platform::KERNEL_END());
 		// Initialize pages for page tables
-		paging::heap(const_cast<byte_t*>(platform::KERNEL_END()), PAGE_SIZE << 6);
+		paging::heap(const_cast<byte_t*>(kernelEnd, PAGE_SIZE << 6);
 
 		// Create flags
 		const auto flags = kflags<flags_t> {
