@@ -11,7 +11,7 @@
 //
 
 
-#include <gdt.hpp>
+#include <arch/x86_64/gdt.hpp>
 
 
 // x86_64 namespace

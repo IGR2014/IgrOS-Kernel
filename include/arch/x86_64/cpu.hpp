@@ -3,7 +3,7 @@
 //	CPU operations
 //
 //	File:	cpu.hpp
-//	Date:	13 Jul 2020
+//	Date:	28 Jan 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -28,7 +28,7 @@ namespace igros::x86_64 {
 #endif	// __cplusplus
 
 
-		// Read CR0 register
+		// Halt CPU
 		inline void cpuHalt() noexcept;
 
 

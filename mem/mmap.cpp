@@ -3,7 +3,7 @@
 //	Memory map operations definition
 //
 //	File:	mmap.cpp
-//	Date:	17 Jul 2020
+//	Date:	15 Jan 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -36,9 +36,9 @@ namespace igros::mem {
 		// Loop through memory map
 		while (reinterpret_cast<std::size_t>(entry) < size) {
 			// Check if entry is available
-			if (	(multiboot::MEMORY_MAP_TYPE::AVAILABLE == entry->type)
-				&& ((reinterpret_cast<std::size_t>(entry) < reinterpret_cast<std::size_t>(platform::KERNEL_START()))
-				|| (reinterpret_cast<std::size_t>(entry) > reinterpret_cast<std::size_t>(platform::KERNEL_END())))) {
+			if (	(multiboot::MEMORY_MAP_TYPE::AVAILABLE		== entry->type)
+				&& ((reinterpret_cast<std::size_t>(entry)	< reinterpret_cast<std::size_t>(platform::KERNEL_START()))
+				|| (reinterpret_cast<std::size_t>(entry)	> reinterpret_cast<std::size_t>(platform::KERNEL_END())))) {
 				// Initial entry's memory offset
 				auto entrySize = 0ULL;
 				// Loop through entry's memory
