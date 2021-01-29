@@ -5,11 +5,22 @@ on: [push]
 jobs:
   build:
 
-    runs-on: ubuntu-latest
-    
+    runs-on: ubuntu-20.04
+
     steps:
-    - uses: actions/checkout@v1
-    - name: install g++ multilib
+
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: G++ Multilib
       run: sudo apt update && sudo apt install -y gcc-multilib g++-multilib --fix-missing
-    - name: make
+
+    - name: CMake
       run: ./config/script/build-i386.sh
+
+    - name: SonarCloud Scan
+      uses: sonarsource/sonarcloud-github-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
