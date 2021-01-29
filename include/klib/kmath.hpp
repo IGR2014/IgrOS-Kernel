@@ -3,7 +3,7 @@
 //	Kernel math functions definitions
 //
 //	File:	kmath.hpp
-//	Date:	17 Jul 2020
+//	Date:	15 Jan 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -38,9 +38,11 @@ namespace igros::klib {
 
 	// Divide 64-bit integer by 32-bit integer
 	// Returns 64-bit quotient and 64-bit reminder
+	[[nodiscard]]
 	udivmod_t	kudivmod(quad_t dividend, dword_t divisor) noexcept;
 	// Divide 64-bit integer by 32-bit integer
 	// Returns 64-bit quotient and 64-bit reminder
+	[[nodiscard]]
 	divmod_t	kdivmod(squad_t dividend, sdword_t divisor) noexcept;
 
 

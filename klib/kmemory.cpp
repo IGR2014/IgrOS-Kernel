@@ -3,7 +3,7 @@
 //	Kernel mem functions
 //
 //	File:	kmemory.cpp
-//	Date:	07 Jul 2020
+//	Date:	15 Jan 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -19,7 +19,8 @@ namespace igros::klib {
 
 
 	// Set required memory with specified byte
-	[[maybe_unused]] pointer_t kmemset8(byte_t* dst, const std::size_t size, const byte_t val) noexcept {
+	[[maybe_unused]]
+	pointer_t kmemset8(byte_t* dst, const std::size_t size, const byte_t val) noexcept {
 
 		// Check arguments
 		if (nullptr == dst || 0u == size) {
@@ -37,7 +38,8 @@ namespace igros::klib {
 	}
 
 	// Set required memory with specified word
-	[[maybe_unused]] pointer_t kmemset16(word_t* dst, const std::size_t size, const word_t val) noexcept {
+	[[maybe_unused]]
+	pointer_t kmemset16(word_t* dst, const std::size_t size, const word_t val) noexcept {
 
 		// Check arguments
 		if (nullptr == dst || 0ull == size) {
@@ -73,7 +75,8 @@ namespace igros::klib {
 	}
 
 	// Set required memory with specified double word
-	[[maybe_unused]] pointer_t kmemset32(dword_t* dst, const std::size_t size, const dword_t val) noexcept {
+	[[maybe_unused]]
+	pointer_t kmemset32(dword_t* dst, const std::size_t size, const dword_t val) noexcept {
 
 		// Check arguments
 		if (nullptr == dst || 0ull == size) {
@@ -152,7 +155,8 @@ namespace igros::klib {
 	}
 
 	// Set required memory with specified quad word
-	[[maybe_unused]] pointer_t kmemset64(quad_t* dst, const std::size_t size, const quad_t val) noexcept {
+	[[maybe_unused]]
+	pointer_t kmemset64(quad_t* dst, const std::size_t size, const quad_t val) noexcept {
 
 		// Check arguments
 		if (nullptr == dst || 0ull == size) {
@@ -175,7 +179,8 @@ namespace igros::klib {
 
 
 	// Copy memory
-	[[maybe_unused]] pointer_t kmemcpy(const pointer_t dst, const pointer_t src, const std::size_t size) noexcept {
+	[[maybe_unused]]
+	pointer_t kmemcpy(const pointer_t dst, const pointer_t src, const std::size_t size) noexcept {
 		// Check arguments
 		if (nullptr == dst || nullptr == src || dst == src || 0ull == size) {
 			return nullptr;

@@ -3,7 +3,7 @@
 //	Boot low-level main setup function
 //
 //	File:	boot.cpp
-//	Date:	17 Jul 2020
+//	Date:	15 Jan 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -42,25 +42,27 @@ namespace igros {
 	// Print kernel header
 	void printHeader(const multiboot::info_t* const multiboot) noexcept {
 		// Write kernel info
-		klib::kprintf(	u8"Kernel info:\r\n"
-				u8"Arch:\t\t%s\r\n"
-				u8"Start addr:\t0x%p\r\n"
-				u8"End addr:\t0x%p\r\n"
-				u8"Size:\t\t%d Kb.\r\n"
-				u8"Build:\t\t" __DATE__ u8", " __TIME__ u8"\r\n"
-				u8"Version:\t%s\r\n"
-				u8"Author:\t\tIgor Baklykov (c) %d - %d\r\n"
-				u8"Command line:\t%s\r\n"
-				u8"Loader:\t\t%s\r\n",
-				platform::name(),
-				platform::KERNEL_START(),
-				platform::KERNEL_END(),
-				platform::KERNEL_SIZE() >> 10,
-				KERNEL_VERSION_STRING(),
-				2017,
-				2020,
-				multiboot->commandLine(),
-				multiboot->loaderName());
+		klib::kprintf(
+			u8"Kernel info:\r\n"
+			u8"Arch:\t\t%s\r\n"
+			u8"Start addr:\t0x%p\r\n"
+			u8"End addr:\t0x%p\r\n"
+			u8"Size:\t\t%d Kb.\r\n"
+			u8"Build:\t\t" __DATE__ u8", " __TIME__ u8"\r\n"
+			u8"Version:\t%s\r\n"
+			u8"Author:\t\tIgor Baklykov (c) %d - %d\r\n"
+			u8"Command line:\t%s\r\n"
+			u8"Loader:\t\t%s\r\n",
+			platform::name(),
+			platform::KERNEL_START(),
+			platform::KERNEL_END(),
+			platform::KERNEL_SIZE() >> 10,
+			KERNEL_VERSION_STRING(),
+			2017,
+			2020,
+			multiboot->commandLine(),
+			multiboot->loaderName()
+		);
 	}
 
 
