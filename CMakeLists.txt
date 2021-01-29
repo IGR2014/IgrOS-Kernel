@@ -1,0 +1,217 @@
+# Cmake version
+CMAKE_MINIMUM_REQUIRED(VERSION 3.10.0)
+
+# Arch
+IF(NOT DEFINED IGROS_ARCH)
+	SET(IGROS_ARCH		"x86_64")
+ENDIF()
+IF(NOT DEFINED IGROS_CXX)
+	SET(IGROS_CXX		"clang++")
+ENDIF()
+SET(IGROS_KERNEL	"kernel.bin")
+SET(IGROS_CONFIG_FILE	"config/cmake/${IGROS_CXX}-${IGROS_ARCH}.cmake")
+SET(IGROS_LINK_SCRIPT	"config/link/link-${IGROS_ARCH}.ld")
+SET(IGROS_VERSION_MAJOR	"0")
+SET(IGROS_VERSION_MINOR	"1")
+SET(IGROS_VERSION_BUILD	"0")
+SET(IGROS_VERSION	${IGROS_VERSION_MAJOR}.${IGROS_VERSION_MINOR}.${IGROS_VERSION_BUILD})
+
+# Build config
+INCLUDE(${IGROS_CONFIG_FILE})
+
+# Build in Source protection
+FILE(
+	TO_CMAKE_PATH "${PROJECT_BINARY_DIR}/CMakeLists.txt" LOC_PATH
+)
+IF(EXISTS "${LOC_PATH}")
+	MESSAGE(FATAL_ERROR "Cannot build in a source directory (or any with CMakeLists.txt)!")
+ENDIF()
+
+# Project
+PROJECT(
+	IgrOS-Kernel
+	VERSION ${IGROS_VERSION}
+)
+
+# Printables
+STRING(
+	REPLACE " -" "\n\t\t-"
+	CMAKE_ASM-ATT_FLAGS_PRINTABLE
+	${CMAKE_ASM-ATT_FLAGS}
+)
+STRING(
+	REPLACE " -" "\n\t\t-"
+	CMAKE_CXX_FLAGS_PRINTABLE
+	${CMAKE_CXX_FLAGS}
+)
+STRING(
+	REPLACE " -" "\n\t\t-"
+	CMAKE_LINKER_FLAGS_PRINTABLE
+	${CMAKE_LINKER_FLAGS}
+)
+
+# Header
+MESSAGE(
+	"===============================\n"
+	"\n"
+	"IgrOS Kernel Build v1.0\n"
+	"\n"
+	"Architecture:	${IGROS_ARCH}\n"
+	"\n"
+	"Compiler:	${CMAKE_CXX_COMPILER}\n"
+	"	flags:	${CMAKE_CXX_FLAGS_PRINTABLE}\n"
+	"\n"
+	"Assembler:	${CMAKE_ASM_COMPILER}\n"
+	"	flags:	${CMAKE_ASM-ATT_FLAGS_PRINTABLE}\n"
+	"\n"
+	"Linker:		${CMAKE_LINKER}\n"
+	"	flags:	${CMAKE_LINKER_FLAGS_PRINTABLE}\n"
+	"\n"
+	"Script:		${IGROS_CONFIG_FILE}\n"
+	"\n"
+	"Binary:		${IGROS_KERNEL}\n"
+	"\n"
+	"===============================\n"
+)
+
+# Message
+MESSAGE(STATUS "Building Kernel ${IGROS_ARCH}")
+
+# C++ Language syntax
+ENABLE_LANGUAGE(CXX)
+# AT&T Assembler syntax
+ENABLE_LANGUAGE(ASM-ATT)
+
+# Kernel C++ files
+FILE(
+	GLOB
+	KERNEL_SRC
+	*.cpp
+)
+
+# Includes
+INCLUDE_DIRECTORIES(
+	include
+)
+
+# Kernel executable
+ADD_EXECUTABLE(
+	${IGROS_KERNEL}
+	${KERNEL_SRC}
+)
+
+# Kernel C++ standard
+SET_PROPERTY(
+	TARGET
+	${IGROS_KERNEL}
+	PROPERTY CXX_STANDARD 17
+)
+# Required c++17
+SET_PROPERTY(
+	TARGET
+	${IGROS_KERNEL}
+	PROPERTY CMAKE_CXX_STANDARD_REQUIRED True
+)
+# No GNU!
+SET_PROPERTY(
+	TARGET
+	${IGROS_KERNEL}
+	PROPERTY CXX_EXTENSIONS OFF
+)
+
+# Kernel C standard
+SET_PROPERTY(
+	TARGET
+	${IGROS_KERNEL}
+	PROPERTY C_STANDARD 11
+)
+# Required c11
+SET_PROPERTY(
+	TARGET
+	${IGROS_KERNEL}
+	PROPERTY CMAKE_C_STANDARD_REQUIRED True
+)
+# No GNU!
+SET_PROPERTY(
+	TARGET
+	${IGROS_KERNEL}
+	PROPERTY C_EXTENSIONS OFF
+)
+
+# PIC
+SET_PROPERTY(
+	TARGET
+	${IGROS_KERNEL}
+	PROPERTY CMAKE_POSITION_INDEPENDENT_CODE ON
+)
+
+# Kernel definitions
+ADD_COMPILE_DEFINITIONS(
+	IGROS_ARCH_${IGROS_ARCH}
+	IGROS_ARCH=${IGROS_ARCH}
+	IGROS_KERNEL
+)
+
+# Add arch subdirectory
+ADD_SUBDIRECTORY(
+	arch
+	arch
+)
+# Add multiboot subdirectory
+ADD_SUBDIRECTORY(
+	multiboot
+	multiboot
+)
+# Add klib subdirectory
+ADD_SUBDIRECTORY(
+	klib
+	klib
+)
+# Add mem subdirectory
+ADD_SUBDIRECTORY(
+	mem
+	mem
+)
+# Add sys subdirectory
+ADD_SUBDIRECTORY(
+	sys
+	sys
+)
+# Add drivers subdirectory
+ADD_SUBDIRECTORY(
+	drivers
+	drivers
+)
+
+# Debug build target
+ADD_CUSTOM_TARGET(
+	Debug
+	COMMAND ${CMAKE_COMMAND} -DCMAKE_TOOLCHAIN_FILE=${IGROS_CONFIG_FILE} -DCMAKE_BUILD_TYPE=Debug -S"${CMAKE_SOURCE_DIR}" -H"${CMAKE_SOURCE_DIR}" -B"${CMAKE_BINARY_DIR}/${IGROS_ARCH}" ${CMAKE_SOURCE_DIR}
+	COMMAND ${CMAKE_COMMAND} --build "${CMAKE_BINARY_DIR}/${IGROS_ARCH}" --target all
+	COMMENT "Switch CMAKE_BUILD_TYPE to Debug"
+)
+# Profiling build target
+ADD_CUSTOM_TARGET(
+	Profiling
+	COMMAND ${CMAKE_COMMAND} -DCMAKE_TOOLCHAIN_FILE=${IGROS_CONFIG_FILE} -DCMAKE_BUILD_TYPE=Profiling -S"${CMAKE_SOURCE_DIR}" -H"${CMAKE_SOURCE_DIR}" -B"${CMAKE_BINARY_DIR}/${IGROS_ARCH}" ${CMAKE_SOURCE_DIR}
+	COMMAND ${CMAKE_COMMAND} --build "${CMAKE_BINARY_DIR}/${IGROS_ARCH}" --target all
+	COMMENT "Switch CMAKE_BUILD_TYPE to Profiling"
+)
+# Release build target
+ADD_CUSTOM_TARGET(
+	Release
+	COMMAND ${CMAKE_COMMAND} -DCMAKE_TOOLCHAIN_FILE=${IGROS_CONFIG_FILE} -DCMAKE_BUILD_TYPE=Release -S"${CMAKE_SOURCE_DIR}" -H"${CMAKE_SOURCE_DIR}" -B"${CMAKE_BINARY_DIR}/${IGROS_ARCH}" ${CMAKE_SOURCE_DIR}
+	COMMAND ${CMAKE_COMMAND} --build "${CMAKE_BINARY_DIR}/${IGROS_ARCH}" --target all
+	COMMENT "Switch CMAKE_BUILD_TYPE to Release"
+)
+
+# Install rules
+INSTALL(
+	TARGETS ${IGROS_KERNEL}
+	CONFIGURATIONS ${CMAKE_BUILD_TYPE}
+	DESTINATION "${CMAKE_SOURCE_DIR}/${CMAKE_BUILD_TYPE}/${IGROS_ARCH}"
+)
+
+# Link command
+SET(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_LINKER} <OBJECTS> -o ${IGROS_KERNEL} -T ${CMAKE_SOURCE_DIR}/${IGROS_LINK_SCRIPT} ${CMAKE_LINKER_FLAGS}")
+

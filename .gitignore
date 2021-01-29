@@ -13,6 +13,9 @@
 # Build folder
 build
 builds
-# Release folder
 release
+# Release, Profiling, Debug folders
+Release
+Profiling
+Debug
 

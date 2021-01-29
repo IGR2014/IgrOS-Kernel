@@ -1,4 +1,6 @@
 #!/bin/sh
 
-rm -rf release
+rm -rf Release
+rm -rf Profiling
+rm -rf Debug
 
