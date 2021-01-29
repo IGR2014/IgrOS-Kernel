@@ -19,6 +19,13 @@ jobs:
     - name: CMake
       run: ./config/script/build-i386.sh
 
+    - name: SonarCloud Wrapper
+      shell: bash
+      run: |
+        curl -L -O https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip
+        unzip -o build-wrapper-linux-x86.zip
+        build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir sonar-build-wrapper cmake --build build --config $BUILD_TYPE
+
     - name: SonarCloud Scan
       uses: sonarsource/sonarcloud-github-action@master
       env:
