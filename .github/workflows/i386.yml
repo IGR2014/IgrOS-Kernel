@@ -16,9 +16,6 @@ jobs:
     - name: G++ Multilib
       run: sudo apt update && sudo apt install -y gcc-multilib g++-multilib --fix-missing
 
-    - name: CMake
-      run: ./config/script/build-i386.sh
-
     - name: SonarCloud Wrapper
       shell: bash
       run: |
@@ -34,5 +31,5 @@ jobs:
       run: |
         curl -L -O https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.0.2311-linux.zip
         unzip sonar-scanner-cli-4.6.0.2311-linux.zip
-        sonar-scanner-4.6.0.2311-linux/bin/sonar-scanner -Dsonar.host.url=https://sonarcloud.io -Dsonar.branch.name=master -Dproject.settings=sonar-project.properties
+        sonar-scanner-4.6.0.2311-linux/bin/sonar-scanner -X -Dsonar.host.url=https://sonarcloud.io -Dsonar.branch.name=master -Dproject.settings=sonar-project.properties
 
