@@ -61,7 +61,7 @@ namespace igros::i386 {
 		// Get kernel end address
 		auto kernelEnd = const_cast<byte_t*>(platform::KERNEL_END());
 		// Initialize pages for page tables
-		paging::heap(const_cast<byte_t*>(kernelEnd, PAGE_SIZE << 6);
+		paging::heap(kernelEnd, PAGE_SIZE << 6);
 
 		// Create flags
 		const auto flags = kflags<flags_t> {
