@@ -3,7 +3,7 @@
 //	Programmable interrupt timer
 //
 //	File:	pit.hpp
-//	Date:	11 Jul 2020
+//	Date:	02 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -63,7 +63,8 @@ namespace igros::arch {
 	void	pitSetupFrequency(const word_t frequency) noexcept;
 
 	// Get expired ticks
-	[[nodiscard]] quad_t	pitGetTicks() noexcept;
+	[[nodiscard]]
+	quad_t	pitGetTicks() noexcept;
 
 	// Setup programmable interrupt timer
 	void	pitSetup() noexcept;

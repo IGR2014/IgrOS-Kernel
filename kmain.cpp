@@ -3,7 +3,7 @@
 //	Boot low-level main setup function
 //
 //	File:	boot.cpp
-//	Date:	15 Jan 2021
+//	Date:	02 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -26,6 +26,7 @@
 #include <drivers/keyboard.hpp>
 #include <drivers/pit.hpp>
 #include <drivers/rtc.hpp>
+#include <drivers/serial.hpp>
 
 // Kernel library
 #include <klib/kstring.hpp>
@@ -59,7 +60,7 @@ namespace igros {
 			platform::KERNEL_SIZE() >> 10,
 			KERNEL_VERSION_STRING(),
 			2017,
-			2020,
+			2021,
 			multiboot->commandLine(),
 			multiboot->loaderName()
 		);
@@ -97,6 +98,8 @@ namespace igros {
 			arch::keyboardSetup();
 			// Setup RTC
 			arch::rtcSetup();
+			// Setup UART (#1, 115200 8N1)
+			arch::serialSetup();
 
 /*
 			// Show multiboot flags

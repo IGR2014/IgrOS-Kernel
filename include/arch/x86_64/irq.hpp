@@ -3,7 +3,7 @@
 //	Interrupts low-level operations
 //
 //	File:	irq.hpp
-//	Date:	21 Jul 2020
+//	Date:	01 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -34,7 +34,10 @@ namespace igros::x86_64 {
 	// Interrupts number enumeration
 	enum class irq_t : dword_t {
 		PIT		= 0u,
-		KEYBOARD	= 1u
+		KEYBOARD	= 1u,
+		PIC		= 2u,
+		UART2		= 3u,
+		UART1		= 4u
 	};
 
 

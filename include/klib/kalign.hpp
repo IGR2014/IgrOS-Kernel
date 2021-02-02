@@ -32,7 +32,7 @@ namespace igros::klib {
 	// Align up
 	template<typename T>
 	[[nodiscard]]
-	inline T* kalignUp(const T* ptr, const std::size_t offset = alignof(T)) noexcept {
+	constexpr inline T* kalignUp(const T* ptr, const std::size_t offset = alignof(T)) noexcept {
 		// Address addition
 		auto addition = kalignMask(offset);
 		// Do alignment
@@ -42,7 +42,7 @@ namespace igros::klib {
 	// Align down
 	template<typename T>
 	[[nodiscard]]
-	inline T* kalignDown(const T* ptr, const std::size_t offset = alignof(T)) noexcept {
+	constexpr inline T* kalignDown(const T* ptr, const std::size_t offset = alignof(T)) noexcept {
 		// Address addition
 		auto addition = kalignMask(offset);
 		// Do alignment
@@ -52,7 +52,7 @@ namespace igros::klib {
 	// Check alignment
 	template<typename T>
 	[[nodiscard]]
-	inline bool kalignCheck(const T* ptr, const std::size_t offset = alignof(T)) noexcept {
+	constexpr inline bool kalignCheck(const T* ptr, const std::size_t offset = alignof(T)) noexcept {
 		return (static_cast<std::size_t>(0) == (reinterpret_cast<std::size_t>(ptr) & kalignMask(offset)));
 	}
 

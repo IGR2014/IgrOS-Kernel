@@ -3,7 +3,7 @@
 //	Kernel string functions
 //
 //	File:	string.cpp
-//	Date:	15 Jan 2021
+//	Date:	01 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -28,7 +28,7 @@ namespace igros::klib {
 			return nullptr;
 		}
                 // Find string end pointer
-                for (;*src != u8'\0'; ++src);
+                for (;*src != u8'\0'; ++src) {};
 		// Return string end
                 return src;
 	}
@@ -43,7 +43,7 @@ namespace igros::klib {
 		// Copy string start pointer
                 auto iter = src;
                 // Find string end pointer
-                for (;*iter != u8'\0'; ++iter);
+                for (;*iter != u8'\0'; ++iter) {};
 		// Return string end
                 return iter;
 	}
@@ -75,7 +75,7 @@ namespace igros::klib {
 			// Copy string byte by byte
 			*++dst = *++src;
 		// Stop on size overflow or null terminator
-		} while (--size > 0u && *src != u8'\0');
+		} while ((--size > 0u) && (*src != u8'\0'));
 		// Return pointer to dst tring
 		return tempDst;
 	}
@@ -98,7 +98,7 @@ namespace igros::klib {
 			// Copy string byte by byte
 			*++dst = *++src;
 		// Stop on size overflow or null terminator
-		} while (--size > 0u && *src != u8'\0');
+		} while ((--size > 0u) && (*src != u8'\0'));
 		// Return pointer to dst tring
 		return tempDst;
 	}
@@ -123,12 +123,16 @@ namespace igros::klib {
 		// Check src1 and src2 pointers
 		if (nullptr == src1 || nullptr == src2 || 0u == size) {
 			// Handle wrong input
-			return ((src1 == nullptr) ? ((src2 == nullptr) ? 0 : -1) : 1);
+			if (src1 == nullptr) {
+				return (src2 == nullptr) ? 0 : -1;
+			} else {
+				return 1;
+			}
 		}
 		// Compare string symbol by symbol
-		for (;--size > 0u && *src1 != u8'\0' && *src1 == *src2; ++src1, ++src2);
+		for (;(--size > 0u) && (*src1 != u8'\0') && (*src1 == *src2); ++src1, ++src2) {};
 		// Return string difference
-		return byte_t(*src1) - byte_t(*src2);
+		return static_cast<byte_t>(*src1) - static_cast<byte_t>(*src2);
 	}
 
 
@@ -140,7 +144,7 @@ namespace igros::klib {
 			return nullptr;
 		}
 		// Find symbol inside string
-		for (;--size > 0u && *src != u8'\0' && *src != chr; ++src);
+		for (;(--size > 0u) && (*src != u8'\0') && (*src != chr); ++src) {};
 		// Return address of first occurrence or null pointer
 		return (*src == chr) ? src : nullptr;
 	}
@@ -153,7 +157,7 @@ namespace igros::klib {
 			return nullptr;
 		}
 		// Find symbol inside string
-		for (;--size > 0u && *src != u8'\0' && *src != chr; ++src);
+		for (;(--size > 0u) && (*src != u8'\0') && (*src != chr); ++src) {};
 		// Return address of first occurrence or null pointer
 		return (*src == chr) ? src : nullptr;
 	}
@@ -167,7 +171,7 @@ namespace igros::klib {
 			return nullptr;
 		}
 		// Copy pointer to string start
-		auto iter = src;
+		auto iter		= src;
 		// Get string length
 		const auto strLen	= kstrlen(src);
 		// Get required reverting string length
@@ -177,9 +181,9 @@ namespace igros::klib {
 		// Loop through image
 		for (auto i = len; i != halfLen; i--, iter++) {
 			// Swap symbols
-			const auto temp = *iter;
-			*iter = src[i];
-			src[i] = temp;
+			const auto temp	= *iter;
+			*iter		= src[i];
+			src[i]		= temp;
 		}
 		// Return string address
 		return src;

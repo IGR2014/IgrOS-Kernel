@@ -3,7 +3,7 @@
 //	Keyboard generic handling
 //
 //	File:	keyboard.cpp
-//	Date:	21 Jul 2020
+//	Date:	01 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -36,12 +36,14 @@ namespace igros::arch {
 		if (keyStatus & 0x01) {
 			// Read keyboard data
 			const auto keyCode = io::get().readPort8(KEYBOARD_DATA);
-			klib::kprintf(	u8"IRQ #%d\t[Keyboard]\r\n"
-					u8"Key:\t%s\r\n"
-					u8"Code:\t0x%x\r\n",
-					irq::irq_t::KEYBOARD,
-					(keyCode > 0x80) ? u8"RELEASED" : u8"PRESSED",
-					keyCode);
+			klib::kprintf(
+				u8"IRQ #%d\t[Keyboard]\r\n"
+				u8"Key:\t%s\r\n"
+				u8"Code:\t0x%x\r\n",
+				irq::irq_t::KEYBOARD,
+				(keyCode > 0x80) ? u8"RELEASED" : u8"PRESSED",
+				keyCode
+			);
 		}
 		// IRQ EOI
 		irq::get().eoi(static_cast<irq::irq_t>(regs->number));
@@ -56,7 +58,10 @@ namespace igros::arch {
 		// Mask Keyboard interrupts
 		irq::get().mask(irq::irq_t::KEYBOARD);
 
-		klib::kprintf(u8"IRQ #%d [Keyboard] installed", irq::irq_t::KEYBOARD);
+		klib::kprintf(
+			u8"IRQ #%d [Keyboard] installed",
+			irq::irq_t::KEYBOARD
+		);
 
 	}
 

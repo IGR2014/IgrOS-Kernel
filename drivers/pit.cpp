@@ -3,7 +3,7 @@
 //	Programmable interrupt timer
 //
 //	File:	pit.cpp
-//	Date:	21 Jul 2020
+//	Date:	31 Jan 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -51,8 +51,10 @@ namespace igros::arch {
 		// Save current real frequency value
 		PIT_FREQUENCY	= PIT_MAIN_FREQUENCY / divisor;
 
-		klib::kprintf(	u8"REAL frequency set to: %d Hz.",
-				PIT_FREQUENCY);
+		klib::kprintf(
+			u8"REAL frequency set to: %d Hz.",
+			PIT_FREQUENCY
+		);
 
 		// Tell pit we want to change divisor for channel 0
 		io::get().writePort8(PIT_CONTROL,	0x36);
@@ -89,13 +91,15 @@ namespace igros::arch {
 			const auto minutes	= seconds / 60;
 			const auto hours	= minutes / 60;
 			// Debug date/time
-			klib::kprintf(	u8"IRQ #%d\t[PIT]\r\n"
-					u8"Time:\t%02d:%02d:%02d.%03d (~1 sec.)\r\n",
-					irq::irq_t::PIT,
-					hours % 24,
-					minutes % 60,
-					seconds % 60,
-					nanoseconds);
+			klib::kprintf(
+				u8"IRQ #%d\t[PIT]\r\n"
+				u8"Time:\t%02d:%02d:%02d.%03d (~1 sec.)\r\n",
+				irq::irq_t::PIT,
+				hours % 24,
+				minutes % 60,
+				seconds % 60,
+				nanoseconds
+			);
 		}
 		// IRQ EOI
 		irq::get().eoi(static_cast<const irq::irq_t>(regs->number));
@@ -114,7 +118,10 @@ namespace igros::arch {
 		irq::get().mask(irq::irq_t::PIT);
 
 		// Print buffer
-		klib::kprintf("IRQ #%d [PIT] installed\r\n", irq::irq_t::PIT);
+		klib::kprintf(
+			"IRQ #%d [PIT] installed\r\n",
+			irq::irq_t::PIT
+		);
 
 	}
 

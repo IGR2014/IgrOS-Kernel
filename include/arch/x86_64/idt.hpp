@@ -3,7 +3,7 @@
 //	Interrupt descriptor table low-level operations
 //
 //	File:	idt.hpp
-//	Date:	13 Jul 2020
+//	Date:	01 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -91,12 +91,12 @@ namespace igros::x86_64 {
 	// Set IDT entry
 	inline idtEntry_t idt::setEntry(const isrPointer_t offset, const word_t selector, const byte_t type) noexcept {
 		return {
-			.offsetLow	= static_cast<word_t>(reinterpret_cast<quad_t>(offset) & 0xFFFF),
+			.offsetLow	= static_cast<word_t>(*reinterpret_cast<const quad_t*>(&offset) & 0xFFFF),
 			.selector	= selector,
 			.ist		= 0x00,
 			.type		= type,
-			.offsetMiddle	= static_cast<word_t>((reinterpret_cast<quad_t>(offset) & 0xFFFF0000) >> 16),
-			.offsetHigh	= static_cast<dword_t>((reinterpret_cast<quad_t>(offset) & 0xFFFFFFFF00000000) >> 32),
+			.offsetMiddle	= static_cast<word_t>((*reinterpret_cast<const quad_t*>(&offset) & 0xFFFF0000) >> 16),
+			.offsetHigh	= static_cast<dword_t>((*reinterpret_cast<const quad_t*>(&offset) & 0xFFFFFFFF00000000) >> 32),
 			.reserved2	= 0x00000000
 		};
 	}

@@ -3,7 +3,7 @@
 //	RTC clock driver
 //
 //	File:	rtc.cpp
-//	Date:	18 Jul 2020
+//	Date:	31 Jan 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -155,13 +155,15 @@ namespace igros::arch {
 		// Get current date/time
 		auto dateTime = clockGetCurrentDateTime();
 		// Print result
-		klib::kprintf(	u8"RTC date/time:\t%02d.%02d.%04d %02d:%02d:%02d\r\n",
-				dateTime.day,
-				dateTime.month,
-				dateTime.year,
-				dateTime.hour,
-				dateTime.minute,
-				dateTime.second);
+		klib::kprintf(
+			u8"RTC date/time:\t%02d.%02d.%04d %02d:%02d:%02d\r\n",
+			dateTime.day,
+			dateTime.month,
+			dateTime.year,
+			dateTime.hour,
+			dateTime.minute,
+			dateTime.second
+		);
 	}
 
 
