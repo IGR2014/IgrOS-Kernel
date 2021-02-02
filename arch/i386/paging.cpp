@@ -423,7 +423,7 @@ namespace igros::i386 {
 	// Set page directory
 	void paging::flush(const directory_t* const dir) noexcept {
 		// Set page directory address to CR3
-		inCR3(reinterpret_cast<dword_t>(dir) & 0x3FFFFFFF);
+		inCR3(*reinterpret_cast<const dword_t*>(&dir) & 0x3FFFFFFF);
 	}
 
 

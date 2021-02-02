@@ -3,7 +3,7 @@
 //	Kernel math functions declarations
 //
 //	File:	kmath.hpp
-//	Date:	15 Jan 2021
+//	Date:	01 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -92,7 +92,7 @@ namespace igros::klib {
 	}
 
 
-#else
+#elif defined(IGROS_ARCH_x86_64)
 
 	// Divide 64-bit integer by 32-bit integer
 	// Returns 64-bit quotient and 64-bit reminder

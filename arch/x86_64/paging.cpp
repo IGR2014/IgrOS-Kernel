@@ -3,7 +3,7 @@
 //	Memory paging for x86_64
 //
 //	File:	paging.cpp
-//	Date:	29 Jan 2021
+//	Date:	01 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -724,7 +724,7 @@ namespace igros::x86_64 {
 	// Set page directory
 	void paging::flush(const pml4_t* const dir) noexcept {
 		// Set page directory address to CR3
-		inCR3(reinterpret_cast<quad_t>(dir) & 0x7FFFFFFF);
+		inCR3(*reinterpret_cast<const quad_t*>(&dir) & 0x7FFFFFFF);
 	}
 
 

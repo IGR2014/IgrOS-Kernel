@@ -3,7 +3,7 @@
 //	Kernel text print functions
 //
 //	File:	kprint.hpp
-//	Date:	17 Jul 2020
+//	Date:	01 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -39,26 +39,30 @@ namespace igros::klib {
 	sbyte_t* kitoa(sbyte_t* buffer, const std::size_t size, const squad_t value, const radix_t radix = radix_t::DEC) noexcept;
 
 	// Kernel unsigned integer to string function
-	sbyte_t* kitoa(sbyte_t* buffer, const std::size_t size, const dword_t value, const radix_t radix = radix_t::DEC) noexcept;
+	inline sbyte_t* kitoa(sbyte_t* buffer, const std::size_t size, const dword_t value, const radix_t radix = radix_t::DEC) noexcept {
+		return kitoa(buffer, size, static_cast<quad_t>(value), radix);
+	}
 	// Kernel integer to string function
-	sbyte_t* kitoa(sbyte_t* buffer, const std::size_t size, const sdword_t value, const radix_t radix = radix_t::DEC) noexcept;
+	inline sbyte_t* kitoa(sbyte_t* buffer, const std::size_t size, const sdword_t value, const radix_t radix = radix_t::DEC) noexcept {
+		return kitoa(buffer, size, static_cast<squad_t>(value), radix);
+	}
 
 	// Kernel integer to string function
 	inline sbyte_t* kitoa(sbyte_t* buffer, const std::size_t size, const word_t value, const radix_t radix = radix_t::DEC) noexcept {
-		return kitoa(buffer, size, static_cast<dword_t>(value), radix);
+		return kitoa(buffer, size, static_cast<quad_t>(value), radix);
 	}
 	// Kernel integer to string function
 	inline sbyte_t* kitoa(sbyte_t* buffer, const std::size_t size, const sword_t value, const radix_t radix = radix_t::DEC) noexcept {
-		return kitoa(buffer, size, static_cast<sdword_t>(value), radix);
+		return kitoa(buffer, size, static_cast<squad_t>(value), radix);
 	}
 
 	// Kernel integer to string function
 	inline sbyte_t* kitoa(sbyte_t* buffer, const std::size_t size, const byte_t value, const radix_t radix = radix_t::DEC) noexcept {
-		return kitoa(buffer, size, static_cast<dword_t>(value), radix);
+		return kitoa(buffer, size, static_cast<quad_t>(value), radix);
 	}
 	// Kernel integer to string function
 	inline sbyte_t* kitoa(sbyte_t* buffer, const std::size_t size, const sbyte_t value, const radix_t radix = radix_t::DEC) noexcept {
-		return kitoa(buffer, size, static_cast<sdword_t>(value), radix);
+		return kitoa(buffer, size, static_cast<squad_t>(value), radix);
 	}
 
 	// Kernel size type to string function

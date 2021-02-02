@@ -21,20 +21,16 @@ namespace igros::klib {
 	// Set required memory with specified byte
 	[[maybe_unused]]
 	pointer_t kmemset8(byte_t* dst, const std::size_t size, const byte_t val) noexcept {
-
 		// Check arguments
 		if (nullptr == dst || 0u == size) {
 			return nullptr;
 		}
-
 		// Do actual memset
 		for (auto i = 0ull; i < size; i++) {
 			dst[i] = val;
 		}
-
 		// Return pointer to dst
 		return dst;
-
 	}
 
 	// Set required memory with specified word
