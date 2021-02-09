@@ -108,5 +108,5 @@ namespace igros::klib {
 	pointer_t kmemcpy(pointer_t dst, const pointer_t src, const std::size_t size) noexcept;
 
 
-}	// namespace igros::arch
+}	// namespace igros::klib
 

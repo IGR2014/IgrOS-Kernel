@@ -3,7 +3,7 @@
 //	Kernel text print functions
 //
 //	File:	kprint.cpp
-//	Date:	02 Feb 2021
+//	Date:	08 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -14,8 +14,8 @@
 #include <cstdarg>
 #include <array>
 
-#include <drivers/vmem.hpp>
-#include <drivers/serial.hpp>
+#include <drivers/vga/vmem.hpp>
+#include <drivers/uart/serial.hpp>
 
 #include <klib/kprint.hpp>
 #include <klib/kstring.hpp>
@@ -28,7 +28,7 @@ namespace igros::klib {
 
 
 	// Default temporary buffer for kitoa
-	constexpr std::size_t			KITOA_BUFF_LEN		{65u};
+	constexpr std::size_t			KITOA_BUFF_LEN		{65U};
 	// Constant integer symbols values buffer
 	constexpr std::array<sbyte_t, 16ULL>	KITOA_CONST_BUFFER	{u8'0', u8'1', u8'2', u8'3', u8'4', u8'5', u8'6', u8'7', u8'8', u8'9', u8'A', u8'B', u8'C', u8'D', u8'E', u8'F'};
 
@@ -46,7 +46,7 @@ namespace igros::klib {
 		kmemset(tempBuffer.data(), tempBuffer.size(), u8'\0');
 
 		// Setup counter to last - 1 position in temporary buffer
-		auto pos = KITOA_BUFF_LEN - 2u;
+		auto pos = KITOA_BUFF_LEN - 2U;
 		// Loop through all digits while number is greater than base.
 		// Digits are stored from the end of the start of temporary buffer
 		// (this makes easier dealing with reverse routine by removing it)
@@ -57,7 +57,7 @@ namespace igros::klib {
 			tempBuffer[pos--]	= KITOA_CONST_BUFFER[divres.reminder];
 			// Divide value by base to remove current digit
 			tempValue		= divres.quotient;
-		} while (tempValue > 0u);
+		} while (tempValue > 0U);
 
 		// Resulting string length
 		auto strLength = (KITOA_BUFF_LEN - ++pos);
@@ -95,7 +95,7 @@ namespace igros::klib {
 		kmemset(tempBuffer.data(), tempBuffer.size(), u8'\0');
 
 		// Setup counter to last - 1 position in temporary buffer
-		auto pos = KITOA_BUFF_LEN - 2u;
+		auto pos = KITOA_BUFF_LEN - 2U;
 		// Loop through all digits while number is greater than base.
 		// Digits are stored from the end of the start of temporary buffer
 		// (this makes easier dealing with reverse routine by removing it)
@@ -166,7 +166,7 @@ namespace igros::klib {
 		// Integer print lambda
 		auto printInteger = [&list, &fillPreceding](auto &str, const auto radix, const auto type, const auto width, const auto fill, const auto sign) noexcept {
 			// Number holder
-			static std::array<sbyte_t, KITOA_BUFF_LEN> number;
+			std::array<sbyte_t, KITOA_BUFF_LEN> number;
 			// Zero-initialize
 			kmemset(number.data(), number.size(), u8'\0');
 			// Value
@@ -220,9 +220,9 @@ namespace igros::klib {
 
 				// Fill character
 				auto fillChar	= u8' ';
-				auto fillWidth	= 0u;
+				auto fillWidth	= 0U;
 				// Check format fill char
-				if (u8'0' == format[fmtIterator + 1u]) {
+				if (u8'0' == format[fmtIterator + 1U]) {
 					// Set fillchar to '0'
 					fillChar = u8'0';
 					// Adjust format iterator
@@ -230,10 +230,10 @@ namespace igros::klib {
 				}
 
 				// Check format fill width
-				if (u8'1'	<= format[fmtIterator + 1u]
-				    && u8'9'	>= format[fmtIterator + 1u]) {
+				if (u8'1'	<= format[fmtIterator + 1U]
+				    && u8'9'	>= format[fmtIterator + 1U]) {
 					// Set fill width to value
-					fillWidth = static_cast<dword_t>(format[fmtIterator + 1u] - u8'0');
+					fillWidth = static_cast<dword_t>(format[fmtIterator + 1U] - u8'0');
 					// Adjust format iterator
 					++fmtIterator;
 				}
@@ -241,22 +241,22 @@ namespace igros::klib {
 				// Argument type (dword by default)
 				auto argType = argType_t::DWORD;
 				// Check if quad specifier
-				if (u8'l' == format[fmtIterator + 1u]) {
+				if (u8'l' == format[fmtIterator + 1U]) {
 					// Check if quad specifier
-					if (u8'l' == format[fmtIterator + 2u]) {
+					if (u8'l' == format[fmtIterator + 2U]) {
 						// Quad argument
 						argType = argType_t::QUAD;
 						// Adjust format iterator
-						fmtIterator += 2u;
+						fmtIterator += 2U;
 					}
 				// Otherwise it could be word
-				} else if (u8'h' == format[fmtIterator + 1u]) {
+				} else if (u8'h' == format[fmtIterator + 1U]) {
 					// Or even byte
-					if (u8'h' == format[fmtIterator + 2u]) {
+					if (u8'h' == format[fmtIterator + 2U]) {
 						// Byte argument
 						argType = argType_t::BYTE;
 						// Adjust format iterator
-						fmtIterator += 2u;
+						fmtIterator += 2U;
 					} else {
 						// Word argument
 						argType = argType_t::WORD;
@@ -323,7 +323,7 @@ namespace igros::klib {
 						fillWidth	= sizeof(pointer_t) << 1;
 						fillChar	= u8'0';
 						// Convert pointer to string
-						kptoa(number.data(), (sizeof(pointer_t) << 3) + 1ull, static_cast<pointer_t>(va_arg(list, pointer_t)));
+						kptoa(number.data(), (sizeof(pointer_t) << 3) + 1ULL, static_cast<pointer_t>(va_arg(list, pointer_t)));
 						// Get string length
 						const auto len = kstrlen(number.data());
 						// Fill with preceding symbols
@@ -337,7 +337,7 @@ namespace igros::klib {
 					// Size
 					case u8'z': {
 						// Convert pointer to string
-						kstoa(number.data(), (sizeof(std::size_t) << 3) + 1ull, static_cast<const std::size_t>(va_arg(list, std::size_t)));
+						kstoa(number.data(), (sizeof(std::size_t) << 3) + 1ULL, static_cast<const std::size_t>(va_arg(list, std::size_t)));
 						// Get string length
 						const auto len = kstrlen(number.data());
 						// Fill with preceding symbols
@@ -373,7 +373,7 @@ namespace igros::klib {
 
 				// Reset fill char
 				fillChar	= u8' ';
-				fillWidth	= 0u;
+				fillWidth	= 0U;
 
 			}
 
@@ -404,7 +404,7 @@ namespace igros::klib {
 		// Initialize variadic arguments list
 		va_start(list, format);
 		// Format string
-		kvsnprintf(buffer, 1024u, format, list);
+		kvsnprintf(buffer, 1024ULL, format, list);
 		// End variadic arguments list
 		va_end(list);
 	}

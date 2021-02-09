@@ -3,7 +3,7 @@
 //	Programmable interrupt timer
 //
 //	File:	pit.cpp
-//	Date:	31 Jan 2021
+//	Date:	08 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -16,7 +16,7 @@
 #include <arch/irq.hpp>
 #include <arch/register.hpp>
 
-#include <drivers/pit.hpp>
+#include <drivers/clock/pit.hpp>
 
 #include <klib/kmath.hpp>
 #include <klib/kprint.hpp>
@@ -29,16 +29,16 @@ namespace igros::arch {
 	// PIT ports
 	constexpr auto PIT_CONTROL	= static_cast<io::port_t>(0x0043);
 	constexpr auto PIT_CHANNEL_0	= static_cast<io::port_t>(0x0040);
-	constexpr auto PIT_CHANNEL_1	= static_cast<io::port_t>(PIT_CHANNEL_0 + 1);
-	constexpr auto PIT_CHANNEL_2	= static_cast<io::port_t>(PIT_CHANNEL_1 + 1);
+	constexpr auto PIT_CHANNEL_1	= static_cast<io::port_t>(PIT_CHANNEL_0 + 1U);
+	constexpr auto PIT_CHANNEL_2	= static_cast<io::port_t>(PIT_CHANNEL_1 + 1U);
 
 
 	// Ticks count
-	static dword_t	PIT_TICKS	= 0u;
+	static dword_t	PIT_TICKS	= 0U;
 	// Current frequency
-	static word_t	PIT_FREQUENCY	= 0u;
+	static word_t	PIT_FREQUENCY	= 0U;
 	// Current divisor
-	static word_t	PIT_DIVISOR	= 1u;
+	static word_t	PIT_DIVISOR	= 1U;
 
 
         // Setup PIT frequency
@@ -88,16 +88,16 @@ namespace igros::arch {
 			const auto res		= klib::kudivmod(elapsed, PIT_MAIN_FREQUENCY);
 			const auto nanoseconds	= static_cast<dword_t>(res.reminder);
 			const auto seconds	= static_cast<dword_t>(res.quotient);
-			const auto minutes	= seconds / 60;
-			const auto hours	= minutes / 60;
+			const auto minutes	= seconds / 60U;
+			const auto hours	= minutes / 60U;
 			// Debug date/time
 			klib::kprintf(
 				u8"IRQ #%d\t[PIT]\r\n"
 				u8"Time:\t%02d:%02d:%02d.%03d (~1 sec.)\r\n",
 				irq::irq_t::PIT,
-				hours % 24,
-				minutes % 60,
-				seconds % 60,
+				hours % 24U,
+				minutes % 60U,
+				seconds % 60U,
 				nanoseconds
 			);
 		}

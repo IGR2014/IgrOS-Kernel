@@ -3,7 +3,7 @@
 //	Memory paging for x86
 //
 //	File:	paging.hpp
-//	Date:	21 Dec 2020
+//	Date:	02 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.

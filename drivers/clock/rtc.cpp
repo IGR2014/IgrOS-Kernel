@@ -3,7 +3,7 @@
 //	RTC clock driver
 //
 //	File:	rtc.cpp
-//	Date:	31 Jan 2021
+//	Date:	08 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -13,7 +13,7 @@
 
 #include <arch/io.hpp>
 
-#include <drivers/rtc.hpp>
+#include <drivers/clock/rtc.hpp>
 
 #include <klib/kprint.hpp>
 
@@ -24,7 +24,7 @@ namespace igros::arch {
 
 	// CMOS ports
 	constexpr auto CMOS_COMMAND	= static_cast<io::port_t>(0x0070);
-	constexpr auto CMOS_DATA	= static_cast<io::port_t>(CMOS_COMMAND + 1);
+	constexpr auto CMOS_DATA	= static_cast<io::port_t>(CMOS_COMMAND + 1U);
 
 
 	// Clock from RTC conversion
@@ -140,11 +140,11 @@ namespace igros::arch {
 		if (	(0x00 == (flags & RTC_IS_TIME_24))
 			&& (0x00 != (0x80 & rtcDateTime.time.hour))) {
 			// Adjust hours value
-			rtcDateTime.time.hour = static_cast<dword_t>((rtcDateTime.time.hour & 0x7F) + 12u) % 24u;
+			rtcDateTime.time.hour = static_cast<dword_t>((rtcDateTime.time.hour & 0x7F) + 12U) % 24U;
 		}
 		// Convert RTC to clock
 		clockDateTime_t dateTime;
-		clockFromRTC(rtcDateTime, ((0x00 != century) ? (century * 100u) : 2000u), dateTime);
+		clockFromRTC(rtcDateTime, ((0x00 != century) ? (century * 100U) : 2000U), dateTime);
 		// Return current
 		return dateTime;
 	}

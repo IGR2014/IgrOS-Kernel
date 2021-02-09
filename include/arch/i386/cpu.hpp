@@ -3,7 +3,7 @@
 //	CPU operations
 //
 //	File:	cpu.hpp
-//	Date:	28 Jan 2021
+//	Date:	08 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -16,55 +16,101 @@
 
 #include <arch/i386/types.hpp>
 
+#include <klib/kprint.hpp>
+
+
+#ifdef	__cplusplus
+
+extern "C" {
+
+#endif	// __cplusplus
+
+
+	// Halt CPU
+	inline void	cpuHalt() noexcept;
+
+
+#ifdef	__cplusplus
+
+}	// extern "C"
+
+#endif	// __cplusplus
+
 
 // i386 platform namespace
 namespace igros::i386 {
 
 
-#ifdef	__cplusplus
-
-	extern "C" {
-
-#endif	// __cplusplus
-
-
-		// Halt CPU
-		inline void cpuHalt() noexcept;
-
-
-#ifdef	__cplusplus
-
-	}	// extern "C"
-
-#endif	// __cplusplus
-
-
 	// CPU representation
-	struct cpu final {
-
-		// Default c-tor
-		cpu() noexcept = default;
+	class cpui386 final {
 
 		// Copy c-tor
-		cpu(const cpu &other) = delete;
+		cpui386(const cpui386 &other) = delete;
 		// Copy assignment
-		cpu& operator=(const cpu &other) = delete;
+		cpui386& operator=(const cpui386 &other) = delete;
 
 		// Move c-tor
-		cpu(cpu &&other) = delete;
+		cpui386(cpui386 &&other) = delete;
 		// Move assignment
-		cpu& operator=(cpu &&other) = delete;
+		cpui386& operator=(cpui386 &&other) = delete;
+
+
+	public:
+
+		// Default c-tor
+		cpui386() noexcept = default;
 
 		// Halt CPU
-		inline static void	halt() noexcept;
+		static void	halt() noexcept;
+
+		// Dump CPU registers
+		static void	dumpRegisters(const registeri386_t* const regs) noexcept;
 
 
 	};
 
 
 	// Halt CPU
-	inline void cpu::halt() noexcept {
-		cpuHalt();
+	inline void cpui386::halt() noexcept {
+		::cpuHalt();
+	}
+
+
+	// Dump CPU registers
+	inline void cpui386::dumpRegisters(const registeri386_t* const regs) noexcept {
+		// Print regs
+		klib::kprintf(
+			u8"Registers dump:\r\n"
+			u8"EAX=[%p] EBX=[%p] ECX=[%p] EDX=[%p]\r\n"
+			u8"ESI=[%p] EDI=[%p]\r\n"
+			u8"ESP=[%p] EBP=[%p]\r\n"
+			u8"EIP=[%p]\r\n"
+			u8"EFLAGS=[%p]\r\n"
+			u8"Segments:\r\n"
+			u8"CS=[%p]\r\n"
+			u8"DS=[%p]\r\n"
+			u8"SS=[%p]\r\n"
+			u8"ES=[%p]\r\n"
+			u8"FS=[%p]\r\n"
+			u8"GS=[%p]\r\n"
+			u8"\r\n",
+			regs->eax,
+			regs->ebx,
+			regs->ecx,
+			regs->edx,
+			regs->esi,
+			regs->edi,
+			regs->esp,
+			regs->ebp,
+			regs->eip,
+			regs->eflags,
+			regs->cs,
+			regs->ds,
+			regs->ss,
+			regs->es,
+			regs->fs,
+			regs->gs
+		);
 	}
 
 

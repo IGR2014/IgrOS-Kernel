@@ -3,7 +3,7 @@
 //	Task switch registers data structure
 //
 //	File:	register.hpp
-//	Date:	13 Jul 2020
+//	Date:	03 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -17,6 +17,74 @@
 #include <arch/i386/types.hpp>
 
 
+#ifdef	__cplusplus
+
+extern "C" {
+
+#endif	// __cplusplus
+
+
+	// Read CS register
+	[[nodiscard]]
+	igros::word_t volatile	outCS() noexcept;
+	// Read DS register
+	[[nodiscard]]
+	igros::word_t volatile	outDS() noexcept;
+	// Read ES register
+	[[nodiscard]]
+	igros::word_t volatile	outES() noexcept;
+	// Read FS register
+	[[nodiscard]]
+	igros::word_t volatile	outFS() noexcept;
+	// Read GS register
+	[[nodiscard]]
+	igros::word_t volatile	outGS() noexcept;
+	// Read SS register
+	[[nodiscard]]
+	igros::word_t volatile	outSS() noexcept;
+
+	// Read EBP register
+	[[nodiscard]]
+	igros::dword_t volatile	outEBP() noexcept;
+	// Read ESP register
+	[[nodiscard]]
+	igros::dword_t volatile	outESP() noexcept;
+
+	// Read EFLAGS register
+	[[nodiscard]]
+	igros::dword_t volatile	outEFLAGS() noexcept;
+
+	// Read EAX register
+	[[nodiscard]]
+	igros::dword_t volatile	outEAX() noexcept;
+	// Read EBX register
+	[[nodiscard]]
+	igros::dword_t volatile	outEBX() noexcept;
+	// Read ECX register
+	[[nodiscard]]
+	igros::dword_t volatile	outECX() noexcept;
+	// Read EDX register
+	[[nodiscard]]
+	igros::dword_t volatile	outEDX() noexcept;
+	// Read EDI register
+	[[nodiscard]]
+	igros::dword_t volatile	outEDI() noexcept;
+	// Read ESI register
+	[[nodiscard]]
+	igros::dword_t volatile	outESI() noexcept;
+
+	// Read EIP register
+	[[nodiscard]]
+	igros::dword_t volatile	outEAX() noexcept;
+
+
+#ifdef	__cplusplus
+
+}	// extern "C"
+
+#endif	// __cplusplus
+
+
 // i386 namespace
 namespace igros::i386 {
 
@@ -24,7 +92,7 @@ namespace igros::i386 {
 #pragma pack(push, 1)
 
 	// x86 task switch registers save
-	struct register_t {
+	struct registeri386_t {
 
 		// Segment registers pushed by us
 		dword_t	gs;		// Extra3 segment register
@@ -56,60 +124,8 @@ namespace igros::i386 {
 #pragma pack(pop)
 
 
-#ifdef	__cplusplus
-
-	extern "C" {
-
-#endif	// __cplusplus
-
-
-		// Read CS register
-		[[nodiscard]] word_t volatile outCS() noexcept;
-		// Read DS register
-		[[nodiscard]] word_t volatile outDS() noexcept;
-		// Read ES register
-		[[nodiscard]] word_t volatile outES() noexcept;
-		// Read FS register
-		[[nodiscard]] word_t volatile outFS() noexcept;
-		// Read GS register
-		[[nodiscard]] word_t volatile outGS() noexcept;
-		// Read SS register
-		[[nodiscard]] word_t volatile outSS() noexcept;
-
-		// Read EBP register
-		[[nodiscard]] dword_t volatile outEBP() noexcept;
-		// Read ESP register
-		[[nodiscard]] dword_t volatile outESP() noexcept;
-
-		// Read EFLAGS register
-		[[nodiscard]] dword_t volatile outEFLAGS() noexcept;
-
-		// Read EAX register
-		[[nodiscard]] dword_t volatile outEAX() noexcept;
-		// Read EBX register
-		[[nodiscard]] dword_t volatile outEBX() noexcept;
-		// Read ECX register
-		[[nodiscard]] dword_t volatile outECX() noexcept;
-		// Read EDX register
-		[[nodiscard]] dword_t volatile outEDX() noexcept;
-		// Read EDI register
-		[[nodiscard]] dword_t volatile outEDI() noexcept;
-		// Read ESI register
-		[[nodiscard]] dword_t volatile outESI() noexcept;
-
-		// Read EIP register
-		[[nodiscard]] dword_t volatile outEAX() noexcept;
-
-
-#ifdef	__cplusplus
-
-	}	// extern "C"
-
-#endif	// __cplusplus
-
-
 	// Print registers info
-	void dumpRegisters() noexcept;
+	void	dumpRegisters() noexcept;
 
 
 }	// namespace igros::i386

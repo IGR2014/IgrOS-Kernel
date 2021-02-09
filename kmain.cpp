@@ -3,7 +3,7 @@
 //	Boot low-level main setup function
 //
 //	File:	boot.cpp
-//	Date:	02 Feb 2021
+//	Date:	08 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -22,11 +22,11 @@
 #include <arch/cpu.hpp>
 
 // Kernel drivers
-#include <drivers/vmem.hpp>
-#include <drivers/keyboard.hpp>
-#include <drivers/pit.hpp>
-#include <drivers/rtc.hpp>
-#include <drivers/serial.hpp>
+#include <drivers/vga/vmem.hpp>
+#include <drivers/input/keyboard.hpp>
+#include <drivers/clock/pit.hpp>
+#include <drivers/clock/rtc.hpp>
+#include <drivers/uart/serial.hpp>
 
 // Kernel library
 #include <klib/kstring.hpp>
@@ -67,66 +67,64 @@ namespace igros {
 	}
 
 
-#ifdef	__cplusplus
-
-	extern "C" {
-
-#endif	// __cplusplus
-
-
-		// Kernel main function
-		void kmain(const multiboot::info_t* const multiboot, const dword_t magic) noexcept {
-
-			// Init VGA memory
-			arch::vmemInit();
-
-			// Write Multiboot magic error message message
-			klib::kprintf(u8"IgrOS kernel\r\n");
-
-			// Test multiboot (Hang on error)
-			multiboot::test(multiboot, magic);
-
-			// Print kernel header
-			printHeader(multiboot);
-
-			// Initialize platform
-			platform::initialize();
-
-			// Setup PIT
-			//arch::pitSetup();
-			// Setup keyboard
-			arch::keyboardSetup();
-			// Setup RTC
-			arch::rtcSetup();
-			// Setup UART (#1, 115200 8N1)
-			arch::serialSetup();
-
-/*
-			// Show multiboot flags
-			multiboot->printFlags();
-			// Show VBE info
-			multiboot->printVBEInfo();
-			// Show memory map
-			multiboot->printMemMap();
-			// Show framebuffer info
-			multiboot->printFBInfo();
-*/
-
-			// Write "Booted successfully" message
-			klib::kprintf(u8"Booted successfully\r\n");
-
-			// Halt CPU
-			arch::cpu::get().halt();
-
-		}
-
-
-#ifdef	__cplusplus
-
-	}	// extern "C"
-
-#endif	// __cplusplus
-
-
 }	// namespace igros
+
+
+#ifdef	__cplusplus
+
+extern "C" {
+
+#endif	// __cplusplus
+
+
+	// Kernel main function
+	void kmain(const igros::multiboot::info_t* const multiboot, const igros::dword_t magic) noexcept {
+
+		// Init VGA memory
+		igros::arch::vmemInit();
+
+		// Write Multiboot magic error message message
+		igros::klib::kprintf(u8"IgrOS kernel\r\n");
+
+		// Test multiboot (Hang on error)
+		igros::multiboot::test(multiboot, magic);
+
+		// Print kernel header
+		igros::printHeader(multiboot);
+
+		// Initialize platform
+		igros::platform::initialize();
+
+		// Setup PIT
+		//igros::arch::pitSetup();
+		// Setup keyboard
+		igros::arch::keyboardSetup();
+		// Setup UART (#1, 115200 8N1)
+		igros::arch::serialSetup();
+		// Setup RTC
+		igros::arch::rtcSetup();
+
+		// Show multiboot flags
+		multiboot->printFlags();
+		// Show VBE info
+		multiboot->printVBEInfo();
+		// Show framebuffer info
+		multiboot->printFBInfo();
+		// Show memory map
+		multiboot->printMemMap();
+
+		// Write "Booted successfully" message
+		igros::klib::kprintf(u8"Booted successfully\r\n");
+
+		// Halt CPU
+		igros::arch::cpu::get().halt();
+
+	}
+
+
+#ifdef	__cplusplus
+
+}	// extern "C"
+
+#endif	// __cplusplus
 

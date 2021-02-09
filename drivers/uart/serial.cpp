@@ -3,7 +3,7 @@
 //	UART driver
 //
 //	File:	serial.cpp
-//	Date:	02 Feb 2021
+//	Date:	08 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -23,8 +23,8 @@
 #include <klib/kprint.hpp>
 #include <klib/kstring.hpp>
 
-#include <drivers/vmem.hpp>
-#include <drivers/serial.hpp>
+#include <drivers/vga/vmem.hpp>
+#include <drivers/uart/serial.hpp>
 
 
 // Arch-dependent code zone
@@ -44,37 +44,37 @@ namespace igros::arch {
 
 	// Serial port interrupt enable register
 	constexpr auto SERIAL_PORT_IER(const io::port_t port) noexcept {
-		return port + 1;
+		return port + 1U;
 	}
 
 	// Serial port interrupt identification and FIFO register
 	constexpr auto SERIAL_PORT_IIR(const io::port_t port) noexcept {
-		return port + 2;
+		return port + 2U;
 	}
 
 	// Serial port line control register
 	constexpr auto SERIAL_PORT_LCR(const io::port_t port) noexcept {
-		return port + 3;
+		return port + 3U;
 	}
 
 	// Serial port modem control register
 	constexpr auto SERIAL_PORT_MCR(const io::port_t port) noexcept {
-		return port + 4;
+		return port + 4U;
 	}
 
 	// Serial port line status control register
 	constexpr auto SERIAL_PORT_LSR(const io::port_t port) noexcept {
-		return port + 5;
+		return port + 5U;
 	}
 
 	// Serial port modem status control register
 	constexpr auto SERIAL_PORT_MSR(const io::port_t port) noexcept {
-		return port + 6;
+		return port + 6U;
 	}
 
 	// Serial port scratch register
 	constexpr auto SERIAL_PORT_SR(const io::port_t port) noexcept {
-		return port + 7;
+		return port + 7U;
 	}
 
 
@@ -112,7 +112,7 @@ namespace igros::arch {
 		if (0xA5 != io::get().readPort8(SERIAL_PORT_DR(SERIAL_PORT_1))) {
 			// Debug
 			klib::kprintf(
-				"Serial Port #1:\t ERROR - not functional!"
+				"Serial Port #1:\t ERROR - not functional!\r\n"
 			);
 			// Could not setup serial port
 			return false;
@@ -123,7 +123,7 @@ namespace igros::arch {
 
 		// Debug
 		klib::kprintf(
-			u8"Serial Port #1:\t%d %d%c%d",
+			u8"Serial Port #1:\t%d %d%c%d\r\n",
 			static_cast<dword_t>(baudRate),
 			static_cast<dword_t>(dataSize) + 5U,
 			(parity == PARITY::NONE) ? u8'N' : u8'?',
@@ -205,6 +205,8 @@ namespace igros::arch {
 				u8"IRQ #%d\t[UART2]\r\n"
 				u8"Read:\tNOTHING!\r\n"
 			);
+			// Interrupt done
+			//irq::get().eoi(static_cast<irq::irq_t>(regs->number));
 		} else if (regs->number == static_cast<dword_t>(irq::irq_t::UART1)) {
 			// Serial #1 | #3
 			std::array<byte_t, 128ULL> data;
@@ -219,6 +221,8 @@ namespace igros::arch {
 				read,
 				reinterpret_cast<const sbyte_t* const>(data.cbegin())
 			);
+			// Interrupt done
+			//irq::get().eoi(static_cast<irq::irq_t>(regs->number));
 		}
 	}
 

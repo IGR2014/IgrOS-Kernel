@@ -3,7 +3,7 @@
 //	Platform description for x86_64
 //
 //	File:	platform-x86_64.cpp
-//	Date:	17 Jul 2020
+//	Date:	07 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -30,20 +30,22 @@ namespace igros::x86_64 {
 	// Initialize x86_64
 	void x86_64Init() noexcept {
 
+		klib::kprintf(u8"Initializing x86_64 platform...", __func__);
+
 		// Setup Interrupts Descriptor Table
-		x86_64::idt::init();
+		x86_64::idtx86_64::init();
 		// Init exceptions
 		x86_64::except::init();
 		// Setup Global Descriptors Table
-		x86_64::gdt::init();
+		x86_64::gdtx86_64::init();
 
 		// Setup paging (And identity map first 4MB where kernel physically is)
 		x86_64::paging::init();
 
 		// Init interrupts
-		x86_64::irq::init();
+		x86_64::irqx86_64::init();
 		// Enable interrupts
-		x86_64::irq::enable();
+		x86_64::irqx86_64::enable();
 
 	}
 

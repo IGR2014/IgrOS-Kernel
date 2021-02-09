@@ -32,3 +32,9 @@ ADD_SUBDIRECTORY(
 	${IGROS_ARCH}
 )
 
+# Add platform subdirectory
+ADD_SUBDIRECTORY(
+	platform
+	platform
+)
+

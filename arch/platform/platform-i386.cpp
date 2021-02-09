@@ -3,7 +3,7 @@
 //	Platform description for x86
 //
 //	File:	platform-i386.cpp
-//	Date:	17 Jul 2020
+//	Date:	07 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -28,47 +28,49 @@ namespace igros::i386 {
 
 
 	// Initialize i386
-	void i386Init() noexcept {
+	static void i386Init() noexcept {
+
+		klib::kprintf(u8"Initializing i386 platform...", __func__);
 
 		// Setup Interrupts Descriptor Table
-		i386::idt::init();
+		i386::idti386::init();
 		// Init exceptions
 		i386::except::init();
 		// Setup Global Descriptors Table
-		i386::gdt::init();
+		i386::gdti386::init();
 
 		// Setup paging (And identity map first 4MB where kernel physically is)
 		i386::paging::init();
 
 		// Init interrupts
-		i386::irq::init();
+		i386::irqi386::init();
 		// Enable interrupts
-		i386::irq::enable();
+		i386::irqi386::enable();
 
 	}
 
 	// Finalize i386
-	void i386Finalize() noexcept {
+	static void i386Finalize() noexcept {
 		klib::kprintf(u8"%s:\tNot implemented yet!", __func__);
 	}
 
 	// Shutdown i386
-	void i386Shutdown() noexcept {
+	static void i386Shutdown() noexcept {
 		klib::kprintf(u8"%s:\tNot implemented yet!", __func__);
 	}
 
 	// Reboot i386
-	void i386Reboot() noexcept {
+	static void i386Reboot() noexcept {
 		klib::kprintf(u8"%s:\tNot implemented yet!", __func__);
 	}
 
 	// Suspend i386
-	void i386Suspend() noexcept {
+	static void i386Suspend() noexcept {
 		klib::kprintf(u8"%s:\tNot implemented yet!", __func__);
 	}
 
 	// Wakeup i386
-	void i386Wakeup() noexcept {
+	static void i386Wakeup() noexcept {
 		klib::kprintf(u8"%s:\tNot implemented yet!", __func__);
 	}
 

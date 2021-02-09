@@ -3,7 +3,7 @@
 //	CPU operations
 //
 //	File:	cpu.hpp
-//	Date:	21 Jul 2020
+//	Date:	08 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -29,26 +29,29 @@ namespace igros::arch {
 
 	// CPU description type
 	template<typename T>
-	class tCPU final : public singleton<tCPU<T>> {
+	class cpu_t final : public singleton<cpu_t<T>> {
 
 		// No copy construction
-		tCPU(const tCPU &other) noexcept = delete;
+		cpu_t(const cpu_t &other) noexcept = delete;
 		// No copy assignment
-		tCPU& operator=(const tCPU &other) noexcept = delete;
+		cpu_t& operator=(const cpu_t &other) noexcept = delete;
 
 		// No move construction
-		tCPU(tCPU &&other) noexcept = delete;
+		cpu_t(cpu_t &&other) noexcept = delete;
 		// No move assignment
-		tCPU& operator=(tCPU &&other) noexcept = delete;
+		cpu_t& operator=(cpu_t &&other) noexcept = delete;
 
 
 	public:
 
 		// Default c-tor
-		tCPU() noexcept = default;
+		cpu_t() noexcept = default;
 
 		// Halt CPU
-	inline	void halt() const noexcept;
+		void	halt() const noexcept;
+
+		// Dump CPU registers
+		void	dumpRegisters(const register_t* const regs) const noexcept;
 
 
 	};
@@ -56,20 +59,27 @@ namespace igros::arch {
 
 	// Halt CPU
 	template<typename T>
-	inline void tCPU<T>::halt() const noexcept {
+	inline void cpu_t<T>::halt() const noexcept {
 		T::halt();
+	}
+
+
+	// Dump CPU registers
+	template<typename T>
+	inline void cpu_t<T>::dumpRegisters(const register_t* const regs) const noexcept {
+		T::dumpRegisters(regs);
 	}
 
 
 #if	defined (IGROS_ARCH_i386)
 	// CPU type
-	using cpu = tCPU<i386::cpu>;
+	using cpu = cpu_t<i386::cpui386>;
 #elif	defined (IGROS_ARCH_x86_64)
 	// CPU type
-	using cpu = tCPU<x86_64::cpu>;
+	using cpu = cpu_t<x86_64::cpux86_64>;
 #else
 	// CPU type
-	using cpu = tCPU<void>;
+	using cpu = cpu_t<void>;
 	static_assert(false, u8"Unknown architecture!!!");
 #endif
 

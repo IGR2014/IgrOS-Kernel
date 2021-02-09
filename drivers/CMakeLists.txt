@@ -14,6 +14,27 @@ FILE(
 	*.cpp
 )
 
+# Add clock subdirectory
+ADD_SUBDIRECTORY(
+	clock
+	clock
+)
+# Add input subdirectory
+ADD_SUBDIRECTORY(
+	input
+	input
+)
+# Add uart subdirectory
+ADD_SUBDIRECTORY(
+	uart
+	uart
+)
+# Add vga subdirectory
+ADD_SUBDIRECTORY(
+	vga
+	vga
+)
+
 # Includes
 INCLUDE_DIRECTORIES(
 	include/drivers

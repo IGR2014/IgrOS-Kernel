@@ -3,7 +3,7 @@
 //	Exceptions low-level operations
 //
 //	File:	exceptions.cpp
-//	Date:	16 Jul 2020
+//	Date:	05 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -49,26 +49,18 @@ namespace igros::i386 {
 
 
 	// Default exception handler
-	void except::exDefaultHandler(const register_t* regs) noexcept {
+	void except::exDefaultHandler(const registeri386_t* regs) noexcept {
 		// Disable interrupts
-		irq::disable();
+		irqi386::disable();
 		// Print exception name
-		klib::kprintf("Exception:\t%s", except::NAME[regs->number]);
+		klib::kprintf(
+			u8"Exception:\t%s",
+			except::NAME[regs->number]
+		);
+		// Dump registres
+		cpui386::dumpRegisters(regs);
 		// Hang CPU
-		cpu::halt();
-	}
-
-
-	// Install handler
-	void except::install(const NUMBER exNumber, const isr_t handler) noexcept {
-		// Install ISR
-		isrHandlerInstall(static_cast<dword_t>(exNumber), handler);
-	}
-
-	// Uninstall handler
-	void except::uninstall(const NUMBER exNumber) noexcept {
-		// Uninstall ISR
-		isrHandlerUninstall(static_cast<dword_t>(exNumber));
+		cpui386::halt();
 	}
 
 

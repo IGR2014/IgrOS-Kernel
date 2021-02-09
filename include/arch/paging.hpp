@@ -3,7 +3,7 @@
 //	Paging operations
 //
 //	File:	paging.hpp
-//	Date:	03 Aug 2020
+//	Date:	03 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -53,22 +53,22 @@ namespace igros::arch {
 		tPaging() noexcept = default;
 
 		// Enable paging
-	inline	void	enable() const noexcept;
+		void	enable() const noexcept;
 		// Disable paging
-	inline	void	disable() const noexcept;
+		void	disable() const noexcept;
 
 		// Translate virtual address to physical
 		[[nodiscard]]
-	inline	phys_t	translate(const virt_t addr) const noexcept;
+		phys_t	translate(const virt_t addr) const noexcept;
 
 		// Map virtual address to physical address
-	inline	void	map(const phys_t phys, const virt_t virt, const std::size_t count, const kflags<flags_t> flags) noexcept;
+		void	map(const phys_t phys, const virt_t virt, const std::size_t count, const kflags<flags_t> flags) noexcept;
 
 		// Get paging data
 		[[nodiscard]]
-	inline	phys_t	directory() const noexcept;
+		phys_t	directory() const noexcept;
 		// Flush paging data
-	inline	void	flush(const phys_t addr) noexcept;
+		void	flush(const phys_t addr) noexcept;
 
 
 	};
@@ -98,7 +98,7 @@ namespace igros::arch {
 	// Map virtual address to physical address
 	template<typename T>
 	void tPaging<T>::map(const phys_t phys, const virt_t virt, const std::size_t count, const kflags<flags_t> flags) noexcept {
-		//
+		// TODO
 	}
 
 

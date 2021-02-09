@@ -3,7 +3,7 @@
 //	Multiboot 1 functions
 //
 //	File:	multiboot.cpp
-//	Date:	15 Jan 2021
+//	Date:	02 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -46,19 +46,19 @@ namespace igros::multiboot {
                 // Print header
 		klib::kprintf(
 			u8"MULTIBOOT header:\r\n"
-			u8"Flags:\t\t0x%x\r\n"
-			u8"BIOS memory map:\t%s\r\n"
-			u8"Boot device:\t%s\r\n"
-			u8"Command line:\t%s\r\n"
-			u8"AOUT:\t\t%s\r\n"
-			u8"ELF:\t\t%s\r\n"
-			u8"Memory map:\t%s\r\n"
-			u8"Drives:\t\t%s\r\n"
-			u8"Table config:\t%s\r\n"
-			u8"Bootloader name:\t%s\r\n"
-			u8"APM:\t\t%s\r\n"
-			u8"VBE:\t\t%s\r\n"
-			u8"FB:\t\t%s\r\n",
+			u8"\tFlags:\t\t\t0x%x\r\n"
+			u8"\tBIOS memory map:\t%s\r\n"
+			u8"\tBoot device:\t\t%s\r\n"
+			u8"\tCommand line:\t\t%s\r\n"
+			u8"\tAOUT:\t\t\t%s\r\n"
+			u8"\tELF:\t\t\t%s\r\n"
+			u8"\tMemory map:\t\t%s\r\n"
+			u8"\tDrives:\t\t\t%s\r\n"
+			u8"\tTable config:\t\t%s\r\n"
+			u8"\tBootloader name:\t%s\r\n"
+			u8"\tAPM:\t\t\t%s\r\n"
+			u8"\tVBE:\t\t\t%s\r\n"
+			u8"\tFB:\t\t\t%s\r\n",
 			flags,
 			hasInfoMemory()		? u8"true" : u8"false",
 			hasInfoBootDevice()	? u8"true" : u8"false",

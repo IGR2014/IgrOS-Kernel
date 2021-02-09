@@ -3,7 +3,7 @@
 //	Task switch registers data structure
 //
 //	File:	register.hpp
-//	Date:	13 Jul 2020
+//	Date:	05 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -24,7 +24,7 @@ namespace igros::x86_64 {
 #pragma pack(push, 1)
 
 	// x86_64 task switch registers save
-	struct register_t {
+	struct registerx86_64_t {
 
 		// "All" registers pushed by us
 		quad_t	r15;		// Register r15

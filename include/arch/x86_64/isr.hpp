@@ -3,7 +3,7 @@
 //	Interrupts low-level operations
 //
 //	File:	isr.hpp
-//	Date:	16 Jul 2020
+//	Date:	05 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -25,16 +25,16 @@ namespace igros::x86_64 {
 
 
 	// IRQ offset in ISR list
-	constexpr auto IRQ_OFFSET	= 32u;
+	constexpr auto IRQ_OFFSET	= 32U;
 	// ISR list size
-	constexpr auto ISR_SIZE		= 256u;
+	constexpr auto ISR_SIZE		= 256U;
 
 	// Interrupt service routine handler type
-	using isr_t = std::add_pointer_t<void(const register_t*)>;
+	using isrx86_64_t		= std::add_pointer_t<void(const registerx86_64_t*)>;
 
 
 	// Install interrupt service routine handler
-	void isrHandlerInstall(const dword_t isrNumber, const isr_t isrHandler) noexcept;
+	void isrHandlerInstall(const dword_t isrNumber, const isrx86_64_t isrHandler) noexcept;
 	// Uninstall interrupt service routine handler
 	void isrHandlerUninstall(const dword_t isrNumber) noexcept;
 
