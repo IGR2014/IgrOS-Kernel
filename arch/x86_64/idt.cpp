@@ -3,7 +3,7 @@
 //	Interrupt descriptor table low-level operations
 //
 //	File:	idt.cpp
-//	Date:	11 Jul 2020
+//	Date:	07 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -19,9 +19,9 @@ namespace igros::x86_64 {
 
 
 	// Exceptions and IRQ descriptors table (IDT)
-	idtEntry_t	idt::table[IDT_SIZE];
+	std::array<idtEntryx86_64_t, idtx86_64::IDT_SIZE>	idtx86_64::table;
 	// Pointer to IDT
-	idtPointer_t	idt::pointer;
+	idtPointerx86_64_t					idtx86_64::pointer;
 
 
 }	// namespace igros::x86_64

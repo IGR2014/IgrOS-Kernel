@@ -3,7 +3,7 @@
 //	Keyboard generic handling
 //
 //	File:	keyboard.cpp
-//	Date:	01 Feb 2021
+//	Date:	02 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -59,7 +59,7 @@ namespace igros::arch {
 		irq::get().mask(irq::irq_t::KEYBOARD);
 
 		klib::kprintf(
-			u8"IRQ #%d [Keyboard] installed",
+			u8"IRQ #%d [Keyboard] installed\r\n",
 			irq::irq_t::KEYBOARD
 		);
 

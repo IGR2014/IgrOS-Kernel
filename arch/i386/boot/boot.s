@@ -3,7 +3,7 @@
 #	Low-level boot setup function
 #
 #	File:	boot.s
-#	Date:	03 Jul 2020
+#	Date:	05 Feb 2021
 #
 #	Copyright (c) 2017 - 2021, Igor Baklykov
 #	All rights reserved.
@@ -32,8 +32,10 @@
 .extern outCR0
 .extern outCR3
 .extern outCR4
+
 .extern inCR0
 .extern inCR4
+
 .extern	kmain						# Extern kernel C-function
 
 # Kernel starts here
@@ -104,6 +106,8 @@ bootPageDirectory:
 	.int	PAGE_ENTRY_VALID
 	# Zeroes
 	.fill	(1024 - PAGE_TEMP_KERNEL - 1), 4, PAGE_ENTRY_INVALID
+	# Entry 255 = 4Gb - 1Mb offset (bootPageDirectory recursive) mapped
+	#.int	PAGE_ENTRY_VALID
 
 
 .section .bss

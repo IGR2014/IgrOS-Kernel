@@ -3,7 +3,7 @@
 //	Memory paging for x86
 //
 //	File:	paging.cpp
-//	Date:	29 Jan 2021
+//	Date:	07 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -42,7 +42,7 @@ namespace igros::i386 {
 	};
 
 	// Kernel memory map
-	inline static const std::array<PAGE_MAP_t, 2ull> PAGE_MAP {{
+	inline static const std::array<PAGE_MAP_t, 2ULL> PAGE_MAP {{
 		// Identity map first 4MB of physical memory to first 4Mb in virtual memory
 		// 0Mb		->	0Mb
 		{nullptr,	nullptr},
@@ -77,6 +77,14 @@ namespace igros::i386 {
 		}
 		// Map page directory to itself
 		paging::mapPage(dir, reinterpret_cast<page_t*>(dir), reinterpret_cast<pointer_t>(0xFFFFF000), flags);
+
+/*
+		// Debug
+		klib::kprintf(
+			u8"0x%p\r\n",
+			*dir
+		);
+*/
 
 		// Setup page directory
 		// PD address bits ([0 .. 31] in cr3)
@@ -138,21 +146,21 @@ namespace igros::i386 {
 		// Get number of pages
 		const auto numOfPages = (tempSize >> PAGE_SHIFT);
 		// Check input
-		if (0ull == numOfPages) {
+		if (0ULL == numOfPages) {
 			return;
 		}
 
 		// Convert to page pointer
 		const auto page = static_cast<page_t*>(tempPhys);
 		// Link first page to free pages list
-		page[0ull].next = paging::mFreePages;
+		page[0ULL].next = paging::mFreePages;
 		// Create linked list of free pages
-		for (auto i = 1ull; i < numOfPages; i++) {
+		for (auto i = 1ULL; i < numOfPages; i++) {
 			// Link each next page to previous
-			page[i].next = &page[i - 1ull];
+			page[i].next = &page[i - 1ULL];
 		}
 		// Make last page new list head
-		paging::mFreePages = &page[numOfPages - 2ull];
+		paging::mFreePages = &page[numOfPages - 2ULL];
 
 	}
 
@@ -295,7 +303,8 @@ namespace igros::i386 {
 	void paging::mapPage(directory_t* const dir, const page_t* phys, const pointer_t virt, const kflags<flags_t> flags) noexcept {
 
 		// Check alignment
-		if (!klib::kalignCheck(phys, PAGE_SHIFT) || !klib::kalignCheck(virt, PAGE_SHIFT)) {
+		if (	!klib::kalignCheck(phys, PAGE_SHIFT)	||
+			!klib::kalignCheck(virt, PAGE_SHIFT)) {
 			// Bad align detected
 			return;
 		}
@@ -395,24 +404,26 @@ namespace igros::i386 {
 	void paging::exHandler(const register_t* regs) noexcept {
 
 		// Disable IRQ
-		irq::disable();
+		irqi386::disable();
 
 		// Write Multiboot magic error message message
-		klib::kprintf(	u8"EXCEPTION [#%d]\t-> (%s)\r\n"
-				u8"Caused by:\t%s%s%s\r\n"
-				u8"From:\t\t%s space\r\n"
-				u8"When:\t\tattempting to %s\r\n"
-				u8"Address:\t0x%p\r\n"
-				u8"Which is:\tnot %s\r\n",
-				static_cast<dword_t>(except::NUMBER::PAGE_FAULT),
-				except::NAME[static_cast<dword_t>(except::NUMBER::PAGE_FAULT)],
-				((regs->param & 0x18) == 0u) ? u8"ACCESS VIOLATION"	: u8"",
-				((regs->param & 0x10) == 0u) ? u8""			: u8"INSTRUCTION FETCH",
-				((regs->param & 0x08) == 0u) ? u8""			: u8"RESERVED BIT SET",
-				((regs->param & 0x04) == 0u) ? u8"KERNEL"		: u8"USER",
-				((regs->param & 0x02) == 0u) ? u8"READ"			: u8"WRITE",
-				reinterpret_cast<const pointer_t>(outCR2()),
-				((regs->param & 0x01) == 0u) ? u8"PRESENT"		: u8"PRIVILEGED");
+		klib::kprintf(
+			u8"EXCEPTION [#%d]\t-> (%s)\r\n"
+			u8"Caused by:\t%s%s%s\r\n"
+			u8"From:\t\t%s space\r\n"
+			u8"When:\t\tattempting to %s\r\n"
+			u8"Address:\t0x%p\r\n"
+			u8"Which is:\tnot %s\r\n",
+			static_cast<dword_t>(except::NUMBER::PAGE_FAULT),
+			except::NAME[static_cast<dword_t>(except::NUMBER::PAGE_FAULT)],
+			((regs->param & 0x18) == 0u) ? u8"ACCESS VIOLATION"	: u8"",
+			((regs->param & 0x10) == 0u) ? u8""			: u8"INSTRUCTION FETCH",
+			((regs->param & 0x08) == 0u) ? u8""			: u8"RESERVED BIT SET",
+			((regs->param & 0x04) == 0u) ? u8"KERNEL"		: u8"USER",
+			((regs->param & 0x02) == 0u) ? u8"READ"			: u8"WRITE",
+			reinterpret_cast<const pointer_t>(outCR2()),
+			((regs->param & 0x01) == 0u) ? u8"PRESENT"		: u8"PRIVILEGED"
+		);
 
 		// Hang here
 		cpuHalt();
@@ -421,9 +432,9 @@ namespace igros::i386 {
 
 
 	// Set page directory
-	void paging::flush(const directory_t* const dir) noexcept {
+	inline void paging::flush(const directory_t* const dir) noexcept {
 		// Set page directory address to CR3
-		inCR3(*reinterpret_cast<const dword_t*>(&dir) & 0x3FFFFFFF);
+		inCR3(reinterpret_cast<std::uintptr_t>(dir) & 0x3FFFFFFF);
 	}
 
 

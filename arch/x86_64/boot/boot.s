@@ -3,7 +3,7 @@
 #	Low-level boot setup function
 #
 #	File:	boot.s
-#	Date:	31 Jun 2020
+#	Date:	02 Feb 2021
 #
 #	Copyright (c) 2017 - 2021, Igor Baklykov
 #	All rights reserved.
@@ -150,32 +150,34 @@ gdt64End:
 
 # Temporary boot page map level 4 table
 bootPageMapLevel4:
-	# Entry 0 - identity mapped lower-half memory
-	.quad	bootPageDirectoryPointer - KERNEL_VMA + 3
+	# Entry 0 = 8Mb (identity) mapped memory
+	.quad	bootPageDirectoryPointer - KERNEL_VMA + 0x03
 	# Zero entries
 	.fill	PAGE_TEMP_KERNEL, 8, PAGE_ENTRY_INVALID
-	# Entry 0 - identity mapped higher-half memory
-	.quad	bootPageDirectoryPointer - KERNEL_VMA + 3
+	# Entry 511 = 4Gb + 8Mb (higher-half) mapped memory
+	.quad	bootPageDirectoryPointer - KERNEL_VMA + 0x03
 
 # Temporary boot page directory pointer table
 bootPageDirectoryPointer:
-	# Entry 0 - identity mapped [0..1] Gb memory
-	.quad	bootPageDirectory - KERNEL_VMA + 3
+	# Entry 0 = 4Mb (identity) mapped memory
+	.quad	bootPageDirectory - KERNEL_VMA + 0x03
 	# Zero entries
-	.fill	PAGE_TEMP_KERNEL - 1, 8, PAGE_ENTRY_INVALID
-	# Entry 0 - higher half mapped [-1..-0] Gb memory
-	.quad	bootPageDirectory - KERNEL_VMA + 3
-	# Zero entry
-	.quad	PAGE_ENTRY_INVALID
+	.fill	(PAGE_TEMP_KERNEL - 1), 8, PAGE_ENTRY_INVALID
+	# Entry 510 = 3Gb + 4Mb (higher-half) mapped memory
+	.quad	bootPageDirectory - KERNEL_VMA + 0x03
+	# Entry 511 = 4Gb - 4Mb (identity) mapped memory
+	.quad	bootPageMapLevel4 - KERNEL_VMA + 0x03
 
 # Temporary boot page directory table
 bootPageDirectory:
-	# Entry 0 - mapped [0..2] Mb memory
+	# Entry 0 = 2Mb (identity) mapped memory
 	.quad	PAGE_ENTRY_VALID
-	# Entry 1 - mapped [2..4] Mb memory
+	# Entry 1 = 2Mb + 2Mb (identity) mapped memory
 	.quad	PAGE_ENTRY_VALID + 0x200000
 	# Zero entries
-	.fill	PAGE_TEMP_KERNEL, 8, PAGE_ENTRY_INVALID
+	.fill	(PAGE_TEMP_KERNEL - 1), 8, PAGE_ENTRY_INVALID
+	# Entry 511 = 1Gb - 2Mb (identity) mapped memory
+	.quad	bootPageMapLevel4 - KERNEL_VMA + PAGE_ENTRY_VALID
 
 
 .section .bss

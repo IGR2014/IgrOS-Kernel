@@ -3,7 +3,7 @@
 //	Memory paging for x86
 //
 //	File:	paging.hpp
-//	Date:	03 Aug 2020
+//	Date:	07 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -24,11 +24,11 @@ namespace igros::x86_64 {
 
 
 	// Forward declaration
-	struct register_t;
+	struct registerx86_64_t;
 
 
 	// Page Map Level 4 max entries count
-	constexpr auto	PAGE_MAP_LEVEL_4_SIZE		= 512ull;
+	constexpr auto	PAGE_MAP_LEVEL_4_SIZE		= 512ULL;
 	// Page Directory Pointer max entries count
 	constexpr auto	PAGE_DIRECTORY_POINTR_SIZE	= PAGE_MAP_LEVEL_4_SIZE;
 	// Page Directory max entries count
@@ -38,44 +38,44 @@ namespace igros::x86_64 {
 	// Page shift
 	constexpr auto	PAGE_SHIFT			= 12;
 	// Page size
-	constexpr auto	PAGE_SIZE			= 1ull << PAGE_SHIFT;
+	constexpr auto	PAGE_SIZE			= 1ULL << PAGE_SHIFT;
 	// Page mask
-	constexpr auto	PAGE_MASK			= PAGE_SIZE - 1ull;
+	constexpr auto	PAGE_MASK			= PAGE_SIZE - 1ULL;
 
 
 #pragma push(pack, 1)
 
 
 	// Page
-	union alignas(4096ull) page_t {
+	union alignas(4096ULL) page_t {
 		pointer_t		next;					// Pointer to next page
 		byte_t			bytes[PAGE_SIZE];			// Page raw bytes
 	};
 
 
 	// Page table
-	union alignas(4096ull) table_t {
+	union alignas(4096ULL) table_t {
 		pointer_t		next;					// Pointer to next table
 		page_t*			pages[PAGE_TABLE_SIZE];			// Page table entries
 	};
 
 
 	// Page directory
-	union alignas(4096ull) directory_t {
+	union alignas(4096ULL) directory_t {
 		pointer_t		next;					// Pointer to next directory
 		table_t*		tables[PAGE_DIRECTORY_SIZE];		// Page directory entries
 	};
 
 
 	// Page directory pointer
-	union alignas(4096ull) directoryPointer_t {
+	union alignas(4096ULL) directoryPointer_t {
 		pointer_t		next;					// Pointer to next directory pointer
 		directory_t*		directories[PAGE_DIRECTORY_SIZE];	// Page directory entries
 	};
 
 
 	// Page Map Level 4
-	union alignas(4096ull) pml4_t {
+	union alignas(4096ULL) pml4_t {
 		directoryPointer_t*	pointers[PAGE_DIRECTORY_SIZE];		// Page Map Level 4 entries
 	};
 
@@ -201,7 +201,7 @@ namespace igros::x86_64 {
 		static pointer_t	translate(const pointer_t addr) noexcept;
 
 		// Page Fault Exception handler
-		static void exHandler(const register_t* regs) noexcept;
+		static void exHandler(const registerx86_64_t* regs) noexcept;
 
 		// Set page directory
 		static void flush(const pml4_t* const dir) noexcept;

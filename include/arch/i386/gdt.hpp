@@ -3,7 +3,7 @@
 //	Global descriptor table low-level operations
 //
 //	File:	gdt.hpp
-//	Date:	13 Jul 2020
+//	Date:	08 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -13,6 +13,8 @@
 
 #pragma once
 
+
+#include <array>
 
 #include <flags.hpp>
 
@@ -26,7 +28,7 @@ namespace igros::i386 {
 #pragma pack(push, 1)
 
 	// GDT entry
-	struct gdtEntry_t {
+	struct gdtEntryi386_t {
 		word_t		limitLow;
 		word_t		baseLow;
 		byte_t		baseMid;
@@ -36,16 +38,45 @@ namespace igros::i386 {
 	};
 
 	// GDT pointer
-	struct gdtPointer_t {
-		word_t		size;			// GDT size
-		gdtEntry_t*	pointer;		// GDT pointer
+	struct gdtPointeri386_t {
+		word_t			size;			// GDT size
+		const gdtEntryi386_t*	pointer;		// GDT pointer
 	};
 
 #pragma pack(pop)
 
 
+}	// namespace igros::i386
+
+
+#ifdef	__cplusplus
+
+extern "C" {
+
+#endif	// __cplusplus
+
+	// Reset segments to apply new GDT
+	inline void					gdtResetSegments() noexcept;
+
+	// Load GDT
+	inline void					gdtLoad(const igros::i386::gdtPointeri386_t* const gdtPtr) noexcept;
+	// Store GDT
+	inline const igros::i386::gdtPointeri386_t*	gdtStore() noexcept;
+	
+
+#ifdef	__cplusplus
+
+}
+
+#endif	// __cplusplus
+
+
+// i386 namespace
+namespace igros::i386 {
+
+
 	// GDT structure
-	class gdt final {
+	class gdti386 final {
 
 		// GDT flags enum
 		enum flags_t : word_t {
@@ -98,7 +129,7 @@ namespace igros::i386 {
 
 
 		// Empty GDT entry (the first one)
-		constexpr static flags_t GDT_ENTRY_EMPTY		= flags_t::GDT_SEG_EMPTY;
+		constexpr static flags_t GDT_ENTRY_EMPTY	= flags_t::GDT_SEG_EMPTY;
 		// Kernel code page (4 Mb page, ring 0, code)
 		constexpr static flags_t GDT_ENTRY_CODE_RING0	= flags_t::GDT_SEG_RING0_CODE;
 		// Kernel data page (4 Mb page, ring 0, data)
@@ -109,97 +140,66 @@ namespace igros::i386 {
 		constexpr static flags_t GDT_ENTRY_DATA_RING3	= flags_t::GDT_SEG_RING3_DATA;
 
 		// Number of GDT entries
-		constexpr static dword_t GDT_SIZE		= 5u;
+		constexpr static auto				GDT_SIZE		= 5ULL;
 
 		// Global descriptors table (GDT)
-		static gdtEntry_t	table[GDT_SIZE];
+		static std::array<gdtEntryi386_t, GDT_SIZE>	table;
 		// Pointer to GDT
-		static gdtPointer_t	pointer;
+		static gdtPointeri386_t				pointer;
+
+
+		// Copy c-tor
+		gdti386(const gdti386 &other) = delete;
+		// Copy assignment
+		gdti386& operator=(const gdti386 &other) = delete;
+
+		// Move c-tor
+		gdti386(gdti386 &&other) = delete;
+		// Move assignment
+		gdti386& operator=(gdti386 &&other) = delete;
 
 
 	public:
 
 		// Default c-tor
-		gdt() noexcept = default;
-
-		// Copy c-tor
-		gdt(const gdt &other) = delete;
-		// Copy assignment
-		gdt& operator=(const gdt &other) = delete;
-
-		// Move c-tor
-		gdt(gdt &&other) = delete;
-		// Move assignment
-		gdt& operator=(gdt &&other) = delete;
+		gdti386() noexcept = default;
 
 		// Set GDT entry
-		constexpr static gdtEntry_t	setEntry(const dword_t base, const dword_t &limit, const flags_t flags) noexcept;
+		constexpr static gdtEntryi386_t	setEntry(const dword_t base, const dword_t &limit, const flags_t flags) noexcept;
 		// Calc GDT size
-		[[nodiscard]] constexpr static word_t	calcSize() noexcept;
+		[[nodiscard]]
+		constexpr static word_t		calcSize() noexcept;
 
 		// Init GDT table
-		inline static void	init() noexcept;
+		static void	init() noexcept;
 
 
 	};
 
 
 	// Set GDT entry
-	constexpr gdtEntry_t gdt::setEntry(const dword_t base, const dword_t &limit, const flags_t flags) noexcept {
+	constexpr gdtEntryi386_t gdti386::setEntry(const dword_t base, const dword_t &limit, const flags_t flags) noexcept {
 		return {
-			.limitLow	= word_t(limit & 0xFFFF),
-			.baseLow	= word_t(base & 0xFFFF),
-			.baseMid	= byte_t((base & 0xFF0000) >> 16),
-			.access		= byte_t(flags & 0x00FF),
-			.limitFlags	= byte_t(((limit & 0xF0000) >> 16) | (word_t(flags & 0x0F00) >> 4)),
-			.baseHigh	= byte_t((base & 0xFF000000) >> 24)
+			.limitLow	= static_cast<word_t>(limit & 0xFFFF),
+			.baseLow	= static_cast<word_t>(base & 0xFFFF),
+			.baseMid	= static_cast<byte_t>((base & 0xFF0000) >> 16),
+			.access		= static_cast<byte_t>(flags & 0x00FF),
+			.limitFlags	= static_cast<byte_t>(((limit & 0xF0000) >> 16) | (static_cast<word_t>(flags & 0x0F00) >> 4)),
+			.baseHigh	= static_cast<byte_t>((base & 0xFF000000) >> 24)
 		};
 	}
 
 	// Calculate GDT size
-	constexpr word_t gdt::calcSize() noexcept {
-		return (GDT_SIZE * sizeof(gdtEntry_t)) - 1u;
+	constexpr word_t gdti386::calcSize() noexcept {
+		// Size equals to (Num of entries * Entry size) - 1
+		return (gdti386::table.size() * sizeof(gdtEntryi386_t)) - 1U;
 	}
-
-
-#ifdef	__cplusplus
-
-	extern "C" {
-
-#endif	// __cplusplus
-
-
-		// Reset segments to apply new GDT
-		constexpr void	gdtResetSegments() noexcept;
-
-		// Load GDT
-		constexpr void	gdtLoad(const gdtPointer_t* gdtPtr) noexcept;
-
-
-#ifdef	__cplusplus
-
-	}
-
-#endif	// __cplusplus
 
 
 	// Init GDT table
-	inline void gdt::init() noexcept {
-		// Empty entry (should be there!)
-		table[0] = gdt::setEntry(0x00000000, 0x00000000, GDT_ENTRY_EMPTY);
-		// Kernel code
-		table[1] = gdt::setEntry(0x00000000, 0xFFFFFFFF, GDT_ENTRY_CODE_RING0);
-		// Kernel data
-		table[2] = gdt::setEntry(0x00000000, 0xFFFFFFFF, GDT_ENTRY_DATA_RING0);
-		// User code
-		table[3] = gdt::setEntry(0x00000000, 0xFFFFFFFF, GDT_ENTRY_CODE_RING3);
-		// User data
-		table[4] = gdt::setEntry(0x00000000, 0xFFFFFFFF, GDT_ENTRY_DATA_RING3);
-		// Set GDT size and data pointer
-		gdt::pointer.size	= gdt::calcSize();
-		gdt::pointer.pointer	= gdt::table;
+	inline void gdti386::init() noexcept {
 		// Load new GDT
-		gdtLoad(&pointer);
+		::gdtLoad(&pointer);
 	}
 
 

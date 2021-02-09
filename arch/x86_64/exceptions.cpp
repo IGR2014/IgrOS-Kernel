@@ -3,7 +3,7 @@
 //	Exceptions low-level operations
 //
 //	File:	exceptions.cpp
-//	Date:	11 Jul 2020
+//	Date:	08 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -12,6 +12,7 @@
 
 
 #include <arch/x86_64/exceptions.hpp>
+#include <arch/x86_64/irq.hpp>
 #include <arch/x86_64/register.hpp>
 #include <arch/x86_64/cpu.hpp>
 
@@ -48,11 +49,18 @@ namespace igros::x86_64 {
 
 
 	// Default exception handler
-	void except::exDefaultHandler(const register_t* regs) noexcept {
+	void except::exDefaultHandler(const registerx86_64_t* regs) noexcept {
+		// Disable interrupts
+		irqx86_64::disable();
 		// Print exception name
-		klib::kprintf("Exception:\t%s", except::NAME[regs->number]);
+		klib::kprintf(
+			u8"Exception:\t%s",
+			except::NAME[regs->number]
+		);
+		// Dump registres
+		cpux86_64::dumpRegisters(regs);
 		// Hang CPU
-		cpuHalt();
+		cpux86_64::halt();
 	}
 
 

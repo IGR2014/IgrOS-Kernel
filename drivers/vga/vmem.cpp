@@ -3,7 +3,7 @@
 //	VGA memory low-level operations
 //
 //	File:	vmem.cpp
-//	Date:	18 Jul 2020
+//	Date:	08 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -13,7 +13,7 @@
 
 #include <arch/io.hpp>
 
-#include <drivers/vmem.hpp>
+#include <drivers/vga/vmem.hpp>
 
 #include <klib/kmemory.hpp>
 
@@ -24,7 +24,7 @@ namespace igros::arch {
 
 	// VGA cursor control ports
 	constexpr auto VGA_CURSOR_CONTROL	= static_cast<io::port_t>(0x03D4);
-	constexpr auto VGA_CURSOR_DATA		= static_cast<io::port_t>(VGA_CURSOR_CONTROL + 1);
+	constexpr auto VGA_CURSOR_DATA		= static_cast<io::port_t>(VGA_CURSOR_CONTROL + 1U);
 
 
 	// Set cursor position
@@ -101,18 +101,18 @@ namespace igros::arch {
 				// Move 1 symbol backward
 				--cursorPos.x;
 			} else {
-				cursorPos.x = VIDEO_MEM_WIDTH - 1u;
+				cursorPos.x = VIDEO_MEM_WIDTH - 1U;
 				// Move 1 line up
 				--cursorPos.y;
 			}
 		// Tabulation symbol
 		} else if (symbol == u8'\t') {
 			// calculate new tab offset
-			cursorPos.x = (cursorPos.x + VIDEO_MEM_TAB_SIZE) & ~7u;
+			cursorPos.x = (cursorPos.x + VIDEO_MEM_TAB_SIZE) & ~7U;
 		// Carret return
 		} else if (symbol == u8'\r') {
 			// Move to start of the row
-			cursorPos.x = 0u;
+			cursorPos.x = 0U;
 		// Carret new line
 		} else if (symbol == u8'\n') {
 			// Move to next row
@@ -131,14 +131,14 @@ namespace igros::arch {
 		// Check if we are not out of columns
 		if (cursorPos.x >= VIDEO_MEM_WIDTH) {
 			// Move to next line
-			cursorPos.x = 0u;
+			cursorPos.x = 0U;
 			++cursorPos.y;
 		}
 
 		// Chech if we are not out of rows
 		if (cursorPos.y >= VIDEO_MEM_HEIGHT) {
 			// Move cursor to the last line
-			cursorPos.y = VIDEO_MEM_HEIGHT - 1u;
+			cursorPos.y = VIDEO_MEM_HEIGHT - 1U;
 			// Move screen 1 line up
 			for (auto i = VIDEO_MEM_WIDTH; i < VIDEO_MEM_SIZE; ++i) {
 				vmemBase[i - VIDEO_MEM_WIDTH] = vmemBase[i];
@@ -167,7 +167,7 @@ namespace igros::arch {
 	// Write fixed-width string to VGA memory
 	void vmemWrite(const sbyte_t* message, const dword_t &size) noexcept {
 		// Loop through message
-		for (auto i = 0u; i < size; ++i) {
+		for (auto i = 0U; i < size; ++i) {
 			// Write symbols one by one
 			vmemWrite(message[i]);
 		}

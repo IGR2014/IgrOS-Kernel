@@ -236,6 +236,6 @@ ADD_CUSTOM_TARGET(
 ADD_CUSTOM_TARGET(
 	test
 	USES_TERMINAL
-	COMMAND ${QEMU} -kernel "${CMAKE_SOURCE_DIR}/${CMAKE_BUILD_TYPE}/${IGROS_ARCH}/${IGROS_KERNEL}" -m 1G -vga std -rtc base=localtime -serial mon:stdio 
+	COMMAND ${QEMU} -kernel "${CMAKE_SOURCE_DIR}/${CMAKE_BUILD_TYPE}/${IGROS_ARCH}/${IGROS_KERNEL}" -m 2G -vga std -rtc base=localtime -serial mon:stdio 
 	DEPENDS install_proxy
 )

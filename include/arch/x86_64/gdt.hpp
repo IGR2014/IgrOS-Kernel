@@ -3,7 +3,7 @@
 //	Global descriptor table low-level operations
 //
 //	File:	gdt.hpp
-//	Date:	13 Jul 2020
+//	Date:	08 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -13,6 +13,8 @@
 
 #pragma once
 
+
+#include <array>
 
 #include <flags.hpp>
 
@@ -26,7 +28,7 @@ namespace igros::x86_64 {
 #pragma pack(push, 1)
 
 	// GDT entry
-	struct gdtEntry_t {
+	struct gdtEntryx86_64_t {
 		word_t		limitLow;
 		word_t		baseLow;
 		byte_t		baseMid;
@@ -36,16 +38,44 @@ namespace igros::x86_64 {
 	};
 
 	// GDT pointer
-	struct gdtPointer_t {
-		word_t		size;			// GDT size
-		gdtEntry_t*	pointer;		// GDT pointer
+	struct gdtPointerx86_64_t {
+		word_t			size;			// GDT size
+		const gdtEntryx86_64_t*	pointer;		// GDT pointer
 	};
 
 #pragma pack(pop)
 
 
+}	// namespace igros::x86_64
+
+
+#ifdef	__cplusplus
+
+extern "C" {
+
+#endif	// __cplusplus
+
+	// Reset segments to apply new GDT
+	inline void					gdtResetSegments() noexcept;
+
+	// Load GDT
+	inline void					gdtLoad(const igros::x86_64::gdtPointerx86_64_t* gdtPtr) noexcept;
+	// Store GDT
+	inline const igros::x86_64::gdtPointerx86_64_t*	gdtStore() noexcept;
+
+#ifdef	__cplusplus
+
+}
+
+#endif	// __cplusplus
+
+
+// x86_64 namespace
+namespace igros::x86_64 {
+
+
 	// GDT structure
-	class gdt final {
+	class gdtx86_64 final {
 
 		// GDT flags enum
 		enum flags_t : word_t {
@@ -98,7 +128,7 @@ namespace igros::x86_64 {
 
 
 		// Empty GDT entry (the first one)
-		constexpr static flags_t GDT_ENTRY_EMPTY		= flags_t::GDT_SEG_EMPTY;
+		constexpr static flags_t GDT_ENTRY_EMPTY	= flags_t::GDT_SEG_EMPTY;
 		// Kernel code page (4 Mb page, ring 0, code)
 		constexpr static flags_t GDT_ENTRY_CODE_RING0	= flags_t::GDT_SEG_RING0_CODE;
 		// Kernel data page (4 Mb page, ring 0, data)
@@ -109,43 +139,45 @@ namespace igros::x86_64 {
 		constexpr static flags_t GDT_ENTRY_DATA_RING3	= flags_t::GDT_SEG_RING3_DATA;
 
 		// Number of GDT entries
-		constexpr static dword_t GDT_SIZE		= 5u;
+		constexpr static auto				GDT_SIZE		= 5ULL;
 
 		// Global descriptors table (GDT)
-		static gdtEntry_t	table[GDT_SIZE];
+		static std::array<gdtEntryx86_64_t, GDT_SIZE>	table;
 		// Pointer to GDT
-		static gdtPointer_t	pointer;
+		static gdtPointerx86_64_t			pointer;
+
+
+		// Copy c-tor
+		gdtx86_64(const gdtx86_64 &other) = delete;
+		// Copy assignment
+		gdtx86_64& operator=(const gdtx86_64 &other) = delete;
+
+		// Move c-tor
+		gdtx86_64(gdtx86_64 &&other) = delete;
+		// Move assignment
+		gdtx86_64& operator=(gdtx86_64 &&other) = delete;
 
 
 	public:
 
 		// Default c-tor
-		gdt() noexcept = default;
-
-		// Copy c-tor
-		gdt(const gdt &other) = delete;
-		// Copy assignment
-		gdt& operator=(const gdt &other) = delete;
-
-		// Move c-tor
-		gdt(gdt &&other) = delete;
-		// Move assignment
-		gdt& operator=(gdt &&other) = delete;
+		gdtx86_64() noexcept = default;
 
 		// Set GDT entry
-		constexpr static gdtEntry_t	setEntry(const dword_t base, const dword_t &limit, const flags_t flags) noexcept;
+		constexpr static gdtEntryx86_64_t	setEntry(const dword_t base, const dword_t &limit, const flags_t flags) noexcept;
 		// Calc GDT size
-		[[nodiscard]] constexpr static word_t	calcSize() noexcept;
+		[[nodiscard]]
+		constexpr static word_t			calcSize() noexcept;
 
 		// Init GDT table
-		inline static void	init() noexcept;
+		static void	init() noexcept;
 
 
 	};
 
 
 	// Set GDT entry
-	constexpr gdtEntry_t gdt::setEntry(const dword_t base, const dword_t &limit, const flags_t flags) noexcept {
+	constexpr gdtEntryx86_64_t gdtx86_64::setEntry(const dword_t base, const dword_t &limit, const flags_t flags) noexcept {
 		return {
 			.limitLow	= static_cast<word_t>(limit & 0xFFFF),
 			.baseLow	= static_cast<word_t>(base & 0xFFFF),
@@ -157,49 +189,16 @@ namespace igros::x86_64 {
 	}
 
 	// Calculate GDT size
-	constexpr word_t gdt::calcSize() noexcept {
-		return (GDT_SIZE * sizeof(gdtEntry_t)) - 1u;
+	constexpr word_t gdtx86_64::calcSize() noexcept {
+		// Size equals to (Num of entries * Entry size) - 1
+		return (gdtx86_64::table.size() * sizeof(gdtEntryx86_64_t)) - 1U;
 	}
-
-
-#ifdef	__cplusplus
-
-	extern "C" {
-
-#endif	// __cplusplus
-
-
-		// Reset segments to apply new GDT
-		constexpr void	gdtResetSegments() noexcept;
-
-		// Load GDT
-		constexpr void	gdtLoad(const gdtPointer_t* gdtPtr) noexcept;
-
-
-#ifdef	__cplusplus
-
-	}
-
-#endif	// __cplusplus
 
 
 	// Init GDT table
-	inline void gdt::init() noexcept {
-		// Empty entry (should be there!)
-		table[0] = gdt::setEntry(0x00000000, 0x00000000, GDT_ENTRY_EMPTY);
-		// Kernel code
-		table[1] = gdt::setEntry(0x00000000, 0xFFFFFFFF, GDT_ENTRY_CODE_RING0);
-		// Kernel data
-		table[2] = gdt::setEntry(0x00000000, 0xFFFFFFFF, GDT_ENTRY_DATA_RING0);
-		// User code
-		table[3] = gdt::setEntry(0x00000000, 0xFFFFFFFF, GDT_ENTRY_CODE_RING3);
-		// User data
-		table[4] = gdt::setEntry(0x00000000, 0xFFFFFFFF, GDT_ENTRY_DATA_RING3);
-		// Set GDT size and data pointer
-		gdt::pointer.size	= gdt::calcSize();
-		gdt::pointer.pointer	= gdt::table;
+	inline void gdtx86_64::init() noexcept {
 		// Load new GDT
-		gdtLoad(&pointer);
+		::gdtLoad(&pointer);
 	}
 
 
