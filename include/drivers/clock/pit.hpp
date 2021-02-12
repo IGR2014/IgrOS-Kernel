@@ -3,7 +3,7 @@
 //	Programmable interrupt timer
 //
 //	File:	pit.hpp
-//	Date:	02 Feb 2021
+//	Date:	12 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -54,9 +54,9 @@ namespace igros::arch {
 
 
 	// PIT frequency (1.193181(3) MHz)
-	constexpr auto PIT_MAIN_FREQUENCY	= 1193181u;
+	constexpr auto PIT_MAIN_FREQUENCY	= 1193181U;
 	// Default pit frequency (100 Hz)
-	constexpr auto PIT_DEFAULT_FREQUENCY	= 100u;
+	constexpr auto PIT_DEFAULT_FREQUENCY	= 100U;
 
 
 	// Setup PIT frequency

@@ -3,7 +3,7 @@
 //	Boot low-level main setup function
 //
 //	File:	boot.cpp
-//	Date:	08 Feb 2021
+//	Date:	10 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -54,7 +54,7 @@ namespace igros {
 			u8"Author:\t\tIgor Baklykov (c) %d - %d\r\n"
 			u8"Command line:\t%s\r\n"
 			u8"Loader:\t\t%s\r\n",
-			platform::name(),
+			platform::CURRENT_PLATFORM.name(),
 			platform::KERNEL_START(),
 			platform::KERNEL_END(),
 			platform::KERNEL_SIZE() >> 10,
@@ -93,7 +93,7 @@ extern "C" {
 		igros::printHeader(multiboot);
 
 		// Initialize platform
-		igros::platform::initialize();
+		igros::platform::CURRENT_PLATFORM.initialize();
 
 		// Setup PIT
 		//igros::arch::pitSetup();

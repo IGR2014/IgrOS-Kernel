@@ -3,7 +3,7 @@
 //	IgrOS platform description
 //
 //	File:	platform.hpp
-//	Date:	17 Jul 2020
+//	Date:	10 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -13,9 +13,10 @@
 
 #pragma once
 
-
+// C++
 #include <type_traits>
-
+#include <string_view>
+// IgrOS
 #include <arch/types.hpp>
 
 
@@ -29,124 +30,223 @@ namespace igros::platform {
 
 
 	// Get kernel start address
-	inline static const auto KERNEL_START() noexcept {
+	[[nodiscard]]
+	constexpr const auto KERNEL_START() noexcept {
 		return &_SECTION_KERNEL_START_;
 	}
 
 	// Get kernel end address
-	inline static const auto KERNEL_END() noexcept {
+	[[nodiscard]]
+	constexpr const auto KERNEL_END() noexcept {
 		return &_SECTION_KERNEL_END_;
 	}
 
 	// Get kernel size
-	inline static const auto KERNEL_SIZE() noexcept {
+	[[nodiscard]]
+	constexpr const auto KERNEL_SIZE() noexcept {
 		return (KERNEL_END() - KERNEL_START());
 	}
 
 
-	// Platform name ID
-	enum class name_t : byte_t {
-		UNKNOWN		= 0x00,
-		I386		= 0x01,
-		X86_64		= 0x02,
-		ARM		= 0x04,
-		ARM64		= 0x08
-	};
+	// Platform desciption structure
+	class description_t final {
+
+		// Platform name ID
+		enum class PLATFORM_ARCH_NAME : dword_t {
+			UNKNOWN		= 0x00000000,
+			I386		= 0x00000001,
+			X86_64		= 0x00000002,
+			ARM		= 0x00000004,
+			ARM64		= 0x00000008,
+			AVR		= 0x00000010
+		};
 
 
 #if	defined (IGROS_ARCH_i386)
-	// i386 platform
-	constexpr auto PLATFORM_NAME = name_t::I386;
+		// i386 platform
+		constexpr static PLATFORM_ARCH_NAME PLATFORM_NAME = PLATFORM_ARCH_NAME::I386;
 #elif	defined (IGROS_ARCH_x86_64)
-	// x86_64 platform
-	constexpr auto PLATFORM_NAME = name_t::X86_64;
+		// x86_64 platform
+		constexpr static PLATFORM_ARCH_NAME PLATFORM_NAME = PLATFORM_ARCH_NAME::X86_64;
 #else
-	// Unknown platform
-	constexpr auto PLATFORM_NAME = name_t::UNKNOWN;
+		// Unknown platform
+		constexpr static PLATFORM_ARCH_NAME PLATFORM_NAME = PLATFORM_ARCH_NAME::UNKNOWN;
 #endif
 
+
+		// Platform init function pointer type
+		using init_t		= std::add_pointer_t<void()>;
+		// Platform finalize function pointer type
+		using finalize_t	= std::add_pointer_t<void()>;
+
+		// Platform shutdown function pointer type
+		using shutdown_t	= std::add_pointer_t<void()>;
+		// Platform reboot function pointer type
+		using reboot_t		= std::add_pointer_t<void()>;
+
+		// Platform suspend function pointer type
+		using suspend_t		= std::add_pointer_t<void()>;
+		// Platform wakeup function pointer type
+		using wakeup_t		= std::add_pointer_t<void()>;
+
+
+		const char* const	mName;			// Platform name
+
+		init_t			mInit;			// Init function
+		finalize_t		mFinalzie;		// Finalize function
+
+		shutdown_t		mShutdown;		// Shutdown function
+		reboot_t		mReboot;		// Reboot function
+
+		suspend_t		mSuspend;		// Suspend platform
+		wakeup_t		mWakeup;		// Wakeup platform
+
+
+		// C-tor
+		description_t() = delete;
+
+
+	public:
+
+		// C-tor #2
+		constexpr description_t(
+			const char* const	name,
+			const init_t		init,
+			const finalize_t	finalize,
+			const shutdown_t	shutdown,
+			const reboot_t		reboot,
+			const suspend_t		suspend,
+			const wakeup_t		wakeup
+		) noexcept;
+
+		// Check if i386
+		[[nodiscard]]
+		constexpr bool	isI386() const noexcept;
+		// Check if x86_64
+		[[nodiscard]]
+		constexpr bool	isX86_64() const noexcept;
+		// Check if arm32
+		[[nodiscard]]
+		constexpr bool	isARM32() const noexcept;
+		// Check if arm64
+		[[nodiscard]]
+		constexpr bool	isARM64() const noexcept;
+		// Check if avr
+		[[nodiscard]]
+		constexpr bool	isAVR() const noexcept;
+
+		// Get platform name
+		[[nodiscard]]
+		const auto	name() const noexcept;
+
+		// Initialize platform
+		void	initialize() const noexcept;
+		// Finalize platform
+		void	finalize() const noexcept;
+
+		// Shutdown platform
+		void	shutdown() const noexcept;
+		// Reboot platform
+		void	reboot() const noexcept;
+
+		// Suspend platform
+		void	suspend() const noexcept;
+		// Wakeup platform
+		void	wakeup() const noexcept;
+
+
+	};
+
+
+	// C-tor #2
+	constexpr description_t::description_t(
+		const char* const	name,
+		const init_t		init,
+		const finalize_t	finalize,
+		const shutdown_t	shutdown,
+		const reboot_t		reboot,
+		const suspend_t		suspend,
+		const wakeup_t		wakeup
+	) noexcept
+		: mName		(name),
+		  mInit		(init),
+		  mFinalzie	(finalize),
+		  mShutdown	(shutdown),
+		  mReboot	(reboot),
+		  mSuspend	(suspend),
+		  mWakeup	(wakeup) {}
+
+
 	// Check if i386
-	constexpr bool isI386() noexcept {
-		return (name_t::I386 == PLATFORM_NAME);
+	[[nodiscard]]
+	constexpr bool description_t::isI386() const noexcept {
+		return (PLATFORM_ARCH_NAME::I386 == PLATFORM_NAME);
 	}
 
 	// Check if x86_64
-	constexpr bool isX86_64() noexcept {
-		return (name_t::X86_64 == PLATFORM_NAME);
+	[[nodiscard]]
+	constexpr bool description_t::isX86_64() const noexcept {
+		return (PLATFORM_ARCH_NAME::X86_64 == PLATFORM_NAME);
+	}
+
+	// Check if arm32
+	[[nodiscard]]
+	constexpr bool description_t::isARM32() const noexcept {
+		return (PLATFORM_ARCH_NAME::ARM == PLATFORM_NAME);
+	}
+
+	// Check if arm64
+	[[nodiscard]]
+	constexpr bool description_t::isARM64() const noexcept {
+		return (PLATFORM_ARCH_NAME::ARM64 == PLATFORM_NAME);
+	}
+
+	// Check if avr
+	[[nodiscard]]
+	constexpr bool description_t::isAVR() const noexcept {
+		return (PLATFORM_ARCH_NAME::AVR == PLATFORM_NAME);
 	}
 
 
-	// Platform init function pointer type
-	using initPtr_t		= std::add_pointer_t<void()>;
-	// Platform finalize function pointer type
-	using finalizePtr_t	= std::add_pointer_t<void()>;
+	// Get platform name
+	[[nodiscard]]
+	inline const auto description_t::name() const noexcept {
+		return mName;
+	}
 
-	// Platform shutdown function pointer type
-	using shutdownPtr_t	= std::add_pointer_t<void()>;
-	// Platform reboot function pointer type
-	using rebootPtr_t	= std::add_pointer_t<void()>;
+	// Initialize platform
+	inline void description_t::initialize() const noexcept {
+		mInit();
+	}
 
-	// Platform suspend function pointer type
-	using suspendPtr_t	= std::add_pointer_t<void()>;
-	// Platform wakeup function pointer type
-	using wakeupPtr_t	= std::add_pointer_t<void()>;
+	// Finalize platform
+	inline void description_t::finalize() const noexcept {
+		mFinalzie();
+	}
 
+	// Shutdown platform
+	inline void description_t::shutdown() const noexcept {
+		mShutdown();
+	}
 
-	// Platform desciption structure
-	struct description_t {
+	// Reboot platform
+	inline void description_t::reboot() const noexcept {
+		mReboot();
+	}
 
-		const sbyte_t* const	mName;			// Platform name
+	// Suspend platform
+	inline void description_t::suspend() const noexcept {
+		mSuspend();
+	}
 
-		initPtr_t		mInit;			// Init function
-		finalizePtr_t		mFinalzie;		// Finalize function
-
-		shutdownPtr_t		mShutdown;		// Shutdown function
-		rebootPtr_t		mReboot;		// Reboot function
-
-		suspendPtr_t		mSuspend;		// Suspend platform
-		wakeupPtr_t		mWakeup;		// Wakeup platform
-
-	};
+	// Wakeup platform
+	inline void description_t::wakeup() const noexcept {
+		mWakeup();
+	}
 
 
 	// Platform description
 	extern const description_t CURRENT_PLATFORM;
-
-
-	// Get platform name
-	[[nodiscard]] inline auto name() noexcept {
-		return CURRENT_PLATFORM.mName;
-	}
-
-	// Initialize platform
-	inline void initialize() noexcept {
-		CURRENT_PLATFORM.mInit();
-	}
-
-	// Finalize platform
-	inline void finalize() noexcept {
-		CURRENT_PLATFORM.mFinalzie();
-	}
-
-	// Shutdown platform
-	inline void shutdown() noexcept {
-		CURRENT_PLATFORM.mShutdown();
-	}
-
-	// Reboot platform
-	inline void reboot() noexcept {
-		CURRENT_PLATFORM.mReboot();
-	}
-
-	// Suspend platform
-	inline void suspend() noexcept {
-		CURRENT_PLATFORM.mSuspend();
-	}
-
-	// Wakeup platform
-	inline void wakeup() noexcept {
-		CURRENT_PLATFORM.mWakeup();
-	}
 
 
 }       // namespace igros::platform

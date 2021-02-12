@@ -3,7 +3,7 @@
 #	Exception low-level handlers
 #
 #	File:	exceptions.s
-#	Date:	10 Oct 2018
+#	Date:	11 Feb 2021
 #
 #	Copyright (c) 2017 - 2021, Igor Baklykov
 #	All rights reserved.
@@ -15,6 +15,7 @@
 
 .section .text
 .balign	4
+
 .global exHandler00			# 0
 .global exHandler01			# 1
 .global exHandler02			# 2
@@ -47,6 +48,7 @@
 .global exHandler1D			# 29
 .global exHandler1E			# 30
 .global exHandler1F			# 31
+
 .extern	interruptServiceRoutine		# Extenral main interrupt service routine handler
 
 

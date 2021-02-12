@@ -3,7 +3,7 @@
 //	Platform description for x86
 //
 //	File:	platform-i386.cpp
-//	Date:	07 Feb 2021
+//	Date:	10 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -83,7 +83,7 @@ namespace igros::platform {
 
 
 	// Platform description
-	const description_t CURRENT_PLATFORM = {
+	const description_t CURRENT_PLATFORM {
 		u8"i386",
 		i386::i386Init,
 		i386::i386Finalize,

@@ -3,7 +3,7 @@
 #	Interrupt servising routine handler
 #
 #	File:	isr.s
-#	Date:	10 Oct 2019
+#	Date:	11 Feb 2021
 #
 #	Copyright (c) 2017 - 2021, Igor Baklykov
 #	All rights reserved.
@@ -21,8 +21,8 @@
 
 
 # Interrupt service routine
+.type interruptServiceRoutine, @function
 interruptServiceRoutine:
-
 	pushal				# Save "all" regisers
 	pushl	%ds			# Save segment registers
 	pushl	%es			# ---//---
@@ -49,4 +49,4 @@ interruptServiceRoutine:
 	addl	$0x08, %esp		# Stack cleanup
 
 	iretl				# Done here
-
+.size interruptServiceRoutine, . - interruptServiceRoutine

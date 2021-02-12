@@ -16,13 +16,16 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=IGR2014_IgrOS-Kernel&metric=alert_status)](https://sonarcloud.io/dashboard?id=IGR2014_IgrOS-Kernel)
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=IGR2014_IgrOS-Kernel&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=IGR2014_IgrOS-Kernel)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=IGR2014_IgrOS-Kernel&metric=bugs)](https://sonarcloud.io/dashboard?id=IGR2014_IgrOS-Kernel)
+
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=IGR2014_IgrOS-Kernel&metric=coverage)](https://sonarcloud.io/dashboard?id=IGR2014_IgrOS-Kernel)
+
 [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=IGR2014_IgrOS-Kernel&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=IGR2014_IgrOS-Kernel)
+
 [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=IGR2014_IgrOS-Kernel&metric=ncloc)](https://sonarcloud.io/dashboard?id=IGR2014_IgrOS-Kernel)
 
 
 IgrOS-Kernel is a simple **OS kernel** written in **C++17**.
-Currently supports **i386** and **x86_64** platforms. **ARM** is the next aim.
+Currently supports **i386** and **x86_64** platforms. **ARM** and **AVR** are the next aims.
 
 ---
 

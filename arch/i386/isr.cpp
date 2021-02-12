@@ -3,7 +3,7 @@
 //	Interrupt service routines low-level operations
 //
 //	File:	isr.cpp
-//	Date:	05 Feb 2021
+//	Date:	10 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -57,10 +57,8 @@ extern "C" {
 
 	// Interrupts handler function
 	void isrHandler(const igros::i386::registeri386_t* regs) noexcept {
-		// Acquire irq handler from list
-		const auto isr = igros::i386::isrList[regs->number];
 		// Check if irq/exception handler installed
-		if (nullptr != isr) {
+		if (const auto isr = igros::i386::isrList[regs->number]; nullptr != isr) {
 			// Handle ISR
 			isr(regs);
 		} else {

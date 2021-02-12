@@ -3,7 +3,7 @@
 #	General purpose, segment, stack and flags registers access
 #
 #	File:	port.s
-#	Date:	21 Jan 2020
+#	Date:	11 Feb 2021
 #
 #	Copyright (c) 2017 - 2021, Igor Baklykov
 #	All rights reserved.
@@ -17,12 +17,12 @@
 .balign 4
 
 # Segment registers
-.global	outCS			        # Read CS register value
-.global	outDS   			# Read DS register value
-.global	outES   			# Read ES register value
-.global	outFS   			# Read FS register value
-.global	outGS   			# Read GS register value
-.global	outSS   			# Read SS register value
+.global	outCS				# Read CS register value
+.global	outDS				# Read DS register value
+.global	outES				# Read ES register value
+.global	outFS				# Read FS register value
+.global	outGS				# Read GS register value
+.global	outSS				# Read SS register value
 
 # Stack registers
 .global	outEBP				# Read EBP register value
@@ -44,86 +44,118 @@
 
 
 # Read CS register value
+.type outCS, @function
 outCS:
 	movw	%cs, %ax		# Get CS value
-	ret
+	retl
+.size outCS, . - outCS
 
 # Read DS register value
+.type outDS, @function
 outDS:
 	movw	%ds, %ax		# Get DS value
-	ret
+	retl
+.size outDS, . - outDS
 
 # Read ES register value
+.type outES, @function
 outES:
 	movw	%es, %ax		# Get ES value
-	ret
+	retl
+.size outES, . - outES
 
 # Read FS register value
+.type outFS, @function
 outFS:
 	movw	%fs, %ax		# Get FS value
-	ret
+	retl
+.size outFS, . - outFS
 
 # Read GS register value
+.type outGS, @function
 outGS:
 	movw	%gs, %ax		# Get GS value
-	ret
+	retl
+.size outGS, . - outGS
 
 # Read SS register value
+.type outSS, @function
 outSS:
 	movw	%ss, %ax		# Get SS value
-	ret
+	retl
+.size outSS, . - outSS
 
 
 # Read EBP register value
+.type outEBP, @function
 outEBP:
 	movl	%ebp, %eax		# Get EBP value
-	ret
+	retl
+.size outEBP, . - outEBP
 
 # Read ESP register value
+.type outESP, @function
 outESP:
 	movl	%esp, %eax		# Get ESP value
-	ret
+	retl
+.size outESP, . - outESP
 
 
 # Read EFLAGS register value
+.type outEFLAGS, @function
 outEFLAGS:
-        pushf                           # Push EFLAGS to stack
-	popl	%eax    		# Get EFLAGS value from stack to output
-	ret
+	pushf				# Push EFLAGS to stack
+	popl	%eax			# Get EFLAGS value from stack to output
+	retl
+.size outEFLAGS, . - outEFLAGS
 
 
 # Read EAX register value
+.type outEAX, @function
 outEAX:
-	ret                             # EAX value already in EAX register :D
+	retl				# EAX value already in EAX register :D
+.size outEAX, . - outEAX
 
 # Read EBX register value
+.type outEBX, @function
 outEBX:
 	movl	%ebx, %eax		# Get EBX value
-	ret
+	retl
+.size outEBX, . - outEBX
 
 # Read ECX register value
+.type outECX, @function
 outECX:
 	movl	%ecx, %eax		# Get ECX value
-	ret
+	retl
+.size outECX, . - outECX
 
 # Read EDX register value
+.type outEDX, @function
 outEDX:
 	movl	%edx, %eax		# Get EDX value
-	ret
+	retl
+.size outEDX, . - outEDX
 
 # Read EDI register value
+.type outEDI, @function
 outEDI:
 	movl	%edi, %eax		# Get EDI value
-	ret
+	retl
+.size outEDI, . - outEDI
 
 # Read ESI register value
+.type outESI, @function
 outESI:
 	movl	%esi, %eax		# Get ESI value
-	ret
+	retl
+.size outESI, . - outESI
 
 
 # Read EIP register value
+.type outEIP, @function
 outEIP:
 	leal	(%esp), %eax		# Get EIP value (Note - can only be read from stack after call!)
-	ret
+	retl
+.size outEIP, . - outEIP
 

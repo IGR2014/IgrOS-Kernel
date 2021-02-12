@@ -3,13 +3,15 @@
 //	Multiboot 1 functions
 //
 //	File:	multiboot.cpp
-//	Date:	02 Feb 2021
+//	Date:	12 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
 //
 //
 
+
+#include <array>
 
 #include <multiboot.hpp>
 
@@ -46,32 +48,32 @@ namespace igros::multiboot {
                 // Print header
 		klib::kprintf(
 			u8"MULTIBOOT header:\r\n"
-			u8"\tFlags:\t\t\t0x%x\r\n"
-			u8"\tBIOS memory map:\t%s\r\n"
-			u8"\tBoot device:\t\t%s\r\n"
-			u8"\tCommand line:\t\t%s\r\n"
-			u8"\tAOUT:\t\t\t%s\r\n"
-			u8"\tELF:\t\t\t%s\r\n"
-			u8"\tMemory map:\t\t%s\r\n"
-			u8"\tDrives:\t\t\t%s\r\n"
-			u8"\tTable config:\t\t%s\r\n"
-			u8"\tBootloader name:\t%s\r\n"
-			u8"\tAPM:\t\t\t%s\r\n"
-			u8"\tVBE:\t\t\t%s\r\n"
-			u8"\tFB:\t\t\t%s\r\n",
+			u8"\tFlags:\t\t\t0x%08x\r\n"
+			u8"\tBIOS memory map:\t[ %c ]\r\n"
+			u8"\tBoot device:\t\t[ %c ]\r\n"
+			u8"\tCommand line:\t\t[ %c ]\r\n"
+			u8"\tAOUT:\t\t\t[ %c ]\r\n"
+			u8"\tELF:\t\t\t[ %c ]\r\n"
+			u8"\tMemory map:\t\t[ %c ]\r\n"
+			u8"\tDrives:\t\t\t[ %c ]\r\n"
+			u8"\tTable config:\t\t[ %c ]\r\n"
+			u8"\tBootloader name:\t[ %c ]\r\n"
+			u8"\tAPM:\t\t\t[ %c ]\r\n"
+			u8"\tVBE:\t\t\t[ %c ]\r\n"
+			u8"\tFB:\t\t\t[ %c ]\r\n",
 			flags,
-			hasInfoMemory()		? u8"true" : u8"false",
-			hasInfoBootDevice()	? u8"true" : u8"false",
-			hasInfoCommandLine()	? u8"true" : u8"false",
-			hasInfoAOUT()		? u8"true" : u8"false",
-			hasInfoELF()		? u8"true" : u8"false",
-			hasInfoMemoryMap()	? u8"true" : u8"false",
-			hasInfoDrives()		? u8"true" : u8"false",
-			hasInfoConfig()		? u8"true" : u8"false",
-			hasInfoBootloaderName()	? u8"true" : u8"false",
-			hasInfoAPM()		? u8"true" : u8"false",
-			hasInfoVBE()		? u8"true" : u8"false",
-			hasInfoFrameBuffer()	? u8"true" : u8"false"
+			hasInfoMemory()		? u8'Y' : u8'N',
+			hasInfoBootDevice()	? u8'Y' : u8'N',
+			hasInfoCommandLine()	? u8'Y' : u8'N',
+			hasInfoAOUT()		? u8'Y' : u8'N',
+			hasInfoELF()		? u8'Y' : u8'N',
+			hasInfoMemoryMap()	? u8'Y' : u8'N',
+			hasInfoDrives()		? u8'Y' : u8'N',
+			hasInfoConfig()		? u8'Y' : u8'N',
+			hasInfoBootloaderName()	? u8'Y' : u8'N',
+			hasInfoAPM()		? u8'Y' : u8'N',
+			hasInfoVBE()		? u8'Y' : u8'N',
+			hasInfoFrameBuffer()	? u8'Y' : u8'N'
 		);
         }
 
@@ -131,19 +133,17 @@ namespace igros::multiboot {
 		// Test VBE
 		if (hasInfoVBE()) {
 			// Get VBE config info
-			auto config	= reinterpret_cast<multiboot::vbeConfig*>(vbeControlInfo);
+			const auto config	= reinterpret_cast<multiboot::vbeConfig*>(vbeControlInfo);
 			// Get current VBE mode
-			auto mode	= reinterpret_cast<multiboot::vbeMode*>(vbeModeInfo);
+			const auto mode		= reinterpret_cast<multiboot::vbeMode*>(vbeModeInfo);
 			// Get OEM string
-			auto oem	= reinterpret_cast<const char* const>(((config->oem & 0xFFFF0000) >> 12) + (config->oem & 0xFFFF));
-			// Get available modes
-			//auto modes	= reinterpret_cast<multiboot::vbeMode*>(((config->modes & 0xFFFF0000) >> 12) + (config->modes & 0xFFFF));
+			const auto oem		= reinterpret_cast<const char* const>(((config->oem & 0xFFFF0000) >> 12) + (config->oem & 0xFFFF));
 			// Get vendor string
-			auto vendor	= reinterpret_cast<const char* const>(((config->vendor & 0xFFFF0000) >> 12) + (config->vendor & 0xFFFF));
+			const auto vendor	= reinterpret_cast<const char* const>(((config->vendor & 0xFFFF0000) >> 12) + (config->vendor & 0xFFFF));
 			// Get product string
-			auto product	= reinterpret_cast<const char* const>(((config->productName & 0xFFFF0000) >> 12) + (config->productName & 0xFFFF));
+			const auto product	= reinterpret_cast<const char* const>(((config->productName & 0xFFFF0000) >> 12) + (config->productName & 0xFFFF));
 			// Get revision string
-			auto revision	= reinterpret_cast<const char* const>(((config->productRev & 0xFFFF0000) >> 12) + (config->productRev & 0xFFFF));
+			const auto revision	= reinterpret_cast<const char* const>(((config->productRev & 0xFFFF0000) >> 12) + (config->productRev & 0xFFFF));
 			// Dump VBE
 			klib::kprintf(
 				u8"Signature:\t%c%c%c%c\r\n"
@@ -158,18 +158,18 @@ namespace igros::multiboot {
 				config->signature[1],
 				config->signature[2],
 				config->signature[3],
-				(config->version >> 8) & 0xFF,
-				config->version & 0xFF,
-				(nullptr != oem) ? oem : "Unknown",
-				(nullptr != vendor) ? vendor : "Unknown",
-				(nullptr != product) ? product : "Unknown",
-				(nullptr != revision) ? revision : "Unknown",
+				(config->version >> 8) & 0x00FF,
+				config->version & 0x00FF,
+				(nullptr != oem)	? oem		: u8"Unknown",
+				(nullptr != vendor)	? vendor	: u8"Unknown",
+				(nullptr != product)	? product	: u8"Unknown",
+				(nullptr != revision)	? revision	: u8"Unknown",
 				vbeModeCurrent,
 				mode->width,
 				mode->height,
 				mode->bpp,
 				mode->physbase,
-				static_cast<dword_t>(config->memory) * 64
+				static_cast<dword_t>(config->memory) * 64U
 			);
 		} else {
 			klib::kprintf(u8"\tNo VBE info provided...\r\n");
@@ -182,6 +182,23 @@ namespace igros::multiboot {
 		klib::kprintf(u8"FB:\r\n");
 		// Check framebuffer
 		if (hasInfoFrameBuffer()) {
+			// Framebuffer type name
+			const char* fbTypeName = u8"";
+			// Get framebuffer type
+			switch (fbType) {
+				// Indexed
+				case 0:
+					fbTypeName = u8"Indexed";
+					break;
+				// RGB
+				case 1:
+					fbTypeName = u8"RGB";
+					break;
+				// Text
+				default:
+					fbTypeName = u8"Text";
+					break;
+			}
 			// Dump FB
 			klib::kprintf(
 				u8"Current mode:\t(%dx%d, %dbpp, %d, %s)\r\n"
@@ -191,7 +208,7 @@ namespace igros::multiboot {
 				fbHeight,
 				fbBpp,
 				fbPitch,
-				((0u == fbType) ? u8"Indexed" : ((1u == fbType) ? u8"RGB" : u8"Text")),
+				fbTypeName,
 				static_cast<std::size_t>(fbAddress),
 				fbWidth * (fbBpp >> 3) * fbHeight * fbPitch
 			);

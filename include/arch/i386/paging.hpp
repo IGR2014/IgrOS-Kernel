@@ -3,7 +3,7 @@
 //	Memory paging for x86
 //
 //	File:	paging.hpp
-//	Date:	02 Feb 2021
+//	Date:	10 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -26,17 +26,17 @@ namespace igros::i386 {
 
 
 	// Page directory/table max entries count
-	constexpr auto	PAGE_ENTRY_SHIFT	= 10;
+	constexpr auto	PAGE_ENTRY_SHIFT	= 10U;
 	// Page directory/table max entries count
-	constexpr auto	PAGE_ENTRY_SIZE		= 1u << PAGE_ENTRY_SHIFT;
+	constexpr auto	PAGE_ENTRY_SIZE		= 1U << PAGE_ENTRY_SHIFT;
 	// Page table max entries count
-	constexpr auto	PAGE_ENTRY_MASK		= PAGE_ENTRY_SIZE - 1u;
+	constexpr auto	PAGE_ENTRY_MASK		= PAGE_ENTRY_SIZE - 1U;
 	// Page shift
-	constexpr auto	PAGE_SHIFT		= 12;
+	constexpr auto	PAGE_SHIFT		= 12U;
 	// Page size
-	constexpr auto	PAGE_SIZE		= 1u << PAGE_SHIFT;
+	constexpr auto	PAGE_SIZE		= 1U << PAGE_SHIFT;
 	// Page mask
-	constexpr auto	PAGE_MASK		= PAGE_SIZE - 1u;
+	constexpr auto	PAGE_MASK		= PAGE_SIZE - 1U;
 
 	// Page directory ID shift
 	constexpr auto	PAGE_DIRECTORY_SHIFT	= PAGE_SHIFT + PAGE_ENTRY_SHIFT;
@@ -73,13 +73,23 @@ namespace igros::i386 {
 	// Paging structure
 	class paging final {
 
-		static page_t*	mFreePages;		// Free pages list
+		static page_t*	mFreePages;				// Free pages list
+
+		// Copy c-tor
+		paging(const paging &other) = delete;
+		// Copy assignment
+		paging& operator=(const paging &other) = delete;
+
+		// Move c-tor
+		paging(paging &&other) = delete;
+		// Move assignment
+		paging& operator=(paging &&other) = delete;
 
 
 	public:
 
 		// Page flags
-		enum class flags_t : dword_t {
+		enum class FLAGS : dword_t {
 			CLEAR			= 0x00000000,
 			PRESENT			= 0x00000001,
 			WRITABLE		= 0x00000002,
@@ -97,16 +107,6 @@ namespace igros::i386 {
 
 		// Default c-tor
 		paging() = default;
-
-		// Copy c-tor
-		paging(const paging &other) = delete;
-		// Copy assignment
-		paging& operator=(const paging &other) = delete;
-
-		// Move c-tor
-		paging(paging &&other) = delete;
-		// Move assignment
-		paging& operator=(paging &&other) = delete;
 
 		// Identity map kernel + map higher-half + self-map page directory
 		static void	init() noexcept;
@@ -144,20 +144,20 @@ namespace igros::i386 {
 
 		// Check table flags
 		[[nodiscard]]
-		static bool	checkFlags(const table_t* table, const kflags<flags_t> flags) noexcept;
+		static bool	checkFlags(const table_t* table, const kflags<FLAGS> flags) noexcept;
 		// Check page flags
 		[[nodiscard]]
-		static bool	checkFlags(const page_t* page, const kflags<flags_t> flags) noexcept;
+		static bool	checkFlags(const page_t* page, const kflags<FLAGS> flags) noexcept;
 
 		// Map virtual page to physical page (whole table, explicit page directory)
-		static void	mapTable(directory_t* const dir, const page_t* phys, const pointer_t virt, const kflags<flags_t> flags) noexcept;
+		static void	mapTable(directory_t* const dir, const page_t* phys, const pointer_t virt, const kflags<FLAGS> flags) noexcept;
 		// Map virtual page to physical page (whole table)
-		static void	mapTable(const page_t* phys, const pointer_t virt, const kflags<flags_t> flags) noexcept;
+		static void	mapTable(const page_t* phys, const pointer_t virt, const kflags<FLAGS> flags) noexcept;
 
 		// Map virtual page to physical page (single page, explicit page directory)
-		static void	mapPage(directory_t* const dir, const page_t* phys, const pointer_t virt, const kflags<flags_t> flags) noexcept;
+		static void	mapPage(directory_t* const dir, const page_t* phys, const pointer_t virt, const kflags<FLAGS> flags) noexcept;
 		// Map virtual page to physical page (single page)
-		static void	mapPage(const page_t* phys, const pointer_t virt, const kflags<flags_t> flags) noexcept;
+		static void	mapPage(const page_t* phys, const pointer_t virt, const kflags<FLAGS> flags) noexcept;
 
 		// Convert virtual address to physical address
 		[[nodiscard]]

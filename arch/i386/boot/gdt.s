@@ -3,7 +3,7 @@
 #	Global descriptor table low-level operations
 #
 #	File:	gdt.s
-#	Date:	08 Feb 2021
+#	Date:	11 Feb 2021
 #
 #	Copyright (c) 2017 - 2021, Igor Baklykov
 #	All rights reserved.
@@ -26,6 +26,7 @@
 
 
 # Reset segments
+.type gdtResetSegments, @function
 gdtResetSegments:
 	ljmp	$KERNEL_SEGMENT_CODE, $1f	# Long jump for CS changes to take affect
 1:
@@ -36,18 +37,23 @@ gdtResetSegments:
 	movw	%ax, %gs			# --//--
 	movw	%ax, %ss			# --//--
 	retl
+.size gdtResetSegments, . - gdtResetSegments
 
 
 # Load GDT
+.type gdtLoad, @function
 gdtLoad:
 	movl	4(%esp), %eax			# Get pointer from stack
 	lgdtl	(%eax)				# Load GDT from pointer
 	calll	gdtResetSegments		# Reset segments after GDT change
 	retl
+.size gdtLoad, . - gdtLoad
 
 
 # Store GDT
+.type gdtStore, @function
 gdtStore:
 	sgdtl	(%eax)				# Store GDT to EAX
 	retl
+.size gdtStore, . - gdtStore
 
