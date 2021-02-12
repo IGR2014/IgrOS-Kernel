@@ -3,7 +3,7 @@
 //	Platform description for x86_64
 //
 //	File:	platform-x86_64.cpp
-//	Date:	07 Feb 2021
+//	Date:	10 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -83,7 +83,7 @@ namespace igros::platform {
 
 
 	// Platform description
-	const description_t CURRENT_PLATFORM = {
+	const description_t CURRENT_PLATFORM {
 		u8"x86_64",
 		x86_64::x86_64Init,
 		x86_64::x86_64Finalize,

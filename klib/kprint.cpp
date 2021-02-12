@@ -130,7 +130,7 @@ namespace igros::klib {
 	void kvsnprintf(sbyte_t* buffer, const std::size_t size, const sbyte_t* format, va_list list) noexcept {
 
 		// Foramt string iterator
-		auto fmtIterator = 0ull;
+		auto fmtIterator = 0ULL;
 		// Resulting string iterator
 		auto strIterator = buffer;
 

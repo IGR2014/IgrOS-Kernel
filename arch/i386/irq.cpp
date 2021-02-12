@@ -43,17 +43,17 @@ namespace igros::i386 {
 	// Init IRQ
 	void irqi386::init() noexcept {
 		// Restart PIC`s
-		inPort8(PIC_MASTER_CONTROL,	0x11);
-		inPort8(PIC_SLAVE_CONTROL,	0x11);
+		::inPort8(PIC_MASTER_CONTROL,	0x11);
+		::inPort8(PIC_SLAVE_CONTROL,	0x11);
 		// Remap IRQ`s because of exceptions
-		inPort8(PIC_MASTER_DATA,	0x20);
-		inPort8(PIC_SLAVE_DATA,		0x28);
+		::inPort8(PIC_MASTER_DATA,	0x20);
+		::inPort8(PIC_SLAVE_DATA,	0x28);
 		// Setup PIC`s cascading
-		inPort8(PIC_MASTER_DATA,	0x04);
-		inPort8(PIC_SLAVE_DATA,		0x02);
+		::inPort8(PIC_MASTER_DATA,	0x04);
+		::inPort8(PIC_SLAVE_DATA,	0x02);
 		// Setup done
-		inPort8(PIC_MASTER_DATA,	0x01);
-		inPort8(PIC_SLAVE_DATA,		0x01);
+		::inPort8(PIC_MASTER_DATA,	0x01);
+		::inPort8(PIC_SLAVE_DATA,	0x01);
 		// Unmask all interrupts
 		irqi386::setMask();
 	}
@@ -61,13 +61,13 @@ namespace igros::i386 {
 
 	// Enable interrupts
 	void irqi386::enable() noexcept {
-		irqEnable();
+		::irqEnable();
 
 	}
 
 	// Disable interrupts
 	void irqi386::disable() noexcept {
-		irqDisable();
+		::irqDisable();
 	}
 
 
@@ -76,7 +76,7 @@ namespace igros::i386 {
 		// Chech if it's hardware interrupt
 		if (static_cast<dword_t>(irqNumber) < 16U) {
 			// Set interrupts mask
-			irqi386::setMask(irqi386::getMask() & ~(1U << static_cast<dword_t>(irqNumber)));
+			irqi386::setMask(static_cast<word_t>(irqi386::getMask() & ~(1U << static_cast<dword_t>(irqNumber))));
 		}
 	}
 
@@ -85,7 +85,7 @@ namespace igros::i386 {
 		// Chech if it's hardware interrupt
 		if (static_cast<dword_t>(irqNumber) < 16U) {
 			// Set interrupts mask
-			irqi386::setMask(irqi386::getMask() | (1U << static_cast<dword_t>(irqNumber)));
+			irqi386::setMask(static_cast<word_t>(irqi386::getMask() | (1U << static_cast<dword_t>(irqNumber))));
 		}
 	}
 
@@ -93,20 +93,20 @@ namespace igros::i386 {
 	// Set interrupts mask
 	void irqi386::setMask(const word_t mask) noexcept {
 		// Set Master controller mask
-		inPort8(PIC_MASTER_DATA, static_cast<byte_t>(mask & 0xFF));
+		::inPort8(PIC_MASTER_DATA,	static_cast<byte_t>(mask & 0x00FF));
 		// Set Slave controller mask
-		inPort8(PIC_SLAVE_DATA, static_cast<byte_t>((mask >> 8) & 0xFF));
+		::inPort8(PIC_SLAVE_DATA,	static_cast<byte_t>((mask >> 8) & 0x00FF));
 	}
 
 	// Get interrupts mask
 	[[nodiscard]]
 	word_t irqi386::getMask() noexcept {
 		// Read slave PIC current mask
-		auto mask	= static_cast<word_t>(outPort8(PIC_SLAVE_DATA)) << 8;
+		auto mask	= static_cast<word_t>(::outPort8(PIC_SLAVE_DATA)) << 8;
 		// Read master PIC current mask
-		mask		|= outPort8(PIC_MASTER_DATA);
+		mask		|= ::outPort8(PIC_MASTER_DATA);
 		// Return IRQ mask
-		return mask;
+		return static_cast<word_t>(mask);
 	}
 
 
@@ -117,10 +117,10 @@ namespace igros::i386 {
 			// Notify slave PIC if needed
 			if (static_cast<dword_t>(number) > 39U) {
 				// Notify slave PIC
-				inPort8(PIC_SLAVE_CONTROL, 0x20);
+				::inPort8(PIC_SLAVE_CONTROL, 0x20);
 			} else {
 				// Notify master PIC
-				inPort8(PIC_MASTER_CONTROL, 0x20);
+				::inPort8(PIC_MASTER_CONTROL, 0x20);
 			}
 		}
 	}

@@ -3,7 +3,7 @@
 //	Bit flags template datatype
 //
 //	File:	flags.hpp
-//	Date:	21 Dec 2020
+//	Date:	10 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -36,7 +36,7 @@ namespace igros {
 	public:
 
 		// Default c-tor
-		constexpr kflags() = default;
+		constexpr kflags() noexcept = default;
 		// From initializer list
 		template<typename ...Args>
 		constexpr explicit kflags(Args &&...args) noexcept; 
@@ -90,14 +90,14 @@ namespace igros {
 		constexpr kflags operator~() const noexcept;
 
 		// Copy c-tor
-		constexpr kflags(const kflags &value) = default;
+		constexpr kflags(const kflags &value) noexcept = default;
 		// Copy assignment
-		constexpr kflags& operator=(const kflags &value) = default;
+		constexpr kflags& operator=(const kflags &value) noexcept = default;
 
 		// Move c-tor
-		constexpr kflags(kflags &&value) = default;
+		constexpr kflags(kflags &&value) noexcept = default;
 		// Move assignment
-		constexpr kflags& operator=(kflags &&value) = default;
+		constexpr kflags& operator=(kflags &&value) noexcept = default;
 
 		// Type copy c-tor
 		constexpr kflags(const T &value) noexcept;
@@ -115,7 +115,7 @@ namespace igros {
 
 		// Test bit
 		[[nodiscard]]
-		constexpr bool	test(const std::size_t bit = 0u) const noexcept;
+		constexpr bool	test(const std::size_t bit = 0U) const noexcept;
 
 
 	};
@@ -293,7 +293,7 @@ namespace igros {
 	template<typename T, typename U>
 	[[nodiscard]]
 	constexpr bool kflags<T, U>::test(const std::size_t bit) const noexcept {
-		return static_cast<U>(1 << bit) == (mValue & static_cast<U>(1 << bit));
+		return static_cast<U>(1U << bit) == (mValue & static_cast<U>(1U << bit));
 	}
 
 

@@ -76,7 +76,7 @@ namespace igros::i386 {
 	class idti386 final {
 
 		// IDT ISR pointer
-		using isrPointeri386_t = std::add_pointer_t<void()>;
+		using isrPointeri386_t				= std::add_pointer_t<void()>;
 
 		// Number of IDT entries
 		constexpr static auto				IDT_SIZE = 256ULL;
@@ -185,11 +185,6 @@ namespace igros::i386 {
 		table[45] = idti386::setEntry(::irqHandlerD, 0x08, 0x8E);
 		table[46] = idti386::setEntry(::irqHandlerE, 0x08, 0x8E);
 		table[47] = idti386::setEntry(::irqHandlerF, 0x08, 0x8E);
-		// Set IDT size and data pointer
-		idti386::pointer = {
-			idti386::calcSize(),
-			idti386::table.cbegin()
-		};
 		// Load new IDT
 		::idtLoad(&pointer);
 	}

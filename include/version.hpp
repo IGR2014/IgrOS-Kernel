@@ -3,7 +3,7 @@
 //	IgrOS version info
 //
 //	File:	version.hpp
-//	Date:	17 Jul 2020
+//	Date:	10 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -14,6 +14,7 @@
 #pragma once
 
 
+// IgrOS
 #include <arch/types.hpp>
 
 
@@ -31,16 +32,19 @@ namespace igros {
 
 
 	// Kernel version integer
-	constexpr auto KERNEL_VERSION(const byte_t major, const byte_t minor, const dword_t build) noexcept {
-		return (build | (static_cast<dword_t>(minor) << 16) | (static_cast<dword_t>(major) << 24));
+	[[nodiscard]]
+	constexpr auto KERNEL_VERSION(const byte_t major, const byte_t minor, const word_t build) noexcept {
+		return (static_cast<dword_t>(build) | (static_cast<dword_t>(minor) << 16) | (static_cast<dword_t>(major) << 24));
 	}
 
 	// Kernel current version integer
+	[[nodiscard]]
 	constexpr auto KERNEL_VERSION() noexcept {
 		return KERNEL_VERSION(VERSION_MAJOR, VERSION_MINOR, VERSION_BUILD);
 	}
 
 	// Kernel version to string
+	[[nodiscard]]
 	constexpr auto KERNEL_VERSION_STRING() noexcept {
 		return u8"v0.1.34 [ BETA ]";
 	}

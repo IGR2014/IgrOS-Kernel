@@ -3,7 +3,7 @@
 //	Programmable interrupt timer
 //
 //	File:	pit.cpp
-//	Date:	08 Feb 2021
+//	Date:	11 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -30,7 +30,7 @@ namespace igros::arch {
 	constexpr auto PIT_CONTROL	= static_cast<io::port_t>(0x0043);
 	constexpr auto PIT_CHANNEL_0	= static_cast<io::port_t>(0x0040);
 	constexpr auto PIT_CHANNEL_1	= static_cast<io::port_t>(PIT_CHANNEL_0 + 1U);
-	constexpr auto PIT_CHANNEL_2	= static_cast<io::port_t>(PIT_CHANNEL_1 + 1U);
+	//constexpr auto PIT_CHANNEL_2	= static_cast<io::port_t>(PIT_CHANNEL_1 + 1U);
 
 
 	// Ticks count
@@ -70,10 +70,10 @@ namespace igros::arch {
 		// Send latch command for channel 0;
 		io::get().writePort8(PIT_CONTROL, 0x00);
 		// Get number of elapsed ticks since last IRQ
-		const auto loByte = io::get().readPort8(PIT_CHANNEL_0);
-		const auto hiByte = io::get().readPort8(PIT_CHANNEL_0);
+		const auto loByte		= io::get().readPort8(PIT_CHANNEL_0);
+		const auto hiByte		= io::get().readPort8(PIT_CHANNEL_0);
 		// Total elapsed ticks value
-		const auto elapsedSinceIRQ = (hiByte << 8) | loByte;
+		const auto elapsedSinceIRQ	= static_cast<word_t>(hiByte << 8) | loByte;
 		// Return full expired ticks count
 		return PIT_TICKS * PIT_DIVISOR + elapsedSinceIRQ;
 	}
@@ -82,7 +82,7 @@ namespace igros::arch {
 	// PIT interrupt (#0) handler
 	void pitInterruptHandler(const register_t* regs) noexcept {
 		// Output every N-th tick were N = frequency
-		if (0u == (++PIT_TICKS % PIT_FREQUENCY)) {
+		if (0U == (++PIT_TICKS % PIT_FREQUENCY)) {
 			// Current time to HH:MM:SS.zzz
 			const auto elapsed	= pitGetTicks();
 			const auto res		= klib::kudivmod(elapsed, PIT_MAIN_FREQUENCY);
@@ -95,9 +95,9 @@ namespace igros::arch {
 				u8"IRQ #%d\t[PIT]\r\n"
 				u8"Time:\t%02d:%02d:%02d.%03d (~1 sec.)\r\n",
 				irq::irq_t::PIT,
-				hours % 24U,
-				minutes % 60U,
-				seconds % 60U,
+				hours	% 24U,
+				minutes	% 60U,
+				seconds	% 60U,
 				nanoseconds
 			);
 		}

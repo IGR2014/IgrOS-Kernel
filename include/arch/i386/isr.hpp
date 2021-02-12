@@ -3,7 +3,7 @@
 //	Interrupts low-level operations
 //
 //	File:	isr.hpp
-//	Date:	03 Feb 2021
+//	Date:	12 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -25,9 +25,9 @@ namespace igros::i386 {
 
 
 	// IRQ offset in ISR list
-	constexpr auto IRQ_OFFSET	= 32u;
+	constexpr auto IRQ_OFFSET	= 32U;
 	// ISR list size
-	constexpr auto ISR_SIZE		= 256u;
+	constexpr auto ISR_SIZE		= 256U;
 
 	// Interrupt service routine handler type
 	using isri386_t			= std::add_pointer_t<void(const registeri386_t*)>;

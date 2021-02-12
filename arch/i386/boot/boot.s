@@ -3,7 +3,7 @@
 #	Low-level boot setup function
 #
 #	File:	boot.s
-#	Date:	05 Feb 2021
+#	Date:	11 Feb 2021
 #
 #	Copyright (c) 2017 - 2021, Igor Baklykov
 #	All rights reserved.
@@ -39,6 +39,7 @@
 .extern	kmain						# Extern kernel C-function
 
 # Kernel starts here
+.type kernelStart, @function
 kernelStart:
 	cli						# Turn off interrupts
 
@@ -79,7 +80,7 @@ kernelStart:
 
 	# Reload CS
 	leal	1f, %eax				# Load new CS related address
-	jmp	*%eax					# Long jump to it
+	jmpl	*%eax					# Long jump to it
 
 1:
 	# Adjust stack to higher half
@@ -91,7 +92,7 @@ kernelStart:
 2:
 	hlt						# Stop CPU
 	jmp	2b					# Hang CPU
-
+.size kernelStart, . - kernelStart
 
 .section .data
 .balign	4096

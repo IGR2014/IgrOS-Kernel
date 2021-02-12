@@ -3,7 +3,7 @@
 //	VGA memory low-level operations
 //
 //	File:	vmem.hpp
-//	Date:	14 Jul 2020
+//	Date:	12 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -22,14 +22,14 @@ namespace igros::arch {
 
 
 	// VGA console max width
-	constexpr static word_t		VIDEO_MEM_WIDTH		= 80u;
+	constexpr static word_t		VIDEO_MEM_WIDTH		= 80U;
 	// VGA console max height
-	constexpr static word_t		VIDEO_MEM_HEIGHT	= 25u;
+	constexpr static word_t		VIDEO_MEM_HEIGHT	= 25U;
 	// VGA console size
 	constexpr static dword_t	VIDEO_MEM_SIZE		= (VIDEO_MEM_WIDTH * VIDEO_MEM_HEIGHT);
 
 	// TAB size
-	constexpr static word_t		VIDEO_MEM_TAB_SIZE	= 8u;
+	constexpr static word_t		VIDEO_MEM_TAB_SIZE	= 8U;
 
 	// VGA cursor start register
 	constexpr static byte_t		VIDEO_MEM_CURSOR_START	= 0x0A;
@@ -83,6 +83,7 @@ namespace igros::arch {
 	void		vmemCursorSet(const vmemCursor&) noexcept;
 
 	// Get VGA memory cursor position
+	[[nodiscard]]
 	vmemCursor	vmemCursorGet() noexcept;
 
 	// Disable VGA memory cursor

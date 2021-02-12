@@ -3,7 +3,7 @@
 //	Interrupt descriptor table low-level operations
 //
 //	File:	idt.hpp
-//	Date:	07 Feb 2021
+//	Date:	11 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -78,7 +78,7 @@ namespace igros::x86_64 {
 	class idtx86_64 final {
 
 		// IDT ISR pointer
-		using isrPointerx86_64_t = std::add_pointer_t<void()>;
+		using isrPointerx86_64_t			= std::add_pointer_t<void()>;
 
 		// Number of IDT entries
 		constexpr static auto				IDT_SIZE = 256ULL;
@@ -133,7 +133,7 @@ namespace igros::x86_64 {
 
 	// Calculate IDT size
 	constexpr dword_t idtx86_64::calcSize() noexcept {
-		return (IDT_SIZE * sizeof(idtEntryx86_64_t)) - 1u;
+		return (IDT_SIZE * sizeof(idtEntryx86_64_t)) - 1U;
 	}
 
 
@@ -189,11 +189,6 @@ namespace igros::x86_64 {
 		table[45] = idtx86_64::setEntry(::irqHandlerD, 0x08, 0x8E);
 		table[46] = idtx86_64::setEntry(::irqHandlerE, 0x08, 0x8E);
 		table[47] = idtx86_64::setEntry(::irqHandlerF, 0x08, 0x8E);
-		// Set IDT size and data pointer
-		idtx86_64::pointer = {
-			idtx86_64::calcSize(),
-			idtx86_64::table.cbegin()
-		};
 		// Load new IDT
 		::idtLoad(&pointer);
 	}

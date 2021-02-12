@@ -3,7 +3,7 @@
 //	Memory paging for x86
 //
 //	File:	paging.hpp
-//	Date:	07 Feb 2021
+//	Date:	10 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -36,7 +36,7 @@ namespace igros::x86_64 {
 	// Page Table max entries count
 	constexpr auto	PAGE_TABLE_SIZE			= PAGE_MAP_LEVEL_4_SIZE;
 	// Page shift
-	constexpr auto	PAGE_SHIFT			= 12;
+	constexpr auto	PAGE_SHIFT			= 12U;
 	// Page size
 	constexpr auto	PAGE_SIZE			= 1ULL << PAGE_SHIFT;
 	// Page mask
@@ -89,11 +89,21 @@ namespace igros::x86_64 {
 
 		static table_t*	mFreePages;		// Free pages list
 
+		// Copy c-tor
+		paging(const paging &other) = delete;
+		// Copy assignment
+		paging& operator=(const paging &other) = delete;
+
+		// Move c-tor
+		paging(paging &&other) = delete;
+		// Move assignment
+		paging& operator=(paging &&other) = delete;
+
 
 	public:
 
 		// Page flags
-		enum class flags_t : quad_t {
+		enum class FLAGS : quad_t {
 			CLEAR			= 0x0000000000000000,
 			PRESENT			= 0x0000000000000001,
 			WRITABLE		= 0x0000000000000002,
@@ -112,16 +122,6 @@ namespace igros::x86_64 {
 
 		// Default c-tor
 		paging() noexcept = default;
-
-		// Copy c-tor
-		paging(const paging &other) = delete;
-		// Copy assignment
-		paging& operator=(const paging &other) = delete;
-
-		// Move c-tor
-		paging(paging &&other) = delete;
-		// Move assignment
-		paging& operator=(paging &&other) = delete;
 
 		// Identity map kernel + map higher-half + self-map page directory
 		static void init() noexcept;
@@ -160,41 +160,41 @@ namespace igros::x86_64 {
 
 		// Check directory pointer flags
 		[[nodiscard]]
-		static bool checkFlags(const directoryPointer_t* dirPtr, const kflags<flags_t> flags) noexcept;
+		static bool checkFlags(const directoryPointer_t* dirPtr, const kflags<FLAGS> flags) noexcept;
 		// Check directory flags
 		[[nodiscard]]
-		static bool checkFlags(const directory_t* dir, const kflags<flags_t> flags) noexcept;
+		static bool checkFlags(const directory_t* dir, const kflags<FLAGS> flags) noexcept;
 		// Check table flags
 		[[nodiscard]]
-		static bool checkFlags(const table_t* table, const kflags<flags_t> flags) noexcept;
+		static bool checkFlags(const table_t* table, const kflags<FLAGS> flags) noexcept;
 		// Check page flags
 		[[nodiscard]]
-		static bool checkFlags(const page_t* page, const kflags<flags_t> flags) noexcept;
+		static bool checkFlags(const page_t* page, const kflags<FLAGS> flags) noexcept;
 
 		// Map virtual page to physical page (whole pml4, explicit pml4)
-		static void mapPML4(pml4_t* const  pml4, const page_t* phys, const pointer_t virt, const kflags<flags_t> flags) noexcept;
+		static void mapPML4(pml4_t* const  pml4, const page_t* phys, const pointer_t virt, const kflags<FLAGS> flags) noexcept;
 		// Map virtual page to physical page (whole pml4)
-		static void mapPML4(const page_t* phys, const pointer_t virt, const kflags<flags_t> flags) noexcept;
+		static void mapPML4(const page_t* phys, const pointer_t virt, const kflags<FLAGS> flags) noexcept;
 
 		// Map virtual page to physical page (single directory pointer, explicit pml4)
-		static void mapDirectoryPointer(pml4_t* const pml4, const page_t* phys, const pointer_t virt, const kflags<flags_t> flags) noexcept;
+		static void mapDirectoryPointer(pml4_t* const pml4, const page_t* phys, const pointer_t virt, const kflags<FLAGS> flags) noexcept;
 		// Map virtual page to physical page (single directory pointer)
-		static void mapDirectoryPointer(const page_t* phys, const pointer_t virt, const kflags<flags_t> flags) noexcept;
+		static void mapDirectoryPointer(const page_t* phys, const pointer_t virt, const kflags<FLAGS> flags) noexcept;
 
 		// Map virtual page to physical page (single directory, explicit pml4)
-		static void mapDirectory(pml4_t* const pml4, const page_t* phys, const pointer_t virt, const kflags<flags_t> flags) noexcept;
+		static void mapDirectory(pml4_t* const pml4, const page_t* phys, const pointer_t virt, const kflags<FLAGS> flags) noexcept;
 		// Map virtual page to physical page (single directory)
-		static void mapDirectory(const page_t* phys, const pointer_t virt, const kflags<flags_t> flags) noexcept;
+		static void mapDirectory(const page_t* phys, const pointer_t virt, const kflags<FLAGS> flags) noexcept;
 
 		// Map virtual page to physical page (single table, explicit pml4)
-		static void mapTable(pml4_t* const pml4, const page_t* phys, const pointer_t virt, const kflags<flags_t> flags) noexcept;
+		static void mapTable(pml4_t* const pml4, const page_t* phys, const pointer_t virt, const kflags<FLAGS> flags) noexcept;
 		// Map virtual page to physical page (single table)
-		static void mapTable(const page_t* phys, const pointer_t virt, const kflags<flags_t> flags) noexcept;
+		static void mapTable(const page_t* phys, const pointer_t virt, const kflags<FLAGS> flags) noexcept;
 
 		// Map virtual page to physical page (single page, explicit page directory)
-		static void mapPage(pml4_t* const dir, const page_t* phys, const pointer_t virt, const kflags<flags_t> flags) noexcept;
+		static void mapPage(pml4_t* const dir, const page_t* phys, const pointer_t virt, const kflags<FLAGS> flags) noexcept;
 		// Map virtual page to physical page (single page)
-		static void mapPage(const page_t* phys, const pointer_t virt, const kflags<flags_t> flags) noexcept;
+		static void mapPage(const page_t* phys, const pointer_t virt, const kflags<FLAGS> flags) noexcept;
 
 		// Convert virtual address to physical address
 		[[nodiscard]]
