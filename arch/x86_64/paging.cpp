@@ -3,7 +3,7 @@
 //	Memory paging for x86_64
 //
 //	File:	paging.cpp
-//	Date:	10 Feb 2021
+//	Date:	12 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -280,8 +280,10 @@ namespace igros::x86_64 {
 	void paging::mapPML4(pml4_t* const pml4, const page_t* phys, const pointer_t virt, const kflags<FLAGS> flags) noexcept {
 
 		// Check alignment
-		if (	!klib::kalignCheck(phys, PAGE_SHIFT)	||
-			!klib::kalignCheck(virt, PAGE_SHIFT)) {
+		if (
+			!klib::kalignCheck(phys, PAGE_SHIFT)	||
+			!klib::kalignCheck(virt, PAGE_SHIFT)
+		) {
 			// Bad align detected
 			return;
 		}
@@ -305,11 +307,6 @@ namespace igros::x86_64 {
 		const auto pml4 = reinterpret_cast<pml4_t*>(outCR3());
 		// Map page to curent page map level 4
 		paging::mapPML4(pml4, phys, virt, flags);
-		// Setup page map level 4
-		// PML4 address bits ([0 .. 63] in cr3)
-		paging::flush(pml4);
-		// Enable paging
-		paging::enable();
 	}
 
 
@@ -317,8 +314,10 @@ namespace igros::x86_64 {
 	void paging::mapDirectoryPointer(pml4_t* const pml4, const page_t* phys, const pointer_t virt, const kflags<FLAGS> flags) noexcept {
 
 		// Check alignment
-		if (	!klib::kalignCheck(phys, PAGE_SHIFT)	||
-			!klib::kalignCheck(virt, PAGE_SHIFT)) {
+		if (
+			!klib::kalignCheck(phys, PAGE_SHIFT)	||
+			!klib::kalignCheck(virt, PAGE_SHIFT)
+		) {
 			// Bad align detected
 			return;
 		}
@@ -361,11 +360,6 @@ namespace igros::x86_64 {
 		const auto pml4 = reinterpret_cast<pml4_t*>(outCR3());
 		// Map page to curent page map level 4
 		paging::mapDirectoryPointer(pml4, phys, virt, flags);
-		// Setup page map level 4
-		// PML4 address bits ([0 .. 63] in cr3)
-		paging::flush(pml4);
-		// Enable paging
-		paging::enable();
 	}
 
 
@@ -373,8 +367,10 @@ namespace igros::x86_64 {
 	void paging::mapDirectory(pml4_t* const pml4, const page_t* phys, const pointer_t virt, const kflags<FLAGS> flags) noexcept {
 
 		// Check alignment
-		if (	!klib::kalignCheck(phys, PAGE_SHIFT)	||
-			!klib::kalignCheck(virt, PAGE_SHIFT)) {
+		if (
+			!klib::kalignCheck(phys, PAGE_SHIFT)	||
+			!klib::kalignCheck(virt, PAGE_SHIFT)
+		) {
 			// Bad align detected
 			return;
 		}
@@ -434,11 +430,6 @@ namespace igros::x86_64 {
 		const auto pml4 = reinterpret_cast<pml4_t*>(outCR3());
 		// Map page to curent page map level 4
 		paging::mapDirectory(pml4, phys, virt, flags);
-		// Setup page map level 4
-		// PML4 address bits ([0 .. 63] in cr3)
-		paging::flush(pml4);
-		// Enable paging
-		paging::enable();
 	}
 
 
@@ -446,8 +437,10 @@ namespace igros::x86_64 {
 	void paging::mapTable(pml4_t* const pml4, const page_t* phys, const pointer_t virt, const kflags<FLAGS> flags) noexcept {
 
 		// Check alignment
-		if (	!klib::kalignCheck(phys, PAGE_SHIFT)	||
-			!klib::kalignCheck(virt, PAGE_SHIFT)) {
+		if (
+			!klib::kalignCheck(phys, PAGE_SHIFT)	||
+			!klib::kalignCheck(virt, PAGE_SHIFT)
+		) {
 			// Bad align detected
 			return;
 		}
@@ -527,11 +520,6 @@ namespace igros::x86_64 {
 		const auto pml4 = reinterpret_cast<pml4_t*>(outCR3());
 		// Map page to curent page map level 4
 		paging::mapTable(pml4, phys, virt, flags);
-		// Setup page map level 4
-		// PML4 address bits ([0 .. 63] in cr3)
-		paging::flush(pml4);
-		// Enable paging
-		paging::enable();
 	}
 
 
@@ -539,8 +527,10 @@ namespace igros::x86_64 {
 	void paging::mapPage(pml4_t* const pml4, const page_t* phys, const pointer_t virt, const kflags<FLAGS> flags) noexcept {
 
 		// Check alignment
-		if (	!klib::kalignCheck(phys, PAGE_SHIFT)	||
-			!klib::kalignCheck(virt, PAGE_SHIFT)) {
+		if (
+			!klib::kalignCheck(phys, PAGE_SHIFT)	||
+			!klib::kalignCheck(virt, PAGE_SHIFT)
+		) {
 			// Bad align detected
 			return;
 		}
@@ -611,9 +601,6 @@ namespace igros::x86_64 {
 		// Insert page pointer
 		page	= reinterpret_cast<page_t*>(pageFlags.value());
 
-		//
-		//klib::kprintf(u8"Page mapped:\t0x%p -> 0x%p [%3d, %3d, %3d, %3d]", phys, virt, pml4ID, dirPtrID, dirID, tabID);
-
 	}
 
 	// Map virtual page to physical page (single page)
@@ -622,11 +609,6 @@ namespace igros::x86_64 {
 		const auto pml4 = reinterpret_cast<pml4_t*>(outCR3());
 		// Map page to curent page map level 4
 		paging::mapPage(pml4, phys, virt, flags);
-		// Setup page map level 4
-		// PML4 address bits ([0 .. 63] in cr3)
-		paging::flush(pml4);
-		// Enable paging
-		paging::enable();
 	}
 
 
@@ -705,15 +687,15 @@ namespace igros::x86_64 {
 				u8"WHEN:\t\tattempting to %s\r\n"
 				u8"ADDRESS:\t0x%p\r\n"
 				u8"WHICH IS:\tnot %s\r\n",
-				static_cast<dword_t>(except::NUMBER::PAGE_FAULT),
-				except::NAME[static_cast<dword_t>(except::NUMBER::PAGE_FAULT)],
-				((regs->param & 0x18) == 0u) ? u8"ACCESS VIOLATION"	: u8"",
-				((regs->param & 0x10) == 0u) ? u8""			: u8"INSTRUCTION FETCH",
-				((regs->param & 0x08) == 0u) ? u8""			: u8"RESERVED BIT SET",
-				((regs->param & 0x04) == 0u) ? u8"KERNEL"		: u8"USER",
-				((regs->param & 0x02) == 0u) ? u8"READ"			: u8"WRITE",
+				regs->number,
+				except::NAME[regs->number],
+				((regs->param & 0x18) == 0U) ? u8"ACCESS VIOLATION"	: u8"",
+				((regs->param & 0x10) == 0U) ? u8""			: u8"INSTRUCTION FETCH",
+				((regs->param & 0x08) == 0U) ? u8""			: u8"RESERVED BIT SET",
+				((regs->param & 0x04) == 0U) ? u8"KERNEL"		: u8"USER",
+				((regs->param & 0x02) == 0U) ? u8"READ"			: u8"WRITE",
 				reinterpret_cast<const pointer_t>(outCR2()),
-				((regs->param & 0x01) == 0u) ? u8"PRESENT"		: u8"PRIVILEGED");
+				((regs->param & 0x01) == 0U) ? u8"PRESENT"		: u8"PRIVILEGED");
 
 		// Hang here
 		cpuHalt();

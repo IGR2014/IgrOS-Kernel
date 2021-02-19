@@ -52,10 +52,10 @@ namespace igros::klib {
 			auto byte	= reinterpret_cast<byte_t*>(dst);
 			auto last	= (mSize << 1) - 1ULL;
 			// Set unaligned data at the start and end of interval
-			byte[0ull]	= static_cast<byte_t>((val >> 8) & 0xFF);
+			byte[0ULL]	= static_cast<byte_t>((val >> 8) & 0xFF);
 			byte[last]	= static_cast<byte_t>(val & 0xFF);
 			// Update address
-			mDest		= reinterpret_cast<word_t*>(&byte[1ull]);
+			mDest		= reinterpret_cast<word_t*>(&byte[1ULL]);
 			// Update size
 			--mSize;
 		}
@@ -89,10 +89,10 @@ namespace igros::klib {
 			// Handle first unaligned byte + word (if unaligned)
 			case 0x03: {
 				// Get byte pointer to array
-				auto byte	= reinterpret_cast<byte_t*>(dst);
-				auto last	= (mSize << 2) - 1ULL;
+				const auto byte	= reinterpret_cast<byte_t*>(dst);
+				const auto last	= (mSize << 2) - 1ULL;
 				// Get word pointer to array
-				auto word	= reinterpret_cast<word_t*>(&byte[last - 2ULL]);
+				const auto word	= reinterpret_cast<word_t*>(&byte[last - 2ULL]);
 				// Set unaligned data at the start and end of interval
 				byte[0ULL]	= static_cast<byte_t>((val >> 24) & 0xFF);
 				word[0ULL]	= static_cast<word_t>(val & 0xFFFF);
@@ -106,8 +106,8 @@ namespace igros::klib {
 			// Handle first unaligned word (if unaligned)
 			case 0x02: {
 				// Get word pointer to array
-				auto word	= reinterpret_cast<word_t*>(dst);
-				auto last	= (mSize << 1) - 1ULL;
+				const auto word	= reinterpret_cast<word_t*>(dst);
+				const auto last	= (mSize << 1) - 1ULL;
 				// Set unaligned data at the start and end of interval
 				word[0ULL]	= static_cast<word_t>((val >> 16) & 0xFFFF);
 				word[last]	= static_cast<word_t>(val & 0xFFFF);
@@ -120,10 +120,10 @@ namespace igros::klib {
 			// Handle first unaligned byte (if unaligned)
 			case 0x01: {
 				// Get byte pointer to array
-				auto byte	= reinterpret_cast<byte_t*>(dst);
-				auto last	= (mSize << 2) - 1ULL;
+				const auto byte	= reinterpret_cast<byte_t*>(dst);
+				const auto last	= (mSize << 2) - 1ULL;
 				// Get word pointer to array
-				auto word	= reinterpret_cast<word_t*>(&byte[1ULL]);
+				const auto word	= reinterpret_cast<word_t*>(&byte[1ULL]);
 				// Set unaligned data at the start and end of interval
 				byte[0ULL]	= static_cast<byte_t>((val >> 8) & 0xFF);
 				word[0ULL]	= static_cast<word_t>((val >> 16) & 0xFFFF);
@@ -155,7 +155,10 @@ namespace igros::klib {
 	pointer_t kmemset64(quad_t* dst, const std::size_t size, const quad_t val) noexcept {
 
 		// Check arguments
-		if (nullptr == dst || 0ULL == size) {
+		if (
+			(nullptr == dst)	||
+			(0ULL	 == size)
+		) {
 			return nullptr;
 		}
 
@@ -178,7 +181,12 @@ namespace igros::klib {
 	[[maybe_unused]]
 	pointer_t kmemcpy(const pointer_t dst, const pointer_t src, const std::size_t size) noexcept {
 		// Check arguments
-		if (nullptr == dst || nullptr == src || dst == src || 0ULL == size) {
+		if (
+			(nullptr == dst)	||
+			(nullptr == src)	||
+			(dst	 == src)	||
+			(0ULL	 == size)
+		) {
 			return nullptr;
 		}
 		// Do actual memcpy

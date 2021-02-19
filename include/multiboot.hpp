@@ -3,7 +3,7 @@
 //	Multiboot 1 header info
 //
 //	File:	multiboot.hpp
-//	Date:	17 Jul 2020
+//	Date:	12 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -15,6 +15,8 @@
 
 
 #include <arch/types.hpp>
+
+#include <flags.hpp>
 
 
 // Multiboot code zone
@@ -34,20 +36,20 @@ namespace igros::multiboot {
 
 
 	// Multiboot header flags enumeration
-	enum flags_t : dword_t {
-		MEM		= (1u << 0),			// Memory info available
-		BOOT_DEV	= (1u << 1),			// Boot device info available
-		CMD		= (1u << 2),			// Kernel command line available
-		MODULES		= (1u << 3),			// Kernel modules available
-		SYMS_AOUT	= (1u << 4),			// A.OUT info available
-		SYMS_ELF	= (1u << 5),			// ELF info available
-		MEM_MAP		= (1u << 6),			// Memory map available
-		DRIVES		= (1u << 7),			// Drives info available
-		TABLE_CONFIG	= (1u << 8),			// Configuration table available
-		LOADER_NAME	= (1u << 9),			// Bootloader name available
-		TABLE_APM	= (1u << 10),			// APM table available
-		VBE		= (1u << 11),			// VBE table available
-		FRAME_BUF	= (1u << 12)			// Frame buffer info available
+	enum class flags_t : dword_t {
+		MEM		= (1U << 0),			// Memory info available
+		BOOT_DEV	= (1U << 1),			// Boot device info available
+		CMD		= (1U << 2),			// Kernel command line available
+		MODULES		= (1U << 3),			// Kernel modules available
+		SYMS_AOUT	= (1U << 4),			// A.OUT info available
+		SYMS_ELF	= (1U << 5),			// ELF info available
+		MEM_MAP		= (1U << 6),			// Memory map available
+		DRIVES		= (1U << 7),			// Drives info available
+		TABLE_CONFIG	= (1U << 8),			// Configuration table available
+		LOADER_NAME	= (1U << 9),			// Bootloader name available
+		TABLE_APM	= (1U << 10),			// APM table available
+		VBE		= (1U << 11),			// VBE table available
+		FRAME_BUF	= (1U << 12)			// Frame buffer info available
 	};
 
 
@@ -95,7 +97,7 @@ namespace igros::multiboot {
 		dword_t		modulesCount;			// Multiboot kernel modules count
 		dword_t		modulesAddr;			// Multiboot kernel modules address
 
-		dword_t		syms[4];			// Multiboot kernel symbols
+		dword_t		syms[4ULL];			// Multiboot kernel symbols
 
 		dword_t		mmapLength;			// Multiboot memory map length
 		dword_t		mmapAddr;			// Multiboot memory map start address
@@ -122,141 +124,171 @@ namespace igros::multiboot {
 		dword_t		fbHeight;			// Multiboot FB height
 		byte_t		fbBpp;				// Multiboot FB bpp
 		byte_t		fbType;				// Multiboot FB type
-		byte_t		fbColorInfo[6];			// Multiboot FB color info
+		byte_t		fbColorInfo[6ULL];		// Multiboot FB color info
 
 
 		// Multiboot contains valid memory info
-		inline bool hasInfoMemory() const noexcept;
+		[[nodiscard]]
+		bool	hasInfoMemory() const noexcept;
 		// Multiboot contains valid boot device info
-		inline bool hasInfoBootDevice() const noexcept;
+		[[nodiscard]]
+		bool	hasInfoBootDevice() const noexcept;
 		// Multiboot contains valid kernel command line info
-		inline bool hasInfoCommandLine() const noexcept;
+		[[nodiscard]]
+		bool	hasInfoCommandLine() const noexcept;
 		// Multiboot contains valid kernel modules info
-		inline bool hasInfoModules() const noexcept;
+		[[nodiscard]]
+		bool	hasInfoModules() const noexcept;
 		// Multiboot contains valid A.OUT sections info
-		inline bool hasInfoAOUT() const noexcept;
+		[[nodiscard]]
+		bool	hasInfoAOUT() const noexcept;
 		// Multiboot contains valid ELF sections info
-		inline bool hasInfoELF() const noexcept;
+		[[nodiscard]]
+		bool	hasInfoELF() const noexcept;
 		// Multiboot contains valid memory map info
-		inline bool hasInfoMemoryMap() const noexcept;
+		[[nodiscard]]
+		bool	hasInfoMemoryMap() const noexcept;
 		// Multiboot contains valid drives info
-		inline bool hasInfoDrives() const noexcept;
+		[[nodiscard]]
+		bool	hasInfoDrives() const noexcept;
 		// Multiboot contains valid config table info
-		inline bool hasInfoConfig() const noexcept;
+		[[nodiscard]]
+		bool	hasInfoConfig() const noexcept;
 		// Multiboot contains valid bootloader name info
-		inline bool hasInfoBootloaderName() const noexcept;
+		[[nodiscard]]
+		bool	hasInfoBootloaderName() const noexcept;
 		// Multiboot contains valid APM table info
-		inline bool hasInfoAPM() const noexcept;
+		[[nodiscard]]
+		bool	hasInfoAPM() const noexcept;
 		// Multiboot contains valid VBE info
-		inline bool hasInfoVBE() const noexcept;
+		[[nodiscard]]
+		bool	hasInfoVBE() const noexcept;
 		// Multiboot contains valid FrameBuffer info
-		inline bool hasInfoFrameBuffer() const noexcept;
+		[[nodiscard]]
+		bool	hasInfoFrameBuffer() const noexcept;
 
 		// Get multiboot command line
-		inline const sbyte_t*	commandLine() const noexcept;
+		[[nodiscard]]
+		const sbyte_t*	commandLine() const noexcept;
 		// Get multiboot bootloader name
-		inline const sbyte_t*	loaderName() const noexcept;
+		[[nodiscard]]
+		const sbyte_t*	loaderName() const noexcept;
 
 		// Print multiboot flags
-		void printFlags() const noexcept;
+		void	printFlags() const noexcept;
 		// Print multiboot memory info
-		void printMemInfo() const noexcept;
+		void	printMemInfo() const noexcept;
 		// Print multiboot memory map
-		void printMemMap() const noexcept;
+		void	printMemMap() const noexcept;
 		// Print multiboot VBE info
-		void printVBEInfo() const noexcept;
+		void	printVBEInfo() const noexcept;
 		// Print multiboot FB info
-		void printFBInfo() const noexcept;
+		void	printFBInfo() const noexcept;
 
 
 	};
 
 	// Multiboot contains valid memory info
-	bool info_t::hasInfoMemory() const noexcept {
-		return flags & flags_t::MEM;
+	[[nodiscard]]
+	inline bool info_t::hasInfoMemory() const noexcept {
+		return kflags<flags_t>(flags).test(flags_t::MEM);
 	}
 
 	// Multiboot contains valid boot device info
-	bool info_t::hasInfoBootDevice() const noexcept {
-		return flags & flags_t::BOOT_DEV;
+	[[nodiscard]]
+	inline bool info_t::hasInfoBootDevice() const noexcept {
+		return kflags<flags_t>(flags).test(flags_t::BOOT_DEV);
 	}
 
 	// Multiboot contains valid command line info
-	bool info_t::hasInfoCommandLine() const noexcept {
-		return flags & flags_t::CMD;
+	[[nodiscard]]
+	inline bool info_t::hasInfoCommandLine() const noexcept {
+		return kflags<flags_t>(flags).test(flags_t::CMD);
 	}
 
 	// Multiboot contains valid kernel modules info
-	bool info_t::hasInfoModules() const noexcept {
-		return flags & flags_t::MODULES;
+	[[nodiscard]]
+	inline bool info_t::hasInfoModules() const noexcept {
+		return kflags<flags_t>(flags).test(flags_t::MODULES);
 	}
 
 	// Multiboot contains valid A.OUT sections info
-	bool info_t::hasInfoAOUT() const noexcept {
+	[[nodiscard]]
+	inline bool info_t::hasInfoAOUT() const noexcept {
 		// A.OUT but not ELF
-		return (flags & flags_t::SYMS_AOUT) && !(flags & flags_t::SYMS_ELF);
+		return	kflags<flags_t>(flags).test(flags_t::SYMS_AOUT) && !kflags<flags_t>(flags).test(flags_t::SYMS_ELF);
 	}
 
 	// Multiboot contains valid ELF sections info
-	bool info_t::hasInfoELF() const noexcept {
+	[[nodiscard]]
+	inline bool info_t::hasInfoELF() const noexcept {
 		// ELF but not A.OUT
-		return (flags & flags_t::SYMS_ELF) && !(flags & flags_t::SYMS_AOUT);
+		return kflags<flags_t>(flags).test(flags_t::SYMS_ELF) && !kflags<flags_t>(flags).test(flags_t::SYMS_AOUT);
 	}
 
 	// Multiboot contains valid memory map info
-	bool info_t::hasInfoMemoryMap() const noexcept {
-		return flags & flags_t::MEM_MAP;
+	[[nodiscard]]
+	inline bool info_t::hasInfoMemoryMap() const noexcept {
+		return kflags<flags_t>(flags).test(flags_t::MEM_MAP);
 	}
 
 	// Multiboot contains valid drives info
-	bool info_t::hasInfoDrives() const noexcept {
-		return flags & flags_t::DRIVES;
+	[[nodiscard]]
+	inline bool info_t::hasInfoDrives() const noexcept {
+		return kflags<flags_t>(flags).test(flags_t::DRIVES);
 	}
 
 	// Multiboot contains valid config table info
-	bool info_t::hasInfoConfig() const noexcept {
-		return flags & flags_t::TABLE_CONFIG;
+	[[nodiscard]]
+	inline bool info_t::hasInfoConfig() const noexcept {
+		return kflags<flags_t>(flags).test(flags_t::TABLE_CONFIG);
 	}
 
 	// Multiboot contains valid bootloader name info
-	bool info_t::hasInfoBootloaderName() const noexcept {
-		return flags & flags_t::LOADER_NAME;
+	[[nodiscard]]
+	inline bool info_t::hasInfoBootloaderName() const noexcept {
+		return kflags<flags_t>(flags).test(flags_t::LOADER_NAME);
 	}
 
 	// Multiboot contains valid APM table info
-	bool info_t::hasInfoAPM() const noexcept {
-		return flags & flags_t::TABLE_APM;
+	[[nodiscard]]
+	inline bool info_t::hasInfoAPM() const noexcept {
+		return kflags<flags_t>(flags).test(flags_t::TABLE_APM);
 	}
 
 	// Multiboot contains valid VBE info
-	bool info_t::hasInfoVBE() const noexcept {
-		return flags & flags_t::VBE;
+	[[nodiscard]]
+	inline bool info_t::hasInfoVBE() const noexcept {
+		return kflags<flags_t>(flags).test(flags_t::VBE);
 	}
 
 	// Multiboot contains valid FrameBuffer info
-	bool info_t::hasInfoFrameBuffer() const noexcept {
-		return flags & flags_t::FRAME_BUF;
+	[[nodiscard]]
+	inline bool info_t::hasInfoFrameBuffer() const noexcept {
+		return kflags<flags_t>(flags).test(flags_t::FRAME_BUF);
 	}
 
 
 	// Get multiboot command line
-	const sbyte_t* info_t::commandLine() const noexcept {
-		return (flags & flags_t::CMD) ? reinterpret_cast<const sbyte_t*>(cmdLine) : nullptr;
+	[[nodiscard]]
+	inline const sbyte_t* info_t::commandLine() const noexcept {
+		return (hasInfoCommandLine()) ? reinterpret_cast<const sbyte_t* const>(cmdLine) : nullptr;
 	}
 
 	// Get multiboot bootloader name
-	const sbyte_t* info_t::loaderName() const noexcept {
-		return (flags & flags_t::LOADER_NAME) ? reinterpret_cast<const sbyte_t*>(bootloaderName) : nullptr;
+	[[nodiscard]]
+	inline const sbyte_t* info_t::loaderName() const noexcept {
+		return (hasInfoBootloaderName()) ? reinterpret_cast<const sbyte_t* const>(bootloaderName) : nullptr;
 	}
 
 
 	// Multiboot 1 memory entry type
 	enum class MEMORY_MAP_TYPE : dword_t {
-		AVAILABLE	= 1u,			// Memory available
-		RESERVED	= 2u,			// Memory reserved
-		ACPI		= 3u,			// Memory is ACPI reclaimable
-		NVS		= 4u,			// Memory is NVS
-		BAD		= 5u			// BAD memory
+		AVAILABLE	= 1U,			// Memory available
+		RESERVED	= 2U,			// Memory reserved
+		ACPI		= 3U,			// Memory is ACPI reclaimable
+		NVS		= 4U,			// Memory is NVS
+		BAD		= 5U			// BAD memory
 	};
 
 	// Multiboot 1 memory map entry
@@ -270,7 +302,7 @@ namespace igros::multiboot {
 
 	// VBE config
 	struct vbeConfig final {
-		sbyte_t		signature[4];		// VBE signature ("VESA")
+		sbyte_t		signature[4ULL];	// VBE signature ("VESA")
 		word_t		version;		// VBE version (e.g. 0x0300 = 3.0)
 		dword_t		oem;			// OEM string
 		dword_t		caps;			// VBE capabilities
@@ -280,8 +312,8 @@ namespace igros::multiboot {
 		dword_t		vendor;			// VBE vendor string
 		dword_t		productName;		// VBE product name string
 		dword_t		productRev;		// VBE product revision string
-		byte_t		reserved[222];		// VBE reserved
-		byte_t		oemData[256];		// VBE OEM data
+		byte_t		reserved[222ULL];	// VBE reserved
+		byte_t		oemData[256ULL];	// VBE OEM data
 	};
 
 	// VBE mode

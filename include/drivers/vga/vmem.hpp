@@ -36,7 +36,7 @@ namespace igros::arch {
 
 
 	// VGA memory colors enumeration
-	enum vmemColor : byte_t {
+	enum class vmemColor : byte_t {
 	        Black   	= 0x00,			// Black VGA color
 	        Blue		= 0x01,			// Blue VGA color
 		Green		= 0x02,			// Green VGA color
@@ -62,10 +62,10 @@ namespace igros::arch {
 	};
 
 	// VGA memory base address
-	static vmemSymbol* const vmemBase		= reinterpret_cast<vmemSymbol*>(0x000B8000);
+	static vmemSymbol* const vmemBase	= reinterpret_cast<vmemSymbol*>(0x000B8000);
 
 	// VGA memory background symbol
-	static byte_t			vmemBkgColor	= vmemColor::Green;
+	static vmemColor vmemBkgColor		= vmemColor::Green;
 
 	// VGA memory cursor struct
 	struct vmemCursor {

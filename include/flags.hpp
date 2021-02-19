@@ -3,7 +3,7 @@
 //	Bit flags template datatype
 //
 //	File:	flags.hpp
-//	Date:	10 Feb 2021
+//	Date:	12 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -116,6 +116,9 @@ namespace igros {
 		// Test bit
 		[[nodiscard]]
 		constexpr bool	test(const std::size_t bit = 0U) const noexcept;
+		// Test flag
+		[[nodiscard]]
+		constexpr bool	test(const T &value) const noexcept;
 
 
 	};
@@ -294,6 +297,14 @@ namespace igros {
 	[[nodiscard]]
 	constexpr bool kflags<T, U>::test(const std::size_t bit) const noexcept {
 		return static_cast<U>(1U << bit) == (mValue & static_cast<U>(1U << bit));
+	}
+
+
+	// Test flag
+	template<typename T, typename U>
+	[[nodiscard]]
+	constexpr bool kflags<T, U>::test(const T &value) const noexcept {
+		return static_cast<U>(value) == (mValue & static_cast<U>(value));
 	}
 
 

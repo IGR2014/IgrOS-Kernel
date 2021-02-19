@@ -3,7 +3,7 @@
 //	CPUID detection
 //
 //	File:	cpuid.hpp
-//	Date:	13 Jul 2020
+//	Date:	12 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -46,10 +46,12 @@ namespace igros::x86_64 {
 
 
 	// Check if CPUID exists (Looks like on i386 not)
-	[[nodiscard]] bool cpuidCheck() noexcept;
+	[[nodiscard]]
+	bool cpuidCheck() noexcept;
 
 	// CPUID instruction call
-	[[nodiscard]] cpuidRegs_t cpuid(const cpuidFlags_t flag) noexcept;
+	[[nodiscard]]
+	cpuidRegs_t cpuid(const cpuidFlags_t flag) noexcept;
 
 
 }	// namespace igros::x86_64

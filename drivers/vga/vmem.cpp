@@ -3,7 +3,7 @@
 //	VGA memory low-level operations
 //
 //	File:	vmem.cpp
-//	Date:	08 Feb 2021
+//	Date:	12 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -23,8 +23,8 @@ namespace igros::arch {
 
 
 	// VGA cursor control ports
-	constexpr auto VGA_CURSOR_CONTROL	= static_cast<io::port_t>(0x03D4);
-	constexpr auto VGA_CURSOR_DATA		= static_cast<io::port_t>(VGA_CURSOR_CONTROL + 1U);
+	constexpr auto VGA_CURSOR_CONTROL	= io::port_t {0x03D4};
+	constexpr auto VGA_CURSOR_DATA		= io::port_t {VGA_CURSOR_CONTROL + 1U};
 
 
 	// Set cursor position
@@ -32,13 +32,13 @@ namespace igros::arch {
 		// Calculate VGA console offset
 		const auto position = (y * VIDEO_MEM_WIDTH) + x;
 		// Choose cursor location high register
-		io::get().writePort8(VGA_CURSOR_CONTROL, 0x0E);
+		io::get().writePort8(VGA_CURSOR_CONTROL,	0x0E);
 		// Write cursor position high byte
-		io::get().writePort8(VGA_CURSOR_DATA, ((position & 0xFF00) >> 8));
+		io::get().writePort8(VGA_CURSOR_DATA,		((position & 0xFF00) >> 8));
 		// Choose cursor location low register
-		io::get().writePort8(VGA_CURSOR_CONTROL, 0x0F);
+		io::get().writePort8(VGA_CURSOR_CONTROL,	0x0F);
 		// Write cursor position low byte
-		io::get().writePort8(VGA_CURSOR_DATA, (position & 0x00FF));
+		io::get().writePort8(VGA_CURSOR_DATA,		(position & 0x00FF));
 		// Save cursor data
 		cursorPos.x = x;
 		cursorPos.y = y;
@@ -70,9 +70,9 @@ namespace igros::arch {
 	// Disable VGA memory cursor
 	void vmemCursorDisable() noexcept {
 		// Choose cursor start register
-		io::get().writePort8(VGA_CURSOR_CONTROL, 0x0A);
+		io::get().writePort8(VGA_CURSOR_CONTROL,	0x0A);
 		// Send control word to disable cursor
-		io::get().writePort8(VGA_CURSOR_DATA, 0x20);
+		io::get().writePort8(VGA_CURSOR_DATA,		0x20);
 	}
 
 	// Enable VGA memory cursor
@@ -88,16 +88,15 @@ namespace igros::arch {
 	// Set VGA memory color
 	void vmemSetColor(const byte_t &background, const byte_t &foreground) noexcept {
 		// Background is first 4 bits and foreground is next 4
-		vmemBkgColor = (background << 4) | foreground;
+		vmemBkgColor = static_cast<vmemColor>((background << 4) | foreground);
 	}
 
 	// Write symbol to VGA memory
 	void vmemWrite(const sbyte_t &symbol) noexcept {
-
 		// Backspace symbol
 		if (symbol == u8'\b') {
 			// If we are not at start
-			if (0u != cursorPos.x) {
+			if (0U != cursorPos.x) {
 				// Move 1 symbol backward
 				--cursorPos.x;
 			} else {
@@ -123,18 +122,16 @@ namespace igros::arch {
 			const auto pos = cursorPos.y * VIDEO_MEM_WIDTH + cursorPos.x;
 			// Write symbol to VGA console
 			vmemBase[pos].symbol	= symbol;
-			vmemBase[pos].color	= vmemBkgColor;
+			vmemBase[pos].color	= static_cast<byte_t>(vmemBkgColor);
 			// Move cursor 1 symbol right
 			++cursorPos.x;
 		}
-
 		// Check if we are not out of columns
 		if (cursorPos.x >= VIDEO_MEM_WIDTH) {
 			// Move to next line
 			cursorPos.x = 0U;
 			++cursorPos.y;
 		}
-
 		// Chech if we are not out of rows
 		if (cursorPos.y >= VIDEO_MEM_HEIGHT) {
 			// Move cursor to the last line
@@ -146,17 +143,16 @@ namespace igros::arch {
 			// Calculate offset in VGA console
 			const auto pos = cursorPos.y * VIDEO_MEM_WIDTH + cursorPos.x;
 			// Clear bottom line
-			klib::kmemset(&vmemBase[pos], VIDEO_MEM_WIDTH, static_cast<word_t>(u8' ' | (vmemBkgColor << 8)));
+			klib::kmemset(&vmemBase[pos], VIDEO_MEM_WIDTH, (u8' ' | (static_cast<word_t>(vmemBkgColor) << 8)));
 		}
 		// Set new cursor position
 		vmemCursorSet(cursorPos.x, cursorPos.y);
-
 	}
 
 	// Write string to VGA memory
 	void vmemWrite(const sbyte_t* message) noexcept {
 		// Cast const pointer to pointer
-		auto data = &message[0];
+		auto data = message;
 		// Loop through message while \0 not found
 		while (*data != u8'\0') {
 			// Write symbols one by one
@@ -167,7 +163,7 @@ namespace igros::arch {
 	// Write fixed-width string to VGA memory
 	void vmemWrite(const sbyte_t* message, const dword_t &size) noexcept {
 		// Loop through message
-		for (auto i = 0U; i < size; ++i) {
+		for (auto i = 0ULL; i < size; ++i) {
 			// Write symbols one by one
 			vmemWrite(message[i]);
 		}
@@ -177,7 +173,7 @@ namespace igros::arch {
 	// Clear VGA memory
 	void vmemClear() noexcept {
 		// Set whole screen with whitespace with default background
-		klib::kmemset(vmemBase, VIDEO_MEM_SIZE, static_cast<word_t>(u8' ' | (vmemBkgColor << 8)));
+		klib::kmemset(vmemBase, VIDEO_MEM_SIZE, (u8' ' | (static_cast<word_t>(vmemBkgColor) << 8)));
 	}
 
 
@@ -186,7 +182,7 @@ namespace igros::arch {
 		// Clear screen
 		vmemClear();
 		// Place cursor at (0, 0)
-		vmemCursorSet(0u, 0u);
+		vmemCursorSet(0U, 0U);
 		// Disable cursor
 		vmemCursorDisable();
 	}
