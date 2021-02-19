@@ -87,7 +87,7 @@ namespace igros::x86_64 {
 		// Chech if it's hardware interrupt
 		if (static_cast<dword_t>(number) < 16U) {
 			// Set interrupts mask
-			irqx86_64::setMask(static_cast<word_t>(irqx86_64::getMask() | (1u << static_cast<dword_t>(number))));
+			irqx86_64::setMask(static_cast<word_t>(irqx86_64::getMask() | (1U << static_cast<dword_t>(number))));
 		}
 	}
 
@@ -97,7 +97,7 @@ namespace igros::x86_64 {
 		// Set Master controller mask
 		::inPort8(PIC_MASTER_DATA,	static_cast<byte_t>(mask & 0xFF));
 		// Set Slave controller mask
-		::inPort8(PIC_SLAVE_DATA,		static_cast<byte_t>((mask >> 8) & 0xFF));
+		::inPort8(PIC_SLAVE_DATA,	static_cast<byte_t>((mask >> 8) & 0xFF));
 	}
 
 	// Get interrupts mask

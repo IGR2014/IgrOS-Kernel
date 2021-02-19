@@ -3,7 +3,7 @@
 //	IgrOS platform description
 //
 //	File:	platform.hpp
-//	Date:	10 Feb 2021
+//	Date:	12 Feb 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -31,19 +31,19 @@ namespace igros::platform {
 
 	// Get kernel start address
 	[[nodiscard]]
-	constexpr const auto KERNEL_START() noexcept {
+	constexpr auto KERNEL_START() noexcept {
 		return &_SECTION_KERNEL_START_;
 	}
 
 	// Get kernel end address
 	[[nodiscard]]
-	constexpr const auto KERNEL_END() noexcept {
+	constexpr auto KERNEL_END() noexcept {
 		return &_SECTION_KERNEL_END_;
 	}
 
 	// Get kernel size
 	[[nodiscard]]
-	constexpr const auto KERNEL_SIZE() noexcept {
+	constexpr auto KERNEL_SIZE() noexcept {
 		return (KERNEL_END() - KERNEL_START());
 	}
 
