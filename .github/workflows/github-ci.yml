@@ -1,5 +1,5 @@
 # Name
-name: IgrOS-Kernel i386 C/C++ CI
+name: IgrOS-Kernel C/C++ CI
 
 # Triggered on push
 on: [push]
