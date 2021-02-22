@@ -1,35 +1,111 @@
+# Name
 name: IgrOS-Kernel i386 C/C++ CI
 
+# Triggered on push
 on: [push]
 
+# Project jobs
 jobs:
-  build:
 
+  # Prepare
+  Prepare:
+
+    # Name
+    name: Prepare Environment
+    # Ubuntu
     runs-on: ubuntu-20.04
 
+    # Strategy with languages matrix
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'cpp' ]
+
+    # Job steps
     steps:
 
-    - uses: actions/checkout@v2
+    # Checkout
+    - name: Checkout repository
+      uses: actions/checkout@v2
       with:
         fetch-depth: 0
 
-    - name: G++ Multilib
-      run: sudo apt update && sudo apt install -y gcc-multilib g++-multilib --fix-missing
+    # Install multilib for i386
+    - name: Install G++ Multilib
+      run: |
+        sudo apt update
+        sudo apt install -y gcc-multilib g++-multilib --fix-missing
 
-    - name: SonarCloud Wrapper
+    # Init CodeQL
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v1
+      with:
+        languages: ${{ matrix.language }}
+
+    # Init SonarCloud Wrapper
+    - name: Initialize SonarCloud Wrapper
       shell: bash
       run: |
         curl -L -O https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip
         unzip -o build-wrapper-linux-x86.zip
-        build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir sonar-build-wrapper ./config/script/build-i386.sh
+        curl -L -O https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.0.2311-linux.zip
+        unzip sonar-scanner-cli-4.6.0.2311-linux.zip
 
-    - name: SonarCloud
+
+  # Build project
+  Build:
+
+    # Name
+    name: Build with CMake
+    # Ubuntu
+    runs-on: ubuntu-20.04
+    # Requires prepare
+    needs: Prepare
+
+    # Job steps
+    steps:
+
+    # Build
+    - name: Build
+      shell: bash
+      run: build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir sonar-build-wrapper ./config/script/build-i386.sh
+
+
+  # Analyze with GitHub CodeQL
+  Analyze-CodeQL:
+
+    # Name
+    name: Analyze with GitHub CodeQL
+    # Ubuntu
+    runs-on: ubuntu-20.04
+    # Requires build
+    needs: Build
+
+    # Job steps
+    steps:
+
+    # CodeQL analysis
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v1
+
+  # Analyze with SonarCloud
+  Analyze-SonarCloud:
+
+    # Name
+    name: Analyze with SonarCloud
+    # Ubuntu
+    runs-on: ubuntu-20.04
+    # Requires build
+    needs: Build
+
+    # Job steps
+    steps:
+
+    # SonarCloud analysis
+    - name: Perform SonarCloud Analysis
       shell: bash
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: |
-        curl -L -O https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.0.2311-linux.zip
-        unzip sonar-scanner-cli-4.6.0.2311-linux.zip
-        sonar-scanner-4.6.0.2311-linux/bin/sonar-scanner -X -Dsonar.host.url=https://sonarcloud.io -Dsonar.branch.name=master -Dproject.settings=sonar-project.properties
+      run: sonar-scanner-4.6.0.2311-linux/bin/sonar-scanner -X -Dsonar.host.url=https://sonarcloud.io -Dsonar.branch.name=master -Dproject.settings=sonar-project.properties
 
