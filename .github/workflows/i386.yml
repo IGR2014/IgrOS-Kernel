@@ -8,10 +8,10 @@ on: [push]
 jobs:
 
   # Prepare
-  Prepare:
+  Build:
 
     # Name
-    name: Prepare Environment
+    name: Build with CMake
     # Ubuntu
     runs-on: ubuntu-20.04
 
@@ -51,55 +51,14 @@ jobs:
         curl -L -O https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.0.2311-linux.zip
         unzip sonar-scanner-cli-4.6.0.2311-linux.zip
 
-
-  # Build project
-  Build:
-
-    # Name
-    name: Build with CMake
-    # Ubuntu
-    runs-on: ubuntu-20.04
-    # Requires prepare
-    needs: Prepare
-
-    # Job steps
-    steps:
-
     # Build
     - name: Build
       shell: bash
       run: build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir sonar-build-wrapper ./config/script/build-i386.sh
 
-
-  # Analyze with GitHub CodeQL
-  Analyze-CodeQL:
-
-    # Name
-    name: Analyze with GitHub CodeQL
-    # Ubuntu
-    runs-on: ubuntu-20.04
-    # Requires build
-    needs: Build
-
-    # Job steps
-    steps:
-
     # CodeQL analysis
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
-
-  # Analyze with SonarCloud
-  Analyze-SonarCloud:
-
-    # Name
-    name: Analyze with SonarCloud
-    # Ubuntu
-    runs-on: ubuntu-20.04
-    # Requires build
-    needs: Build
-
-    # Job steps
-    steps:
 
     # SonarCloud analysis
     - name: Perform SonarCloud Analysis
