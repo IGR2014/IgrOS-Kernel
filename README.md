@@ -2,8 +2,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 
-[![GitHub Arch: i386](https://github.com/IGR2014/IgrOS-Kernel/workflows/IgrOS-Kernel%20i386%20C/C++%20CI/badge.svg)](https://github.com/IGR2014/IgrOS-Kernel/actions)
-[![GitHub Arch: x86_64](https://github.com/IGR2014/IgrOS-Kernel/workflows/IgrOS-Kernel%20x86_64%20C/C++%20CI/badge.svg)](https://github.com/IGR2014/IgrOS-Kernel/actions)
+[![GitHub pipeline](https://github.com/IGR2014/IgrOS-Kernel/workflows/IgrOS-Kernel%20C/C++%20CI/badge.svg)](https://github.com/IGR2014/IgrOS-Kernel/actions)
 
 
 [![GitLab pipeline](https://gitlab.com/IGR2014/IgrOS-Kernel/badges/master/pipeline.svg)](https://gitlab.com/IGR2014/IgrOS-Kernel/-/commits/master)
