@@ -61,7 +61,7 @@ namespace igros::i386 {
 		fpu() noexcept = default;
 
 		// Check FPU
-		static void	check() noexcept;
+		static bool	check() noexcept;
 
 
 	};
