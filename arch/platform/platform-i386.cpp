@@ -3,7 +3,7 @@
 //	Platform description for x86
 //
 //	File:	platform-i386.cpp
-//	Date:	10 Feb 2021
+//	Date:	05 Jul 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -46,6 +46,9 @@ namespace igros::i386 {
 		i386::irq::init();
 		// Enable interrupts
 		i386::irq::enable();
+
+		// Check FPU
+		i386::fpu::check();
 
 	}
 
