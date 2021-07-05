@@ -76,7 +76,7 @@ namespace igros::i386 {
 
 
 	// GDT structure
-	class gdti386 final {
+	class gdt final {
 
 		// GDT flags enum
 		enum flags_t : word_t {
@@ -149,20 +149,20 @@ namespace igros::i386 {
 
 
 		// Copy c-tor
-		gdti386(const gdti386 &other) = delete;
+		gdt(const gdt &other) = delete;
 		// Copy assignment
-		gdti386& operator=(const gdti386 &other) = delete;
+		gdt& operator=(const gdt &other) = delete;
 
 		// Move c-tor
-		gdti386(gdti386 &&other) = delete;
+		gdt(gdt &&other) = delete;
 		// Move assignment
-		gdti386& operator=(gdti386 &&other) = delete;
+		gdt& operator=(gdt &&other) = delete;
 
 
 	public:
 
 		// Default c-tor
-		gdti386() noexcept = default;
+		gdt() noexcept = default;
 
 		// Set GDT entry
 		constexpr static gdtEntryi386_t	setEntry(const dword_t base, const dword_t &limit, const flags_t flags) noexcept;
@@ -178,7 +178,7 @@ namespace igros::i386 {
 
 
 	// Set GDT entry
-	constexpr gdtEntryi386_t gdti386::setEntry(const dword_t base, const dword_t &limit, const flags_t flags) noexcept {
+	constexpr gdtEntryi386_t gdt::setEntry(const dword_t base, const dword_t &limit, const flags_t flags) noexcept {
 		return {
 			.limitLow	= static_cast<word_t>(limit & 0xFFFF),
 			.baseLow	= static_cast<word_t>(base & 0xFFFF),
@@ -190,14 +190,14 @@ namespace igros::i386 {
 	}
 
 	// Calculate GDT size
-	constexpr word_t gdti386::calcSize() noexcept {
+	constexpr word_t gdt::calcSize() noexcept {
 		// Size equals to (Num of entries * Entry size) - 1
-		return (gdti386::table.size() * sizeof(gdtEntryi386_t)) - 1U;
+		return (gdt::table.size() * sizeof(gdtEntryi386_t)) - 1U;
 	}
 
 
 	// Init GDT table
-	inline void gdti386::init() noexcept {
+	inline void gdt::init() noexcept {
 		// Load new GDT
 		::gdtLoad(&pointer);
 	}

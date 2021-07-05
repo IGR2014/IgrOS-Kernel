@@ -33,19 +33,19 @@ namespace igros::i386 {
 		klib::kprintf(u8"Initializing i386 platform...", __func__);
 
 		// Setup Interrupts Descriptor Table
-		i386::idti386::init();
+		i386::idt::init();
 		// Init exceptions
 		i386::except::init();
 		// Setup Global Descriptors Table
-		i386::gdti386::init();
+		i386::gdt::init();
 
 		// Setup paging (And identity map first 4MB where kernel physically is)
 		i386::paging::init();
 
 		// Init interrupts
-		i386::irqi386::init();
+		i386::irq::init();
 		// Enable interrupts
-		i386::irqi386::enable();
+		i386::irq::enable();
 
 	}
 

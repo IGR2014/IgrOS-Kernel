@@ -30,7 +30,7 @@ namespace igros::x86_64 {
 	constexpr auto ISR_SIZE		= 256U;
 
 	// Interrupt service routine handler type
-	using isrx86_64_t		= std::add_pointer_t<void(const registerx86_64_t*)>;
+	using isrx86_64_t		= std::add_pointer_t<void(const register_t*)>;
 
 
 	// Install interrupt service routine handler

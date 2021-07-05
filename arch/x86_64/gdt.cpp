@@ -19,18 +19,18 @@ namespace igros::x86_64 {
 
 
 	// Global descriptors table (GDT)
-	std::array<gdtEntryx86_64_t, gdtx86_64::GDT_SIZE> gdtx86_64::table {
-		gdtx86_64::setEntry(0x00000000, 0x00000000, GDT_ENTRY_EMPTY),		// Empty entry (should be there!)
-		gdtx86_64::setEntry(0x00000000, 0xFFFFFFFF, GDT_ENTRY_CODE_RING0),	// Kernel code
-		gdtx86_64::setEntry(0x00000000, 0xFFFFFFFF, GDT_ENTRY_DATA_RING0),	// Kernel data
-		gdtx86_64::setEntry(0x00000000, 0xFFFFFFFF, GDT_ENTRY_CODE_RING3),	// User code
-		gdtx86_64::setEntry(0x00000000, 0xFFFFFFFF, GDT_ENTRY_DATA_RING3)	// User data
+	std::array<gdtEntryx86_64_t, gdt::GDT_SIZE> gdt::table {
+		gdt::setEntry(0x00000000, 0x00000000, GDT_ENTRY_EMPTY),		// Empty entry (should be there!)
+		gdt::setEntry(0x00000000, 0xFFFFFFFF, GDT_ENTRY_CODE_RING0),	// Kernel code
+		gdt::setEntry(0x00000000, 0xFFFFFFFF, GDT_ENTRY_DATA_RING0),	// Kernel data
+		gdt::setEntry(0x00000000, 0xFFFFFFFF, GDT_ENTRY_CODE_RING3),	// User code
+		gdt::setEntry(0x00000000, 0xFFFFFFFF, GDT_ENTRY_DATA_RING3)	// User data
 	};
 
 	// Pointer to GDT
-	gdtPointerx86_64_t gdtx86_64::pointer {
-		gdtx86_64::calcSize(),
-		gdtx86_64::table.cbegin()
+	gdtPointerx86_64_t gdt::pointer {
+		gdt::calcSize(),
+		gdt::table.cbegin()
 	};
 
 

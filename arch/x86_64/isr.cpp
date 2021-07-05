@@ -55,14 +55,14 @@ extern "C" {
 #endif	// __cplusplus
 
 	// Interrupts handler function
-	void isrHandler(const igros::x86_64::registerx86_64_t* regs) noexcept {
+	void isrHandler(const igros::x86_64::register_t* regs) noexcept {
 		// Check if irq/exception handler installed
 		if (const auto isr = igros::x86_64::isrList[regs->number]; nullptr != isr) {
 			// Handle ISR
 			isr(regs);
 		} else {
 			// Disable interrupts
-			igros::x86_64::irqx86_64::disable();
+			igros::x86_64::irq::disable();
 			// Debug
 			igros::klib::kprintf(
 				u8"%s -> [#%d]\r\n"
@@ -71,7 +71,7 @@ extern "C" {
 				((regs->number >= igros::x86_64::IRQ_OFFSET) ? (regs->number - igros::x86_64::IRQ_OFFSET) : regs->number)
 			);
 			// Hang CPU
-			igros::x86_64::cpux86_64::halt();
+			igros::x86_64::cpu::halt();
 		}
 	}
 

@@ -49,18 +49,18 @@ namespace igros::i386 {
 
 
 	// Default exception handler
-	void except::exDefaultHandler(const registeri386_t* regs) noexcept {
+	void except::exDefaultHandler(const register_t* regs) noexcept {
 		// Disable interrupts
-		irqi386::disable();
+		irq::disable();
 		// Print exception name
 		klib::kprintf(
 			u8"Exception:\t%s",
 			except::NAME[regs->number]
 		);
 		// Dump registres
-		cpui386::dumpRegisters(regs);
+		cpu::dumpRegisters(regs);
 		// Hang CPU
-		cpui386::halt();
+		cpu::halt();
 	}
 
 

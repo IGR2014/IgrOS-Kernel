@@ -56,14 +56,14 @@ extern "C" {
 
 
 	// Interrupts handler function
-	void isrHandler(const igros::i386::registeri386_t* regs) noexcept {
+	void isrHandler(const igros::i386::register_t* regs) noexcept {
 		// Check if irq/exception handler installed
 		if (const auto isr = igros::i386::isrList[regs->number]; nullptr != isr) {
 			// Handle ISR
 			isr(regs);
 		} else {
 			// Disable interrupts
-			igros::i386::irqi386::disable();
+			igros::i386::irq::disable();
 			// Debug
 			igros::klib::kprintf(
 				u8"%s -> [#%d]\r\n"
@@ -72,9 +72,9 @@ extern "C" {
 				((regs->number >= igros::i386::IRQ_OFFSET) ? (regs->number - igros::i386::IRQ_OFFSET) : regs->number)
 			);
 			// Dump registres
-			igros::i386::cpui386::dumpRegisters(regs);
+			igros::i386::cpu::dumpRegisters(regs);
 			// Hang CPU
-			igros::i386::cpui386::halt();
+			igros::i386::cpu::halt();
 		}
 	}
 

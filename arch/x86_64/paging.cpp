@@ -678,7 +678,7 @@ namespace igros::x86_64 {
 	void paging::exHandler(const register_t* regs) noexcept {
 
 		// Disable IRQ
-		irqx86_64::disable();
+		irq::disable();
 
 		// Write Multiboot magic error message message
 		klib::kprintf(	u8"EXCEPTION [#%d]\t-> (%s)\r\n"

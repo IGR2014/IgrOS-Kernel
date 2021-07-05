@@ -73,10 +73,10 @@ namespace igros::arch {
 
 #if	defined (IGROS_ARCH_i386)
 	// CPU type
-	using cpu = cpu_t<i386::cpui386>;
+	using cpu = cpu_t<i386::cpu>;
 #elif	defined (IGROS_ARCH_x86_64)
 	// CPU type
-	using cpu = cpu_t<x86_64::cpux86_64>;
+	using cpu = cpu_t<x86_64::cpu>;
 #else
 	// CPU type
 	using cpu = cpu_t<void>;

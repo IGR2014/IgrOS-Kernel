@@ -145,10 +145,10 @@ namespace igros::arch {
 
 #if	defined (IGROS_ARCH_i386)
 	// IRQ type
-	using irq	= interrupts_t<i386::irqi386, i386::irqi386_t>;
+	using irq	= interrupts_t<i386::irq, i386::irq_t>;
 #elif	defined (IGROS_ARCH_x86_64)
 	// IRQ type
-	using irq	= interrupts_t<x86_64::irqx86_64, x86_64::irqx86_64_t>;
+	using irq	= interrupts_t<x86_64::irq, x86_64::irq_t>;
 #else
 	// IRQ type
 	using irq	= interrupts_t<void, void>;

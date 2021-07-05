@@ -339,10 +339,10 @@ namespace igros::arch {
 
 #if	defined (IGROS_ARCH_i386)
 	// I/O type
-	using io = io_t<i386::ioi386, i386::porti386_t>;
+	using io = io_t<i386::io, i386::port_t>;
 #elif	defined (IGROS_ARCH_x86_64)
 	// I/O type
-	using io = io_t<x86_64::iox86_64, x86_64::portx86_64_t>;
+	using io = io_t<x86_64::io, x86_64::port_t>;
 #else
 	// I/O type
 	using io = io_t<void, void>;

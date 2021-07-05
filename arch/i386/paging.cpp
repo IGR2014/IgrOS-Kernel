@@ -389,7 +389,7 @@ namespace igros::i386 {
 	void paging::exHandler(const register_t* regs) noexcept {
 
 		// Disable IRQ
-		irqi386::disable();
+		irq::disable();
 
 		// Write Multiboot magic error message message
 		klib::kprintf(
