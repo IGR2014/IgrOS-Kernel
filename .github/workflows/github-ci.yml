@@ -43,20 +43,20 @@ jobs:
       with:
         languages: ${{ matrix.language }}
 
-    # Init SonarCloud Wrapper
+    # Build
+    - name: Run CMake
+      env:
+        IGROS_ARCH: ${{ matrix.arch }}
+      run: build-wrapper-linux-x86-64 --out-dir ./build-wrapper ./config/script/build-$IGROS_ARCH.sh
+
+    # CodeQL analysis
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v1
+
+    # SonarCloud Wrapper analysis
     - name: Initialize SonarCloud
       uses: sonarsource/sonarcloud-github-action@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-    # Build
-    - name: Run CMake
-      env:
-        IGROS_ARCH: ${{ matrix.arch }}
-      run: build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir . ./config/script/build-$IGROS_ARCH.sh
-
-    # CodeQL analysis
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v1
 
