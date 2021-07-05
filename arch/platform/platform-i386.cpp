@@ -19,6 +19,7 @@
 #include <arch/i386/gdt.hpp>
 #include <arch/i386/paging.hpp>
 #include <arch/i386/irq.hpp>
+#include <arch/i386/fpu.hpp>
 
 #include <klib/kprint.hpp>
 
