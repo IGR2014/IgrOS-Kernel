@@ -53,14 +53,14 @@ jobs:
       run: |
         curl -L -O https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip
         unzip -o build-wrapper-linux-x86.zip
-        curl -L -O https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-${{ SONAR_CLOUD_BUILD_WRAPPER_VERSION }}-linux.zip
-        unzip sonar-scanner-cli-${{ SONAR_CLOUD_BUILD_WRAPPER_VERSION }}-linux.zip
+        curl -L -O https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-$SONAR_CLOUD_BUILD_WRAPPER_VERSION-linux.zip
+        unzip sonar-scanner-cli-$SONAR_CLOUD_BUILD_WRAPPER_VERSION-linux.zip
 
     # Build
     - name: Run CMake
       env:
         IGROS_ARCH: ${{ matrix.arch }}
-      run: sonar-scanner-cli-${{ SONAR_CLOUD_BUILD_WRAPPER_VERSION }}-linux/build-wrapper-linux-x86-64 --out-dir ./build-wrapper ./config/script/build-$IGROS_ARCH.sh
+      run: sonar-scanner-cli-$SONAR_CLOUD_BUILD_WRAPPER_VERSION-linux/build-wrapper-linux-x86-64 --out-dir ./build-wrapper ./config/script/build-$IGROS_ARCH.sh
 
     # CodeQL analysis
     - name: Perform CodeQL Analysis
