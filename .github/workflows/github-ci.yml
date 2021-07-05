@@ -33,6 +33,7 @@ jobs:
 
     # Install multilib for i386
     - name: Install G++ Multilib
+      shell: bash
       run: |
         sudo apt update
         sudo apt install -y gcc-multilib g++-multilib --fix-missing
@@ -40,17 +41,17 @@ jobs:
     # Init CodeQL
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v1
+      shell: bash
       with:
         languages: ${{ matrix.language }}
 
     # Init SonarCloud Wrapper
-    - name: Initialize SonarCloud Wrapper
+    - name: Initialize SonarCloud
+      uses: sonarsource/sonarcloud-github-action@master
       shell: bash
-      run: |
-        curl -L -O https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip
-        unzip -o build-wrapper-linux-x86.zip
-        curl -L -O https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
-        unzip sonar-scanner-cli-4.6.2.2472-linux.zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
     # Build
     - name: Run CMake
@@ -62,12 +63,4 @@ jobs:
     # CodeQL analysis
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
-
-    # SonarCloud analysis
-    - name: Perform SonarCloud Analysis
-      shell: bash
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: sonar-scanner-4.6.2.2472-linux/bin/sonar-scanner -X -Dsonar.host.url=https://sonarcloud.io -Dsonar.branch.name=master -Dproject.settings=sonar-project.properties
 
