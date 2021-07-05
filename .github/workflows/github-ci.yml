@@ -68,7 +68,7 @@ jobs:
       env:
         IGROS_ARCH: ${{ matrix.arch }}
       run: |
-        build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir ./build-wrapper cmake --build ./build/$IGROS_ARCH --target all --parallel
+        build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir ./build-wrapper make all -j 4
 
     # Install
     - name: Run CMake Install
