@@ -49,18 +49,18 @@ namespace igros::x86_64 {
 
 
 	// Default exception handler
-	void except::exDefaultHandler(const registerx86_64_t* regs) noexcept {
+	void except::exDefaultHandler(const register_t* regs) noexcept {
 		// Disable interrupts
-		irqx86_64::disable();
+		irq::disable();
 		// Print exception name
 		klib::kprintf(
 			u8"Exception:\t%s",
 			except::NAME[regs->number]
 		);
 		// Dump registres
-		cpux86_64::dumpRegisters(regs);
+		cpu::dumpRegisters(regs);
 		// Hang CPU
-		cpux86_64::halt();
+		cpu::halt();
 	}
 
 

@@ -43,7 +43,7 @@ namespace igros::x86_64 {
 
 
 	// Init IRQ
-	void irqx86_64::init() noexcept {
+	void irq::init() noexcept {
 		// Restart PIC`s
 		::inPort8(PIC_MASTER_CONTROL,	0x11);
 		::inPort8(PIC_SLAVE_CONTROL,	0x11);
@@ -57,43 +57,43 @@ namespace igros::x86_64 {
 		::inPort8(PIC_MASTER_DATA,	0x01);
 		::inPort8(PIC_SLAVE_DATA,	0x01);
 		// Unmask all interrupts
-		irqx86_64::setMask();
+		irq::setMask();
 	}
 
 
 	// Enable interrupts
-	void irqx86_64::enable() noexcept {
+	void irq::enable() noexcept {
 		::irqEnable();
 
 	}
 
 	// Disable interrupts
-	void irqx86_64::disable() noexcept {
+	void irq::disable() noexcept {
 		::irqDisable();
 	}
 
 
 	// Mask interrupt
-	void irqx86_64::mask(const irqx86_64_t number) noexcept {
+	void irq::mask(const irq_t number) noexcept {
 		// Chech if it's hardware interrupt
 		if (static_cast<dword_t>(number) < 16U) {
 			// Set interrupts mask
-			irqx86_64::setMask(static_cast<word_t>(irqx86_64::getMask() & ~(1U << static_cast<dword_t>(number))));
+			irq::setMask(static_cast<word_t>(irq::getMask() & ~(1U << static_cast<dword_t>(number))));
 		}
 	}
 
 	// Unmask interrupt
-	void irqx86_64::unmask(const irqx86_64_t number) noexcept {
+	void irq::unmask(const irq_t number) noexcept {
 		// Chech if it's hardware interrupt
 		if (static_cast<dword_t>(number) < 16U) {
 			// Set interrupts mask
-			irqx86_64::setMask(static_cast<word_t>(irqx86_64::getMask() | (1U << static_cast<dword_t>(number))));
+			irq::setMask(static_cast<word_t>(irq::getMask() | (1U << static_cast<dword_t>(number))));
 		}
 	}
 
 
 	// Set interrupts mask
-	void irqx86_64::setMask(const word_t mask) noexcept {
+	void irq::setMask(const word_t mask) noexcept {
 		// Set Master controller mask
 		::inPort8(PIC_MASTER_DATA,	static_cast<byte_t>(mask & 0xFF));
 		// Set Slave controller mask
@@ -102,7 +102,7 @@ namespace igros::x86_64 {
 
 	// Get interrupts mask
 	[[nodiscard]]
-	word_t irqx86_64::getMask() noexcept {
+	word_t irq::getMask() noexcept {
 		// Read slave PIC current mask
 		auto mask	= static_cast<word_t>(::outPort8(PIC_SLAVE_DATA)) << 8;
 		// Read master PIC current mask
@@ -113,7 +113,7 @@ namespace igros::x86_64 {
 
 
 	// Send EOI (IRQ done)
-	void irqx86_64::eoi(const irqx86_64_t number) noexcept {
+	void irq::eoi(const irq_t number) noexcept {
 		// If it`s an interrupt
 		if (static_cast<dword_t>(number) >= IRQ_OFFSET) {
 			// Notify slave PIC if needed

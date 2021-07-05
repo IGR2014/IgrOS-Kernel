@@ -33,19 +33,19 @@ namespace igros::x86_64 {
 		klib::kprintf(u8"Initializing x86_64 platform...", __func__);
 
 		// Setup Interrupts Descriptor Table
-		x86_64::idtx86_64::init();
+		x86_64::idt::init();
 		// Init exceptions
 		x86_64::except::init();
 		// Setup Global Descriptors Table
-		x86_64::gdtx86_64::init();
+		x86_64::gdt::init();
 
 		// Setup paging (And identity map first 4MB where kernel physically is)
 		x86_64::paging::init();
 
 		// Init interrupts
-		x86_64::irqx86_64::init();
+		x86_64::idt::init();
 		// Enable interrupts
-		x86_64::irqx86_64::enable();
+		x86_64::idt::enable();
 
 	}
 

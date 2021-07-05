@@ -103,7 +103,7 @@ namespace igros::x86_64 {
 
 
 	// Task registers structure forward declaration
-	struct registerx86_64_t;
+	struct register_t;
 
 
 	// Exceptions structure
@@ -194,7 +194,7 @@ namespace igros::x86_64 {
 		static void uninstall(const NUMBER irqNumber) noexcept;
 
 		// Default exception handler
-		static void exDefaultHandler(const registerx86_64_t* regs) noexcept;
+		static void exDefaultHandler(const register_t* regs) noexcept;
 
 
 	};

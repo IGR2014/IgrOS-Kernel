@@ -28,10 +28,10 @@ namespace igros {
 
 #if	defined (IGROS_ARCH_i386)
 	// Paging type
-	using register_t = i386::registeri386_t;
+	using register_t = i386::register_t;
 #elif	defined (IGROS_ARCH_x86_64)
 	// Paging type
-	using register_t = x86_64::registerx86_64_t;
+	using register_t = x86_64::register_t;
 #else
 	// Paging type
 	using register_t = void;

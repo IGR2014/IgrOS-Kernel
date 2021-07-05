@@ -42,42 +42,42 @@ namespace igros::i386 {
 
 
 	// CPU representation
-	class cpui386 final {
+	class cpu final {
 
 		// Copy c-tor
-		cpui386(const cpui386 &other) = delete;
+		cpu(const cpu &other) = delete;
 		// Copy assignment
-		cpui386& operator=(const cpui386 &other) = delete;
+		cpu& operator=(const cpu &other) = delete;
 
 		// Move c-tor
-		cpui386(cpui386 &&other) = delete;
+		cpu(cpu &&other) = delete;
 		// Move assignment
-		cpui386& operator=(cpui386 &&other) = delete;
+		cpu& operator=(cpu &&other) = delete;
 
 
 	public:
 
 		// Default c-tor
-		cpui386() noexcept = default;
+		cpu() noexcept = default;
 
 		// Halt CPU
 		static void	halt() noexcept;
 
 		// Dump CPU registers
-		static void	dumpRegisters(const registeri386_t* const regs) noexcept;
+		static void	dumpRegisters(const register_t* const regs) noexcept;
 
 
 	};
 
 
 	// Halt CPU
-	inline void cpui386::halt() noexcept {
+	inline void cpu::halt() noexcept {
 		::cpuHalt();
 	}
 
 
 	// Dump CPU registers
-	inline void cpui386::dumpRegisters(const registeri386_t* const regs) noexcept {
+	inline void cpu::dumpRegisters(const register_t* const regs) noexcept {
 		// Print regs
 		klib::kprintf(
 			u8"Registers dump:\r\n"

@@ -19,18 +19,18 @@ namespace igros::i386 {
 
 
 	// Global descriptors table (GDT)
-	std::array<gdtEntryi386_t, gdti386::GDT_SIZE> gdti386::table {
-		gdti386::setEntry(0x00000000, 0x00000000, GDT_ENTRY_EMPTY),		// Empty entry (should be there!)
-		gdti386::setEntry(0x00000000, 0xFFFFFFFF, GDT_ENTRY_CODE_RING0),	// Kernel code
-		gdti386::setEntry(0x00000000, 0xFFFFFFFF, GDT_ENTRY_DATA_RING0),	// Kernel data
-		gdti386::setEntry(0x00000000, 0xFFFFFFFF, GDT_ENTRY_CODE_RING3),	// User code
-		gdti386::setEntry(0x00000000, 0xFFFFFFFF, GDT_ENTRY_DATA_RING3)		// User data
+	std::array<gdtEntryi386_t, gdt::GDT_SIZE> gdt::table {
+		gdt::setEntry(0x00000000, 0x00000000, GDT_ENTRY_EMPTY),		// Empty entry (should be there!)
+		gdt::setEntry(0x00000000, 0xFFFFFFFF, GDT_ENTRY_CODE_RING0),	// Kernel code
+		gdt::setEntry(0x00000000, 0xFFFFFFFF, GDT_ENTRY_DATA_RING0),	// Kernel data
+		gdt::setEntry(0x00000000, 0xFFFFFFFF, GDT_ENTRY_CODE_RING3),	// User code
+		gdt::setEntry(0x00000000, 0xFFFFFFFF, GDT_ENTRY_DATA_RING3)		// User data
 	};
 
 	// Pointer to GDT
-	gdtPointeri386_t gdti386::pointer {
-		gdti386::calcSize(),
-		gdti386::table.cbegin()
+	gdtPointeri386_t gdt::pointer {
+		gdt::calcSize(),
+		gdt::table.cbegin()
 	};
 
 

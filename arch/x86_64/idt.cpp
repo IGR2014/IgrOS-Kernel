@@ -19,12 +19,12 @@ namespace igros::x86_64 {
 
 
 	// Exceptions and IRQ descriptors table (IDT)
-	std::array<idtEntryx86_64_t, idtx86_64::IDT_SIZE> idtx86_64::table;
+	std::array<idtEntryx86_64_t, idt::IDT_SIZE> idt::table;
 
 	// Pointer to IDT
-	idtPointerx86_64_t idtx86_64::pointer {
-		idtx86_64::calcSize(),
-		idtx86_64::table.cbegin()
+	idtPointerx86_64_t idt::pointer {
+		idt::calcSize(),
+		idt::table.cbegin()
 	};
 
 

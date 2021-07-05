@@ -30,7 +30,7 @@ namespace igros::i386 {
 	constexpr auto ISR_SIZE		= 256U;
 
 	// Interrupt service routine handler type
-	using isri386_t			= std::add_pointer_t<void(const registeri386_t*)>;
+	using isri386_t			= std::add_pointer_t<void(const register_t*)>;
 
 	// Install interrupt service routine handler
 	void isrHandlerInstall(const dword_t isrNumber, const isri386_t isrHandler) noexcept;

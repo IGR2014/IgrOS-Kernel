@@ -24,7 +24,7 @@ namespace igros::x86_64 {
 
 
 	// Forward declaration
-	struct registerx86_64_t;
+	struct register_t;
 
 
 	// Page Map Level 4 max entries count
@@ -201,7 +201,7 @@ namespace igros::x86_64 {
 		static pointer_t	translate(const pointer_t addr) noexcept;
 
 		// Page Fault Exception handler
-		static void exHandler(const registerx86_64_t* regs) noexcept;
+		static void exHandler(const register_t* regs) noexcept;
 
 		// Set page directory
 		static void flush(const pml4_t* const dir) noexcept;

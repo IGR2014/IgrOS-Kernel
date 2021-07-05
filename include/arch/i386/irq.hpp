@@ -70,15 +70,15 @@ namespace igros::i386 {
 
 
 	// Master PIC ports
-	constexpr auto PIC_MASTER_CONTROL	= porti386_t {0x0020};
-	constexpr auto PIC_MASTER_DATA		= porti386_t {PIC_MASTER_CONTROL + 1U};
+	constexpr auto PIC_MASTER_CONTROL	= port_t {0x0020};
+	constexpr auto PIC_MASTER_DATA		= port_t {PIC_MASTER_CONTROL + 1U};
 	// Slave PIC ports
-	constexpr auto PIC_SLAVE_CONTROL	= porti386_t {0x00A0};
-	constexpr auto PIC_SLAVE_DATA		= porti386_t {PIC_SLAVE_CONTROL + 1U};
+	constexpr auto PIC_SLAVE_CONTROL	= port_t {0x00A0};
+	constexpr auto PIC_SLAVE_DATA		= port_t {PIC_SLAVE_CONTROL + 1U};
 
 
 	// Interrupts number enumeration
-	enum class irqi386_t : dword_t {
+	enum class irq_t : dword_t {
 		PIT		= 0U,
 		KEYBOARD	= 1U,
 		PIC		= 2U,
@@ -88,23 +88,23 @@ namespace igros::i386 {
 
 
 	// IRQ structure
-	class irqi386 final {
+	class irq final {
 
 		// Copy c-tor
-		irqi386(const irqi386 &other) = delete;
+		irq(const irq &other) = delete;
 		// Copy assignment
-		irqi386& operator=(const irqi386 &other) = delete;
+		irq& operator=(const irq &other) = delete;
 
 		// Move c-tor
-		irqi386(irqi386 &&other) = delete;
+		irq(irq &&other) = delete;
 		// Move assignment
-		irqi386& operator=(irqi386 &&other) = delete;
+		irq& operator=(irq &&other) = delete;
 
 
 	public:
 
 		// Default c-tor
-		irqi386() noexcept = default;
+		irq() noexcept = default;
 
 		// Init IRQ
 		static void init() noexcept;
@@ -115,9 +115,9 @@ namespace igros::i386 {
 		static void disable() noexcept;
 
 		// Mask interrupt
-		static void mask(const irqi386_t number) noexcept;
+		static void mask(const irq_t number) noexcept;
 		// Unmask interrupt
-		static void unmask(const irqi386_t number) noexcept;
+		static void unmask(const irq_t number) noexcept;
 
 		// Set interrupts mask
 		static void	setMask(const word_t mask = 0xFFFF) noexcept;
@@ -126,25 +126,25 @@ namespace igros::i386 {
 		static word_t	getMask() noexcept;
 
 		// Install IRQ handler
-		static void install(const irqi386_t number, const isri386_t handler) noexcept;
+		static void install(const irq_t number, const isri386_t handler) noexcept;
 		// Uninstall IRQ handler
-		static void uninstall(const irqi386_t number) noexcept;
+		static void uninstall(const irq_t number) noexcept;
 
 		// Send EOI (IRQ done)
-		static void eoi(const irqi386_t number) noexcept;
+		static void eoi(const irq_t number) noexcept;
 
 
 	};
 
 
 	// Install handler
-	inline void irqi386::install(const irqi386_t number, const isri386_t handler) noexcept {
+	inline void irq::install(const irq_t number, const isri386_t handler) noexcept {
 		// Install ISR
 		isrHandlerInstall(static_cast<dword_t>(number) + IRQ_OFFSET, handler);
 	}
 
 	// Uninstall handler
-	inline void irqi386::uninstall(const irqi386_t number) noexcept {
+	inline void irq::uninstall(const irq_t number) noexcept {
 		// Uninstall ISR
 		isrHandlerUninstall(static_cast<dword_t>(number) + IRQ_OFFSET);
 	}

@@ -75,7 +75,7 @@ namespace igros::x86_64 {
 
 
 	// GDT structure
-	class gdtx86_64 final {
+	class gdt final {
 
 		// GDT flags enum
 		enum flags_t : word_t {
@@ -148,20 +148,20 @@ namespace igros::x86_64 {
 
 
 		// Copy c-tor
-		gdtx86_64(const gdtx86_64 &other) = delete;
+		gdt(const gdt &other) = delete;
 		// Copy assignment
-		gdtx86_64& operator=(const gdtx86_64 &other) = delete;
+		gdt& operator=(const gdt &other) = delete;
 
 		// Move c-tor
-		gdtx86_64(gdtx86_64 &&other) = delete;
+		gdt(gdt &&other) = delete;
 		// Move assignment
-		gdtx86_64& operator=(gdtx86_64 &&other) = delete;
+		gdt& operator=(gdt &&other) = delete;
 
 
 	public:
 
 		// Default c-tor
-		gdtx86_64() noexcept = default;
+		gdt() noexcept = default;
 
 		// Set GDT entry
 		constexpr static gdtEntryx86_64_t	setEntry(const dword_t base, const dword_t &limit, const flags_t flags) noexcept;
@@ -177,7 +177,7 @@ namespace igros::x86_64 {
 
 
 	// Set GDT entry
-	constexpr gdtEntryx86_64_t gdtx86_64::setEntry(const dword_t base, const dword_t &limit, const flags_t flags) noexcept {
+	constexpr gdtEntryx86_64_t gdt::setEntry(const dword_t base, const dword_t &limit, const flags_t flags) noexcept {
 		return {
 			.limitLow	= static_cast<word_t>(limit & 0xFFFF),
 			.baseLow	= static_cast<word_t>(base & 0xFFFF),
@@ -189,14 +189,14 @@ namespace igros::x86_64 {
 	}
 
 	// Calculate GDT size
-	constexpr word_t gdtx86_64::calcSize() noexcept {
+	constexpr word_t gdt::calcSize() noexcept {
 		// Size equals to (Num of entries * Entry size) - 1
-		return (gdtx86_64::table.size() * sizeof(gdtEntryx86_64_t)) - 1U;
+		return (gdt::table.size() * sizeof(gdtEntryx86_64_t)) - 1U;
 	}
 
 
 	// Init GDT table
-	inline void gdtx86_64::init() noexcept {
+	inline void gdt::init() noexcept {
 		// Load new GDT
 		::gdtLoad(&pointer);
 	}

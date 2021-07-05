@@ -42,42 +42,42 @@ namespace igros::x86_64 {
 
 
 	// CPU representation
-	class cpux86_64 final {
+	class cpu final {
 
 		// Copy c-tor
-		cpux86_64(const cpux86_64 &other) = delete;
+		cpu(const cpu &other) = delete;
 		// Copy assignment
-		cpux86_64& operator=(const cpux86_64 &other) = delete;
+		cpu& operator=(const cpu &other) = delete;
 
 		// Move c-tor
-		cpux86_64(cpux86_64 &&other) = delete;
+		cpu(cpu &&other) = delete;
 		// Move assignment
-		cpux86_64& operator=(cpux86_64 &&other) = delete;
+		cpu& operator=(cpu &&other) = delete;
 
 
 	public:
 
 		// Default c-tor
-		cpux86_64() noexcept = default;
+		cpu() noexcept = default;
 
 		// Halt CPU
 		static void	halt() noexcept;
 
 		// Dump CPU registers
-		static void	dumpRegisters(const registerx86_64_t* const regs) noexcept;
+		static void	dumpRegisters(const register_t* const regs) noexcept;
 
 
 	};
 
 
 	// Halt CPU
-	inline void cpux86_64::halt() noexcept {
+	inline void cpu::halt() noexcept {
 		::cpuHalt();
 	}
 
 
 	// Dump registers
-	inline void cpux86_64::dumpRegisters(const registerx86_64_t* const regs) noexcept {
+	inline void cpu::dumpRegisters(const register_t* const regs) noexcept {
 		// Print regs
 		klib::kprintf(
 			u8"Registers dump:\r\n"

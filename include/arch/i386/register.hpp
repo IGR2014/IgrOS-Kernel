@@ -92,7 +92,7 @@ namespace igros::i386 {
 #pragma pack(push, 1)
 
 	// x86 task switch registers save
-	struct registeri386_t {
+	struct register_t {
 
 		// Segment registers pushed by us
 		dword_t	gs;		// Extra3 segment register

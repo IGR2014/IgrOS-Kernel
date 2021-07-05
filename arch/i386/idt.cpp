@@ -19,12 +19,12 @@ namespace igros::i386 {
 
 
 	// Exceptions and IRQ descriptors table (IDT)
-	std::array<idtEntryi386_t, idti386::IDT_SIZE> idti386::table;
+	std::array<idtEntryi386_t, idt::IDT_SIZE> idt::table;
 
 	// Pointer to IDT
-	idtPointeri386_t idti386::pointer {
-		idti386::calcSize(),
-		idti386::table.cbegin()
+	idtPointeri386_t idt::pointer {
+		idt::calcSize(),
+		idt::table.cbegin()
 	};
 
 

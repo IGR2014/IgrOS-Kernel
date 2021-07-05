@@ -24,7 +24,7 @@ namespace igros::x86_64 {
 #pragma pack(push, 1)
 
 	// x86_64 task switch registers save
-	struct registerx86_64_t {
+	struct register_t {
 
 		// "All" registers pushed by us
 		quad_t	r15;		// Register r15
