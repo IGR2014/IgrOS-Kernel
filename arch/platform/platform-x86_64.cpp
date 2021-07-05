@@ -43,9 +43,9 @@ namespace igros::x86_64 {
 		x86_64::paging::init();
 
 		// Init interrupts
-		x86_64::idt::init();
+		x86_64::irq::init();
 		// Enable interrupts
-		x86_64::idt::enable();
+		x86_64::irq::enable();
 
 	}
 
