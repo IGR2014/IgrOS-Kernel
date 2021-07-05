@@ -26,11 +26,12 @@
 .type fpuCheck, @function
 fpuCheck:
 	fninit					# Initialize FPU
-	movl $FPU_STATUS_WORD_TEST, %ax		# Load status test value to AX
-	fnstsw 2(%ax)				# Store FPU status word
+	movl $FPU_STATUS_WORD_TEST, %eax	# Load status test value to AX
+	fnstsw 2(%eax)				# Store FPU status word
 	cmpw $0, %ax				# Compare FPU status word with 0
 	jne 1f					# Not equal - no FPU
-	fnstcw 2(%ax)				# Store FPU control word
+	movl $FPU_STATUS_WORD_TEST, %eax	# Load status test value to AX
+	fnstcw 2(%eax)				# Store FPU control word
 	andw $FPU_CONTROL_WORD_MASK, %ax	# Apply mask to FPU control word
 	cmpw $FPU_CONTROL_WORD, %ax		# Compare FPU control word with 0
 	jne 1f					# Not equal - no FPU
