@@ -48,7 +48,6 @@ jobs:
     # Init SonarCloud Wrapper
     - name: Initialize SonarCloud
       uses: sonarsource/sonarcloud-github-action@master
-      shell: bash
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
