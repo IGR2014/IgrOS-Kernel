@@ -17,7 +17,7 @@ jobs:
 
     # Environment variables
     env:
-      SONAR_CLOUD_BUILD_WRAPPER_VERSION: "4.6.0.2311"
+      SONAR_CLOUD_BUILD_WRAPPER_VERSION: "4.6.2.2472"
 
     # Strategy with languages matrix
     strategy:
@@ -53,7 +53,7 @@ jobs:
       run: |
         curl -L -O https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip
         unzip -o build-wrapper-linux-x86.zip
-        curl -L -O https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-${SONAR_CLOUD_BUILD_WRAPPER_VERSION}-linux.zip
+        curl -L -O https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-${SONAR_CLOUD_BUILD_WRAPPER_VERSION}-linux.zip
         unzip sonar-scanner-cli-${SONAR_CLOUD_BUILD_WRAPPER_VERSION}-linux.zip
 
     # Build
