@@ -28,15 +28,16 @@
 fpuCheck:
 	fninit					# Initialize FPU
 	fnstsw $FPU_STATUS_WORD_TEST		# Store FPU status word
-	cmpl %eax, 0				# Compare FPU status word with 0
-	jnel 1f					# Not equal - no FPU
+	cmpw $0, %ax				# Compare FPU status word with 0
+	jne 1f					# Not equal - no FPU
 	fnstcw %ax				# Store FPU control word
 	andw $FPU_CONTROL_WORD_MASK, %ax	# Apply mask to FPU control word
-	cmpl $FPU_CONTROL_WORD, %ax		# Compare FPU control word with 0
-	jnel 1f					# Not equal - no FPU
+	cmpw $FPU_CONTROL_WORD, %ax		# Compare FPU control word with 0
+	jne 1f					# Not equal - no FPU
 	movl $1, %eax				# FPU - ok
 	retl					# Exit
 1:
 	movl $0, $eax				# FPU - error
 	retl					# Exit
 .size fpuCheck, . - fpuCheck
+
