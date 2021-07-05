@@ -67,7 +67,7 @@ jobs:
       uses: github/codeql-action/analyze@v1
 
     # SonarCloud Wrapper analysis
-    - name: Initialize SonarCloud
+    - name: Perform SonarCloud Analysis
       uses: sonarsource/sonarcloud-github-action@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
