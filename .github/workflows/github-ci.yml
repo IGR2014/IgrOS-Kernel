@@ -54,7 +54,7 @@ jobs:
     - name: Run CMake
       env:
         IGROS_ARCH: ${{ matrix.arch }}
-      run: config/script/build-$IGROS_ARCH.sh
+      run: build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir ./sonar-build-wrapper ./config/script/build-$IGROS_ARCH.sh
 
     # CodeQL analysis
     - name: Perform CodeQL Analysis
