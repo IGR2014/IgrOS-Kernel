@@ -33,7 +33,6 @@ jobs:
 
     # Install multilib for i386
     - name: Install G++ Multilib
-      shell: bash
       run: |
         sudo apt update
         sudo apt install -y gcc-multilib g++-multilib --fix-missing
@@ -41,7 +40,6 @@ jobs:
     # Init CodeQL
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v1
-      shell: bash
       with:
         languages: ${{ matrix.language }}
 
@@ -54,7 +52,6 @@ jobs:
 
     # Build
     - name: Run CMake
-      shell: bash
       env:
         IGROS_ARCH: ${{ matrix.arch }}
       run: build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir sonar-build-wrapper ./config/script/build-$IGROS_ARCH.sh
