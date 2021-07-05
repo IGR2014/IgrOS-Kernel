@@ -27,7 +27,7 @@ extern "C" {
 
 
 	// Check FPU
-	inline void	fpuCheck() noexcept;
+	inline bool	fpuCheck() noexcept;
 
 
 #ifdef	__cplusplus
@@ -69,7 +69,7 @@ namespace igros::i386 {
 
 	// Check FPU
 	inline bool fpu::check() noexcept {
-		::fpuCheck();
+		return ::fpuCheck();
 	}
 
 
