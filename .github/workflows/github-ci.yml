@@ -61,8 +61,6 @@ jobs:
       env:
         IGROS_ARCH: ${{ matrix.arch }}
       run: |
-        mkdir -p build
-        cd build
         build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir build-wrapper cmake --config Release -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DIGROS_ARCH=${{ matrix.arch }} -DCMAKE_TOOLCHAIN_FILE=config/cmake/${{ matrix.compiler }}-${{ matrix.arch }}.cmake -DCMAKE_BUILD_TYPE=Release -B build/${{ matrix.arch }} -G Ninja .
 
     # Build
