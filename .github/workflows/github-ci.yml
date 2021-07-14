@@ -24,7 +24,7 @@ jobs:
       fail-fast: false
       matrix:
         arch: [ 'i386', 'x86_64' ]
-        language: [ 'cpp' ]
+        compiler: [ 'clang++', 'g++' ]
 
     # Job steps
     steps:
@@ -35,17 +35,17 @@ jobs:
       with:
         fetch-depth: 0
 
-    # Install multilib for i386
-    - name: Install G++ Multilib
+    # Install dependencies
+    - name: Install Dependencies
       run: |
         sudo apt update
-        sudo apt install -y gcc-multilib g++-multilib --fix-missing
+        sudo apt install -y cmake ninja-build gcc clang gcc-multilib g++-multilib --fix-missing
 
     # Init CodeQL
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v1
       with:
-        languages: ${{ matrix.language }}
+        languages: cpp
 
     # Init SonarCloud Wrapper
     - name: Initialize SonarCloud Wrapper
@@ -61,22 +61,23 @@ jobs:
       env:
         IGROS_ARCH: ${{ matrix.arch }}
       run: |
-        cmake -DIGROS_ARCH=$IGROS_ARCH -DCMAKE_TOOLCHAIN_FILE=config/cmake/clang++-$IGROS_ARCH.cmake -DCMAKE_BUILD_TYPE=Release -S ./ -B ./build/$IGROS_ARCH
+        mkdir -p build
+        cd build
+        build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir build-wrapper cmake --config Release -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DIGROS_ARCH=${{ matrix.arch }} -DCMAKE_TOOLCHAIN_FILE=config/cmake/${{ matrix.compiler }}-${{ matrix.arch }}.cmake -DCMAKE_BUILD_TYPE=Release -B build/${{ matrix.arch }} -G Ninja .
 
     # Build
     - name: Run CMake Build
       env:
         IGROS_ARCH: ${{ matrix.arch }}
       run: |
-        build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir ./build-wrapper make all -C ./build/$IGROS_ARCH -j 4
+        build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir build-wrapper cmake --config Release --build build/${{ matrix.arch }} --target all --parallel
 
     # Install
     - name: Run CMake Install
       env:
         IGROS_ARCH: ${{ matrix.arch }}
       run: |
-        echo "TODO ..."
-      #cmake --build ./build/$IGROS_ARCH --target install
+        build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir build-wrapper cmake --config Release --install build/${{ matrix.arch }}
 
     # CodeQL analysis
     - name: Perform CodeQL Analysis
