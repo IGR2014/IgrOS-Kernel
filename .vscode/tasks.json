@@ -117,16 +117,63 @@
 			"dependsOrder": "parallel",
 			"problemMatcher": []
 		},
+		// Configure i386
+		{
+			"label": "Configure i386 Release",
+			"type": "shell",
+			"linux": {
+				"command": "cmake",
+				"args": [
+					"-DCMAKE_BUILD_TYPE=Release",
+					"IGROS_ARCH=i386",
+					"-H\"${workspaceRoot}\"",
+					"-S\"${workspaceRoot}\"",
+					"-B\"${workspaceRoot}/build/Release\"",
+					"-G\"Ninja\""
+				]
+			},
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		// Configure x86_64
+		{
+			"label": "Configure x86_64 Release",
+			"type": "shell",
+			"linux": {
+				"command": "cmake",
+				"args": [
+					"-DCMAKE_BUILD_TYPE=Release",
+					"IGROS_ARCH=x86_64",
+					"-H\"${workspaceRoot}\"",
+					"-S\"${workspaceRoot}\"",
+					"-B\"${workspaceRoot}/build/Release\"",
+					"-G\"Ninja\""
+				]
+			},
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
 		// Build i386
 		{
 			"label": "Build i386",
+			"dependsOn": [
+				"Configure i386 Release"
+			],
 			"type": "shell",
 			"linux": {
-				"command": "make",
+				"command": "cmake",
 				"args": [
-					"IGROS_ARCH=i386"
+					"--build",
+					"\"${workspaceRoot}/build/Release\"",
+					"--target",
+					"all"
 				]
 			},
+			"group": "build",
 			"options": {
 				"cwd": "${workspaceFolder}"
 			},
@@ -135,13 +182,20 @@
 		// Build x86_64
 		{
 			"label": "Build x86_64",
+			"dependsOn": [
+				"Configure x86_64 Release"
+			],
 			"type": "shell",
 			"linux": {
-				"command": "make",
+				"command": "cmake",
 				"args": [
-					"IGROS_ARCH=x86_64"
+					"--build",
+					"\"${workspaceRoot}/build/Release\"",
+					"--target",
+					"all"
 				]
 			},
+			"group": "build",
 			"options": {
 				"cwd": "${workspaceFolder}"
 			},
@@ -154,6 +208,7 @@
 				"Build i386",
 				"Build x86_64"
 			],
+			"group": "build",
 			"dependsOrder": "parallel",
 			"problemMatcher": []
 		},
@@ -165,6 +220,7 @@
 				"Clean i386",
 				"Build i386"
 			],
+			"group": "build",
 			"dependsOrder": "sequence",
 			"problemMatcher": []
 		},
@@ -176,6 +232,7 @@
 				"Clean x86_64",
 				"Build x86_64"
 			],
+			"group": "build",
 			"dependsOrder": "sequence",
 			"problemMatcher": []
 		},
@@ -192,6 +249,27 @@
 				"kind": "build",
 				"isDefault": true
 			}
+		},
+		// Install all
+		{
+			"label": "Install all",
+			"dependsOn": [
+				"Rebuild all"
+			],
+			"type": "shell",
+			"linux": {
+				"command": "cmake",
+				"args": [
+					"--build",
+					"\"${workspaceRoot}/build/Release\"",
+					"--target",
+					"install"
+				]
+			},
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
 		}
 	]
 }
