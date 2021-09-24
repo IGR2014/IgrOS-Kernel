@@ -1,6 +1,6 @@
 # IgrOS-Kernel
 
-IgrOS-Kernel is a simple **OS kernel** written in **C++17**.
+IgrOS-Kernel is a simple **OS kernel** written in **C++20**.
 Currently supports **i386** and **x86_64** platforms. **ARM** and **AVR** are the next aims.
 
 ---
