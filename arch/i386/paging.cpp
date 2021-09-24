@@ -36,7 +36,7 @@ namespace igros::i386 {
 
 
 	// Kernel memory map structure
-	const struct PAGE_MAP_t {
+	struct PAGE_MAP_t {
 		const page_t*	phys;
 		const pointer_t	virt;
 	};
