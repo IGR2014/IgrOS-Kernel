@@ -1,34 +1,27 @@
-# Cmake version
-CMAKE_MINIMUM_REQUIRED(VERSION 3.10.0)
-
 # Message
-MESSAGE(STATUS "Building i386 files")
-
-# C++ Language syntax
-ENABLE_LANGUAGE(CXX)
+message(STATUS "Building i386 files")
 
 # Kernel i386 arch C++ files
-FILE(
+file(
 	GLOB
 	I386_SRC
 	*.cpp
 )
 
 # Includes
-INCLUDE_DIRECTORIES(
+include_directories(
 	include/arch/i386
 )
 
 # Target sources
-TARGET_SOURCES(
+target_sources(
 	${IGROS_KERNEL}
 	PRIVATE
 	${I386_SRC}
 )
 
 # Add boot subdirectory
-ADD_SUBDIRECTORY(
-	boot
+add_subdirectory(
 	boot
 )
 

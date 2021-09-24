@@ -1,26 +1,20 @@
-# Cmake version
-CMAKE_MINIMUM_REQUIRED(VERSION 3.10.0)
-
 # Message
-MESSAGE(STATUS "Building mem files")
-
-# C++ Language syntax
-ENABLE_LANGUAGE(CXX)
+message(STATUS "Building mem files")
 
 # Kernel mem C++ files
-FILE(
+file(
 	GLOB
 	MEM_SRC
 	*.cpp
 )
 
 # Includes
-INCLUDE_DIRECTORIES(
+include_directories(
 	include/mem
 )
 
 # Target sources
-TARGET_SOURCES(
+target_sources(
 	${IGROS_KERNEL}
 	PRIVATE
 	${MEM_SRC}

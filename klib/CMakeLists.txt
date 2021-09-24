@@ -1,26 +1,20 @@
-# Cmake version
-CMAKE_MINIMUM_REQUIRED(VERSION 3.10.0)
-
 # Message
-MESSAGE(STATUS "Building klib files")
-
-# C++ Language syntax
-ENABLE_LANGUAGE(CXX)
+message(STATUS "Building klib files")
 
 # Kernel klib C++ files
-FILE(
+file(
 	GLOB
 	KLIB_SRC
 	*.cpp
 )
 
 # Includes
-INCLUDE_DIRECTORIES(
+include_directories(
 	include/klib
 )
 
 # Target sources
-TARGET_SOURCES(
+target_sources(
 	${IGROS_KERNEL}
 	PRIVATE
 	${KLIB_SRC}

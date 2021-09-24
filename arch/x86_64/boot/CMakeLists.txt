@@ -1,18 +1,15 @@
 # Message
-MESSAGE(STATUS "Building boot files")
-
-# AT&T Assembler syntax
-ENABLE_LANGUAGE(ASM-ATT)
+message(STATUS "Building boot files")
 
 # Kernel boot x86_64 Assembler files
-FILE(
+file(
 	GLOB
 	BOOT_x86_64_SRC
 	*.s
 )
 
 # Target sources
-TARGET_SOURCES(
+target_sources(
 	${IGROS_KERNEL}
 	PRIVATE
 	${BOOT_x86_64_SRC}
