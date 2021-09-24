@@ -3,7 +3,7 @@
 //	I/O operations
 //
 //	File:	io.hpp
-//	Date:	12 Feb 2021
+//	Date:	24 Sep 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -346,7 +346,7 @@ namespace igros::arch {
 #else
 	// I/O type
 	using io = io_t<void, void>;
-	static_assert(false, u8"Unknown architecture!!!");
+	static_assert(false, "Unknown architecture!!!");
 #endif
 
 

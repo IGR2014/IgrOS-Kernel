@@ -3,7 +3,7 @@
 //	CPU operations
 //
 //	File:	cpu.hpp
-//	Date:	08 Feb 2021
+//	Date:	24 Sep 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -80,7 +80,7 @@ namespace igros::arch {
 #else
 	// CPU type
 	using cpu = cpu_t<void>;
-	static_assert(false, u8"Unknown architecture!!!");
+	static_assert(false, "Unknown architecture!!!");
 #endif
 
 

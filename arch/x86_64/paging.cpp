@@ -510,7 +510,7 @@ namespace igros::x86_64 {
 		table	= reinterpret_cast<table_t*>(tableFlags.value());
 
 		//
-		//klib::kprintf(u8"Table mapped:\t0x%p -> 0x%p [%3d, %3d, %3d, %3c]", phys, virt, pml4ID, dirPtrID, dirID, u8'-');
+		//klib::kprintf("Table mapped:\t0x%p -> 0x%p [%3d, %3d, %3d, %3c]", phys, virt, pml4ID, dirPtrID, dirID, '-');
 
 	}
 
@@ -681,21 +681,23 @@ namespace igros::x86_64 {
 		irq::disable();
 
 		// Write Multiboot magic error message message
-		klib::kprintf(	u8"EXCEPTION [#%d]\t-> (%s)\r\n"
-				u8"CAUSED BY:\t%s%s%s\r\n"
-				u8"FROM:\t\t%s space\r\n"
-				u8"WHEN:\t\tattempting to %s\r\n"
-				u8"ADDRESS:\t0x%p\r\n"
-				u8"WHICH IS:\tnot %s\r\n",
-				regs->number,
-				except::NAME[regs->number],
-				((regs->param & 0x18) == 0U) ? u8"ACCESS VIOLATION"	: u8"",
-				((regs->param & 0x10) == 0U) ? u8""			: u8"INSTRUCTION FETCH",
-				((regs->param & 0x08) == 0U) ? u8""			: u8"RESERVED BIT SET",
-				((regs->param & 0x04) == 0U) ? u8"KERNEL"		: u8"USER",
-				((regs->param & 0x02) == 0U) ? u8"READ"			: u8"WRITE",
-				reinterpret_cast<const pointer_t>(outCR2()),
-				((regs->param & 0x01) == 0U) ? u8"PRESENT"		: u8"PRIVILEGED");
+		klib::kprintf(
+			"EXCEPTION [#%d]\t-> (%s)\r\n"
+			"CAUSED BY:\t%s%s%s\r\n"
+			"FROM:\t\t%s space\r\n"
+			"WHEN:\t\tattempting to %s\r\n"
+			"ADDRESS:\t0x%p\r\n"
+			"WHICH IS:\tnot %s\r\n",
+			regs->number,
+			except::NAME[regs->number],
+			((regs->param & 0x18) == 0U) ? "ACCESS VIOLATION"	: "",
+			((regs->param & 0x10) == 0U) ? ""			: "INSTRUCTION FETCH",
+			((regs->param & 0x08) == 0U) ? ""			: "RESERVED BIT SET",
+			((regs->param & 0x04) == 0U) ? "KERNEL"			: "USER",
+			((regs->param & 0x02) == 0U) ? "READ"			: "WRITE",
+			reinterpret_cast<const pointer_t>(outCR2()),
+			((regs->param & 0x01) == 0U) ? "PRESENT"		: "PRIVILEGED"
+		);
 
 		// Hang here
 		cpuHalt();
