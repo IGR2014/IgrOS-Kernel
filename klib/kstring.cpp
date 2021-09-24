@@ -61,7 +61,7 @@ namespace igros::klib {
 	[[maybe_unused]]
 	sbyte_t* kstrcpy(sbyte_t* src, sbyte_t* dst, std::size_t size) noexcept {
 		// Check src, dst pointers and size
-		if (nullptr == src || nullptr == dst || 0u == size) {
+		if (nullptr == src || nullptr == dst || 0U == size) {
 			// Pointer to empty dst
 			// Fill with null terminator for sanity
 			return dst;
@@ -75,7 +75,7 @@ namespace igros::klib {
 			// Copy string byte by byte
 			*++dst = *++src;
 		// Stop on size overflow or null terminator
-		} while ((--size > 0u) && (*src != '\0'));
+		} while ((--size > 0U) && (*src != '\0'));
 		// Return pointer to dst tring
 		return tempDst;
 	}
@@ -84,7 +84,7 @@ namespace igros::klib {
 	[[maybe_unused]]
 	const sbyte_t* kstrcpy(const sbyte_t* src, sbyte_t* dst, std::size_t size) noexcept {
 		// Check src, dst pointers and size
-		if (nullptr == src || nullptr == dst || 0u == size) {
+		if (nullptr == src || nullptr == dst || 0U == size) {
 			// Pointer to empty dst
 			// Fill with null terminator for sanity
 			return dst;
@@ -98,7 +98,7 @@ namespace igros::klib {
 			// Copy string byte by byte
 			*++dst = *++src;
 		// Stop on size overflow or null terminator
-		} while ((--size > 0u) && (*src != '\0'));
+		} while ((--size > 0U) && (*src != '\0'));
 		// Return pointer to dst tring
 		return tempDst;
 	}
@@ -108,7 +108,7 @@ namespace igros::klib {
 	[[maybe_unused]]
 	sbyte_t* kstrcat(const sbyte_t* src, sbyte_t* dst, std::size_t size) noexcept {
 		// Check src, dst pointers and size
-		if (nullptr == src || nullptr == dst || 0u == size) {
+		if (nullptr == src || nullptr == dst || 0U == size) {
 			// Return nothing
 			return nullptr;
 		}
@@ -121,7 +121,7 @@ namespace igros::klib {
 	[[nodiscard]]
 	sdword_t kstrcmp(const sbyte_t* src1, const sbyte_t* src2, std::size_t size) noexcept {
 		// Check src1 and src2 pointers
-		if (nullptr == src1 || nullptr == src2 || 0u == size) {
+		if (nullptr == src1 || nullptr == src2 || 0U == size) {
 			// Handle wrong input
 			if (src1 == nullptr) {
 				return (src2 == nullptr) ? 0 : -1;
@@ -130,7 +130,7 @@ namespace igros::klib {
 			}
 		}
 		// Compare string symbol by symbol
-		for (;(--size > 0u) && (*src1 != '\0') && (*src1 == *src2); ++src1, ++src2) {};
+		for (;(--size > 0U) && (*src1 != '\0') && (*src1 == *src2); ++src1, ++src2) {};
 		// Return string difference
 		return static_cast<byte_t>(*src1) - static_cast<byte_t>(*src2);
 	}
@@ -140,11 +140,11 @@ namespace igros::klib {
 	[[nodiscard]]
 	sbyte_t* kstrchr(sbyte_t* src, sbyte_t chr, std::size_t size) noexcept {
 		// Check src pointer and size
-		if (nullptr == src || 0u == size) {
+		if (nullptr == src || 0U == size) {
 			return nullptr;
 		}
 		// Find symbol inside string
-		for (;(--size > 0u) && (*src != '\0') && (*src != chr); ++src) {};
+		for (;(--size > 0U) && (*src != '\0') && (*src != chr); ++src) {};
 		// Return address of first occurrence or null pointer
 		return (*src == chr) ? src : nullptr;
 	}
@@ -153,11 +153,11 @@ namespace igros::klib {
 	[[nodiscard]]
 	const sbyte_t* kstrchr(const sbyte_t* src, sbyte_t chr, std::size_t size) noexcept {
 		// Check src pointer and size
-		if (nullptr == src || 0u == size) {
+		if (nullptr == src || 0U == size) {
 			return nullptr;
 		}
 		// Find symbol inside string
-		for (;(--size > 0u) && (*src != '\0') && (*src != chr); ++src) {};
+		for (;(--size > 0U) && (*src != '\0') && (*src != chr); ++src) {};
 		// Return address of first occurrence or null pointer
 		return (*src == chr) ? src : nullptr;
 	}
@@ -173,9 +173,9 @@ namespace igros::klib {
 		// Copy pointer to string start
 		auto iter		= src;
 		// Get string length
-		const auto strLen	= kstrlen(src);
+		const auto strLen	= kstrlen(src) - 1U;
 		// Get required reverting string length
-		const auto len		= (strLen < size) ? strLen : (size - 1u);
+		const auto len		= (strLen < size) ? strLen : (size - 1U);
 		// Calculate half length of the reverting string
 		const auto halfLen	= (len >> 1);
 		// Loop through image
