@@ -3,7 +3,7 @@
 //	Exceptions low-level operations
 //
 //	File:	exceptions.hpp
-//	Date:	05 Feb 2021
+//	Date:	24 Sep 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -124,38 +124,38 @@ namespace igros::x86_64 {
 
 		// Exceptions names
 		constexpr static std::array<const sbyte_t* const, 32ULL> NAME {
-			u8"DIVIDE BY ZERO",			// 0
-			u8"DEBUG",				// 1
-			u8"NON-MASKABLE INTERRUPT",		// 2
-			u8"BREAKPOINT",				// 3
-			u8"INTO DETECTED OVERFLOW",		// 4
-			u8"BOUND RANGE EXCEEDED",		// 5
-			u8"INVALID OPCODE",			// 6
-			u8"NO COPROCESSOR",			// 7
-			u8"DOUBLE FAULT",			// 8
-			u8"COPROCESSOR SEGMENT OVERRUN",	// 9
-			u8"INVALID TSS",			// 10
-			u8"SEGMENT NOT PPRESENT",		// 11
-			u8"STACK FAULT",			// 12
-			u8"GENERAL PROTECTION FAULT",		// 13
-			u8"PAGE FAULT",				// 14
-			u8"UNKNOWN INTERRUPT",			// 15
-			u8"COPROCESSOR FAULT",			// 16
-			u8"ALIGNMENT CHECK",			// 17
-			u8"MACHINE CHECK",			// 18
-			u8"RESERVED",				// 19
-			u8"RESERVED",				// 20
-			u8"RESERVED",				// 21
-			u8"RESERVED",				// 22
-			u8"RESERVED",				// 23
-			u8"RESERVED",				// 24
-			u8"RESERVED",				// 25
-			u8"RESERVED",				// 26
-			u8"RESERVED",				// 27
-			u8"RESERVED",				// 28
-			u8"RESERVED",				// 29
-			u8"RESERVED",				// 30
-			u8"RESERVED"				// 31
+			"DIVIDE BY ZERO",			// 0
+			"DEBUG",				// 1
+			"NON-MASKABLE INTERRUPT",		// 2
+			"BREAKPOINT",				// 3
+			"INTO DETECTED OVERFLOW",		// 4
+			"BOUND RANGE EXCEEDED",			// 5
+			"INVALID OPCODE",			// 6
+			"NO COPROCESSOR",			// 7
+			"DOUBLE FAULT",				// 8
+			"COPROCESSOR SEGMENT OVERRUN",		// 9
+			"INVALID TSS",				// 10
+			"SEGMENT NOT PPRESENT",			// 11
+			"STACK FAULT",				// 12
+			"GENERAL PROTECTION FAULT",		// 13
+			"PAGE FAULT",				// 14
+			"UNKNOWN INTERRUPT",			// 15
+			"COPROCESSOR FAULT",			// 16
+			"ALIGNMENT CHECK",			// 17
+			"MACHINE CHECK",			// 18
+			"RESERVED",				// 19
+			"RESERVED",				// 20
+			"RESERVED",				// 21
+			"RESERVED",				// 22
+			"RESERVED",				// 23
+			"RESERVED",				// 24
+			"RESERVED",				// 25
+			"RESERVED",				// 26
+			"RESERVED",				// 27
+			"RESERVED",				// 28
+			"RESERVED",				// 29
+			"RESERVED",				// 30
+			"RESERVED"				// 31
 		};
 
 		// Exceptions number enumeration

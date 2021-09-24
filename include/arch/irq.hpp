@@ -3,7 +3,7 @@
 //	Architecture interrupts type deduction
 //
 //	File:	types.hpp
-//	Date:	05 Feb 2021
+//	Date:	24 Sep 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -152,7 +152,7 @@ namespace igros::arch {
 #else
 	// IRQ type
 	using irq	= interrupts_t<void, void>;
-	static_assert(false, u8"Unknown architecture!!!");
+	static_assert(false, "Unknown architecture!!!");
 #endif
 
 

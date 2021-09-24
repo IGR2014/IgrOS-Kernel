@@ -3,7 +3,7 @@
 //	Paging operations
 //
 //	File:	paging.hpp
-//	Date:	03 Feb 2021
+//	Date:	24 Sep 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -125,7 +125,7 @@ namespace igros::arch {
 #else
 	// Paging type
 	using paging = tPaging<void>;
-	static_assert(false, u8"Unknown architecture!!!");
+	static_assert(false, "Unknown architecture!!!");
 #endif
 
 

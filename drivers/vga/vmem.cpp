@@ -3,7 +3,7 @@
 //	VGA memory low-level operations
 //
 //	File:	vmem.cpp
-//	Date:	12 Feb 2021
+//	Date:	24 Sep 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -94,7 +94,7 @@ namespace igros::arch {
 	// Write symbol to VGA memory
 	void vmemWrite(const sbyte_t &symbol) noexcept {
 		// Backspace symbol
-		if (symbol == u8'\b') {
+		if (symbol == '\b') {
 			// If we are not at start
 			if (0U != cursorPos.x) {
 				// Move 1 symbol backward
@@ -105,19 +105,19 @@ namespace igros::arch {
 				--cursorPos.y;
 			}
 		// Tabulation symbol
-		} else if (symbol == u8'\t') {
+		} else if (symbol == '\t') {
 			// calculate new tab offset
 			cursorPos.x = (cursorPos.x + VIDEO_MEM_TAB_SIZE) & ~7U;
 		// Carret return
-		} else if (symbol == u8'\r') {
+		} else if (symbol == '\r') {
 			// Move to start of the row
 			cursorPos.x = 0U;
 		// Carret new line
-		} else if (symbol == u8'\n') {
+		} else if (symbol == '\n') {
 			// Move to next row
 			++cursorPos.y;
 		// If non-control (printable) character
-		} else if (symbol >= u8' ') {
+		} else if (symbol >= ' ') {
 			// Calculate offset in VGA console
 			const auto pos = cursorPos.y * VIDEO_MEM_WIDTH + cursorPos.x;
 			// Write symbol to VGA console
@@ -143,7 +143,7 @@ namespace igros::arch {
 			// Calculate offset in VGA console
 			const auto pos = cursorPos.y * VIDEO_MEM_WIDTH + cursorPos.x;
 			// Clear bottom line
-			klib::kmemset(&vmemBase[pos], VIDEO_MEM_WIDTH, (u8' ' | (static_cast<word_t>(vmemBkgColor) << 8)));
+			klib::kmemset(&vmemBase[pos], VIDEO_MEM_WIDTH, (' ' | (static_cast<word_t>(vmemBkgColor) << 8)));
 		}
 		// Set new cursor position
 		vmemCursorSet(cursorPos.x, cursorPos.y);
@@ -154,7 +154,7 @@ namespace igros::arch {
 		// Cast const pointer to pointer
 		auto data = message;
 		// Loop through message while \0 not found
-		while (*data != u8'\0') {
+		while (*data != '\0') {
 			// Write symbols one by one
 			vmemWrite(*data++);
 		}
@@ -173,7 +173,7 @@ namespace igros::arch {
 	// Clear VGA memory
 	void vmemClear() noexcept {
 		// Set whole screen with whitespace with default background
-		klib::kmemset(vmemBase, VIDEO_MEM_SIZE, (u8' ' | (static_cast<word_t>(vmemBkgColor) << 8)));
+		klib::kmemset(vmemBase, VIDEO_MEM_SIZE, (' ' | (static_cast<word_t>(vmemBkgColor) << 8)));
 	}
 
 

@@ -3,7 +3,7 @@
 //	Platform description for x86_64
 //
 //	File:	platform-x86_64.cpp
-//	Date:	10 Feb 2021
+//	Date:	24 Sep 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -30,7 +30,7 @@ namespace igros::x86_64 {
 	// Initialize x86_64
 	void x86_64Init() noexcept {
 
-		klib::kprintf(u8"Initializing x86_64 platform...", __func__);
+		klib::kprintf("Initializing x86_64 platform...", __func__);
 
 		// Setup Interrupts Descriptor Table
 		x86_64::idt::init();
@@ -51,27 +51,27 @@ namespace igros::x86_64 {
 
 	// Finalize x86_64
 	void x86_64Finalize() noexcept {
-		klib::kprintf(u8"%s:\tNot implemented yet!", __func__);
+		klib::kprintf("%s:\tNot implemented yet!", __func__);
 	}
 
 	// Shutdown x86_64
 	void x86_64Shutdown() noexcept {
-		klib::kprintf(u8"%s:\tNot implemented yet!", __func__);
+		klib::kprintf("%s:\tNot implemented yet!", __func__);
 	}
 
 	// Reboot x86_64
 	void x86_64Reboot() noexcept {
-		klib::kprintf(u8"%s:\tNot implemented yet!", __func__);
+		klib::kprintf("%s:\tNot implemented yet!", __func__);
 	}
 
 	// Suspend x86_64
 	void x86_64Suspend() noexcept {
-		klib::kprintf(u8"%s:\tNot implemented yet!", __func__);
+		klib::kprintf("%s:\tNot implemented yet!", __func__);
 	}
 
 	// Wakeup x86_64
 	void x86_64Wakeup() noexcept {
-		klib::kprintf(u8"%s:\tNot implemented yet!", __func__);
+		klib::kprintf("%s:\tNot implemented yet!", __func__);
 	}
 
 
@@ -84,7 +84,7 @@ namespace igros::platform {
 
 	// Platform description
 	const description_t CURRENT_PLATFORM {
-		u8"x86_64",
+		"x86_64",
 		x86_64::x86_64Init,
 		x86_64::x86_64Finalize,
 		x86_64::x86_64Shutdown,

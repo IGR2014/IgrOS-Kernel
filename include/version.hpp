@@ -3,7 +3,7 @@
 //	IgrOS version info
 //
 //	File:	version.hpp
-//	Date:	12 Feb 2021
+//	Date:	24 Sep 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -28,7 +28,7 @@ namespace igros {
 	constexpr auto VERSION_BUILD	= static_cast<word_t>(34U);
 
 	// Kernel version name
-	constexpr auto VERSION_NAME	= u8"BETA";
+	constexpr auto VERSION_NAME	= "BETA";
 
 
 	// Kernel version integer
@@ -46,7 +46,7 @@ namespace igros {
 	// Kernel version to string
 	[[nodiscard]]
 	constexpr auto KERNEL_VERSION_STRING() noexcept {
-		return u8"v0.1.34 [ BETA ]";
+		return "v0.1.34 [ BETA ]";
 	}
 
 
