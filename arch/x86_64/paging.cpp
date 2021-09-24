@@ -3,7 +3,7 @@
 //	Memory paging for x86_64
 //
 //	File:	paging.cpp
-//	Date:	12 Feb 2021
+//	Date:	24 Sep 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -38,7 +38,7 @@ namespace igros::x86_64 {
 
 
 	// Kernel memory map structure
-	const struct PAGE_MAP_t {
+	struct PAGE_MAP_t {
 		const page_t*	phys;
 		const pointer_t	virt;
 	};
