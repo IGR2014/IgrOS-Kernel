@@ -1,47 +1,37 @@
-# Cmake version
-CMAKE_MINIMUM_REQUIRED(VERSION 3.10.0)
-
 # Message
-MESSAGE(STATUS "Building Drivers")
-
-# C++ Language syntax
-ENABLE_LANGUAGE(CXX)
+message(STATUS "Building Drivers")
 
 # Kernel drivers C++ files
-FILE(
+file(
 	GLOB
 	DRIVERS_SRC
 	*.cpp
 )
 
 # Add clock subdirectory
-ADD_SUBDIRECTORY(
-	clock
+add_subdirectory(
 	clock
 )
 # Add input subdirectory
-ADD_SUBDIRECTORY(
-	input
+add_subdirectory(
 	input
 )
 # Add uart subdirectory
-ADD_SUBDIRECTORY(
-	uart
+add_subdirectory(
 	uart
 )
 # Add vga subdirectory
-ADD_SUBDIRECTORY(
-	vga
+add_subdirectory(
 	vga
 )
 
 # Includes
-INCLUDE_DIRECTORIES(
+include_directories(
 	include/drivers
 )
 
 # Target sources
-TARGET_SOURCES(
+target_sources(
 	${IGROS_KERNEL}
 	PRIVATE
 	${DRIVERS_SRC}

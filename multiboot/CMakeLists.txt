@@ -1,26 +1,20 @@
-# Cmake version
-CMAKE_MINIMUM_REQUIRED(VERSION 3.10.0)
-
 # Message
-MESSAGE(STATUS "Building multiboot files")
-
-# C++ Language syntax
-ENABLE_LANGUAGE(CXX)
+message(STATUS "Building multiboot files")
 
 # Kernel multiboot C++ files
-FILE(
+file(
 	GLOB
 	MULTIBOOT_SRC
 	*.cpp
 )
 
 # Includes
-INCLUDE_DIRECTORIES(
+include_directories(
 	include/multiboot
 )
 
 # Target sources
-TARGET_SOURCES(
+target_sources(
 	${IGROS_KERNEL}
 	PRIVATE
 	${MULTIBOOT_SRC}

@@ -1,26 +1,20 @@
-# Cmake version
-CMAKE_MINIMUM_REQUIRED(VERSION 3.10.0)
-
 # Message
-MESSAGE(STATUS "Building platform files")
-
-# C++ Language syntax
-ENABLE_LANGUAGE(CXX)
+message(STATUS "Building platform files")
 
 # Kernel platform C++ files
-FILE(
+file(
 	GLOB
 	PLATFORM_SRC
-	*-${IGROS_ARCH}.cpp
+	platform-${IGROS_ARCH}.cpp
 )
 
 # Includes
-INCLUDE_DIRECTORIES(
+include_directories(
 	include/
 )
 
 # Target sources
-TARGET_SOURCES(
+target_sources(
 	${IGROS_KERNEL}
 	PRIVATE
 	${PLATFORM_SRC}
