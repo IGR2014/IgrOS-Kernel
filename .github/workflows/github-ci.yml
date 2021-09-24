@@ -61,7 +61,7 @@ jobs:
       env:
         IGROS_ARCH: ${{ matrix.arch }}
       run: |
-        build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir build-wrapper cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DIGROS_ARCH=${{ matrix.arch }} -DCMAKE_TOOLCHAIN_FILE=config/cmake/${{ matrix.compiler }}-${{ matrix.arch }}.cmake -DCMAKE_BUILD_TYPE=Release -B build/${{ matrix.arch }} -G Ninja .
+        cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DIGROS_ARCH=${{ matrix.arch }} -DCMAKE_TOOLCHAIN_FILE=config/cmake/${{ matrix.compiler }}-${{ matrix.arch }}.cmake -DCMAKE_BUILD_TYPE=Release -B build/${{ matrix.arch }} -G Ninja .
 
     # Build
     - name: Run CMake Build
@@ -75,7 +75,7 @@ jobs:
       env:
         IGROS_ARCH: ${{ matrix.arch }}
       run: |
-        build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir build-wrapper cmake --install build/${{ matrix.arch }}
+        cmake --install build/${{ matrix.arch }}
 
     # CodeQL analysis
     - name: Perform CodeQL Analysis
@@ -83,9 +83,8 @@ jobs:
 
     # SonarCloud Wrapper analysis
     - name: Perform SonarCloud Analysis
+      uses: sonarsource/sonarcloud-github-action@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: |
-        sonar-scanner-cli-${SONAR_CLOUD_BUILD_WRAPPER_VERSION}-linux/bin/sonar-scanner -X -Dsonar.host.url=https://sonarcloud.io -Dsonar.branch.name=master -Dproject.settings=sonar-project.properties
 
