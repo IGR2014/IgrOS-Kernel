@@ -3,7 +3,7 @@
 //	Exceptions low-level operations
 //
 //	File:	exceptions.cpp
-//	Date:	05 Feb 2021
+//	Date:	24 Sep 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -54,7 +54,7 @@ namespace igros::i386 {
 		irq::disable();
 		// Print exception name
 		klib::kprintf(
-			u8"Exception:\t%s",
+			"Exception:\t%s",
 			except::NAME[regs->number]
 		);
 		// Dump registres

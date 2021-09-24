@@ -3,7 +3,7 @@
 //	Keyboard generic handling
 //
 //	File:	keyboard.cpp
-//	Date:	02 Feb 2021
+//	Date:	24 Sep 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -37,11 +37,11 @@ namespace igros::arch {
 			// Read keyboard data
 			const auto keyCode = io::get().readPort8(KEYBOARD_DATA);
 			klib::kprintf(
-				u8"IRQ #%d\t[Keyboard]\r\n"
-				u8"Key:\t%s\r\n"
-				u8"Code:\t0x%x\r\n",
+				"IRQ #%d\t[Keyboard]\r\n"
+				"Key:\t%s\r\n"
+				"Code:\t0x%x\r\n",
 				irq::irq_t::KEYBOARD,
-				(keyCode > 0x80) ? u8"RELEASED" : u8"PRESSED",
+				(keyCode > 0x80) ? "RELEASED" : "PRESSED",
 				keyCode
 			);
 		}
@@ -59,7 +59,7 @@ namespace igros::arch {
 		irq::get().mask(irq::irq_t::KEYBOARD);
 
 		klib::kprintf(
-			u8"IRQ #%d [Keyboard] installed\r\n",
+			"IRQ #%d [Keyboard] installed\r\n",
 			irq::irq_t::KEYBOARD
 		);
 

@@ -3,7 +3,7 @@
 //	Programmable interrupt timer
 //
 //	File:	pit.cpp
-//	Date:	11 Feb 2021
+//	Date:	24 Sep 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -52,7 +52,7 @@ namespace igros::arch {
 		PIT_FREQUENCY	= PIT_MAIN_FREQUENCY / divisor;
 
 		klib::kprintf(
-			u8"REAL frequency set to: %d Hz.",
+			"REAL frequency set to: %d Hz.",
 			PIT_FREQUENCY
 		);
 
@@ -92,8 +92,8 @@ namespace igros::arch {
 			const auto hours	= minutes / 60U;
 			// Debug date/time
 			klib::kprintf(
-				u8"IRQ #%d\t[PIT]\r\n"
-				u8"Time:\t%02d:%02d:%02d.%03d (~1 sec.)\r\n",
+				"IRQ #%d\t[PIT]\r\n"
+				"Time:\t%02d:%02d:%02d.%03d (~1 sec.)\r\n",
 				irq::irq_t::PIT,
 				hours	% 24U,
 				minutes	% 60U,

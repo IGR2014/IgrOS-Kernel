@@ -3,7 +3,7 @@
 //	RTC clock driver
 //
 //	File:	rtc.cpp
-//	Date:	08 Feb 2021
+//	Date:	24 Sep 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -137,8 +137,10 @@ namespace igros::arch {
 			century = rtcFromBCD(century);
 		}
 		// Check 24-hours format
-		if (	(0x00 == (flags & RTC_IS_TIME_24))
-			&& (0x00 != (0x80 & rtcDateTime.time.hour))) {
+		if (
+			(0x00 == (flags & RTC_IS_TIME_24))	&&
+			(0x00 != (0x80 & rtcDateTime.time.hour))
+		) {
 			// Adjust hours value
 			rtcDateTime.time.hour = static_cast<dword_t>((rtcDateTime.time.hour & 0x7F) + 12U) % 24U;
 		}
@@ -156,7 +158,7 @@ namespace igros::arch {
 		auto dateTime = clockGetCurrentDateTime();
 		// Print result
 		klib::kprintf(
-			u8"RTC date/time:\t%02d.%02d.%04d %02d:%02d:%02d\r\n",
+			"RTC date/time:\t%02d.%02d.%04d %02d:%02d:%02d\r\n",
 			dateTime.day,
 			dateTime.month,
 			dateTime.year,

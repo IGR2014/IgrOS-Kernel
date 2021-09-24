@@ -3,7 +3,7 @@
 //	UART driver
 //
 //	File:	serial.cpp
-//	Date:	08 Feb 2021
+//	Date:	24 Sep 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -123,10 +123,10 @@ namespace igros::arch {
 
 		// Debug
 		klib::kprintf(
-			u8"Serial Port #1:\t%d %d%c%d\r\n",
+			"Serial Port #1:\t%d %d%c%d\r\n",
 			static_cast<dword_t>(baudRate),
 			static_cast<dword_t>(dataSize) + 5U,
-			(parity == PARITY::NONE) ? u8'N' : u8'?',
+			(parity == PARITY::NONE) ? 'N' : '?',
 			(static_cast<dword_t>(stopBits) & 0x01) + 1U
 		);
 
@@ -202,8 +202,8 @@ namespace igros::arch {
 			// Serial #2 | #4
 			// Debug data
 			klib::kprintf(
-				u8"IRQ #%d\t[UART2]\r\n"
-				u8"Read:\tNOTHING!\r\n"
+				"IRQ #%d\t[UART2]\r\n"
+				"Read:\tNOTHING!\r\n"
 			);
 			// Interrupt done
 			//irq::get().eoi(static_cast<irq::irq_t>(regs->number));
@@ -216,8 +216,8 @@ namespace igros::arch {
 			const auto read = serialRead(data.data(), data.size());
 			// Debug data
 			klib::kprintf(
-				u8"IRQ #%d\t[UART1]\r\n"
-				u8"Read:\t%05d bytes = %s\r\n",
+				"IRQ #%d\t[UART1]\r\n"
+				"Read:\t%05d bytes = %s\r\n",
 				read,
 				reinterpret_cast<const sbyte_t* const>(data.cbegin())
 			);
@@ -247,21 +247,21 @@ namespace igros::arch {
 
 		// Debug
 		klib::kprintf(
-			u8"IRQ #%d [UART1] installed\r\n"
-			u8"IRQ #%d [UART2] installed\r\n",
+			"IRQ #%d [UART1] installed\r\n"
+			"IRQ #%d [UART2] installed\r\n",
 			irq::irq_t::UART1,
 			irq::irq_t::UART2
 		);
 
 		// Test serial
-		const auto res = serialWrite(u8"Hello World\r\n");
+		const auto res = serialWrite("Hello World\r\n");
 		// Error check
-		if (res != klib::kstrlen(u8"Hello World\r\n")) {
+		if (res != klib::kstrlen("Hello World\r\n")) {
 			// Debug
 			klib::kprintf(
-				u8"Serial Port #1:\tERROR - bad write (%d of %d bytes)",
+				"Serial Port #1:\tERROR - bad write (%d of %d bytes)",
 				res,
-				klib::kstrlen(u8"Hello World\r\n")
+				klib::kstrlen("Hello World\r\n")
 			);
 		}
 

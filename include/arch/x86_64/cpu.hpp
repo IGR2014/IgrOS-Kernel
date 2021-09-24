@@ -3,7 +3,7 @@
 //	CPU operations
 //
 //	File:	cpu.hpp
-//	Date:	08 Feb 2021
+//	Date:	24 Sep 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -80,22 +80,22 @@ namespace igros::x86_64 {
 	inline void cpu::dumpRegisters(const register_t* const regs) noexcept {
 		// Print regs
 		klib::kprintf(
-			u8"Registers dump:\r\n"
-			u8"RAX=[%p] RBX=[%p] RCX=[%p] RDX=[%p]\r\n"
-			u8"R8 =[%p] R9 =[%p] R10=[%p] R11=[%p]\r\n"
-			u8"R12=[%p] R13=[%p] R14=[%p] R15=[%p]\r\n"
-			u8"RSI=[%p] RDI=[%p]\r\n"
-			u8"RSP=[%p] RBP=[%p]\r\n"
-			u8"RIP=[%p]\r\n"
-			u8"RFLAGS=[%p]\r\n"
-			u8"Segments:\r\n"
-			u8"CS=[%p]\r\n"
-			u8"DS=[%p]\r\n"
-			u8"SS=[%p]\r\n"
-			u8"ES=[%p]\r\n"
-			u8"FS=[%p]\r\n"
-			u8"GS=[%p]\r\n"
-			u8"\r\n",
+			"Registers dump:\r\n"
+			"RAX=[%p] RBX=[%p] RCX=[%p] RDX=[%p]\r\n"
+			"R8 =[%p] R9 =[%p] R10=[%p] R11=[%p]\r\n"
+			"R12=[%p] R13=[%p] R14=[%p] R15=[%p]\r\n"
+			"RSI=[%p] RDI=[%p]\r\n"
+			"RSP=[%p] RBP=[%p]\r\n"
+			"RIP=[%p]\r\n"
+			"RFLAGS=[%p]\r\n"
+			"Segments:\r\n"
+			"CS=[%p]\r\n"
+			"DS=[%p]\r\n"
+			"SS=[%p]\r\n"
+			"ES=[%p]\r\n"
+			"FS=[%p]\r\n"
+			"GS=[%p]\r\n"
+			"\r\n",
 			regs->rax,
 			regs->rbx,
 			regs->rcx,
