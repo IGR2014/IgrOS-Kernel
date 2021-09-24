@@ -3,7 +3,7 @@
 //	Interrupt service routines low-level operations
 //
 //	File:	isr.cpp
-//	Date:	10 Feb 2021
+//	Date:	24 Sep 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -66,9 +66,9 @@ extern "C" {
 			igros::i386::irq::disable();
 			// Debug
 			igros::klib::kprintf(
-				u8"%s -> [#%d]\r\n"
-				u8"State:\t\tUNHANDLED! CPU halted!\r\n",
-				((regs->number >= igros::i386::IRQ_OFFSET) ? u8"IRQ" : u8"EXCEPTION"),
+				"%s -> [#%d]\r\n"
+				"State:\t\tUNHANDLED! CPU halted!\r\n",
+				((regs->number >= igros::i386::IRQ_OFFSET) ? "IRQ" : "EXCEPTION"),
 				((regs->number >= igros::i386::IRQ_OFFSET) ? (regs->number - igros::i386::IRQ_OFFSET) : regs->number)
 			);
 			// Dump registres

@@ -3,7 +3,7 @@
 //	Kernel text print functions
 //
 //	File:	kprint.cpp
-//	Date:	08 Feb 2021
+//	Date:	24 Sep 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -30,7 +30,7 @@ namespace igros::klib {
 	// Default temporary buffer for kitoa
 	constexpr std::size_t			KITOA_BUFF_LEN		{65U};
 	// Constant integer symbols values buffer
-	constexpr std::array<sbyte_t, 16ULL>	KITOA_CONST_BUFFER	{u8'0', u8'1', u8'2', u8'3', u8'4', u8'5', u8'6', u8'7', u8'8', u8'9', u8'A', u8'B', u8'C', u8'D', u8'E', u8'F'};
+	constexpr std::array<sbyte_t, 16ULL>	KITOA_CONST_BUFFER	{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
 
 	// Kernel large unsigned integer to string function
@@ -43,7 +43,7 @@ namespace igros::klib {
 		// Temporary buffer for value text representation
 		std::array<sbyte_t, KITOA_BUFF_LEN> tempBuffer;
 		// Zero-initialize
-		kmemset(tempBuffer.data(), tempBuffer.size(), u8'\0');
+		kmemset(tempBuffer.data(), tempBuffer.size(), '\0');
 
 		// Setup counter to last - 1 position in temporary buffer
 		auto pos = KITOA_BUFF_LEN - 2U;
@@ -82,7 +82,7 @@ namespace igros::klib {
 		if (	(value < 0)
 			&& (radix_t::DEC == radix)) {
 			// Write minus sign to buffer
-			*buffer++ = u8'-';
+			*buffer++ = '-';
 			// Decrement size counter
 			--tempSize;
 			// Made value positive
@@ -92,7 +92,7 @@ namespace igros::klib {
 		// Temporary buffer for value text representation
 		std::array<sbyte_t, KITOA_BUFF_LEN> tempBuffer;
 		// Zero-initialize
-		kmemset(tempBuffer.data(), tempBuffer.size(), u8'\0');
+		kmemset(tempBuffer.data(), tempBuffer.size(), '\0');
 
 		// Setup counter to last - 1 position in temporary buffer
 		auto pos = KITOA_BUFF_LEN - 2U;
@@ -140,7 +140,7 @@ namespace igros::klib {
 		// Number holder
 		std::array<sbyte_t, KITOA_BUFF_LEN> number;
 		// Zero-initialize
-		kmemset(number.data(), number.size(), u8'\0');
+		kmemset(number.data(), number.size(), '\0');
 
 		// Preceding char fill lambda
 		constexpr auto fillPreceding = [](auto &str, const auto len, const auto width, const auto fill) constexpr noexcept {
@@ -168,7 +168,7 @@ namespace igros::klib {
 			// Number holder
 			std::array<sbyte_t, KITOA_BUFF_LEN> number;
 			// Zero-initialize
-			kmemset(number.data(), number.size(), u8'\0');
+			kmemset(number.data(), number.size(), '\0');
 			// Value
 			auto value	= 0ULL;
 			// Check argument size specifier
@@ -209,31 +209,33 @@ namespace igros::klib {
 
 		// Iterate through format string
 		while (	(fmtIterator < size)
-			&& (u8'\0' != format[fmtIterator])) {
+			&& ('\0' != format[fmtIterator])) {
 
 			// If symbol is not placeholder symbol '%'
-			if (u8'%' != format[fmtIterator]) {
+			if ('%' != format[fmtIterator]) {
 				// Copy string till the next placeholder symbol '%'
 				*strIterator++ = format[fmtIterator++];
 			// Placeholder symbol '%' received
 			} else {
 
 				// Fill character
-				auto fillChar	= u8' ';
+				auto fillChar	= ' ';
 				auto fillWidth	= 0U;
 				// Check format fill char
-				if (u8'0' == format[fmtIterator + 1U]) {
+				if ('0' == format[fmtIterator + 1U]) {
 					// Set fillchar to '0'
-					fillChar = u8'0';
+					fillChar = '0';
 					// Adjust format iterator
 					++fmtIterator;
 				}
 
 				// Check format fill width
-				if (u8'1'	<= format[fmtIterator + 1U]
-				    && u8'9'	>= format[fmtIterator + 1U]) {
+				if (
+					'1'	<= format[fmtIterator + 1U]	&&
+					'9'	>= format[fmtIterator + 1U]
+				) {
 					// Set fill width to value
-					fillWidth = static_cast<dword_t>(format[fmtIterator + 1U] - u8'0');
+					fillWidth = static_cast<dword_t>(format[fmtIterator + 1U] - '0');
 					// Adjust format iterator
 					++fmtIterator;
 				}
@@ -241,18 +243,18 @@ namespace igros::klib {
 				// Argument type (dword by default)
 				auto argType = argType_t::DWORD;
 				// Check if quad specifier
-				if (u8'l' == format[fmtIterator + 1U]) {
+				if ('l' == format[fmtIterator + 1U]) {
 					// Check if quad specifier
-					if (u8'l' == format[fmtIterator + 2U]) {
+					if ('l' == format[fmtIterator + 2U]) {
 						// Quad argument
 						argType = argType_t::QUAD;
 						// Adjust format iterator
 						fmtIterator += 2U;
 					}
 				// Otherwise it could be word
-				} else if (u8'h' == format[fmtIterator + 1U]) {
+				} else if ('h' == format[fmtIterator + 1U]) {
 					// Or even byte
-					if (u8'h' == format[fmtIterator + 2U]) {
+					if ('h' == format[fmtIterator + 2U]) {
 						// Byte argument
 						argType = argType_t::BYTE;
 						// Adjust format iterator
@@ -270,13 +272,13 @@ namespace igros::klib {
 				switch (format[++fmtIterator]) {
 
 					// '%' character
-					case u8'%':
+					case '%':
 						// Copy placeholder symbol '%'
 						*strIterator++ = format[fmtIterator];
 						break;
 
 					// Character
-					case u8'c':
+					case 'c':
 						// Fill with preceding symbols
 						fillPreceding(strIterator, sizeof(sbyte_t), fillWidth, fillChar);
 						// Copy character to resulting string
@@ -284,44 +286,44 @@ namespace igros::klib {
 						break;
 
 					// Binary integer
-					case u8'b':
+					case 'b':
 						// Print integer
 						printInteger(strIterator, radix_t::BIN, argType, fillWidth, fillChar, false);
 						break;
 
 					// Octal integer
-					case u8'o':
+					case 'o':
 						// Print integer
 						printInteger(strIterator, radix_t::OCT, argType, fillWidth, fillChar, false);
 						break;
 
 					// Integer
-					case u8'd':
+					case 'd':
 					[[fallthrough]];
 					// Integer too
-					case u8'i':
+					case 'i':
 						// Print integer
 						printInteger(strIterator, radix_t::DEC, argType, fillWidth, fillChar, true);
 						break;
 
 					// Unsigned integer
-					case u8'u':
+					case 'u':
 						// Print integer
 						printInteger(strIterator, radix_t::DEC, argType, fillWidth, fillChar, false);
 						break;
 
 					// Hexidemical integer
-					case u8'x':
+					case 'x':
 						// Print integer
 						printInteger(strIterator, radix_t::HEX, argType, fillWidth, fillChar, false);
 						break;
 
 					// Address
-					case u8'p': {
+					case 'p': {
 						// For pointers width is always size of pointer_t (aka void*) on current platform
 						// And fill char is always '0'
 						fillWidth	= sizeof(pointer_t) << 1;
-						fillChar	= u8'0';
+						fillChar	= '0';
 						// Convert pointer to string
 						kptoa(number.data(), (sizeof(pointer_t) << 3) + 1ULL, static_cast<pointer_t>(va_arg(list, pointer_t)));
 						// Get string length
@@ -335,7 +337,7 @@ namespace igros::klib {
 					} break;
 
 					// Size
-					case u8'z': {
+					case 'z': {
 						// Convert pointer to string
 						kstoa(number.data(), (sizeof(std::size_t) << 3) + 1ULL, static_cast<const std::size_t>(va_arg(list, std::size_t)));
 						// Get string length
@@ -349,7 +351,7 @@ namespace igros::klib {
 					} break;
 
 					// String
-					case u8's': {
+					case 's': {
 						// Get string from args
 						str = static_cast<sbyte_t*>(va_arg(list, sbyte_t*));
 						// Get string length
@@ -363,7 +365,7 @@ namespace igros::klib {
 					// Default action
 					default:
 						// Copy character to resulting string
-						*strIterator++ = u8'?';
+						*strIterator++ = '?';
 						break;
 
 				}
@@ -372,7 +374,7 @@ namespace igros::klib {
 				++fmtIterator;
 
 				// Reset fill char
-				fillChar	= u8' ';
+				fillChar	= ' ';
 				fillWidth	= 0U;
 
 			}
@@ -380,7 +382,7 @@ namespace igros::klib {
 		}
 
 		// Insert null terminator
-		*strIterator++ = u8'\0';
+		*strIterator++ = '\0';
 
 	}
 
@@ -415,7 +417,7 @@ namespace igros::klib {
 		// Text buffer
 		static std::array<sbyte_t, 1024ULL> buffer;
 		// Zero-initialize
-		kmemset(buffer.data(), buffer.size(), u8'\0');
+		kmemset(buffer.data(), buffer.size(), '\0');
 		// Kernel variadic argument list
 		va_list list {};
 		// Initialize variadic arguments list
@@ -426,10 +428,10 @@ namespace igros::klib {
 		va_end(list);
 		// Output buffer
 		arch::vmemWrite(buffer.data());
-		arch::vmemWrite(u8"\r\n");
+		arch::vmemWrite("\r\n");
 		// Output to serial
 		arch::serialWrite(buffer.data());
-		arch::serialWrite(u8"\r\n");
+		arch::serialWrite("\r\n");
 	}
 
 

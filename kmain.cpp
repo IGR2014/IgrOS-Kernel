@@ -3,7 +3,7 @@
 //	Boot low-level main setup function
 //
 //	File:	boot.cpp
-//	Date:	10 Feb 2021
+//	Date:	24 Sep 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -44,16 +44,16 @@ namespace igros {
 	void printHeader(const multiboot::info_t* const multiboot) noexcept {
 		// Write kernel info
 		klib::kprintf(
-			u8"Kernel info:\r\n"
-			u8"Arch:\t\t%s\r\n"
-			u8"Start addr:\t0x%p\r\n"
-			u8"End addr:\t0x%p\r\n"
-			u8"Size:\t\t%d Kb.\r\n"
-			u8"Build:\t\t" __DATE__ u8", " __TIME__ u8"\r\n"
-			u8"Version:\t%s\r\n"
-			u8"Author:\t\tIgor Baklykov (c) %d - %d\r\n"
-			u8"Command line:\t%s\r\n"
-			u8"Loader:\t\t%s\r\n",
+			"Kernel info:\r\n"
+			"Arch:\t\t%s\r\n"
+			"Start addr:\t0x%p\r\n"
+			"End addr:\t0x%p\r\n"
+			"Size:\t\t%d Kb.\r\n"
+			"Build:\t\t" __DATE__ ", " __TIME__ "\r\n"
+			"Version:\t%s\r\n"
+			"Author:\t\tIgor Baklykov (c) %d - %d\r\n"
+			"Command line:\t%s\r\n"
+			"Loader:\t\t%s\r\n",
 			platform::CURRENT_PLATFORM.name(),
 			platform::KERNEL_START(),
 			platform::KERNEL_END(),
@@ -84,7 +84,7 @@ extern "C" {
 		igros::arch::vmemInit();
 
 		// Write Multiboot magic error message message
-		igros::klib::kprintf(u8"IgrOS kernel\r\n");
+		igros::klib::kprintf("IgrOS kernel\r\n");
 
 		// Test multiboot (Hang on error)
 		igros::multiboot::test(multiboot, magic);
@@ -114,7 +114,7 @@ extern "C" {
 		multiboot->printMemMap();
 
 		// Write "Booted successfully" message
-		igros::klib::kprintf(u8"Booted successfully\r\n");
+		igros::klib::kprintf("Booted successfully\r\n");
 
 		// Halt CPU
 		igros::arch::cpu::get().halt();

@@ -3,7 +3,7 @@
 //	CPU operations
 //
 //	File:	cpu.hpp
-//	Date:	08 Feb 2021
+//	Date:	24 Sep 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -80,20 +80,20 @@ namespace igros::i386 {
 	inline void cpu::dumpRegisters(const register_t* const regs) noexcept {
 		// Print regs
 		klib::kprintf(
-			u8"Registers dump:\r\n"
-			u8"EAX=[%p] EBX=[%p] ECX=[%p] EDX=[%p]\r\n"
-			u8"ESI=[%p] EDI=[%p]\r\n"
-			u8"ESP=[%p] EBP=[%p]\r\n"
-			u8"EIP=[%p]\r\n"
-			u8"EFLAGS=[%p]\r\n"
-			u8"Segments:\r\n"
-			u8"CS=[%p]\r\n"
-			u8"DS=[%p]\r\n"
-			u8"SS=[%p]\r\n"
-			u8"ES=[%p]\r\n"
-			u8"FS=[%p]\r\n"
-			u8"GS=[%p]\r\n"
-			u8"\r\n",
+			"Registers dump:\r\n"
+			"EAX=[%p] EBX=[%p] ECX=[%p] EDX=[%p]\r\n"
+			"ESI=[%p] EDI=[%p]\r\n"
+			"ESP=[%p] EBP=[%p]\r\n"
+			"EIP=[%p]\r\n"
+			"EFLAGS=[%p]\r\n"
+			"Segments:\r\n"
+			"CS=[%p]\r\n"
+			"DS=[%p]\r\n"
+			"SS=[%p]\r\n"
+			"ES=[%p]\r\n"
+			"FS=[%p]\r\n"
+			"GS=[%p]\r\n"
+			"\r\n",
 			regs->eax,
 			regs->ebx,
 			regs->ecx,

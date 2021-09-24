@@ -3,7 +3,7 @@
 //	Memory paging for x86
 //
 //	File:	paging.cpp
-//	Date:	12 Feb 2021
+//	Date:	24 Sep 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -393,21 +393,21 @@ namespace igros::i386 {
 
 		// Write Multiboot magic error message message
 		klib::kprintf(
-			u8"EXCEPTION [#%d]\t-> (%s)\r\n"
-			u8"Caused by:\t%s%s%s\r\n"
-			u8"From:\t\t%s space\r\n"
-			u8"When:\t\tattempting to %s\r\n"
-			u8"Address:\t0x%p\r\n"
-			u8"Which is:\tnot %s\r\n",
+			"EXCEPTION [#%d]\t-> (%s)\r\n"
+			"Caused by:\t%s%s%s\r\n"
+			"From:\t\t%s space\r\n"
+			"When:\t\tattempting to %s\r\n"
+			"Address:\t0x%p\r\n"
+			"Which is:\tnot %s\r\n",
 			regs->number,
 			except::NAME[regs->number],
-			((regs->param & 0x18) == 0U) ? u8"ACCESS VIOLATION"	: u8"",
-			((regs->param & 0x10) == 0U) ? u8""			: u8"INSTRUCTION FETCH",
-			((regs->param & 0x08) == 0U) ? u8""			: u8"RESERVED BIT SET",
-			((regs->param & 0x04) == 0U) ? u8"KERNEL"		: u8"USER",
-			((regs->param & 0x02) == 0U) ? u8"READ"			: u8"WRITE",
+			((regs->param & 0x18) == 0U) ? "ACCESS VIOLATION"	: "",
+			((regs->param & 0x10) == 0U) ? ""			: "INSTRUCTION FETCH",
+			((regs->param & 0x08) == 0U) ? ""			: "RESERVED BIT SET",
+			((regs->param & 0x04) == 0U) ? "KERNEL"			: "USER",
+			((regs->param & 0x02) == 0U) ? "READ"			: "WRITE",
 			reinterpret_cast<const pointer_t>(outCR2()),
-			((regs->param & 0x01) == 0U) ? u8"PRESENT"		: u8"PRIVILEGED"
+			((regs->param & 0x01) == 0U) ? "PRESENT"		: "PRIVILEGED"
 		);
 
 		// Hang here
