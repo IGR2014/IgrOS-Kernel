@@ -83,8 +83,9 @@ jobs:
 
     # SonarCloud Wrapper analysis
     - name: Perform SonarCloud Analysis
-      uses: sonarsource/sonarcloud-github-action@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: |
+        sonar-scanner-cli-${SONAR_CLOUD_BUILD_WRAPPER_VERSION}-linux/bin/sonar-scanner -X -Dsonar.host.url=https://sonarcloud.io -Dsonar.branch.name=master -Dproject.settings=sonar-project.properties
 
