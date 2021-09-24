@@ -1,60 +1,65 @@
 # Cmake version
-CMAKE_MINIMUM_REQUIRED(VERSION 3.10.0)
+cmake_minimum_required(VERSION 3.20.0)
 
 # Arch
-IF(NOT DEFINED IGROS_ARCH)
-	SET(IGROS_ARCH		"i386")
-ENDIF()
-IF(NOT DEFINED IGROS_CXX)
-	SET(IGROS_CXX		"clang++")
-ENDIF()
-SET(IGROS_KERNEL	"kernel.bin")
-SET(IGROS_CONFIG_FILE	"config/cmake/${IGROS_CXX}-${IGROS_ARCH}.cmake")
-SET(IGROS_LINK_SCRIPT	"config/link/link-${IGROS_ARCH}.ld")
-SET(IGROS_VERSION_MAJOR	"0")
-SET(IGROS_VERSION_MINOR	"1")
-SET(IGROS_VERSION_BUILD	"34")
-SET(IGROS_VERSION	${IGROS_VERSION_MAJOR}.${IGROS_VERSION_MINOR}.${IGROS_VERSION_BUILD})
+if(NOT DEFINED IGROS_ARCH)
+	set(IGROS_ARCH	"i386")
+endif()
+# Compiler
+if(NOT DEFINED IGROS_CXX)
+	set(IGROS_CXX	"clang++")
+endif()
+# Preset parameters
+set(IGROS_KERNEL	"kernel.bin")
+set(IGROS_CONFIG_FILE	"config/cmake/${IGROS_CXX}-${IGROS_ARCH}.cmake")
+set(IGROS_LINK_SCRIPT	"config/link/link-${IGROS_ARCH}.ld")
+set(IGROS_VERSION_MAJOR	"0")
+set(IGROS_VERSION_MINOR	"1")
+set(IGROS_VERSION_BUILD	"34")
+set(IGROS_VERSION	${IGROS_VERSION_MAJOR}.${IGROS_VERSION_MINOR}.${IGROS_VERSION_BUILD})
 
 # Build config
-INCLUDE(${IGROS_CONFIG_FILE})
+include(${IGROS_CONFIG_FILE})
 
 # Build in Source protection
-FILE(
+file(
 	TO_CMAKE_PATH "${PROJECT_BINARY_DIR}/CMakeLists.txt" LOC_PATH
 )
-IF(EXISTS "${LOC_PATH}")
-	MESSAGE(FATAL_ERROR "Cannot build in a source directory (or any with CMakeLists.txt)!")
-ENDIF()
+if(EXISTS "${LOC_PATH}")
+	message(FATAL_ERROR "Cannot build in a source directory (or any with CMakeLists.txt)!")
+endif()
 
 # Project
-PROJECT(
+project(
 	IgrOS-Kernel
 	VERSION ${IGROS_VERSION}
+	DESCRIPTION "Simple C++20 Kernel for i386/x86_64"
+	LANGUAGES ASM-ATT CXX
 )
 
 # Printables
-STRING(
+string(
 	REPLACE " -" "\n\t\t-"
 	CMAKE_ASM-ATT_FLAGS_PRINTABLE
 	${CMAKE_ASM-ATT_FLAGS}
 )
-STRING(
+string(
 	REPLACE " -" "\n\t\t-"
 	CMAKE_CXX_FLAGS_PRINTABLE
 	${CMAKE_CXX_FLAGS}
 )
-STRING(
+string(
 	REPLACE " -" "\n\t\t-"
 	CMAKE_LINKER_FLAGS_PRINTABLE
 	${CMAKE_LINKER_FLAGS}
 )
 
 # Header
-MESSAGE(
+message(
+	"\n"
 	"===============================\n"
 	"\n"
-	"IgrOS Kernel Build v1.0\n"
+	"IgrOS Kernel Build v${IGROS_VERSION}\n"
 	"\n"
 	"Architecture:	${IGROS_ARCH}\n"
 	"\n"
@@ -75,130 +80,119 @@ MESSAGE(
 )
 
 # Message
-MESSAGE(STATUS "Building Kernel ${IGROS_ARCH}")
-
-# C++ Language syntax
-ENABLE_LANGUAGE(CXX)
-# AT&T Assembler syntax
-ENABLE_LANGUAGE(ASM-ATT)
+message(STATUS "Building Kernel ${IGROS_ARCH}")
 
 # Kernel C++ files
-FILE(
+file(
 	GLOB
 	KERNEL_SRC
 	*.cpp
 )
 
 # Includes
-INCLUDE_DIRECTORIES(
+include_directories(
 	include
 )
 
 # Kernel executable
-ADD_EXECUTABLE(
+add_executable(
 	${IGROS_KERNEL}
 	${KERNEL_SRC}
 )
 
 # Kernel C++ standard
-SET_PROPERTY(
+set_property(
 	TARGET
 	${IGROS_KERNEL}
-	PROPERTY CXX_STANDARD 17
+	PROPERTY CXX_STANDARD 20
 )
-# Required c++17
-SET_PROPERTY(
+# Required C++20
+set_property(
 	TARGET
 	${IGROS_KERNEL}
 	PROPERTY CMAKE_CXX_STANDARD_REQUIRED True
 )
 # No GNU!
-SET_PROPERTY(
+set_property(
 	TARGET
 	${IGROS_KERNEL}
 	PROPERTY CXX_EXTENSIONS OFF
 )
 
 # Kernel C standard
-SET_PROPERTY(
+set_property(
 	TARGET
 	${IGROS_KERNEL}
-	PROPERTY C_STANDARD 11
+	PROPERTY C_STANDARD 17
 )
-# Required c11
-SET_PROPERTY(
+# Required c17
+set_property(
 	TARGET
 	${IGROS_KERNEL}
 	PROPERTY CMAKE_C_STANDARD_REQUIRED True
 )
 # No GNU!
-SET_PROPERTY(
+set_property(
 	TARGET
 	${IGROS_KERNEL}
 	PROPERTY C_EXTENSIONS OFF
 )
 
 # PIC
-SET_PROPERTY(
+set_property(
 	TARGET
 	${IGROS_KERNEL}
 	PROPERTY CMAKE_POSITION_INDEPENDENT_CODE ON
 )
 
 # Kernel definitions
-ADD_COMPILE_DEFINITIONS(
+add_compile_definitions(
 	IGROS_ARCH_${IGROS_ARCH}
 	IGROS_ARCH=${IGROS_ARCH}
 	IGROS_KERNEL
 )
 
 # Add arch subdirectory
-ADD_SUBDIRECTORY(
-	arch
+add_subdirectory(
 	arch
 )
 # Add multiboot subdirectory
-ADD_SUBDIRECTORY(
-	multiboot
+add_subdirectory(
 	multiboot
 )
 # Add klib subdirectory
-ADD_SUBDIRECTORY(
-	klib
+add_subdirectory(
 	klib
 )
 # Add mem subdirectory
-ADD_SUBDIRECTORY(
-	mem
+add_subdirectory(
 	mem
 )
 # Add sys subdirectory
-ADD_SUBDIRECTORY(
-	sys
+add_subdirectory(
 	sys
 )
 # Add drivers subdirectory
-ADD_SUBDIRECTORY(
-	drivers
+add_subdirectory(
 	drivers
 )
 
 # Debug build target
-ADD_CUSTOM_TARGET(
+add_custom_target(
 	debug
 	COMMAND ${CMAKE_COMMAND} -DCMAKE_TOOLCHAIN_FILE=${IGROS_CONFIG_FILE} -DCMAKE_BUILD_TYPE=Debug -S"${CMAKE_SOURCE_DIR}" -H"${CMAKE_SOURCE_DIR}" -B"${CMAKE_BINARY_DIR}/${IGROS_ARCH}" ${CMAKE_SOURCE_DIR}
 	COMMAND ${CMAKE_COMMAND} --build "${CMAKE_BINARY_DIR}/${IGROS_ARCH}" --target all
 	COMMENT "Switch CMAKE_BUILD_TYPE to Debug"
 )
 # Profiling build target
-ADD_CUSTOM_TARGET(
+add_custom_target(
 	profiling
 	COMMAND ${CMAKE_COMMAND} -DCMAKE_TOOLCHAIN_FILE=${IGROS_CONFIG_FILE} -DCMAKE_BUILD_TYPE=Profiling -S"${CMAKE_SOURCE_DIR}" -H"${CMAKE_SOURCE_DIR}" -B"${CMAKE_BINARY_DIR}/${IGROS_ARCH}" ${CMAKE_SOURCE_DIR}
 	COMMAND ${CMAKE_COMMAND} --build "${CMAKE_BINARY_DIR}/${IGROS_ARCH}" --target all
 	COMMENT "Switch CMAKE_BUILD_TYPE to Profiling"
 )
 # Release build target
-ADD_CUSTOM_TARGET(
+add_custom_target(
 	release
 	COMMAND ${CMAKE_COMMAND} -DCMAKE_TOOLCHAIN_FILE=${IGROS_CONFIG_FILE} -DCMAKE_BUILD_TYPE=Release -S"${CMAKE_SOURCE_DIR}" -H"${CMAKE_SOURCE_DIR}" -B"${CMAKE_BINARY_DIR}/${IGROS_ARCH}" ${CMAKE_SOURCE_DIR}
 	COMMAND ${CMAKE_COMMAND} --build "${CMAKE_BINARY_DIR}/${IGROS_ARCH}" --target all
@@ -206,34 +200,34 @@ ADD_CUSTOM_TARGET(
 )
 
 # Install rules
-INSTALL(
+install(
 	TARGETS ${IGROS_KERNEL}
 	CONFIGURATIONS ${CMAKE_BUILD_TYPE}
 	DESTINATION "${CMAKE_SOURCE_DIR}/${CMAKE_BUILD_TYPE}/${IGROS_ARCH}"
 )
 
 # Link command
-SET(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_LINKER} <OBJECTS> -o ${IGROS_KERNEL} -T ${CMAKE_SOURCE_DIR}/${IGROS_LINK_SCRIPT} ${CMAKE_LINKER_FLAGS}")
+set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_LINKER} <OBJECTS> -o ${IGROS_KERNEL} -T ${CMAKE_SOURCE_DIR}/${IGROS_LINK_SCRIPT} ${CMAKE_LINKER_FLAGS}")
 
 # If i386
-IF(${IGROS_ARCH} MATCHES "i386")
+if(${IGROS_ARCH} MATCHES "i386")
 	# Qemu for i386
-	SET(QEMU "qemu-system-i386")
+	set(QEMU "qemu-system-i386")
 # If x86_64
-ELSEIF(${IGROS_ARCH} MATCHES "x86_64")
+elseif(${IGROS_ARCH} MATCHES "x86_64")
 	# Qemu for x86_64
-	SET(QEMU "qemu-system-x86_64")
-ENDIF()
+	set(QEMU "qemu-system-x86_64")
+endif()
 
 # Install proxy
-ADD_CUSTOM_TARGET(
+add_custom_target(
 	install_proxy
 	COMMAND ${CMAKE_COMMAND} --build "${CMAKE_BINARY_DIR}" --target install
 	DEPENDS ${IGROS_KERNEL}
 )
 
 # Test kernel
-ADD_CUSTOM_TARGET(
+add_custom_target(
 	test
 	USES_TERMINAL
 	COMMAND ${QEMU} -kernel "${CMAKE_SOURCE_DIR}/${CMAKE_BUILD_TYPE}/${IGROS_ARCH}/${IGROS_KERNEL}" -m 2G -vga std -rtc base=localtime -serial mon:stdio 
