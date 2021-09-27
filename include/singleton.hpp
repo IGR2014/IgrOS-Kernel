@@ -3,7 +3,7 @@
 //	IgrOS singleton implementation
 //
 //	File:	singleton.hpp
-//	Date:	21 Jul 2020
+//	Date:	27 Sep 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -23,20 +23,20 @@ namespace igros {
 	class singleton {
 
 		// No copy construction
-		singleton(const singleton &other) noexcept = delete;
+		singleton(const singleton &other) = delete;
 		// No copy assignment
-		singleton& operator=(const singleton &other) noexcept = delete;
+		singleton& operator=(const singleton &other) = delete;
 
 		// No move construction
-		singleton(singleton &&other) noexcept = delete;
+		singleton(singleton &&other) = delete;
 		// No move assignment
-		singleton& operator=(singleton &&other) noexcept = delete;
+		singleton& operator=(singleton &&other) = delete;
 
 
 	protected:
 
 		// Default c-tor
-		singleton() noexcept {}
+		singleton() = default;
 
 
 	public:

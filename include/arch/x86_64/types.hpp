@@ -3,7 +3,7 @@
 //	Common C++ types redefinition
 //
 //	File:	types.hpp
-//	Date:	12 Feb 2021
+//	Date:	27 Sep 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -12,6 +12,10 @@
 
 
 #pragma once
+
+
+// C++
+#include <type_traits>
 
 
 // OS namespace
@@ -35,7 +39,7 @@ namespace igros {
 	using	real64_t	= double;
 
 	// Common pointer type
-	using	pointer_t	= void*;
+	using	pointer_t	= std::add_pointer_t<void>;
 
 
 }	// namespace igros

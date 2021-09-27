@@ -3,7 +3,7 @@
 //	Bit flags template datatype
 //
 //	File:	flags.hpp
-//	Date:	12 Feb 2021
+//	Date:	27 Sep 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -100,12 +100,12 @@ namespace igros {
 		constexpr kflags& operator=(kflags &&value) noexcept = default;
 
 		// Type copy c-tor
-		constexpr kflags(const T &value) noexcept;
+		constexpr explicit kflags(const T &value) noexcept;
 		// Type copy assignment
 		constexpr kflags& operator=(const T &value) noexcept;
 
 		// Type move c-tor
-		constexpr kflags(T &&value) noexcept;
+		constexpr explicit kflags(T &&value) noexcept;
 		// Type move assignment
 		constexpr kflags& operator=(T &&value) noexcept;
 
