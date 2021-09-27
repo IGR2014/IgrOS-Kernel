@@ -164,7 +164,7 @@ namespace igros::klib {
 		};
 
 		// Integer print lambda
-		auto printInteger = [&list](auto &str, const auto radix, const auto type, const auto width, const auto fill, const auto sign) noexcept {
+		auto printInteger = [&list, &fillPreceding](auto &str, const auto radix, const auto type, const auto width, const auto fill, const auto sign) noexcept {
 			// Number holder
 			std::array<sbyte_t, KITOA_BUFF_LEN> number;
 			// Zero-initialize
