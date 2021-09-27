@@ -3,7 +3,7 @@
 //	Kernel math functions declarations
 //
 //	File:	kmath.hpp
-//	Date:	012 Feb 2021
+//	Date:	27 Sep 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -26,18 +26,16 @@ namespace igros::klib {
 	udivmod_t kudivmod(quad_t dividend, dword_t divisor) noexcept {
 
 		// Division result
-		udivmod_t	res	= {0ULL, dividend};
+		auto res	= udivmod_t {0ULL, dividend};
 		// Quotient bit
-		quad_t		qbit	= 1ULL;
+		auto qbit	= quad_t {1ULL};
 
-		// Division by 0
+		// Division by zeor
 		if (0 == divisor) {
-			res.quotient = (1 / divisor);
-			res.reminder = 0ULL;
 			return res;
 		}
 
-		while (0 <= static_cast<sdword_t>(divisor)) {
+		while (0 < static_cast<sdword_t>(divisor)) {
 			divisor <<= 1ULL;
 			qbit	<<= 1ULL;
 		}
@@ -45,7 +43,7 @@ namespace igros::klib {
 		while (qbit) {
 			if (res.reminder >= divisor) {
 				res.reminder -= divisor;
-				res.quotient |= qbit;
+				res.quotient += qbit;
 			}
 			divisor	>>= 1ULL;
 			qbit	>>= 1ULL;
@@ -62,18 +60,16 @@ namespace igros::klib {
 	divmod_t kdivmod(squad_t dividend, dword_t divisor) noexcept {
 
 		// Division result
-		divmod_t	res	= {0LL, dividend};
+		auto res	= divmod_t {0LL, dividend};
 		// Quotient bit
-		squad_t		qbit	= 1LL;
+		auto qbit	= squad_t {1LL};
 
-		// Division by 0
+		// Division by zeor
 		if (0 == divisor) {
-			res.quotient = (1 / divisor);
-			res.reminder = 0LL;
 			return res;
 		}
 
-		while (0 <= divisor) {
+		while (0 < divisor) {
 			divisor <<= 1LL;
 			qbit	<<= 1LL;
 		}
@@ -81,7 +77,7 @@ namespace igros::klib {
 		while (qbit) {
 			if (res.reminder >= divisor) {
 				res.reminder -= divisor;
-				res.quotient |= qbit;
+				res.quotient += qbit;
 			}
 			divisor	>>= 1LL;
 			qbit	>>= 1LL;
