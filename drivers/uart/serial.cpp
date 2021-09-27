@@ -3,7 +3,7 @@
 //	UART driver
 //
 //	File:	serial.cpp
-//	Date:	24 Sep 2021
+//	Date:	27 Sep 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -33,9 +33,9 @@ namespace igros::arch {
 
 	// Serial ports
 	constexpr auto SERIAL_PORT_1	= static_cast<io::port_t>(0x03F8);
-	constexpr auto SERIAL_PORT_2	= static_cast<io::port_t>(0x02F8);
-	constexpr auto SERIAL_PORT_3	= static_cast<io::port_t>(0x03E8);
-	constexpr auto SERIAL_PORT_4	= static_cast<io::port_t>(0x02E8);
+	//constexpr auto SERIAL_PORT_2	= static_cast<io::port_t>(0x02F8);
+	//constexpr auto SERIAL_PORT_3	= static_cast<io::port_t>(0x03E8);
+	//constexpr auto SERIAL_PORT_4	= static_cast<io::port_t>(0x02E8);
 
 	// Serial port data register
 	constexpr auto SERIAL_PORT_DR(const io::port_t port) noexcept {
@@ -83,7 +83,7 @@ namespace igros::arch {
 	bool serialInit(const BAUD_RATE baudRate, const DATA_SIZE dataSize, const STOP_BITS stopBits, const PARITY parity) noexcept {
 		
 		// Calculate BAUD rate
-		const auto rate	= static_cast<word_t>(115200 / static_cast<dword_t>(baudRate));
+		const auto rate	= static_cast<word_t>(115200U / static_cast<dword_t>(baudRate));
 		// LCR value
 		const auto lcr	= (static_cast<byte_t>(dataSize)	& 0x03)
 				| ((static_cast<byte_t>(stopBits)	& 0x01) << 2)
@@ -153,7 +153,7 @@ namespace igros::arch {
 	[[nodiscard]]
 	std::size_t serialWrite(const byte_t* const src, const std::size_t size) noexcept {
 		// Wait for write ready
-		while (!serialReadyWrite()) {};
+		while (!serialReadyWrite());
 		// Writed size
 		auto i = 0ULL;
 		// Write data
@@ -182,7 +182,7 @@ namespace igros::arch {
 	[[nodiscard]]
 	std::size_t serialRead(byte_t* const src, const std::size_t size) noexcept {
 		// Wait for read ready
-		while (!serialReadyRead()) {};
+		//while (!serialReadyRead());
 		// Readed size
 		auto i = 0ULL;
 		// Read data
@@ -205,8 +205,6 @@ namespace igros::arch {
 				"IRQ #%d\t[UART2]\r\n"
 				"Read:\tNOTHING!\r\n"
 			);
-			// Interrupt done
-			//irq::get().eoi(static_cast<irq::irq_t>(regs->number));
 		} else if (regs->number == static_cast<dword_t>(irq::irq_t::UART1)) {
 			// Serial #1 | #3
 			std::array<byte_t, 128ULL> data;
@@ -221,8 +219,6 @@ namespace igros::arch {
 				read,
 				reinterpret_cast<const sbyte_t* const>(data.cbegin())
 			);
-			// Interrupt done
-			//irq::get().eoi(static_cast<irq::irq_t>(regs->number));
 		}
 	}
 

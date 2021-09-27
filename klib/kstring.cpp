@@ -3,7 +3,7 @@
 //	Kernel string functions
 //
 //	File:	string.cpp
-//	Date:	24 Sep 2021
+//	Date:	27 Sep 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -28,7 +28,7 @@ namespace igros::klib {
 			return nullptr;
 		}
                 // Find string end pointer
-                for (;*src != '\0'; ++src) {};
+                for (;*src != '\0'; ++src);
 		// Return string end
                 return src;
 	}
@@ -43,7 +43,7 @@ namespace igros::klib {
 		// Copy string start pointer
                 auto iter = src;
                 // Find string end pointer
-                for (;*iter != '\0'; ++iter) {};
+                for (;*iter != '\0'; ++iter);
 		// Return string end
                 return iter;
 	}
@@ -130,7 +130,7 @@ namespace igros::klib {
 			}
 		}
 		// Compare string symbol by symbol
-		for (;(--size > 0U) && (*src1 != '\0') && (*src1 == *src2); ++src1, ++src2) {};
+		for (;(--size > 0U) && (*src1 != '\0') && (*src1 == *src2); ++src1, ++src2);
 		// Return string difference
 		return static_cast<byte_t>(*src1) - static_cast<byte_t>(*src2);
 	}
@@ -144,7 +144,7 @@ namespace igros::klib {
 			return nullptr;
 		}
 		// Find symbol inside string
-		for (;(--size > 0U) && (*src != '\0') && (*src != chr); ++src) {};
+		for (;(--size > 0U) && (*src != '\0') && (*src != chr); ++src);
 		// Return address of first occurrence or null pointer
 		return (*src == chr) ? src : nullptr;
 	}
@@ -157,7 +157,7 @@ namespace igros::klib {
 			return nullptr;
 		}
 		// Find symbol inside string
-		for (;(--size > 0U) && (*src != '\0') && (*src != chr); ++src) {};
+		for (;(--size > 0U) && (*src != '\0') && (*src != chr); ++src);
 		// Return address of first occurrence or null pointer
 		return (*src == chr) ? src : nullptr;
 	}
