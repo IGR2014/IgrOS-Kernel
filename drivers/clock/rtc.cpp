@@ -3,7 +3,7 @@
 //	RTC clock driver
 //
 //	File:	rtc.cpp
-//	Date:	24 Sep 2021
+//	Date:	27 Sep 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -115,9 +115,9 @@ namespace igros::arch {
 	// Get current date/time
 	clockDateTime_t clockGetCurrentDateTime() noexcept {
 		// Wait for update if any
-		while (0x00 != (0x80 & rtcRead(RTC_REGISTER_A))) {};
+		while (0x00 != (0x80 & rtcRead(RTC_REGISTER_A)));
 		// Read CMOS date/time
-		rtcDateTime_t rtcDateTime;
+		rtcDateTime_t rtcDateTime {};
 		rtcReadDateTime(rtcDateTime);
 		// Get RTC flags
 		const auto flags	= rtcRead(RTC_REGISTER_B);
@@ -142,10 +142,10 @@ namespace igros::arch {
 			(0x00 != (0x80 & rtcDateTime.time.hour))
 		) {
 			// Adjust hours value
-			rtcDateTime.time.hour = static_cast<dword_t>((rtcDateTime.time.hour & 0x7F) + 12U) % 24U;
+			rtcDateTime.time.hour = ((rtcDateTime.time.hour & 0x7F) + 12U) % 24U;
 		}
 		// Convert RTC to clock
-		clockDateTime_t dateTime;
+		clockDateTime_t dateTime {};
 		clockFromRTC(rtcDateTime, ((0x00 != century) ? (century * 100U) : 2000U), dateTime);
 		// Return current
 		return dateTime;

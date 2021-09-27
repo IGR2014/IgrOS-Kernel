@@ -3,7 +3,7 @@
 //	IgrOS platform description
 //
 //	File:	platform.hpp
-//	Date:	12 Feb 2021
+//	Date:	27 Sep 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -137,7 +137,7 @@ namespace igros::platform {
 
 		// Get platform name
 		[[nodiscard]]
-		const auto	name() const noexcept;
+		auto	name() const noexcept;
 
 		// Initialize platform
 		void	initialize() const noexcept;
@@ -210,7 +210,7 @@ namespace igros::platform {
 
 	// Get platform name
 	[[nodiscard]]
-	inline const auto description_t::name() const noexcept {
+	inline auto description_t::name() const noexcept {
 		return mName;
 	}
 

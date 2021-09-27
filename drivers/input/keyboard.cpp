@@ -3,7 +3,7 @@
 //	Keyboard generic handling
 //
 //	File:	keyboard.cpp
-//	Date:	24 Sep 2021
+//	Date:	27 Sep 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -30,10 +30,8 @@ namespace igros::arch {
 
 	// Keyboard interrupt (#1) handler
 	void keyboardInterruptHandler(const register_t* regs) {
-		// Check keyboard status
-		const auto keyStatus = io::get().readPort8(KEYBOARD_CONTROL);
 		// Check keyboard data port
-		if (keyStatus & 0x01) {
+		if (const auto status = io::get().readPort8(KEYBOARD_CONTROL); status & 0x01) {
 			// Read keyboard data
 			const auto keyCode = io::get().readPort8(KEYBOARD_DATA);
 			klib::kprintf(

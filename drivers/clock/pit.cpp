@@ -3,7 +3,7 @@
 //	Programmable interrupt timer
 //
 //	File:	pit.cpp
-//	Date:	24 Sep 2021
+//	Date:	27 Sep 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -29,7 +29,7 @@ namespace igros::arch {
 	// PIT ports
 	constexpr auto PIT_CONTROL	= static_cast<io::port_t>(0x0043);
 	constexpr auto PIT_CHANNEL_0	= static_cast<io::port_t>(0x0040);
-	constexpr auto PIT_CHANNEL_1	= static_cast<io::port_t>(PIT_CHANNEL_0 + 1U);
+	//constexpr auto PIT_CHANNEL_1	= static_cast<io::port_t>(PIT_CHANNEL_0 + 1U);
 	//constexpr auto PIT_CHANNEL_2	= static_cast<io::port_t>(PIT_CHANNEL_1 + 1U);
 
 
@@ -45,11 +45,11 @@ namespace igros::arch {
 	void pitSetupFrequency(const word_t frequency) noexcept {
 
 		// Calculate PIT divisor (Base PIT frequency / required frequency)
-		const auto divisor = static_cast<word_t>(PIT_MAIN_FREQUENCY / frequency);
+		const auto divisor	= static_cast<word_t>(PIT_MAIN_FREQUENCY / frequency);
 		// Save divisor value
-		PIT_DIVISOR	= divisor;
+		PIT_DIVISOR		= divisor;
 		// Save current real frequency value
-		PIT_FREQUENCY	= PIT_MAIN_FREQUENCY / divisor;
+		PIT_FREQUENCY		= PIT_MAIN_FREQUENCY / divisor;
 
 		klib::kprintf(
 			"REAL frequency set to: %d Hz.",
