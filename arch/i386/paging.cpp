@@ -3,7 +3,7 @@
 //	Memory paging for x86
 //
 //	File:	paging.cpp
-//	Date:	24 Sep 2021
+//	Date:	27 Sep 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -253,7 +253,7 @@ namespace igros::i386 {
 		// Get page table pointer
 		auto &table = dir->tables[dirID];
 		// Check if page table is present or not
-		if (!paging::checkFlags(table, FLAGS::PRESENT)) {
+		if (!paging::checkFlags(table, static_cast<kflags<FLAGS>>(FLAGS::PRESENT))) {
 			// Create page table
 			table = paging::makeTable();
 		}
@@ -308,7 +308,7 @@ namespace igros::i386 {
 		// Get page table pointer
 		auto &table = dir->tables[dirID];
 		// Check if page table is present or not
-		if (!paging::checkFlags(table, FLAGS::PRESENT)) {
+		if (!paging::checkFlags(table, static_cast<kflags<FLAGS>>(FLAGS::PRESENT))) {
 			// Create page table
 			table = paging::makeTable();
 		}
@@ -358,7 +358,7 @@ namespace igros::i386 {
 		// Get page table pointer
 		const auto table = dir->tables[dirID];
 		// Check if page table is present or not
-		if (!paging::checkFlags(table, FLAGS::PRESENT)) {
+		if (!paging::checkFlags(table, static_cast<kflags<FLAGS>>(FLAGS::PRESENT))) {
 			// Page or table is not present
 			return nullptr;
 		}
@@ -366,7 +366,7 @@ namespace igros::i386 {
 		// Get page pointer
 		const auto page = table->pages[tabID];
 		// Check if page table is present or not
-		if (!paging::checkFlags(page, FLAGS::PRESENT)) {
+		if (!paging::checkFlags(page, static_cast<kflags<FLAGS>>(FLAGS::PRESENT))) {
 			// Page or table is not present
 			return nullptr;
 		}

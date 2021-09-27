@@ -3,7 +3,7 @@
 //	Memory paging for x86_64
 //
 //	File:	paging.cpp
-//	Date:	24 Sep 2021
+//	Date:	27 Sep 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -328,7 +328,7 @@ namespace igros::x86_64 {
 		// Get page directory pointer
 		auto &dirPtr = pml4->pointers[pml4ID];
 		// Check if page directory pointer is present or not
-		if (!paging::checkFlags(dirPtr, FLAGS::PRESENT)) {
+		if (!paging::checkFlags(dirPtr, static_cast<kflags<FLAGS>>(FLAGS::PRESENT))) {
 			// Allocate page directory pointer
 			dirPtr = paging::makeDirectoryPointer();
 		}
@@ -383,7 +383,7 @@ namespace igros::x86_64 {
 		// Get page directory pointer
 		auto &dirPtr = pml4->pointers[pml4ID];
 		// Check if page directory pointer is present or not
-		if (!paging::checkFlags(dirPtr, FLAGS::PRESENT)) {
+		if (!paging::checkFlags(dirPtr, static_cast<kflags<FLAGS>>(FLAGS::PRESENT))) {
 			// Allocate page directory pointer
 			dirPtr = paging::makeDirectoryPointer();
 		}
@@ -391,7 +391,7 @@ namespace igros::x86_64 {
 		// Get page directory
 		auto &dir = dirPtr->directories[dirPtrID];
 		// Check if page directory is present or not
-		if (!paging::checkFlags(dir, FLAGS::PRESENT)) {
+		if (!paging::checkFlags(dir, static_cast<kflags<FLAGS>>(FLAGS::PRESENT))) {
 			// Allocate page table
 			dir = paging::makeDirectory();
 		}
@@ -455,7 +455,7 @@ namespace igros::x86_64 {
 		// Get page directory pointer
 		auto &dirPtr = pml4->pointers[pml4ID];
 		// Check if page directory pointer is present or not
-		if (!paging::checkFlags(dirPtr, FLAGS::PRESENT)) {
+		if (!paging::checkFlags(dirPtr, static_cast<kflags<FLAGS>>(FLAGS::PRESENT))) {
 			// Allocate page directory pointer
 			dirPtr = paging::makeDirectoryPointer();
 		}
@@ -463,7 +463,7 @@ namespace igros::x86_64 {
 		// Get page directory
 		auto &dir = dirPtr->directories[dirPtrID];
 		// Check if page directory is present or not
-		if (!paging::checkFlags(dir, FLAGS::PRESENT)) {
+		if (!paging::checkFlags(dir, static_cast<kflags<FLAGS>>(FLAGS::PRESENT))) {
 			// Allocate page directory
 			dir = paging::makeDirectory();
 		}
@@ -471,7 +471,7 @@ namespace igros::x86_64 {
 		// Get page table
 		auto &table = dir->tables[dirID];
 		// Check if page directory is present or not
-		if (!paging::checkFlags(table, FLAGS::PRESENT)) {
+		if (!paging::checkFlags(table, static_cast<kflags<FLAGS>>(FLAGS::PRESENT))) {
 			// Allocate page table
 			table = paging::makeTable();
 		}
@@ -547,7 +547,7 @@ namespace igros::x86_64 {
 		// Get page directory pointer
 		auto &dirPtr = pml4->pointers[pml4ID];
 		// Check if page directory pointer is present or not
-		if (!paging::checkFlags(dirPtr, FLAGS::PRESENT)) {
+		if (!paging::checkFlags(dirPtr, static_cast<kflags<FLAGS>>(FLAGS::PRESENT))) {
 			// Allocate page directory pointer
 			dirPtr = paging::makeDirectoryPointer();
 		}
@@ -555,7 +555,7 @@ namespace igros::x86_64 {
 		// Get page directory
 		auto &dir = dirPtr->directories[dirPtrID];
 		// Check if page directory is present or not
-		if (!paging::checkFlags(dir, FLAGS::PRESENT)) {
+		if (!paging::checkFlags(dir, static_cast<kflags<FLAGS>>(FLAGS::PRESENT))) {
 			// Allocate page directory
 			dir = paging::makeDirectory();
 		}
@@ -563,7 +563,7 @@ namespace igros::x86_64 {
 		// Get page table
 		auto &table = dir->tables[dirID];
 		// Check if page directory is present or not
-		if (!paging::checkFlags(table, FLAGS::PRESENT)) {
+		if (!paging::checkFlags(table, static_cast<kflags<FLAGS>>(FLAGS::PRESENT))) {
 			// Allocate page table
 			table = paging::makeTable();
 		}
@@ -631,7 +631,7 @@ namespace igros::x86_64 {
 		// Get page directory pointer
 		const auto dirPtr = pml4->pointers[pml4ID];
 		// Check if page directory pointer is present or not
-		if (!paging::checkFlags(dirPtr, FLAGS::PRESENT)) {
+		if (!paging::checkFlags(dirPtr, static_cast<kflags<FLAGS>>(FLAGS::PRESENT))) {
 			// Page or table is not present
 			return nullptr;
 		}
@@ -639,7 +639,7 @@ namespace igros::x86_64 {
 		// Get page directory
 		const auto dir = dirPtr->directories[dirPtrID];
 		// Check if page directory is present or not
-		if (!paging::checkFlags(dir, FLAGS::PRESENT)) {
+		if (!paging::checkFlags(dir, static_cast<kflags<FLAGS>>(FLAGS::PRESENT))) {
 			// Page or table is not present
 			return nullptr;
 		}
@@ -647,7 +647,7 @@ namespace igros::x86_64 {
 		// Get page table pointer
 		const auto table = dir->tables[dirID];
 		// Check if page table is present or not
-		if (!paging::checkFlags(table, FLAGS::PRESENT)) {
+		if (!paging::checkFlags(table, static_cast<kflags<FLAGS>>(FLAGS::PRESENT))) {
 			// Page or table is not present
 			return nullptr;
 		}
@@ -655,7 +655,7 @@ namespace igros::x86_64 {
 		// Get page table pointer
 		const auto page = table->pages[tabID];
 		// Check if page is present or not
-		if (!paging::checkFlags(page, FLAGS::PRESENT)) {
+		if (!paging::checkFlags(page, static_cast<kflags<FLAGS>>(FLAGS::PRESENT))) {
 			// Page or table is not present
 			return nullptr;
 		}
