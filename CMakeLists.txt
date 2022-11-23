@@ -37,6 +37,84 @@ project(
 	LANGUAGES ASM-ATT CXX
 )
 
+# Enable CTest
+enable_testing()
+
+# Colored output option
+option(
+	GWE_CXX_COLORED_OUTPUT
+	"Produce ANSI-colored output from compiler (GCC/Clang can do it)"
+	OFF
+)
+# ClangTidy pass
+option(
+	GWE_CXX_CLANG_TIDY
+	"Add ClangTidy pass to build process"
+	OFF
+)
+
+# GWE C++ standard
+set(
+	CMAKE_CXX_STANDARD
+	20
+)
+# Required C++20
+set(
+	CMAKE_CXX_STANDARD_REQUIRED
+	True
+)
+# No GNU extensions!
+set(
+	CMAKE_CXX_EXTENSIONS
+	OFF
+)
+# PIC
+set(
+	CMAKE_PLATFORM_INDEPENDENT_CODE
+	ON
+)
+# Compile comands export
+set(
+	CMAKE_EXPORT_COMPILE_COMMANDS
+	ON
+)
+# Install prefix
+set(
+	CMAKE_INSTALL_PREFIX
+	"${CMAKE_SOURCE_DIR}/install/${CMAKE_BUILD_TYPE}"
+)
+# CMake Module path
+set(
+	CMAKE_MODULE_PATH
+	"${CMAKE_SOURCE_DIR}/cmake/modules"
+)
+
+
+# Enable CCache
+include(EnableCCache)
+
+
+# Use Clang-Tidy ?
+if (GWE_CXX_CLANG_TIDY)
+	# Clang-Tidy extra args
+	if(("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC") OR (("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang") AND ("${CMAKE_CXX_SIMULATE_ID}" STREQUAL "MSVC")))
+		# Set extra Clang-Tidy checks
+		set(
+			GWE_CLANG_TIDY_ARGS
+			"--extra-arg=/EHsc"
+			"--extra-arg=/DNOMINMAX"
+		)
+	endif()
+	# Set default Clang-Tidy checks
+	set(
+		CMAKE_CXX_CLANG_TIDY
+		"clang-tidy"
+		"-use-color"
+		"-header-filter=.*"
+		${GWE_CLANG_TIDY_ARGS}
+	)
+endif()
+
 # Printables
 string(
 	REPLACE " -" "\n\t\t-"
@@ -98,51 +176,6 @@ include_directories(
 add_executable(
 	${IGROS_KERNEL}
 	${KERNEL_SRC}
-)
-
-# Kernel C++ standard
-set_property(
-	TARGET
-	${IGROS_KERNEL}
-	PROPERTY CXX_STANDARD 20
-)
-# Required C++20
-set_property(
-	TARGET
-	${IGROS_KERNEL}
-	PROPERTY CMAKE_CXX_STANDARD_REQUIRED True
-)
-# No GNU!
-set_property(
-	TARGET
-	${IGROS_KERNEL}
-	PROPERTY CXX_EXTENSIONS OFF
-)
-
-# Kernel C standard
-set_property(
-	TARGET
-	${IGROS_KERNEL}
-	PROPERTY C_STANDARD 17
-)
-# Required c17
-set_property(
-	TARGET
-	${IGROS_KERNEL}
-	PROPERTY CMAKE_C_STANDARD_REQUIRED True
-)
-# No GNU!
-set_property(
-	TARGET
-	${IGROS_KERNEL}
-	PROPERTY C_EXTENSIONS OFF
-)
-
-# PIC
-set_property(
-	TARGET
-	${IGROS_KERNEL}
-	PROPERTY CMAKE_POSITION_INDEPENDENT_CODE ON
 )
 
 # Kernel definitions
@@ -209,15 +242,8 @@ install(
 # Link command
 set(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_LINKER} <OBJECTS> -o ${IGROS_KERNEL} -T ${CMAKE_SOURCE_DIR}/${IGROS_LINK_SCRIPT} ${CMAKE_LINKER_FLAGS}")
 
-# If i386
-if(${IGROS_ARCH} MATCHES "i386")
-	# Qemu for i386
-	set(QEMU "qemu-system-i386")
-# If x86_64
-elseif(${IGROS_ARCH} MATCHES "x86_64")
-	# Qemu for x86_64
-	set(QEMU "qemu-system-x86_64")
-endif()
+# Qemu for specified arch
+set(QEMU "qemu-system-${IGROS_ARCH}")
 
 # Install proxy
 add_custom_target(
@@ -228,8 +254,30 @@ add_custom_target(
 
 # Test kernel
 add_custom_target(
-	test
+	test_proxy
 	USES_TERMINAL
-	COMMAND ${QEMU} -kernel "${CMAKE_SOURCE_DIR}/${CMAKE_BUILD_TYPE}/${IGROS_ARCH}/${IGROS_KERNEL}" -m 2G -vga std -rtc base=localtime -serial mon:stdio 
+	COMMAND ${QEMU} -kernel "${CMAKE_SOURCE_DIR}/${CMAKE_BUILD_TYPE}/${IGROS_ARCH}/${IGROS_KERNEL}" -m 2G -vga std -rtc base=localtime -serial mon:stdio
 	DEPENDS install_proxy
 )
+
+# Search Doxygen package
+find_package(
+	Doxygen
+	COMPONENTS dot
+)
+# If Doxygen found
+if(DOXYGEN_FOUND)
+	# Documentation output directory
+	set(
+		DOXYGEN_OUTPUT_DIRECTORY
+		"${PROJECT_SOURCE_DIR}/doc/"
+	)
+	# Documentation build target
+	doxygen_add_docs(
+		documentation
+		"${PROJECT_SOURCE_DIR}/"
+		WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+		COMMENT "Generate documentation"
+	)
+endif()
+

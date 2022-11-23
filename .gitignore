@@ -11,11 +11,11 @@
 *.cfg
 
 # Build folder
-build
-builds
-release
+/build
+/ccache
+/install
 # Release, Profiling, Debug folders
-Release
-Profiling
-Debug
+/Release
+/Profiling
+/Debug
 
