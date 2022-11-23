@@ -1,0 +1,406 @@
+{
+	"buildPresets": [
+		{
+			"configuration": "Debug",
+			"configurePreset": "config-linux-i386-clang-debug",
+			"description": "Linux Build with Clang i386 in Debug mode",
+			"displayName": "Linux Clang i386 Debug Build",
+			"name": "build-linux-i386-clang-debug"
+		},
+		{
+			"configuration": "Release",
+			"configurePreset": "config-linux-i386-clang-release",
+			"description": "Linux Build with Clang i386 in Release mode",
+			"displayName": "Linux Clang i386 Release Build",
+			"name": "build-linux-i386-clang-release"
+		},
+		{
+			"configuration": "Debug",
+			"configurePreset": "config-linux-i386-gcc-debug",
+			"description": "Linux Build with GCC i386 in Debug mode",
+			"displayName": "Linux GCC i386 Debug Build",
+			"name": "build-linux-i386-gcc-debug"
+		},
+		{
+			"configuration": "Release",
+			"configurePreset": "config-linux-i386-gcc-release",
+			"description": "Linux Build with GCC i386 in Release mode",
+			"displayName": "Linux GCC i386 Release Build",
+			"name": "build-linux-i386-gcc-release"
+		},
+		{
+			"configuration": "Debug",
+			"configurePreset": "config-linux-x86_64-clang-debug",
+			"description": "Linux Build with Clang x86_64 in Debug mode",
+			"displayName": "Linux Clang x86_64 Debug Build",
+			"name": "build-linux-x86_64-clang-debug"
+		},
+		{
+			"configuration": "Release",
+			"configurePreset": "config-linux-x86_64-clang-release",
+			"description": "Linux Build with Clang x86_64 in Release mode",
+			"displayName": "Linux Clang x86_64 Release Build",
+			"name": "build-linux-x86_64-clang-release"
+		},
+		{
+			"configuration": "Debug",
+			"configurePreset": "config-linux-x86_64-gcc-debug",
+			"description": "Linux Build with GCC x86_64 in Debug mode",
+			"displayName": "Linux GCC x86_64 Debug Build",
+			"name": "build-linux-x86_64-gcc-debug"
+		},
+		{
+			"configuration": "Release",
+			"configurePreset": "config-linux-x86_64-gcc-release",
+			"description": "Linux Build with GCC x86_64 in Release mode",
+			"displayName": "Linux GCC x86_64 Release Build",
+			"name": "build-linux-x86_64-gcc-release"
+		}
+	],
+	"cmakeMinimumRequired": {
+		"major": 3,
+		"minor": 21,
+		"patch": 0
+	},
+	"configurePresets": [
+		{
+			"architecture": {
+				"value": "i386",
+				"strategy": "external"
+			},
+			"hidden": true,
+			"name": "config-i386-default"
+		},
+		{
+			"architecture": {
+				"value": "x86_64",
+				"strategy": "external"
+			},
+			"hidden": true,
+			"name": "config-x86_64-default"
+		},
+		{
+			"binaryDir": "${sourceDir}/build/Debug",
+			"cacheVariables": {
+				"CMAKE_BUILD_TYPE": {
+					"value": "Debug",
+					"type": "string"
+				},
+				"CMAKE_INSTALL_PREFIX": {
+					"value": "${sourceDir}/install/Debug",
+					"type": "string"
+				}
+			},
+			"description": "Default Debug config, used as common",
+			"environment": {
+				"NINJA_STATUS": "[%f/%t %p::%e] ",
+				"CLICOLOR_FORCE": "1"
+			},
+			"hidden": true,
+			"name": "config-debug-default"
+		},
+		{
+			"binaryDir": "${sourceDir}/build/Release",
+			"cacheVariables": {
+				"CMAKE_BUILD_TYPE": {
+					"value": "Release",
+					"type": "string"
+				},
+				"CMAKE_INSTALL_PREFIX": {
+					"value": "${sourceDir}/install/Release",
+					"type": "string"
+				}
+			},
+			"description": "Default Release config, used as common",
+			"environment": {
+				"NINJA_STATUS": "[%f/%t %p::%e] ",
+				"CLICOLOR_FORCE": "1"
+			},
+			"hidden": true,
+			"name": "config-release-default"
+		},
+		{
+			"cacheVariables": {
+				"CMAKE_MAKE_PROGRAM": {
+					"value": "ninja",
+					"type": "string"
+				}
+			},
+			"condition": {
+				"type": "equals",
+				"lhs": "${hostSystemName}",
+				"rhs": "Linux"
+			},
+			"description": "Default Linux x86_64 build Config, used as common",
+			"environment": {
+				"CCACHE_BASEDIR": "${sourceDir}/ccache",
+				"CCACHE_DIR": "${sourceDir}/ccache/ccache",
+				"CCACHE_COMPRESS": "true",
+				"CCACHE_COMPRESSLEVEL": "6",
+				"CCACHE_MAXSIZE": "200M"
+			},
+			"generator": "Ninja",
+			"hidden": true,
+			"name": "config-linux-default"
+		},
+		{
+			"cacheVariables": {
+				"CMAKE_CXX_COMPILER": {
+					"value": "clang++",
+					"type": "string"
+				}
+			},
+			"description": "Linux build configuration with Clang i386 in Debug mode",
+			"displayName": "Linux i386 Clang Debug Config",
+			"inherits": [
+				"config-i386-default",
+				"config-linux-default",
+				"config-debug-default"
+			],
+			"name": "config-linux-i386-clang-debug",
+			"vendor": {
+				"microsoft.com/VisualStudioSettings/CMake/1.0": {
+					"enableClangTidyCodeAnalysis": true,
+					"hostOS": [
+						"Linux"
+					],
+					"intelliSenseMode": "linux-gcc-x86"
+				}
+			}
+		},
+		{
+			"cacheVariables": {
+				"CMAKE_CXX_COMPILER": {
+					"value": "clang++",
+					"type": "string"
+				}
+			},
+			"description": "Linux build configuration with Clang i386 in Release mode",
+			"displayName": "Linux i386 Clang Release Config",
+			"inherits": [
+				"config-i386-default",
+				"config-linux-default",
+				"config-release-default"
+			],
+			"name": "config-linux-i386-clang-release",
+			"vendor": {
+				"microsoft.com/VisualStudioSettings/CMake/1.0": {
+					"enableClangTidyCodeAnalysis": true,
+					"hostOS": [
+						"Linux"
+					],
+					"intelliSenseMode": "linux-gcc-x86"
+				}
+			}
+		},
+		{
+			"cacheVariables": {
+				"CMAKE_CXX_COMPILER": {
+					"value": "clang++",
+					"type": "string"
+				}
+			},
+			"description": "Linux build configuration with Clang x86_64 in Debug mode",
+			"displayName": "Linux x86_64 Clang Debug Config",
+			"inherits": [
+				"config-x86_64-default",
+				"config-linux-default",
+				"config-debug-default"
+			],
+			"name": "config-linux-x86_64-clang-debug",
+			"vendor": {
+				"microsoft.com/VisualStudioSettings/CMake/1.0": {
+					"enableClangTidyCodeAnalysis": true,
+					"hostOS": [
+						"Linux"
+					],
+					"intelliSenseMode": "linux-gcc-x64"
+				}
+			}
+		},
+		{
+			"cacheVariables": {
+				"CMAKE_CXX_COMPILER": {
+					"value": "clang++",
+					"type": "string"
+				}
+			},
+			"description": "Linux build configuration with Clang x86_64 in Release mode",
+			"displayName": "Linux x86_64 Clang Release Config",
+			"inherits": [
+				"config-x86_64-default",
+				"config-linux-default",
+				"config-release-default"
+			],
+			"name": "config-linux-x86_64-clang-release",
+			"vendor": {
+				"microsoft.com/VisualStudioSettings/CMake/1.0": {
+					"enableClangTidyCodeAnalysis": true,
+					"hostOS": [
+						"Linux"
+					],
+					"intelliSenseMode": "linux-gcc-x64"
+				}
+			}
+		},
+		{
+			"cacheVariables": {
+				"CMAKE_CXX_COMPILER": {
+					"value": "g++",
+					"type": "string"
+				}
+			},
+			"description": "Linux build configuration with GCC i386 in Debug mode",
+			"displayName": "Linux i386 GCC Debug Config",
+			"inherits": [
+				"config-i386-default",
+				"config-linux-default",
+				"config-debug-default"
+			],
+			"name": "config-linux-i386-gcc-debug",
+			"vendor": {
+				"microsoft.com/VisualStudioSettings/CMake/1.0": {
+					"enableClangTidyCodeAnalysis": true,
+					"hostOS": [
+						"Linux"
+					],
+					"intelliSenseMode": "linux-gcc-x86"
+				}
+			}
+		},
+		{
+			"cacheVariables": {
+				"CMAKE_CXX_COMPILER": {
+					"value": "g++",
+					"type": "string"
+				}
+			},
+			"description": "Linux build configuration with GCC i386 in Release mode",
+			"displayName": "Linux i386 GCC Release Config",
+			"inherits": [
+				"config-i386-default",
+				"config-linux-default",
+				"config-release-default"
+			],
+			"name": "config-linux-i386-gcc-release",
+			"vendor": {
+				"microsoft.com/VisualStudioSettings/CMake/1.0": {
+					"enableClangTidyCodeAnalysis": true,
+					"hostOS": [
+						"Linux"
+					],
+					"intelliSenseMode": "linux-gcc-x86"
+				}
+			}
+		},
+		{
+			"cacheVariables": {
+				"CMAKE_CXX_COMPILER": {
+					"value": "g++",
+					"type": "string"
+				}
+			},
+			"description": "Linux build configuration with GCC x86_64 in Debug mode",
+			"displayName": "Linux x86_64 GCC Debug Config",
+			"inherits": [
+				"config-x86_64-default",
+				"config-linux-default",
+				"config-debug-default"
+			],
+			"name": "config-linux-x86_64-gcc-debug",
+			"vendor": {
+				"microsoft.com/VisualStudioSettings/CMake/1.0": {
+					"enableClangTidyCodeAnalysis": true,
+					"hostOS": [
+						"Linux"
+					],
+					"intelliSenseMode": "linux-gcc-x64"
+				}
+			}
+		},
+		{
+			"cacheVariables": {
+				"CMAKE_CXX_COMPILER": {
+					"value": "g++",
+					"type": "string"
+				}
+			},
+			"description": "Linux build configuration with GCC x86_64 in Release mode",
+			"displayName": "Linux x86_64 GCC Release Config",
+			"inherits": [
+				"config-x86_64-default",
+				"config-linux-default",
+				"config-release-default"
+			],
+			"name": "config-linux-x86_64-gcc-release",
+			"vendor": {
+				"microsoft.com/VisualStudioSettings/CMake/1.0": {
+					"enableClangTidyCodeAnalysis": true,
+					"hostOS": [
+						"Linux"
+					],
+					"intelliSenseMode": "linux-gcc-x64"
+				}
+			}
+		}
+	],
+	"testPresets": [
+		{
+			"configuration": "Debug",
+			"configurePreset": "config-linux-i386-clang-debug",
+			"description": "Engine Unit-tests (Clang)",
+			"displayName": "Engine Unit-tests with Clang i386",
+			"execution": {
+				"noTestsAction": "error",
+				"stopOnFailure": true
+			},
+			"name": "test-linux-i386-clang-debug",
+			"output": {
+				"outputOnFailure": true
+			}
+		},
+		{
+			"configuration": "Debug",
+			"configurePreset": "config-linux-i386-gcc-debug",
+			"description": "Engine Unit-tests (GCC)",
+			"displayName": "Engine Unit-tests with GCC i386",
+			"execution": {
+				"noTestsAction": "error",
+				"stopOnFailure": true
+			},
+			"name": "test-linux-i386-gcc-debug",
+			"output": {
+				"outputOnFailure": true
+			}
+		},
+		{
+			"configuration": "Debug",
+			"configurePreset": "config-linux-x86_64-clang-debug",
+			"description": "Engine Unit-tests (Clang)",
+			"displayName": "Engine Unit-tests with Clang x86_64",
+			"execution": {
+				"noTestsAction": "error",
+				"stopOnFailure": true
+			},
+			"name": "test-linux-x86_64-clang-debug",
+			"output": {
+				"outputOnFailure": true
+			}
+		},
+		{
+			"configuration": "Debug",
+			"configurePreset": "config-linux-x86_64-gcc-debug",
+			"description": "Engine Unit-tests (GCC)",
+			"displayName": "Engine Unit-tests with GCC x86_64",
+			"execution": {
+				"noTestsAction": "error",
+				"stopOnFailure": true
+			},
+			"name": "test-linux-x86_64-gcc-debug",
+			"output": {
+				"outputOnFailure": true
+			}
+		}
+	],
+	"version": 3
+}
