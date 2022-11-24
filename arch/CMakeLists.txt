@@ -1,40 +1,41 @@
-# Cmake version
-CMAKE_MINIMUM_REQUIRED(VERSION 3.10.0)
-
 # Message
-MESSAGE(STATUS "Building arch files")
+message(
+	STATUS
+	"Building arch files"
+)
 
-# C++ Language syntax
-ENABLE_LANGUAGE(CXX)
-
-# Kernel arch C++ files
-FILE(
+# Kernel arch C++ headers
+file(
 	GLOB
-	ARCH_SRC
+	ARCH_HEADERS
+	*.hpp
+)
+# Kernel arch C++ files
+file(
+	GLOB
+	ARCH_SOURCES
 	*.cpp
 )
 
 # Includes
-INCLUDE_DIRECTORIES(
-	include/arch
+include_directories(
+	"include/arch"
 )
 
 # Target sources
-TARGET_SOURCES(
+target_sources(
 	${IGROS_KERNEL}
 	PRIVATE
-	${ARCH_SRC}
+	${ARCH_HEADERS}
+	${ARCH_SOURCES}
 )
 
 # Add proper arch subdirectory
-ADD_SUBDIRECTORY(
-	${IGROS_ARCH}
-	${IGROS_ARCH}
+add_subdirectory(
+	${CMAKE_SYSTEM_PROCESSOR}
 )
-
 # Add platform subdirectory
-ADD_SUBDIRECTORY(
-	platform
+add_subdirectory(
 	platform
 )
 
