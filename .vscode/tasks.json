@@ -125,11 +125,11 @@
 				"command": "cmake",
 				"args": [
 					"-DCMAKE_BUILD_TYPE=Release",
-					"IGROS_ARCH=i386",
-					"-H\"${workspaceRoot}\"",
-					"-S\"${workspaceRoot}\"",
-					"-B\"${workspaceRoot}/build/Release\"",
-					"-G\"Ninja\""
+					"-DCMAKE_TOOLCHAIN_FILE=\"${workspaceRoot}/config/cmake/clang++-i386.cmake\"",
+					"-H \"${workspaceRoot}\"",
+					"-S \"${workspaceRoot}\"",
+					"-B \"${workspaceRoot}/build/Release\"",
+					"-G \"Ninja\""
 				]
 			},
 			"options": {
@@ -145,11 +145,11 @@
 				"command": "cmake",
 				"args": [
 					"-DCMAKE_BUILD_TYPE=Release",
-					"IGROS_ARCH=x86_64",
-					"-H\"${workspaceRoot}\"",
-					"-S\"${workspaceRoot}\"",
-					"-B\"${workspaceRoot}/build/Release\"",
-					"-G\"Ninja\""
+					"-DCMAKE_TOOLCHAIN_FILE=\"${workspaceRoot}/config/cmake/clang++-x86_64.cmake\"",
+					"-H \"${workspaceRoot}\"",
+					"-S \"${workspaceRoot}\"",
+					"-B \"${workspaceRoot}/build/Release\"",
+					"-G \"Ninja\""
 				]
 			},
 			"options": {
@@ -256,6 +256,7 @@
 			"dependsOn": [
 				"Rebuild all"
 			],
+			"dependsOrder": "parallel",
 			"type": "shell",
 			"linux": {
 				"command": "cmake",

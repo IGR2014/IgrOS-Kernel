@@ -5,9 +5,6 @@
             "includePath": [
                 "${workspaceFolder}/**"
             ],
-            "defines": [
-                "IGROS_ARCH_i386"
-            ],
             "compilerPath": "/usr/bin/g++",
             "cStandard": "c17",
             "cppStandard": "c++20",
@@ -22,8 +19,7 @@
             "windowsSdkVersion": "10.0.19041.0",
             "defines": [
                 "UNICODE",
-                "_UNICODE",
-                "IGROS_ARCH_i386"
+                "_UNICODE"
             ],
             "compilerPath": "C:/Program Files (x86)/Microsoft Visual Studio/2019/BuildTools/VC/Tools/MSVC/14.24.28314/bin/Hostx64/x64/cl.exe",
             "cStandard": "c17",

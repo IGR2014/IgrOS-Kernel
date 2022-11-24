@@ -151,13 +151,14 @@
 				}
 			},
 			"description": "Linux build configuration with Clang i386 in Debug mode",
-			"displayName": "Linux i386 Clang Debug Config",
+			"displayName": "Linux Clang i386 Debug Config",
 			"inherits": [
 				"config-i386-default",
 				"config-linux-default",
 				"config-debug-default"
 			],
 			"name": "config-linux-i386-clang-debug",
+			"toolchainFile": "${sourceDir}/config/cmake/clang++-i386.cmake",
 			"vendor": {
 				"microsoft.com/VisualStudioSettings/CMake/1.0": {
 					"enableClangTidyCodeAnalysis": true,
@@ -176,13 +177,14 @@
 				}
 			},
 			"description": "Linux build configuration with Clang i386 in Release mode",
-			"displayName": "Linux i386 Clang Release Config",
+			"displayName": "Linux Clang i386 Release Config",
 			"inherits": [
 				"config-i386-default",
 				"config-linux-default",
 				"config-release-default"
 			],
 			"name": "config-linux-i386-clang-release",
+			"toolchainFile": "${sourceDir}/config/cmake/clang++-i386.cmake",
 			"vendor": {
 				"microsoft.com/VisualStudioSettings/CMake/1.0": {
 					"enableClangTidyCodeAnalysis": true,
@@ -201,13 +203,14 @@
 				}
 			},
 			"description": "Linux build configuration with Clang x86_64 in Debug mode",
-			"displayName": "Linux x86_64 Clang Debug Config",
+			"displayName": "Linux Clang x86_64 Debug Config",
 			"inherits": [
 				"config-x86_64-default",
 				"config-linux-default",
 				"config-debug-default"
 			],
 			"name": "config-linux-x86_64-clang-debug",
+			"toolchainFile": "${sourceDir}/config/cmake/clang++-x86_64.cmake",
 			"vendor": {
 				"microsoft.com/VisualStudioSettings/CMake/1.0": {
 					"enableClangTidyCodeAnalysis": true,
@@ -226,7 +229,8 @@
 				}
 			},
 			"description": "Linux build configuration with Clang x86_64 in Release mode",
-			"displayName": "Linux x86_64 Clang Release Config",
+			"displayName": "Linux Clang x86_64 Release Config",
+			"toolchainFile": "${sourceDir}/config/cmake/clang++-x86_64.cmake",
 			"inherits": [
 				"config-x86_64-default",
 				"config-linux-default",
@@ -251,7 +255,8 @@
 				}
 			},
 			"description": "Linux build configuration with GCC i386 in Debug mode",
-			"displayName": "Linux i386 GCC Debug Config",
+			"displayName": "Linux GCC i386 Debug Config",
+			"toolchainFile": "${sourceDir}/config/cmake/g++-i386.cmake",
 			"inherits": [
 				"config-i386-default",
 				"config-linux-default",
@@ -276,13 +281,14 @@
 				}
 			},
 			"description": "Linux build configuration with GCC i386 in Release mode",
-			"displayName": "Linux i386 GCC Release Config",
+			"displayName": "Linux GCC i386 Release Config",
 			"inherits": [
 				"config-i386-default",
 				"config-linux-default",
 				"config-release-default"
 			],
 			"name": "config-linux-i386-gcc-release",
+			"toolchainFile": "${sourceDir}/config/cmake/g++-i386.cmake",
 			"vendor": {
 				"microsoft.com/VisualStudioSettings/CMake/1.0": {
 					"enableClangTidyCodeAnalysis": true,
@@ -301,13 +307,14 @@
 				}
 			},
 			"description": "Linux build configuration with GCC x86_64 in Debug mode",
-			"displayName": "Linux x86_64 GCC Debug Config",
+			"displayName": "Linux GCC x86_64 Debug Config",
 			"inherits": [
 				"config-x86_64-default",
 				"config-linux-default",
 				"config-debug-default"
 			],
 			"name": "config-linux-x86_64-gcc-debug",
+			"toolchainFile": "${sourceDir}/config/cmake/g++-x86_64.cmake",
 			"vendor": {
 				"microsoft.com/VisualStudioSettings/CMake/1.0": {
 					"enableClangTidyCodeAnalysis": true,
@@ -326,13 +333,14 @@
 				}
 			},
 			"description": "Linux build configuration with GCC x86_64 in Release mode",
-			"displayName": "Linux x86_64 GCC Release Config",
+			"displayName": "Linux GCC x86_64 Release Config",
 			"inherits": [
 				"config-x86_64-default",
 				"config-linux-default",
 				"config-release-default"
 			],
 			"name": "config-linux-x86_64-gcc-release",
+			"toolchainFile": "${sourceDir}/config/cmake/g++-x86_64.cmake",
 			"vendor": {
 				"microsoft.com/VisualStudioSettings/CMake/1.0": {
 					"enableClangTidyCodeAnalysis": true,

@@ -12,13 +12,22 @@ if(CCACHE)
 
 
 	# Enable CCache for C
-	set(CMAKE_C_COMPILER_LAUNCHER ${CCACHE})
+	set(
+		CMAKE_C_COMPILER_LAUNCHER
+		${CCACHE}
+	)
 	# Enable CCache for C++
-	set(CMAKE_CXX_COMPILER_LAUNCHER ${CCACHE})
+	set(
+		CMAKE_CXX_COMPILER_LAUNCHER
+		${CCACHE}
+	)
 
 
 	# Message
-	message(STATUS "Found CCache: ${CCACHE}")
+	message(
+		STATUS
+		"Found CCache: ${CCACHE}"
+	)
 
 
 # No CCache found
@@ -26,7 +35,10 @@ else()
 
 
 	# Message
-	message(STATUS "Coud NOT find CCache: (missing CCACHE)")
+	message(
+		STATUS
+		"Coud NOT find CCache: (missing CCACHE)"
+	)
 
 
 endif()
