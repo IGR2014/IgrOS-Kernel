@@ -38,6 +38,6 @@ set(
 # Linker flags
 set(
 	CMAKE_LINKER_FLAGS
-	"-T ${CMAKE_SOURCE_DIR}/config/link/link-x86_64.ld -n -m elf_x86_64 -z max-page-size=0x1000"
+	"-T ${CMAKE_SOURCE_DIR}/config/link/link-x86_64.ld -n -m elf_x86_64 -z max-page-size=0x1000 --no-warn-rwx-segments --no-warn-execstack"
 )
 
