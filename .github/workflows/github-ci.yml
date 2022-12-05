@@ -17,6 +17,15 @@ jobs:
 
     # Environment variables
     env:
+      IGROS_KERNEL_DIR_BUILD: "${{ github.workspace }}/build"
+      IGROS_KERNEL_DIR_INSTALL: "${{ github.workspace }}/install"
+      CCACHE_BASEDIR: "${{ github.workspace }}/ccache"
+      CCACHE_DIR: "${{ github.workspace }}/ccache/.ccache"
+      CCACHE_COMPRESS: "true"
+      CCACHE_COMPRESSLEVEL: "6"
+      CCACHE_MAXSIZE: "200M"
+      CLICOLOR_FORCE: "1"
+      NINJA_STATUS: "[%f/%t %p::%e] "
       SONAR_CLOUD_BUILD_WRAPPER_VERSION: "4.6.2.2472"
 
     # Strategy with languages matrix
@@ -56,6 +65,35 @@ jobs:
         unzip -o build-wrapper-linux-x86.zip
         curl -L -O https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-${SONAR_CLOUD_BUILD_WRAPPER_VERSION}-linux.zip
         unzip sonar-scanner-cli-${SONAR_CLOUD_BUILD_WRAPPER_VERSION}-linux.zip
+
+    # Restore Build Cache
+    - name: 'Restore Build Cache'
+      uses: actions/cache@v3
+      with:
+        path: ${{ env.IGROS_KERNEL_DIR_BUILD }}
+        key: build-${{ matrix.arch }}-${{ matrix.compiler }}-${{ github.sha }}
+        restore-keys: |
+          build-${{ matrix.arch }}-${{ matrix.compiler }}-
+          build-${{ matrix.arch }}-
+
+    # Restore CCache Cache
+    - name: 'Restore CCache Cache'
+      uses: actions/cache@v3
+      with:
+        path: ${{ env.CCACHE_BASEDIR }}
+        key: ccache-${{ matrix.arch }}-${{ matrix.compiler }}-${{ github.sha }}
+        restore-keys: |
+          ccache-${{ matrix.arch }}-${{ matrix.compiler }}-
+
+    # Restore Install Cache
+    - name: 'Restore Install Cache'
+      uses: actions/cache@v3
+      with:
+        path: ${{ env.IGROS_KERNEL_DIR_INSTALL }}
+        key: install-${{ matrix.arch }}-${{ matrix.compiler }}-${{ github.sha }}
+        restore-keys: |
+          install-${{ matrix.arch }}-${{ matrix.compiler }}-
+          install-${{ matrix.arch }}-
 
     # Configure
     - name: 'CMake Configure'
