@@ -1,6 +1,21 @@
 # Cmake version
 cmake_minimum_required(VERSION 3.21.0)
 
+# Build in Source protection
+file(
+	TO_CMAKE_PATH
+	"${PROJECT_BINARY_DIR}/CMakeLists.txt"
+	LOC_PATH
+)
+# Check existance
+if(EXISTS "${LOC_PATH}")
+	# Error message
+	message(
+		FATAL_ERROR
+		"Cannot build in a source directory (or any with CMakeLists.txt)!"
+	)
+endif()
+
 # GWE C++ standard
 set(
 	CMAKE_CXX_STANDARD
@@ -76,21 +91,6 @@ set(
 	IGROS_VERSION
 	${IGROS_GIT_VERSION}.${IGROS_GIT_COMMIT}
 )
-
-# Build in Source protection
-file(
-	TO_CMAKE_PATH
-	"${PROJECT_BINARY_DIR}/CMakeLists.txt"
-	LOC_PATH
-)
-# Check existance
-if(EXISTS "${LOC_PATH}")
-	# Error message
-	message(
-		FATAL_ERROR
-		"Cannot build in a source directory (or any with CMakeLists.txt)!"
-	)
-endif()
 
 # Project
 project(
