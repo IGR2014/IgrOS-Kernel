@@ -3,15 +3,12 @@
 //	UART driver
 //
 //	File:	serial.cpp
-//	Date:	27 Sep 2021
+//	Date:	05 Dec 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
 //
 //
-
-
-#pragma once
 
 
 #include <array>
