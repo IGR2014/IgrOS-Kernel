@@ -3,7 +3,7 @@
 //	Kernel text print functions
 //
 //	File:	kprint.cpp
-//	Date:	27 Sep 2021
+//	Date:	05 Dec 2021
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -374,10 +374,6 @@ namespace igros::klib {
 
 				// Incremet format iterator
 				++fmtIterator;
-
-				// Reset fill char
-				fillChar	= ' ';
-				fillWidth	= 0U;
 
 			}
 
