@@ -13,7 +13,7 @@ jobs:
     # Name
     name: Build with CMake
     # Ubuntu
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 
     # Environment variables
     env:
@@ -22,6 +22,7 @@ jobs:
     # Strategy with languages matrix
     strategy:
       fail-fast: false
+      max-parallel: 4
       matrix:
         arch: [ 'i386', 'x86_64' ]
         compiler: [ 'clang++', 'g++' ]
@@ -30,8 +31,8 @@ jobs:
     steps:
 
     # Checkout
-    - name: Checkout repository
-      uses: actions/checkout@v2
+    - name: 'Checkout repository'
+      uses: actions/checkout@v3
       with:
         fetch-depth: 0
 
@@ -39,16 +40,16 @@ jobs:
     - name: Install Dependencies
       run: |
         sudo apt update
-        sudo apt install -y cmake ninja-build gcc clang gcc-multilib g++-multilib --fix-missing
+        sudo apt install -y --no-install-recommends cmake ccache ninja-build gcc clang gcc-multilib g++-multilib
 
     # Init CodeQL
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v1
+    - name: 'CodeQL Init'
+      uses: github/codeql-action/init@v2
       with:
         languages: cpp
 
     # Init SonarCloud Wrapper
-    - name: Initialize SonarCloud Wrapper
+    - name: 'SonarCloud Init'
       shell: bash
       run: |
         curl -L -O https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip
@@ -57,26 +58,21 @@ jobs:
         unzip sonar-scanner-cli-${SONAR_CLOUD_BUILD_WRAPPER_VERSION}-linux.zip
 
     # Configure
-    - name: Run CMake Configure
+    - name: 'CMake Configure'
       run: |
-        cmake -DCMAKE_TOOLCHAIN_FILE=config/cmake/${{ matrix.compiler }}-${{ matrix.arch }}.cmake -DCMAKE_BUILD_TYPE=Release -B build/${{ matrix.arch }} -G Ninja .
+        cmake --preset="config-linux-${{ matrix.arch }}-${{ matrix.compiler }}-debug"
 
     # Build
-    - name: Run CMake Build
+    - name: 'CMake Build'
       run: |
-        build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir build-wrapper cmake --build build/${{ matrix.arch }} --target all --parallel
-
-    # Install
-    - name: Run CMake Install
-      run: |
-        cmake --install build/${{ matrix.arch }}
+        build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir build-wrapper cmake --build --preset="build-linux-${{ matrix.arch }}-${{ matrix.compiler }}-debug" --target install
 
     # CodeQL analysis
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v1
+    - name: 'CodeQL Analysis'
+      uses: github/codeql-action/analyze@v2
 
     # SonarCloud Wrapper analysis
-    - name: Perform SonarCloud Analysis
+    - name: 'SonarCloud Analysis'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
