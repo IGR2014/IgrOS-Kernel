@@ -14,14 +14,8 @@ function(IGROS_GIT_get_version)
 	# Parse RegExp
 	string(
 		REGEX MATCH
-		"([0-9]+)\.([0-9]+)\.([0-9]+)"
+		"(([0-9]+)\.([0-9]+)\.([0-9]+))"
 		IGROS_GIT_VERSION "${IGROS_GIT_VERSION}"
-	)
-	# Set version
-	set(
-		IGROS_GIT_VERSION
-		${IGROS_GIT_VERSION}
-		PARENT_SCOPE
 	)
 	# Set major version
 	set(
@@ -102,9 +96,17 @@ IGROS_GIT_get_commit_number()
 # Get GIT commit hash
 IGROS_GIT_get_commit_hash()
 
+
+# Set version
+set(
+	IGROS_GIT_VERSION
+	"${IGROS_GIT_VERSION_MAJOR}.${IGROS_GIT_VERSION_MINOR}.${IGROS_GIT_VERSION_PATCH}.${IGROS_GIT_COMMIT}"
+)
+
+
 # Show message
 message(
 	STATUS
-	"Version Git: ${IGROS_GIT_VERSION}.${IGROS_GIT_COMMIT} (${IGROS_GIT_HASH})"
+	"Version Git: ${IGROS_GIT_VERSION} (${IGROS_GIT_HASH})"
 )
 

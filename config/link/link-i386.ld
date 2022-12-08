@@ -5,7 +5,7 @@
 **	File:	link.ld
 **	Date:	24 Jan 2020
 **
-**	Copyright (c) 2017 - 2021, Igor Baklykov
+**	Copyright (c) 2017 - 2022, Igor Baklykov
 **	All rights reserved.
 **
 */
@@ -38,7 +38,7 @@ SECTIONS {
 	.text ALIGN(4K) : AT(ADDR(.text) - KERNEL_OFFSET_VIRT) {
 	_SECTION_TEXT_START_ = .;
 		KEEP(*(.multiboot))
-		*(.boot)
+		KEEP(*(.boot))
 		*(.text)
 	_SECTION_TEXT_END_ = .;
 	}

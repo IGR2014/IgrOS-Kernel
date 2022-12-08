@@ -3,13 +3,15 @@
 //	Kernel math functions declarations
 //
 //	File:	kmath.hpp
-//	Date:	27 Sep 2021
+//	Date:	10 Dec 2022
 //
-//	Copyright (c) 2017 - 2021, Igor Baklykov
+//	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
 //
 //
 
+
+#include <utility>
 
 #include <klib/kmath.hpp>
 
@@ -23,30 +25,30 @@ namespace igros::klib {
 	// Divide 64-bit integer by 32-bit integer
 	// Returns 64-bit quotient and 64-bit reminder
 	[[nodiscard]]
-	udivmod_t kudivmod(quad_t dividend, dword_t divisor) noexcept {
+	auto kudivmod(igros_quad_t dividend, igros_dword_t divisor) noexcept -> udivmod_t {
 
 		// Division result
-		auto res	= udivmod_t {0ULL, dividend};
+		auto res	{udivmod_t {0_u64, dividend}};
 		// Quotient bit
-		auto qbit	= quad_t {1ULL};
+		auto qbit	{1_u64};
 
 		// Division by zeor
-		if (0 == divisor) {
+		if (std::cmp_equal(0_u32, divisor)) [[unlikely]] {
 			return res;
 		}
 
-		while (0 < static_cast<sdword_t>(divisor)) {
-			divisor <<= 1ULL;
-			qbit	<<= 1ULL;
+		while (std::cmp_less(0_i32, divisor)) {
+			divisor <<= 1_u64;
+			qbit	<<= 1_u64;
 		}
 
 		while (qbit) {
-			if (res.reminder >= divisor) {
+			if (std::cmp_greater_equal(res.reminder, divisor)) [[likely]] {
 				res.reminder -= divisor;
 				res.quotient += qbit;
 			}
-			divisor	>>= 1ULL;
-			qbit	>>= 1ULL;
+			divisor	>>= 1_u64;
+			qbit	>>= 1_u64;
 		}
 
 		return res;
@@ -57,30 +59,30 @@ namespace igros::klib {
         // Divide 64-bit integer by 32-bit integer
 	// Returns 64-bit quotient and 64-bit reminder
 	[[nodiscard]]
-	divmod_t kdivmod(squad_t dividend, dword_t divisor) noexcept {
+	auto kdivmod(igros_squad_t dividend, igros_dword_t divisor) noexcept -> divmod_t {
 
 		// Division result
-		auto res	= divmod_t {0LL, dividend};
+		auto res	{divmod_t {0_i64, dividend}};
 		// Quotient bit
-		auto qbit	= squad_t {1LL};
+		auto qbit	{1_i64};
 
 		// Division by zeor
-		if (0 == divisor) {
+		if (std::cmp_equal(0_i32, divisor)) [[unlikely]] {
 			return res;
 		}
 
-		while (0 < divisor) {
-			divisor <<= 1LL;
-			qbit	<<= 1LL;
+		while (std::cmp_less(0_i32, divisor)) {
+			divisor <<= 1_i64;
+			qbit	<<= 1_i64;
 		}
 
 		while (qbit) {
-			if (res.reminder >= divisor) {
+			if (std::cmp_greater_equal(res.reminder, divisor)) [[likely]] {
 				res.reminder -= divisor;
 				res.quotient += qbit;
 			}
-			divisor	>>= 1LL;
-			qbit	>>= 1LL;
+			divisor	>>= 1_i64;
+			qbit	>>= 1_i64;
 		}
 
 		return res;
@@ -92,7 +94,8 @@ namespace igros::klib {
 
 	// Divide 64-bit integer by 32-bit integer
 	// Returns 64-bit quotient and 64-bit reminder
-	udivmod_t kudivmod(quad_t dividend, dword_t divisor) noexcept {
+	[[nodiscard]]
+	auto kudivmod(igros_quad_t dividend, igros_dword_t divisor) noexcept -> udivmod_t {
 		return {
 			dividend / divisor,
 			dividend % divisor
@@ -102,7 +105,8 @@ namespace igros::klib {
 
         // Divide 64-bit integer by 32-bit integer
 	// Returns 64-bit quotient and 64-bit reminder
-	divmod_t kdivmod(squad_t dividend, sdword_t divisor) noexcept {
+	[[nodiscard]]
+	auto kdivmod(igros_squad_t dividend, igros_sdword_t divisor) noexcept -> divmod_t {
 		return {
 			dividend / divisor,
 			dividend % divisor

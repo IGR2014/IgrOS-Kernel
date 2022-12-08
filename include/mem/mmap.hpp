@@ -3,9 +3,9 @@
 //	Memory map operations
 //
 //	File:	mmap.hpp
-//	Date:	17 Jul 2020
+//	Date:	08 Dec 2022
 //
-//	Copyright (c) 2017 - 2021, Igor Baklykov
+//	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
 //
 //
@@ -24,25 +24,26 @@ namespace igros::mem {
 
 
 	// Default page size constant
-	constexpr auto DEFAULT_PAGE_SIZE = 0x1000;
+	constexpr auto DEFAULT_PAGE_SIZE {0x1000_usize};
 
 
 	// Phyical memory structure
 	class phys final {
 
 		// Free pages pointer
-		static pointer_t freePageList;
+		static igros_pointer_t	freePageList;
 
 
 	public:
 
 		// Initialize physical memory
-		static void init(const multiboot::memoryMapEntry* map, const std::size_t size) noexcept;
+		static void	init(const multiboot::memoryMapEntry* map, const igros_usize_t size) noexcept;
 
 		// Allcoate physical page
-   		[[nodiscard]] static pointer_t	alloc() noexcept;
+   		[[nodiscard]]
+		static auto	alloc() noexcept -> igros_pointer_t;
 		// Free physical page
-		static void			free(pointer_t &page) noexcept;
+		static void	free(igros_pointer_t &page) noexcept;
 
 
 	};

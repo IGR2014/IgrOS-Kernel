@@ -3,9 +3,9 @@
 //	CPU operations
 //
 //	File:	cpu.hpp
-//	Date:	24 Sep 2021
+//	Date:	09 Dec 2022
 //
-//	Copyright (c) 2017 - 2021, Igor Baklykov
+//	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
 //
 //
@@ -14,7 +14,8 @@
 #pragma once
 
 
-#include <arch/i386/types.hpp>
+#include <arch/types.hpp>
+#include <arch/register.hpp>
 
 #include <klib/kprint.hpp>
 
@@ -27,7 +28,7 @@ extern "C" {
 
 
 	// Halt CPU
-	inline void	cpuHalt() noexcept;
+	void	cpuHalt() noexcept;
 
 
 #ifdef	__cplusplus
@@ -80,20 +81,21 @@ namespace igros::i386 {
 	inline void cpu::dumpRegisters(const register_t* const regs) noexcept {
 		// Print regs
 		klib::kprintf(
-			"Registers dump:\r\n"
-			"EAX=[%p] EBX=[%p] ECX=[%p] EDX=[%p]\r\n"
-			"ESI=[%p] EDI=[%p]\r\n"
-			"ESP=[%p] EBP=[%p]\r\n"
-			"EIP=[%p]\r\n"
-			"EFLAGS=[%p]\r\n"
-			"Segments:\r\n"
-			"CS=[%p]\r\n"
-			"DS=[%p]\r\n"
-			"SS=[%p]\r\n"
-			"ES=[%p]\r\n"
-			"FS=[%p]\r\n"
-			"GS=[%p]\r\n"
-			"\r\n",
+R"registers(
+Registers dump:
+EAX=[%p] EBX=[%p] ECX=[%p] EDX=[%p]
+ESI=[%p] EDI=[%p]
+ESP=[%p] EBP=[%p]
+EIP=[%p]
+EFLAGS=[%p]
+Segments:
+CS=[%p]
+DS=[%p]
+SS=[%p]
+ES=[%p]
+FS=[%p]
+GS=[%p]
+)registers",
 			regs->eax,
 			regs->ebx,
 			regs->ecx,

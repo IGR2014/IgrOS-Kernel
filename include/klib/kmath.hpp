@@ -3,9 +3,9 @@
 //	Kernel math functions definitions
 //
 //	File:	kmath.hpp
-//	Date:	15 Jan 2021
+//	Date:	08 Dec 2022
 //
-//	Copyright (c) 2017 - 2021, Igor Baklykov
+//	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
 //
 //
@@ -25,25 +25,25 @@ namespace igros::klib {
 
 	// Combined division & modulo result (unsigned)
 	struct udivmod_t {
-		quad_t quotient;
-		quad_t reminder;
+		igros_quad_t quotient;
+		igros_quad_t reminder;
 	};
 
 	// Combined division & modulo result (signed)
 	struct divmod_t {
-		squad_t quotient;
-		squad_t reminder;
+		igros_squad_t quotient;
+		igros_squad_t reminder;
 	};
 
 
 	// Divide 64-bit integer by 32-bit integer
 	// Returns 64-bit quotient and 64-bit reminder
 	[[nodiscard]]
-	udivmod_t	kudivmod(quad_t dividend, dword_t divisor) noexcept;
+	auto	kudivmod(igros_quad_t dividend, igros_dword_t divisor) noexcept -> udivmod_t;
 	// Divide 64-bit integer by 32-bit integer
 	// Returns 64-bit quotient and 64-bit reminder
 	[[nodiscard]]
-	divmod_t	kdivmod(squad_t dividend, sdword_t divisor) noexcept;
+	auto	kdivmod(igros_squad_t dividend, igros_sdword_t divisor) noexcept -> divmod_t;
 
 
 }	// namespace igros::klib

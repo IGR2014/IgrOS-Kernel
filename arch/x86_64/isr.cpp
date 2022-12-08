@@ -3,9 +3,9 @@
 //	Interrupt service routines low-level operations
 //
 //	File:	isr.cpp
-//	Date:	24 Sep 2021
+//	Date:	09 Dec 2022
 //
-//	Copyright (c) 2017 - 2021, Igor Baklykov
+//	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
 //
 //
@@ -27,19 +27,17 @@ namespace igros::x86_64 {
 
 
 	// Interrupt handlers
-	static std::array<isrx86_64_t, ISR_SIZE> isrList {
-		nullptr
-	};
+	static auto isrList {std::array<isrx86_64_t, ISR_SIZE> {}};
 
 
 	// Install interrupt service routine handler
-	void isrHandlerInstall(const dword_t isrNumber, const isrx86_64_t isrHandler) noexcept{
+	void isrHandlerInstall(const igros_dword_t isrNumber, const isrx86_64_t isrHandler) noexcept{
 		// Put interrupt service routine handler in ISRs list
 		isrList[isrNumber] = isrHandler;
 	}
 
 	// Uninstall interrupt service routine handler
-	void isrHandlerUninstall(const dword_t isrNumber) noexcept {
+	void isrHandlerUninstall(const igros_dword_t isrNumber) noexcept {
 		// Remove interrupt service routine handler from ISRs list
 		isrList[isrNumber] = nullptr;
 	}
@@ -65,8 +63,8 @@ extern "C" {
 			igros::x86_64::irq::disable();
 			// Debug
 			igros::klib::kprintf(
-				"%s -> [#%d]\r\n"
-				"State:\t\tUNHANDLED! CPU halted!\r\n",
+				"%s -> [#%d]\n"
+				"State:\t\tUNHANDLED! CPU halted!\n",
 				((regs->number >= igros::x86_64::IRQ_OFFSET) ? "IRQ" : "EXCEPTION"),
 				((regs->number >= igros::x86_64::IRQ_OFFSET) ? (regs->number - igros::x86_64::IRQ_OFFSET) : regs->number)
 			);

@@ -3,36 +3,32 @@
 //	Boot low-level main setup function
 //
 //	File:	boot.cpp
-//	Date:	24 Sep 2021
+//	Date:	05 Dec 2022
 //
-//	Copyright (c) 2017 - 2021, Igor Baklykov
+//	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
 //
 //
 
 
-// Common
+// IgrOS-Kernel Common
 #include <version.hpp>
 #include <multiboot.hpp>
 #include <platform.hpp>
 #include <flags.hpp>
-
-// Architecture dependent
+// IgrOS-Kernel arch
 #include <arch/types.hpp>
 #include <arch/cpu.hpp>
-
-// Kernel drivers
+// IgrOS-Kernel drivers
 #include <drivers/vga/vmem.hpp>
 #include <drivers/input/keyboard.hpp>
 #include <drivers/clock/pit.hpp>
 #include <drivers/clock/rtc.hpp>
 #include <drivers/uart/serial.hpp>
-
-// Kernel library
+// IgrOS-Kernel library
 #include <klib/kstring.hpp>
 #include <klib/kprint.hpp>
-
-// Kernel memory
+// IgrOS-Kernel memory
 #include <mem/mmap.hpp>
 
 
@@ -44,25 +40,29 @@ namespace igros {
 	void printHeader(const multiboot::info_t* const multiboot) noexcept {
 		// Write kernel info
 		klib::kprintf(
-			"Kernel info:\r\n"
-			"Arch:\t\t%s\r\n"
-			"Start addr:\t0x%p\r\n"
-			"End addr:\t0x%p\r\n"
-			"Size:\t\t%d Kb.\r\n"
-			"Build:\t\t" __DATE__ ", " __TIME__ "\r\n"
-			"Version:\t%s\r\n"
-			"Author:\t\tIgor Baklykov (c) %d - %d\r\n"
-			"Command line:\t%s\r\n"
-			"Loader:\t\t%s\r\n",
+R"info(
+Kernel info:
+Arch:		%s
+Start addr:	0x%p
+End addr:	0x%p
+Size:		%d Kb.
+Build:		%s, %s
+Version:	%s
+Author:		Igor Baklykov (c) %d - %d
+Loader:		"%s"
+Command line:	"%s"
+)info",
 			platform::CURRENT_PLATFORM.name(),
 			platform::KERNEL_START(),
 			platform::KERNEL_END(),
 			platform::KERNEL_SIZE() >> 10,
+			__DATE__,
+			__TIME__,
 			KERNEL_VERSION_STRING(),
 			2017,
-			2021,
-			multiboot->commandLine(),
-			multiboot->loaderName()
+			2022,
+			multiboot->loaderName(),
+			multiboot->commandLine()
 		);
 	}
 
@@ -78,13 +78,13 @@ extern "C" {
 
 
 	// Kernel main function
-	void kmain(const igros::multiboot::info_t* const multiboot, const igros::dword_t magic) noexcept {
+	void kmain(const igros::multiboot::info_t* const multiboot, const igros::igros_dword_t magic) noexcept {
 
 		// Init VGA memory
 		igros::arch::vmemInit();
 
 		// Write Multiboot magic error message message
-		igros::klib::kprintf("IgrOS kernel\r\n");
+		igros::klib::kprintf("IgrOS kernel");
 
 		// Test multiboot (Hang on error)
 		igros::multiboot::test(multiboot, magic);
@@ -114,7 +114,7 @@ extern "C" {
 		multiboot->printMemMap();
 
 		// Write "Booted successfully" message
-		igros::klib::kprintf("Booted successfully\r\n");
+		igros::klib::kprintf("Booted successfully");
 
 		// Halt CPU
 		igros::arch::cpu::get().halt();

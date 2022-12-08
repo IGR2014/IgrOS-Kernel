@@ -3,9 +3,9 @@
 //	IgrOS version info
 //
 //	File:	version.hpp
-//	Date:	24 Sep 2021
+//	Date:	08 Dec 2022
 //
-//	Copyright (c) 2017 - 2021, Igor Baklykov
+//	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
 //
 //
@@ -23,30 +23,31 @@ namespace igros {
 
 
 	// Kernel version constants
-	constexpr auto VERSION_MAJOR	= static_cast<byte_t>(0U);
-	constexpr auto VERSION_MINOR	= static_cast<byte_t>(1U);
-	constexpr auto VERSION_BUILD	= static_cast<word_t>(34U);
+	constexpr auto VERSION_MAJOR	{static_cast<igros_byte_t>(IGROS_GIT_VERSION_MAJOR)};
+	constexpr auto VERSION_MINOR	{static_cast<igros_byte_t>(IGROS_GIT_VERSION_MINOR)};
+	constexpr auto VERSION_PATCH	{static_cast<igros_word_t>(IGROS_GIT_VERSION_PATCH)};
+	constexpr auto VERSION_BUILD	{static_cast<igros_dword_t>(IGROS_GIT_VERSION_BUILD)};
 
 	// Kernel version name
-	constexpr auto VERSION_NAME	= "BETA";
+	constexpr auto VERSION_NAME	{"BETA"};
 
 
 	// Kernel version integer
 	[[nodiscard]]
-	constexpr auto KERNEL_VERSION(const byte_t major, const byte_t minor, const word_t build) noexcept {
-		return (static_cast<dword_t>(build) | (static_cast<dword_t>(minor) << 16) | (static_cast<dword_t>(major) << 24));
+	constexpr auto KERNEL_VERSION(const igros_byte_t major, const igros_byte_t minor, const igros_word_t patch, const igros_dword_t build) noexcept -> igros_quad_t {
+		return static_cast<igros_quad_t>(build) | ((static_cast<igros_quad_t>(patch) | (static_cast<igros_quad_t>(minor) << 16) | (static_cast<igros_quad_t>(major) << 24)) << 32);
 	}
 
 	// Kernel current version integer
 	[[nodiscard]]
-	constexpr auto KERNEL_VERSION() noexcept {
-		return KERNEL_VERSION(VERSION_MAJOR, VERSION_MINOR, VERSION_BUILD);
+	constexpr auto KERNEL_VERSION() noexcept -> igros_quad_t {
+		return KERNEL_VERSION(VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_BUILD);
 	}
 
 	// Kernel version to string
 	[[nodiscard]]
 	constexpr auto KERNEL_VERSION_STRING() noexcept {
-		return "v0.1.34 [ BETA ]";
+		return "v" IGROS_GIT_VERSION;	// " [ " VERSION_NAME " ]";
 	}
 
 

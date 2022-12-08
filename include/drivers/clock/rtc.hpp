@@ -3,9 +3,9 @@
 //	RTC clock driver
 //
 //	File:	rtc.hpp
-//	Date:	14 Jul 2020
+//	Date:	08 Dec 2022
 //
-//	Copyright (c) 2017 - 2021, Igor Baklykov
+//	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
 //
 //
@@ -23,72 +23,71 @@ namespace igros::arch {
 
 	// Date/time structure
 	struct clockDateTime_t {
-		dword_t		year;
-		dword_t		month;
-		dword_t		day;
-		dword_t		weekday;
-		dword_t		hour;
-		dword_t		minute;
-		dword_t		second;
+		igros_dword_t		year;
+		igros_dword_t		month;
+		igros_dword_t		day;
+		igros_dword_t		weekday;
+		igros_dword_t		hour;
+		igros_dword_t		minute;
+		igros_dword_t		second;
 	};
 
 
 	// RTC date
 	struct rtcDate_t {
-		byte_t		year;
-		byte_t		month;
-		byte_t		day;
+		igros_byte_t		year;
+		igros_byte_t		month;
+		igros_byte_t		day;
 	};
 
 	// RTC time
 	struct rtcTime_t {
-		byte_t		hour;
-		byte_t		minute;
-		byte_t		second;
+		igros_byte_t		hour;
+		igros_byte_t		minute;
+		igros_byte_t		second;
 	};
 
 	// RTC date/time
 	struct rtcDateTime_t {
-		rtcDate_t	date;
-		byte_t		weekday;
-		rtcTime_t	time;
+		rtcDate_t		date;
+		igros_byte_t		weekday;
+		rtcTime_t		time;
 	};
 
 
 	// Clock from RTC conversion
-	void clockFromRTC(const rtcDateTime_t &rtcDateTime, const dword_t century, clockDateTime_t &dateTime) noexcept;
+	[[nodiscard]]
+	auto clockFromRTC(const rtcDateTime_t &rtcDateTime, const igros_dword_t century) noexcept -> clockDateTime_t;
 
 	// Get current date/time
-	clockDateTime_t clockGetCurrentDateTime() noexcept;
+	[[nodiscard]]
+	auto clockGetCurrentDateTime() noexcept -> clockDateTime_t;
 
 
 	// Read CMOS register
-	byte_t rtcRead(const byte_t cmd) noexcept;
-
+	[[nodiscard]]
+	auto rtcRead(const igros_byte_t cmd) noexcept -> igros_byte_t;
 
 	// Read CMOS date
-	void rtcReadDate(rtcDate_t &date) noexcept;
-
+	[[nodiscard]]
+	auto rtcReadDate() noexcept -> rtcDate_t;
 	// Read CMOS time
-	void rtcReadTime(rtcTime_t &time) noexcept;
-
+	[[nodiscard]]
+	auto rtcReadTime() noexcept -> rtcTime_t;
 	// Read CMOS date/time
-	void rtcReadDateTime(rtcDateTime_t &dateTime) noexcept;
-
+	[[nodiscard]]
+	auto rtcReadDateTime() noexcept -> rtcDateTime_t;
 
 	// Convert BCD to binary
-	byte_t rtcFromBCD(const byte_t bcd) noexcept;
-
+	[[nodiscard]]
+	auto rtcFromBCD(const igros_byte_t bcd) noexcept -> igros_byte_t;
 
 	// Convert BCD date to binary
 	void rtcDateFromBCD(rtcDate_t &date) noexcept;
-
 	// Convert BCD time to binary
 	void rtcTimeFromBCD(rtcTime_t &time) noexcept;
-
 	// Convert BCD date/time to binary
 	void rtcDateTimeFromBCD(rtcDateTime_t &dateTime) noexcept;
-
 
 	// Setup RTC function
 	void rtcSetup() noexcept;

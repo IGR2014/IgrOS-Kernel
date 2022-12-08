@@ -1,310 +1,512 @@
 ////////////////////////////////////////////////////////////////
-//
-//	Bit flags template datatype
-//
-//	File:	flags.hpp
-//	Date:	27 Sep 2021
-//
-//	Copyright (c) 2017 - 2021, Igor Baklykov
-//	All rights reserved.
-//
-//
+///
+///	@brief		Bit flags template datatype
+///
+///	@file		kflags.hpp
+///	@date		05 Dec 2022
+///
+///	@copyright	Copyright (c) 2017 - 2022,
+///			All rights reserved.
+///	@author		Igor Baklykov
+///
+///
 
 
 #pragma once
 
 
+// C++
+#include <bit>
 #include <type_traits>
 #include <utility>
-
+// IgrOS-Kernel arch
 #include <arch/types.hpp>
 
 
-// OS namespace
+////////////////////////////////////////////////////
+///
+/// @brief OS namespace
+/// @namespace igros
+///
 namespace igros {
 
 
-	// Kernel flags template class
-	template<typename T, typename U = typename std::enable_if_t<std::is_enum_v<T>, typename std::underlying_type_t<T>>>
+	////////////////////////////////////////////////////
+	///
+	/// @brief Bitwise flags template class
+	/// @class kflags
+	/// @tparam T Flags internal representation enum type
+	/// @tparam U Flags internal underlying representation enum type
+	///
+	template<typename T, typename U = std::underlying_type_t<T>>
+	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
 	class kflags {
 
-		static_assert(std::is_enum_v<T>, "Parameter T must be an enum!");
+		static_assert(
+			std::is_enum_v<T>,
+			"Parameter T must be an enum!"
+		);
+		static_assert(
+			std::is_same_v<U, std::underlying_type_t<T>>,
+			"U should match underlying type of enum T!"
+		);
 
-		U	mValue;		// Real flags value
+		U	mValue;		///< Real flags value
 
 
 	public:
 
-		// Default c-tor
+		/// @brief Default c-tor
 		constexpr kflags() noexcept = default;
-		// From initializer list
+		/// @brief From initializer list
 		template<typename ...Args>
 		constexpr explicit kflags(Args &&...args) noexcept; 
 
-		// Type conversion operator
+		/// @brief Type conversion operator
 		[[nodiscard]]
 		constexpr explicit operator T() const noexcept;
-		// Type conversion operator
+		/// @brief Type conversion operator
 		[[nodiscard]]
 		constexpr explicit operator U() const noexcept;
 
-		// Comparison operator
-		constexpr bool operator==(const kflags<T, U> &other) const noexcept;
-		// Comparison operator
-		constexpr bool operator!=(const kflags<T, U> &other) const noexcept;
+		/// @brief Comparison operator
+		constexpr auto	operator==(const kflags<T, U> &other) const noexcept -> bool = default;
 
-		// Comparison operator
-		constexpr bool operator==(const T &other) const noexcept;
-		// Comparison operator
-		constexpr bool operator!=(const T &other) const noexcept;
+		/// @brief Comparison operator
+		constexpr auto	operator==(const T &other) const noexcept -> bool;
+		/// @brief Comparison operator
+		constexpr auto	operator!=(const T &other) const noexcept -> bool;
 
-		// Bitwise AND operator
-		constexpr kflags& operator&=(const kflags<T, U> &other) noexcept;
-		// Bitwise OR operator
-		constexpr kflags& operator|=(const kflags<T, U> &other) noexcept;
-		// Bitwise XOR operator
-		constexpr kflags& operator^=(const kflags<T, U> &other) noexcept;
+		/// @brief Bitwise AND operator
+		[[maybe_unused]]
+		constexpr auto	operator&=(const kflags<T, U> &other) noexcept -> kflags&;
+		/// @brief Bitwise OR operator
+		[[maybe_unused]]
+		constexpr auto	operator|=(const kflags<T, U> &other) noexcept -> kflags&;
+		/// @brief Bitwise XOR operator
+		[[maybe_unused]]
+		constexpr auto	operator^=(const kflags<T, U> &other) noexcept -> kflags&;
 
-		// Bitwise AND operator
-		constexpr kflags operator&(const kflags<T, U> &other) const noexcept;
-		// Bitwise OR operator
-		constexpr kflags operator|(const kflags<T, U> &other) const noexcept;
-		// Bitwise XOR operator
-		constexpr kflags operator^(const kflags<T, U> &other) const noexcept;
+		/// @brief Bitwise AND operator
+		[[nodiscard]]
+		constexpr auto	operator&(const kflags<T, U> &other) const noexcept -> kflags;
+		/// @brief Bitwise OR operator
+		[[nodiscard]]
+		constexpr auto	operator|(const kflags<T, U> &other) const noexcept -> kflags;
+		/// @brief Bitwise XOR operator
+		[[nodiscard]]
+		constexpr auto	operator^(const kflags<T, U> &other) const noexcept -> kflags;
 
-		// Bitwise AND operator
-		constexpr kflags& operator&=(const T &other) noexcept;
-		// Bitwise OR operator
-		constexpr kflags& operator|=(const T &other) noexcept;
-		// Bitwise XOR operator
-		constexpr kflags& operator^=(const T &other) noexcept;
+		/// @brief Bitwise AND operator
+		[[maybe_unused]]
+		constexpr auto	operator&=(const T &other) noexcept -> kflags&;
+		/// @brief Bitwise OR operator
+		[[maybe_unused]]
+		constexpr auto	operator|=(const T &other) noexcept -> kflags&;
+		/// @brief Bitwise XOR operator
+		[[maybe_unused]]
+		constexpr auto	operator^=(const T &other) noexcept -> kflags&;
 
-		// Bitwise AND operator
-		constexpr kflags operator&(const T &other) const noexcept;
-		// Bitwise OR operator
-		constexpr kflags operator|(const T &other) const noexcept;
-		// Bitwise XOR operator
-		constexpr kflags operator^(const T &other) const noexcept;
+		/// @brief Bitwise AND operator
+		[[nodiscard]]
+		constexpr auto	operator&(const T &other) const noexcept -> kflags;
+		/// @brief Bitwise OR operator
+		[[nodiscard]]
+		constexpr auto	operator|(const T &other) const noexcept -> kflags;
+		/// @brief Bitwise XOR operator
+		[[nodiscard]]
+		constexpr auto	operator^(const T &other) const noexcept -> kflags;
 
-		// Bitwise NOT operator
-		constexpr kflags operator~() const noexcept;
+		/// @brief Bitwise NOT operator
+		[[nodiscard]]
+		constexpr auto	operator~() const noexcept -> kflags;
 
-		// Copy c-tor
+		/// @brief Copy c-tor
 		constexpr kflags(const kflags &value) noexcept = default;
-		// Copy assignment
-		constexpr kflags& operator=(const kflags &value) noexcept = default;
+		/// @brief Copy assignment
+		constexpr auto	operator=(const kflags &value) noexcept -> kflags& = default;
 
-		// Move c-tor
+		/// @brief Move c-tor
 		constexpr kflags(kflags &&value) noexcept = default;
-		// Move assignment
-		constexpr kflags& operator=(kflags &&value) noexcept = default;
+		/// @brief Move assignment
+		constexpr auto	operator=(kflags &&value) noexcept -> kflags& = default;
 
-		// Type copy c-tor
+		/// @brief Type copy c-tor
 		constexpr explicit kflags(const T &value) noexcept;
-		// Type copy assignment
-		constexpr kflags& operator=(const T &value) noexcept;
+		/// @brief Type copy assignment
+		constexpr auto	operator=(const T &value) noexcept -> kflags&;
 
-		// Type move c-tor
+		/// @brief Type move c-tor
 		constexpr explicit kflags(T &&value) noexcept;
-		// Type move assignment
-		constexpr kflags& operator=(T &&value) noexcept;
+		/// @brief Type move assignment
+		constexpr auto	operator=(T &&value) noexcept -> kflags&;
 
-		// Get value
+		/// @brief Get value
 		[[nodiscard]]
-		constexpr U	value() const noexcept;
+		constexpr auto	value() const noexcept -> U;
 
-		// Test bit
+		/// @brief Check if empty
 		[[nodiscard]]
-		constexpr bool	test(const std::size_t bit = 0U) const noexcept;
-		// Test flag
+		constexpr auto	isEmpty() const noexcept -> bool;
+		/// @brief Check if flag is set
 		[[nodiscard]]
-		constexpr bool	test(const T &value) const noexcept;
+		constexpr auto	isSet(const T value) const noexcept -> bool;
+
+		/// @brief Test bit
+		[[nodiscard]]
+		constexpr auto	test(const igros_usize_t bit = 0_usize) const noexcept -> bool;
 
 
 	};
 
 
-	// From initializer list
+	////////////////////////////////////////////////////
+	///
+	/// @brief From initializer list
+	/// @tparam Args List of set flags
+	/// @param[in] args List of flags
+	///
 	template<typename T, typename U>
+	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
 	template<typename ...Args>
-	constexpr kflags<T, U>::kflags(Args &&...args) noexcept
-		: mValue((static_cast<U>(args) | ...)) {}
+	constexpr kflags<T, U>::kflags(Args &&...args) noexcept :
+		mValue((static_cast<U>(args) | ...)) {}
 
 
-	// Type conversion operator
+	////////////////////////////////////////////////////
+	///
+	/// @brief Type conversion operator
+	/// @return Flag value of type @c T
+	///
 	template<typename T, typename U>
+	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
 	[[nodiscard]]
 	constexpr kflags<T, U>::operator T() const noexcept {
 		return static_cast<T>(mValue);
 	}
 
-	// Type conversion operator
+	////////////////////////////////////////////////////
+	///
+	/// @brief Type conversion operator
+	/// @return Flag underlying value of type @c U
+	///
 	template<typename T, typename U>
+	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
 	[[nodiscard]]
 	constexpr kflags<T, U>::operator U() const noexcept {
 		return mValue;
 	}
 
 
-	// Comparison operator
+	////////////////////////////////////////////////////
+	///
+	/// @brief Comparison operator
+	/// @param[in] other Other flags value of type @c T
+	/// @return Indicates if flag values are equal
+	///
 	template<typename T, typename U>
-	constexpr bool kflags<T, U>::operator==(const kflags<T, U> &other) const noexcept {
-		return mValue == other.mValue;
-	}
-
-	// Comparison operator
-	template<typename T, typename U>
-	constexpr bool kflags<T, U>::operator!=(const kflags<T, U> &other) const noexcept {
-		return !(*this == other);
-	}
-
-
-	// Comparison operator
-	template<typename T, typename U>
-	constexpr bool kflags<T, U>::operator==(const T &other) const noexcept {
+	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
+	constexpr auto kflags<T, U>::operator==(const T &other) const noexcept -> bool {
 		return mValue == static_cast<U>(other);
 	}
 
-	// Comparison operator
+	////////////////////////////////////////////////////
+	///
+	/// @brief Comparison operator
+	/// @param[in] other Other flags value of type @c T
+	/// @return Indicates if flag values are not equal
+	///
 	template<typename T, typename U>
-	constexpr bool kflags<T, U>::operator!=(const T &other) const noexcept {
+	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
+	constexpr auto kflags<T, U>::operator!=(const T &other) const noexcept -> bool {
 		return !(*this == other);
 	}
 
 
-	// Bitwise AND operator
+	////////////////////////////////////////////////////
+	///
+	/// @brief Bitwise AND operator
+	/// @param[in] other Other flags value
+	/// @return Reference to @c this for chaining
+	///
 	template<typename T, typename U>
-	constexpr kflags<T, U>& kflags<T, U>::operator&=(const kflags<T, U> &other) noexcept {
+	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
+	[[maybe_unused]]
+	constexpr auto kflags<T, U>::operator&=(const kflags<T, U> &other) noexcept -> kflags<T, U>& {
 		return *this &= static_cast<T>(other);
 	}
 
-	// Bitwise OR operator
+	////////////////////////////////////////////////////
+	///
+	/// @brief Bitwise OR operator
+	/// @param[in] other Other flags value
+	/// @return Reference to @c this for chaining
+	///
 	template<typename T, typename U>
-	constexpr kflags<T, U>& kflags<T, U>::operator|=(const kflags<T, U> &other) noexcept {
+	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
+	[[maybe_unused]]
+	constexpr auto kflags<T, U>::operator|=(const kflags<T, U> &other) noexcept -> kflags<T, U>& {
 		return *this |= static_cast<T>(other);
 	}
 
-	// Bitwise XOR operator
+	////////////////////////////////////////////////////
+	///
+	/// @brief Bitwise XOR operator
+	/// @param[in] other Other flags value
+	/// @return Reference to @c this for chaining
+	///
 	template<typename T, typename U>
-	constexpr kflags<T, U>& kflags<T, U>::operator^=(const kflags<T, U> &other) noexcept {
+	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
+	[[maybe_unused]]
+	constexpr auto kflags<T, U>::operator^=(const kflags<T, U> &other) noexcept -> kflags<T, U>& {
 		return *this ^= static_cast<T>(other);
 	}
 
 
-	// Bitwise AND operator
+	////////////////////////////////////////////////////
+	///
+	/// @brief Bitwise AND operator
+	/// @param[in] other Other flags value
+	/// @return Result of (this AND other)
+	///
 	template<typename T, typename U>
-	constexpr kflags<T, U> kflags<T, U>::operator&(const kflags<T, U> &other) const noexcept {
+	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
+	[[nodiscard]]
+	constexpr auto kflags<T, U>::operator&(const kflags<T, U> &other) const noexcept -> kflags<T, U> {
 		return *this & static_cast<T>(other);
 	}
 
-	// Bitwise OR operator
+	////////////////////////////////////////////////////
+	///
+	/// @brief Bitwise OR operator
+	/// @param[in] other Other flags value
+	/// @return Result of (this OR other)
+	///
 	template<typename T, typename U>
-	constexpr kflags<T, U> kflags<T, U>::operator|(const kflags<T, U> &other) const noexcept {
+	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
+	[[nodiscard]]
+	constexpr auto kflags<T, U>::operator|(const kflags<T, U> &other) const noexcept -> kflags<T, U> {
 		return *this | static_cast<T>(other);
 	}
 
-	// Bitwise XOR operator
+	////////////////////////////////////////////////////
+	///
+	/// @brief Bitwise XOR operator
+	/// @param[in] other Other flags value
+	/// @return Result of (this XOR other)
+	///
 	template<typename T, typename U>
-	constexpr kflags<T, U> kflags<T, U>::operator^(const kflags<T, U> &other) const noexcept {
+	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
+	[[nodiscard]]
+	constexpr auto kflags<T, U>::operator^(const kflags<T, U> &other) const noexcept -> kflags<T, U> {
 		return *this ^ static_cast<T>(other);
 	}
 
 
-	// Bitwise AND operator
+	////////////////////////////////////////////////////
+	///
+	/// @brief Bitwise AND operator
+	/// @param[in] other Other flags value of type @c T
+	/// @return Reference to @c this for chaining
+	///
 	template<typename T, typename U>
-	constexpr kflags<T, U>& kflags<T, U>::operator&=(const T &other) noexcept {
+	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
+	[[maybe_unused]]
+	constexpr auto kflags<T, U>::operator&=(const T &other) noexcept -> kflags<T, U>& {
+		// Do AND
 		mValue &= static_cast<U>(other);
+		// Reference chaining
 		return *this;
 	}
 
-	// Bitwise OR operator
+	////////////////////////////////////////////////////
+	///
+	/// @brief Bitwise OR operator
+	/// @param[in] other Other flags value of type @c T
+	/// @return Reference to @c this for chaining
+	///
 	template<typename T, typename U>
-	constexpr kflags<T, U>& kflags<T, U>::operator|=(const T &other) noexcept {
+	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
+	[[maybe_unused]]
+	constexpr auto kflags<T, U>::operator|=(const T &other) noexcept -> kflags<T, U>& {
+		// Do OR
 		mValue |= static_cast<U>(other);
+		// Reference chaining
 		return *this;
 	}
 
-	// Bitwise XOR operator
+	////////////////////////////////////////////////////
+	///
+	/// @brief Bitwise XOR operator
+	/// @param[in] other Other flags value of type @c T
+	/// @return Reference to @c this for chaining
+	///
 	template<typename T, typename U>
-	constexpr kflags<T, U>& kflags<T, U>::operator^=(const T &other) noexcept {
+	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
+	[[maybe_unused]]
+	constexpr auto kflags<T, U>::operator^=(const T &other) noexcept -> kflags<T, U>& {
+		// Do XOR
 		mValue ^= static_cast<U>(other);
+		// Reference chaining
 		return *this;
 	}
 
 
-	// Bitwise AND operator
+	////////////////////////////////////////////////////
+	///
+	/// @brief Bitwise AND operator
+	/// @param[in] other Other flags value of type @c T
+	/// @return Result of (this AND other)
+	///
 	template<typename T, typename U>
-	constexpr kflags<T, U> kflags<T, U>::operator&(const T &other) const noexcept {
+	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
+	[[nodiscard]]
+	constexpr auto kflags<T, U>::operator&(const T &other) const noexcept -> kflags<T, U> {
 		return kflags<T, U>(*this) &= other;
 	}
 
-	// Bitwise OR operator
+	////////////////////////////////////////////////////
+	///
+	/// @brief Bitwise OR operator
+	/// @param[in] other Other flags value of type @c T
+	/// @return Result of (this OR other)
+	///
 	template<typename T, typename U>
-	constexpr kflags<T, U> kflags<T, U>::operator|(const T &other) const noexcept {
+	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
+	[[nodiscard]]
+	constexpr auto kflags<T, U>::operator|(const T &other) const noexcept -> kflags<T, U> {
 		return kflags<T, U>(*this) |= other;
 	}
 
-	// Bitwise XOR operator
+	////////////////////////////////////////////////////
+	///
+	/// @brief Bitwise XOR operator
+	/// @param[in] other Other flags value of type @c T
+	/// @return Result of (this XOR other)
+	///
 	template<typename T, typename U>
-	constexpr kflags<T, U> kflags<T, U>::operator^(const T &other) const noexcept {
+	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
+	[[nodiscard]]
+	constexpr auto kflags<T, U>::operator^(const T &other) const noexcept -> kflags<T, U> {
 		return kflags<T, U>(*this) ^= other;
 	}
 
 
-	// Bitwise NOT operator
+	////////////////////////////////////////////////////
+	///
+	/// @brief Bitwise NOT operator
+	/// @return Result of (NOT this)
+	///
 	template<typename T, typename U>
-	constexpr kflags<T, U> kflags<T, U>::operator~() const noexcept {
+	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
+	[[nodiscard]]
+	constexpr auto kflags<T, U>::operator~() const noexcept -> kflags<T, U> {
 		return kflags<T, U>(static_cast<T>(~mValue));
 	}
 
 
-	// Type copy c-tor
+	////////////////////////////////////////////////////
+	///
+	/// @brief Type copy c-tor
+	/// @param[in] value Other flags value of type @c T
+	///
 	template<typename T, typename U>
-	constexpr kflags<T, U>::kflags(const T &value) noexcept
-		: mValue(value) {}
+	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
+	constexpr kflags<T, U>::kflags(const T &value) noexcept :
+		mValue(value) {}
 
-	// Type copy assignment
+	////////////////////////////////////////////////////
+	///
+	/// @brief Type copy assignment
+	/// @param[in] value Other flags value of type @c T
+	/// @return Reference to @c this for chaining
+	///
 	template<typename T, typename U>
-	constexpr kflags<T, U>& kflags<T, U>::operator=(const T &value) noexcept {
+	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
+	constexpr auto kflags<T, U>::operator=(const T &value) noexcept -> kflags<T, U>& {
+		// Set new value
 		mValue = value;
+		// Reference chaining
 		return *this;
 	}
 
 
-	// Type move c-tor
+	////////////////////////////////////////////////////
+	///
+	/// @brief Type move c-tor
+	/// @param[in] value Other flags value of type @c T
+	///
 	template<typename T, typename U>
-	constexpr kflags<T, U>::kflags(T &&value) noexcept
-		: mValue(std::move(static_cast<U>(value))) {}
+	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
+	constexpr kflags<T, U>::kflags(T &&value) noexcept :
+		mValue(std::move(static_cast<U>(value))) {}
 
-	// Type move assignment
+	////////////////////////////////////////////////////
+	///
+	/// @brief Type move assignment
+	/// @param[in] value Other flags value of type @c T
+	/// @return Reference to @c this for chaining
+	///
 	template<typename T, typename U>
-	constexpr kflags<T, U>& kflags<T, U>::operator=(T &&value) noexcept {
+	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
+	constexpr auto kflags<T, U>::operator=(T &&value) noexcept -> kflags<T, U>& {
+		// Set new value
 		mValue = std::move(value);
+		// Reference chaining
 		return *this;
 	}
 
 
-	// Get value
+	////////////////////////////////////////////////////
+	///
+	/// @brief Get value
+	/// @return Flags underlying value of type @c U
+	///
 	template<typename T, typename U>
+	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
 	[[nodiscard]]
-	constexpr U kflags<T, U>::value() const noexcept {
+	constexpr auto kflags<T, U>::value() const noexcept -> U {
 		return static_cast<U>(*this);
 	}
 
 
-	// Test bit
+	////////////////////////////////////////////////////
+	///
+	/// @brief Check if empty
+	/// @return State of checked flag @c value
+	///
 	template<typename T, typename U>
+	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
 	[[nodiscard]]
-	constexpr bool kflags<T, U>::test(const std::size_t bit) const noexcept {
-		return static_cast<U>(1U << bit) == (mValue & static_cast<U>(1U << bit));
+	constexpr auto kflags<T, U>::isEmpty() const noexcept -> bool {
+		return *this == static_cast<T>(0);
+	}
+
+	////////////////////////////////////////////////////
+	///
+	/// @brief Check if flag is set
+	/// @param[in] value Tested flag
+	/// @return State of checked flag @c value
+	///
+	template<typename T, typename U>
+	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
+	[[nodiscard]]
+	constexpr auto kflags<T, U>::isSet(const T value) const noexcept -> bool {
+		return std::has_single_bit(static_cast<std::make_unsigned_t<U>>(mValue & static_cast<U>(value)));
 	}
 
 
-	// Test flag
+	////////////////////////////////////////////////////
+	///
+	/// @brief Test bit
+	/// @param[in] bit Bit number [0 .. MAX]
+	/// @return Bit value [false, true] calculated as (1 SHL bit) = (this AND (1 SHL bit))
+	///
 	template<typename T, typename U>
+	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
 	[[nodiscard]]
-	constexpr bool kflags<T, U>::test(const T &value) const noexcept {
-		return static_cast<U>(value) == (mValue & static_cast<U>(value));
+	constexpr auto kflags<T, U>::test(const igros_usize_t bit) const noexcept -> bool {
+		return std::has_single_bit(static_cast<std::make_unsigned_t<U>>(mValue & static_cast<U>(bit)));
 	}
 
 

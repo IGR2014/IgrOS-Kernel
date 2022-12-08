@@ -3,9 +3,9 @@
 //	Exceptions low-level operations
 //
 //	File:	exceptions.hpp
-//	Date:	24 Sep 2021
+//	Date:	09 Dec 2022
 //
-//	Copyright (c) 2017 - 2021, Igor Baklykov
+//	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
 //
 //
@@ -16,7 +16,8 @@
 
 #include <array>
 
-#include <arch/x86_64/types.hpp>
+#include <arch/types.hpp>
+
 #include <arch/x86_64/isr.hpp>
 
 
@@ -26,70 +27,72 @@ extern "C" {
 
 #endif	// __cplusplus
 
+
 	// Exception 0 handler
-	inline void	exHandler00() noexcept;
+	void	exHandler00() noexcept;
 	// Exception 1 handler
-	inline void	exHandler01() noexcept;
+	void	exHandler01() noexcept;
 	// Exception 2 handler
-	inline void	exHandler02() noexcept;
+	void	exHandler02() noexcept;
 	// Exception 3 handler
-	inline void	exHandler03() noexcept;
+	void	exHandler03() noexcept;
 	// Exception 4 handler
-	inline void	exHandler04() noexcept;
+	void	exHandler04() noexcept;
 	// Exception 5 handler
-	inline void	exHandler05() noexcept;
+	void	exHandler05() noexcept;
 	// Exception 6 handler
-	inline void	exHandler06() noexcept;
+	void	exHandler06() noexcept;
 	// Exception 7 handler
-	inline void	exHandler07() noexcept;
+	void	exHandler07() noexcept;
 	// Exception 8 handler
-	inline void	exHandler08() noexcept;
+	void	exHandler08() noexcept;
 	// Exception 9 handler
-	inline void	exHandler09() noexcept;
+	void	exHandler09() noexcept;
 	// Exception 10 handler
-	inline void	exHandler0A() noexcept;
+	void	exHandler0A() noexcept;
 	// Exception 11 handler
-	inline void	exHandler0B() noexcept;
+	void	exHandler0B() noexcept;
 	// Exception 12 handler
-	inline void	exHandler0C() noexcept;
+	void	exHandler0C() noexcept;
 	// Exception 13 handler
-	inline void	exHandler0D() noexcept;
+	void	exHandler0D() noexcept;
 	// Exception 14 handler
-	inline void	exHandler0E() noexcept;
+	void	exHandler0E() noexcept;
 	// Exception 15 handler
-	inline void	exHandler0F() noexcept;
+	void	exHandler0F() noexcept;
 	// Exception 16 handler
-	inline void	exHandler10() noexcept;
+	void	exHandler10() noexcept;
 	// Exception 17 handler
-	inline void	exHandler11() noexcept;
+	void	exHandler11() noexcept;
 	// Exception 18 handler
-	inline void	exHandler12() noexcept;
+	void	exHandler12() noexcept;
 	// Exception 19 handler
-	inline void	exHandler13() noexcept;
+	void	exHandler13() noexcept;
 	// Exception 20 handler
-	inline void	exHandler14() noexcept;
+	void	exHandler14() noexcept;
 	// Exception 21 handler
-	inline void	exHandler15() noexcept;
+	void	exHandler15() noexcept;
 	// Exception 22 handler
-	inline void	exHandler16() noexcept;
+	void	exHandler16() noexcept;
 	// Exception 23 handler
-	inline void	exHandler17() noexcept;
+	void	exHandler17() noexcept;
 	// Exception 24 handler
-	inline void	exHandler18() noexcept;
+	void	exHandler18() noexcept;
 	// Exception 25 handler
-	inline void	exHandler19() noexcept;
+	void	exHandler19() noexcept;
 	// Exception 26 handler
-	inline void	exHandler1A() noexcept;
+	void	exHandler1A() noexcept;
 	// Exception 27 handler
-	inline void	exHandler1B() noexcept;
+	void	exHandler1B() noexcept;
 	// Exception 28 handler
-	inline void	exHandler1C() noexcept;
+	void	exHandler1C() noexcept;
 	// Exception 29 handler
-	inline void	exHandler1D() noexcept;
+	void	exHandler1D() noexcept;
 	// Exception 30 handler
-	inline void	exHandler1E() noexcept;
+	void	exHandler1E() noexcept;
 	// Exception 31 handler
-	inline void	exHandler1F() noexcept;
+	void	exHandler1F() noexcept;
+
 
 #ifdef	__cplusplus
 
@@ -123,7 +126,7 @@ namespace igros::x86_64 {
 	public:
 
 		// Exceptions names
-		constexpr static std::array<const sbyte_t* const, 32ULL> NAME {
+		constexpr static std::array<const char* const, 32_usize> NAME {
 			"DIVIDE BY ZERO",			// 0
 			"DEBUG",				// 1
 			"NON-MASKABLE INTERRUPT",		// 2
@@ -159,26 +162,26 @@ namespace igros::x86_64 {
 		};
 
 		// Exceptions number enumeration
-		enum class NUMBER : dword_t {
-			DIVIDE_BY_ZERO			= 0U,
-			DEBUG				= 1U,
-			NON_MASKABLE_IRQ		= 2U,
-			BREAKPOINT			= 3U,
-			INTO_DETECTED_OVERFLOW		= 4U,
-			BOUND_RANGE_EXCEEDED		= 5U,
-			INVALID_OPCODE			= 6U,
-			NO_COPROCESSOR			= 7U,
-			DOUBLE_FAULT			= 8U,
-			COPROCESSOR_SEGMENT_OVERRUN	= 9U,
-			INVALID_TSS			= 10U,
-			SEGMENT_NOT_PRESENT		= 11U,
-			STACK_FAULT			= 12U,
-			GENERAL_PROTECTION_FAULT	= 13U,
-			PAGE_FAULT			= 14U,
-			UNKNOWN_IRQ			= 15U,
-			COPROCESSOR_FAULT		= 16U,
-			ALIGNMENT_CHECK			= 17U,
-			MACHINE_CHECK			= 18U
+		enum class NUMBER : igros_dword_t {
+			DIVIDE_BY_ZERO			= 0_u32,
+			DEBUG				= 1_u32,
+			NON_MASKABLE_IRQ		= 2_u32,
+			BREAKPOINT			= 3_u32,
+			INTO_DETECTED_OVERFLOW		= 4_u32,
+			BOUND_RANGE_EXCEEDED		= 5_u32,
+			INVALID_OPCODE			= 6_u32,
+			NO_COPROCESSOR			= 7_u32,
+			DOUBLE_FAULT			= 8_u32,
+			COPROCESSOR_SEGMENT_OVERRUN	= 9_u32,
+			INVALID_TSS			= 10_u32,
+			SEGMENT_NOT_PRESENT		= 11_u32,
+			STACK_FAULT			= 12_u32,
+			GENERAL_PROTECTION_FAULT	= 13_u32,
+			PAGE_FAULT			= 14_u32,
+			UNKNOWN_IRQ			= 15_u32,
+			COPROCESSOR_FAULT		= 16_u32,
+			ALIGNMENT_CHECK			= 17_u32,
+			MACHINE_CHECK			= 18_u32
 		};
 
 
@@ -186,15 +189,15 @@ namespace igros::x86_64 {
 		except() noexcept = default;
 
 		// Init exceptions
-		static void init() noexcept;
+		static void	init() noexcept;
 
 		// Install exceptions handler
-		static void install(const NUMBER irqNumber, const isrx86_64_t irqHandler) noexcept;
+		static void	install(const NUMBER irqNumber, const isrx86_64_t irqHandler) noexcept;
 		// Uninstall exceptions handler
-		static void uninstall(const NUMBER irqNumber) noexcept;
+		static void	uninstall(const NUMBER irqNumber) noexcept;
 
 		// Default exception handler
-		static void exDefaultHandler(const register_t* regs) noexcept;
+		static void	exDefaultHandler(const register_t* regs) noexcept;
 
 
 	};
@@ -203,13 +206,13 @@ namespace igros::x86_64 {
 	// Install handler
 	inline void except::install(const NUMBER exNumber, const isrx86_64_t handler) noexcept {
 		// Install ISR
-		x86_64::isrHandlerInstall(static_cast<dword_t>(exNumber), handler);
+		isrHandlerInstall(static_cast<igros_dword_t>(exNumber), handler);
 	}
 
 	// Uninstall handler
 	inline void except::uninstall(const NUMBER exNumber) noexcept {
 		// Uninstall ISR
-		x86_64::isrHandlerUninstall(static_cast<dword_t>(exNumber));
+		isrHandlerUninstall(static_cast<igros_dword_t>(exNumber));
 	}
 
 

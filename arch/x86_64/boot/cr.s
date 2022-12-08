@@ -5,7 +5,7 @@
 #	File:	cr.s
 #	Date:	20 Jan 2020
 #
-#	Copyright (c) 2017 - 2021, Igor Baklykov
+#	Copyright (c) 2017 - 2022, Igor Baklykov
 #	All rights reserved.
 #
 #

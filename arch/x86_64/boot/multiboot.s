@@ -5,7 +5,7 @@
 #	File:	multiboot.s
 #	Date:	24 Sep 2021
 #
-#	Copyright (c) 2017 - 2021, Igor Baklykov
+#	Copyright (c) 2017 - 2022, Igor Baklykov
 #	All rights reserved.
 #
 #
@@ -25,7 +25,7 @@
 .set	MULTIBOOT_CHECKSUM,		-(MULTIBOOT_MAGIC + MULTIBOOT_FLAGS)
 
 .section .multiboot			# Multiboot header
-.balign	8
+.balign	4
 	.long	MULTIBOOT_MAGIC		# Multiboot magic value
 	.long	MULTIBOOT_FLAGS		# Multiboot flags
 	.long	MULTIBOOT_CHECKSUM	# Multiboot checksum

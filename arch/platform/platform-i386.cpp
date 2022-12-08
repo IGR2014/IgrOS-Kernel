@@ -3,17 +3,20 @@
 //	Platform description for x86
 //
 //	File:	platform-i386.cpp
-//	Date:	24 Sep 2021
+//	Date:	08 Dec 2022
 //
-//	Copyright (c) 2017 - 2021, Igor Baklykov
+//	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
 //
 //
 
 
+#include <source_location>
+
 #include <platform.hpp>
 
-#include <arch/i386/types.hpp>
+#include <arch/types.hpp>
+
 #include <arch/i386/idt.hpp>
 #include <arch/i386/exceptions.hpp>
 #include <arch/i386/gdt.hpp>
@@ -31,7 +34,7 @@ namespace igros::i386 {
 	// Initialize i386
 	static void i386Init() noexcept {
 
-		klib::kprintf("Initializing i386 platform...", __func__);
+		klib::kprintf("%s:\tInitializing i386 platform...", std::source_location::current().function_name());
 
 		// Setup Interrupts Descriptor Table
 		i386::idt::init();
@@ -55,27 +58,27 @@ namespace igros::i386 {
 
 	// Finalize i386
 	static void i386Finalize() noexcept {
-		klib::kprintf("%s:\tNot implemented yet!", __func__);
+		klib::kprintf("%s:\tNot implemented yet!", std::source_location::current().function_name());
 	}
 
 	// Shutdown i386
 	static void i386Shutdown() noexcept {
-		klib::kprintf("%s:\tNot implemented yet!", __func__);
+		klib::kprintf("%s:\tNot implemented yet!", std::source_location::current().function_name());
 	}
 
 	// Reboot i386
 	static void i386Reboot() noexcept {
-		klib::kprintf("%s:\tNot implemented yet!", __func__);
+		klib::kprintf("%s:\tNot implemented yet!", std::source_location::current().function_name());
 	}
 
 	// Suspend i386
 	static void i386Suspend() noexcept {
-		klib::kprintf("%s:\tNot implemented yet!", __func__);
+		klib::kprintf("%s:\tNot implemented yet!", std::source_location::current().function_name());
 	}
 
 	// Wakeup i386
 	static void i386Wakeup() noexcept {
-		klib::kprintf("%s:\tNot implemented yet!", __func__);
+		klib::kprintf("%s:\tNot implemented yet!", std::source_location::current().function_name());
 	}
 
 

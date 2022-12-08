@@ -5,14 +5,13 @@
 **	File:	link.ld
 **	Date:	24 Jan 2020
 **
-**	Copyright (c) 2017 - 2021, Igor Baklykov
+**	Copyright (c) 2017 - 2022, Igor Baklykov
 **	All rights reserved.
 **
 */
 
 /* Create i386 kernel. Then just jump to x86_64 in code */
 OUTPUT_FORMAT(elf32-i386)
-/*OUTPUT_FORMAT(elf64-x86-64)*/
 OUTPUT_ARCH(i386:x86-64)
 
 /* Kernel entry function. Bootloader will jump here to run kernel */
@@ -38,7 +37,7 @@ SECTIONS {
 	.text ALIGN(4K) : AT(ADDR(.text) - KERNEL_OFFSET_VIRT) {
 	_SECTION_TEXT_START_ = .;
 		KEEP(*(.multiboot))
-		*(.boot)
+		KEEP(*(.boot))
 		*(.text)
 	_SECTION_TEXT_END_ = .;
 	}

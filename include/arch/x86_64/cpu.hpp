@@ -3,9 +3,9 @@
 //	CPU operations
 //
 //	File:	cpu.hpp
-//	Date:	24 Sep 2021
+//	Date:	09 Dec 2022
 //
-//	Copyright (c) 2017 - 2021, Igor Baklykov
+//	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
 //
 //
@@ -14,7 +14,7 @@
 #pragma once
 
 
-#include <arch/x86_64/types.hpp>
+#include <arch/types.hpp>
 
 #include <klib/kprint.hpp>
 
@@ -27,7 +27,7 @@ extern "C" {
 
 
 	// Halt CPU
-	inline void	cpuHalt() noexcept;
+	void	cpuHalt() noexcept;
 
 
 #ifdef	__cplusplus
@@ -80,22 +80,23 @@ namespace igros::x86_64 {
 	inline void cpu::dumpRegisters(const register_t* const regs) noexcept {
 		// Print regs
 		klib::kprintf(
-			"Registers dump:\r\n"
-			"RAX=[%p] RBX=[%p] RCX=[%p] RDX=[%p]\r\n"
-			"R8 =[%p] R9 =[%p] R10=[%p] R11=[%p]\r\n"
-			"R12=[%p] R13=[%p] R14=[%p] R15=[%p]\r\n"
-			"RSI=[%p] RDI=[%p]\r\n"
-			"RSP=[%p] RBP=[%p]\r\n"
-			"RIP=[%p]\r\n"
-			"RFLAGS=[%p]\r\n"
-			"Segments:\r\n"
-			"CS=[%p]\r\n"
-			"DS=[%p]\r\n"
-			"SS=[%p]\r\n"
-			"ES=[%p]\r\n"
-			"FS=[%p]\r\n"
-			"GS=[%p]\r\n"
-			"\r\n",
+R"registers(
+Registers dump:
+RAX=[%p] RBX=[%p] RCX=[%p] RDX=[%p]
+R8 =[%p] R9 =[%p] R10=[%p] R11=[%p]
+R12=[%p] R13=[%p] R14=[%p] R15=[%p]
+RSI=[%p] RDI=[%p]
+RSP=[%p] RBP=[%p]
+RIP=[%p]
+RFLAGS=[%p]
+Segments:
+CS=[%p]
+DS=[%p]
+SS=[%p]
+ES=[%p]
+FS=[%p]
+GS=[%p]
+)registers",
 			regs->rax,
 			regs->rbx,
 			regs->rcx,
@@ -115,15 +116,11 @@ namespace igros::x86_64 {
 			regs->rip,
 			regs->rflags,
 			regs->cs,
-			//regs->ds,
-			0ULL,
+			0_u64,		//regs->ds,
 			regs->ss,
-			//regs->es,
-			0ULL,
-			//regs->fs,
-			0ULL,
-			//regs->gs
-			0ULL
+			0_u64,		//regs->es,
+			0_u64,		//regs->fs,
+			0_u64		//regs->gs
 		);
 	}
 
