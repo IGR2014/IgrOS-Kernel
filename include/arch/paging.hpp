@@ -3,9 +3,9 @@
 //	Paging operations
 //
 //	File:	paging.hpp
-//	Date:	24 Sep 2021
+//	Date:	08 Dec 2022
 //
-//	Copyright (c) 2017 - 2021, Igor Baklykov
+//	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
 //
 //
@@ -29,28 +29,28 @@ namespace igros::arch {
 
 	// Paging description type
 	template<typename T>
-	class tPaging final : public singleton<tPaging<T>> {
+	class paging_t final : public singleton<paging_t<T>> {
 
 		// No copy construction
-		tPaging(const tPaging &other) noexcept = delete;
+		paging_t(const paging_t &other) noexcept = delete;
 		// No copy assignment
-		tPaging& operator=(const tPaging &other) noexcept = delete;
+		paging_t& operator=(const paging_t &other) noexcept = delete;
 
 		// No move construction
-		tPaging(tPaging &&other) noexcept = delete;
+		paging_t(paging_t &&other) noexcept = delete;
 		// No move assignment
-		tPaging& operator=(tPaging &&other) noexcept = delete;
+		paging_t& operator=(paging_t &&other) noexcept = delete;
 
 
 	public:
 
 		// Virtual address pointer
-		using virt_t = pointer_t;
+		using virt_t = igros_pointer_t;
 		// Physical address pointer
-		using phys_t = pointer_t;
+		using phys_t = igros_pointer_t;
 
 		// Default c-tor
-		tPaging() noexcept = default;
+		paging_t() noexcept = default;
 
 		// Enable paging
 		void	enable() const noexcept;
@@ -59,14 +59,14 @@ namespace igros::arch {
 
 		// Translate virtual address to physical
 		[[nodiscard]]
-		phys_t	translate(const virt_t addr) const noexcept;
+		auto	translate(const virt_t addr) const noexcept -> phys_t;
 
 		// Map virtual address to physical address
-		void	map(const phys_t phys, const virt_t virt, const std::size_t count, const kflags<flags_t> flags) noexcept;
+		void	map(const phys_t phys, const virt_t virt, const igros_usize_t count, const kflags<flags_t> flags) noexcept;
 
 		// Get paging data
 		[[nodiscard]]
-		phys_t	directory() const noexcept;
+		auto	directory() const noexcept -> phys_t;
 		// Flush paging data
 		void	flush(const phys_t addr) noexcept;
 
@@ -76,13 +76,13 @@ namespace igros::arch {
 
 	// Enable paging
 	template<typename T>
-	void tPaging<T>::enable() const noexcept {
+	void paging_t<T>::enable() const noexcept {
 		T::enable();
 	}
 
 	// Disable paging
 	template<typename T>
-	void tPaging<T>::disable() const noexcept {
+	void paging_t<T>::disable() const noexcept {
 		T::disable();
 	}
 
@@ -90,14 +90,14 @@ namespace igros::arch {
 	// Translate virtual address to physical
 	template<typename T>
 	[[nodiscard]]
-	tPaging<T>::phys_t tPaging<T>::translate(const virt_t addr) const noexcept {
+	auto paging_t<T>::translate(const virt_t addr) const noexcept -> paging_t<T>::phys_t {
 		return T::translate(addr);
 	}
 
 
 	// Map virtual address to physical address
 	template<typename T>
-	void tPaging<T>::map(const phys_t phys, const virt_t virt, const std::size_t count, const kflags<flags_t> flags) noexcept {
+	void paging_t<T>::map(const phys_t phys, const virt_t virt, const igros_usize_t count, const kflags<flags_t> flags) noexcept {
 		// TODO
 	}
 
@@ -105,27 +105,37 @@ namespace igros::arch {
 	// Get paging data
 	template<typename T>
 	[[nodiscard]]
-	tPaging<T>::phys_t tPaging<T>::directory() const noexcept {
+	auto paging_t<T>::directory() const noexcept -> paging_t<T>::phys_t {
 		return nullptr;
 	}
 
 	// Flush paging data
 	template<typename T>
-	void tPaging<T>::flush(const phys_t addr) noexcept {
+	void paging_t<T>::flush(const phys_t addr) noexcept {
 		T::setDirectory(addr);
 	}
 
 
 #if	defined (IGROS_ARCH_i386)
+
 	// Paging type
-	using paging = tPaging<i386::paging>;
+	using paging	= paging_t<i386::paging>;
+
 #elif	defined (IGROS_ARCH_x86_64)
+
 	// Paging type
-	using paging = tPaging<x86_64::paging>;
+	using paging	= paging_t<x86_64::paging>;
+
 #else
+
+	static_assert(
+		false,
+		"Unknown architecture!"
+	);
+
 	// Paging type
-	using paging = tPaging<void>;
-	static_assert(false, "Unknown architecture!!!");
+	using paging	= paging_t<void>;
+
 #endif
 
 

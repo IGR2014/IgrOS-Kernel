@@ -3,9 +3,9 @@
 //	Kernel text print functions
 //
 //	File:	kprint.hpp
-//	Date:	01 Feb 2021
+//	Date:	08 Dec 2022
 //
-//	Copyright (c) 2017 - 2021, Igor Baklykov
+//	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
 //
 //
@@ -14,6 +14,7 @@
 #pragma once
 
 
+#include <bit>
 #include <cstdint>
 #include <cstdarg>
 
@@ -25,65 +26,75 @@ namespace igros::klib {
 
 
 	// Integer representation types
-	enum class radix_t : byte_t {
-		BIN	= 0x02,			// (Base 2)	Binary integer format
-		OCT	= 0x08,			// (Base 8)	Oct integer format
-		DEC	= 0x0A,			// (Base 10)	Decimal integer format
-		HEX	= 0x10			// (Base 16)	Hexidemical integer format
+	enum class radix_t : igros_byte_t {
+		BIN	= 0x02_u8,			// (Base 2)	Binary integer format
+		OCT	= 0x08_u8,			// (Base 8)	Oct integer format
+		DEC	= 0x0A_u8,			// (Base 10)	Decimal integer format
+		HEX	= 0x10_u8			// (Base 16)	Hexidemical integer format
 	};
 
 
 	// Kernel large unsigned integer to string function
-	sbyte_t* kitoa(sbyte_t* buffer, const std::size_t size, const quad_t value, const radix_t radix = radix_t::DEC) noexcept;
+	[[maybe_unused]]
+	auto	kitoa(char* const buffer, const igros_usize_t size, const igros_quad_t value, const radix_t radix = radix_t::DEC) noexcept -> char*;
 	// Kernel large integer to string function
-	sbyte_t* kitoa(sbyte_t* buffer, const std::size_t size, const squad_t value, const radix_t radix = radix_t::DEC) noexcept;
+	[[maybe_unused]]
+	auto	kitoa(char* const buffer, const igros_usize_t size, const igros_squad_t value, const radix_t radix = radix_t::DEC) noexcept -> char*;
 
 	// Kernel unsigned integer to string function
-	inline sbyte_t* kitoa(sbyte_t* buffer, const std::size_t size, const dword_t value, const radix_t radix = radix_t::DEC) noexcept {
-		return kitoa(buffer, size, static_cast<quad_t>(value), radix);
+	[[maybe_unused]]
+	inline auto kitoa(char* const buffer, const igros_usize_t size, const igros_dword_t value, const radix_t radix = radix_t::DEC) noexcept -> char* {
+		return kitoa(buffer, size, static_cast<igros_usize_t>(value), radix);
 	}
 	// Kernel integer to string function
-	inline sbyte_t* kitoa(sbyte_t* buffer, const std::size_t size, const sdword_t value, const radix_t radix = radix_t::DEC) noexcept {
-		return kitoa(buffer, size, static_cast<squad_t>(value), radix);
-	}
-
-	// Kernel integer to string function
-	inline sbyte_t* kitoa(sbyte_t* buffer, const std::size_t size, const word_t value, const radix_t radix = radix_t::DEC) noexcept {
-		return kitoa(buffer, size, static_cast<quad_t>(value), radix);
-	}
-	// Kernel integer to string function
-	inline sbyte_t* kitoa(sbyte_t* buffer, const std::size_t size, const sword_t value, const radix_t radix = radix_t::DEC) noexcept {
-		return kitoa(buffer, size, static_cast<squad_t>(value), radix);
+	[[maybe_unused]]
+	inline auto kitoa(char* const buffer, const igros_usize_t size, const igros_sdword_t value, const radix_t radix = radix_t::DEC) noexcept -> char* {
+		return kitoa(buffer, size, static_cast<igros_ssize_t>(value), radix);
 	}
 
 	// Kernel integer to string function
-	inline sbyte_t* kitoa(sbyte_t* buffer, const std::size_t size, const byte_t value, const radix_t radix = radix_t::DEC) noexcept {
-		return kitoa(buffer, size, static_cast<quad_t>(value), radix);
+	[[maybe_unused]]
+	inline auto kitoa(char* const buffer, const igros_usize_t size, const igros_word_t value, const radix_t radix = radix_t::DEC) noexcept -> char* {
+		return kitoa(buffer, size, static_cast<igros_usize_t>(value), radix);
 	}
 	// Kernel integer to string function
-	inline sbyte_t* kitoa(sbyte_t* buffer, const std::size_t size, const sbyte_t value, const radix_t radix = radix_t::DEC) noexcept {
-		return kitoa(buffer, size, static_cast<squad_t>(value), radix);
+	[[maybe_unused]]
+	inline auto kitoa(char* const buffer, const igros_usize_t size, const igros_sword_t value, const radix_t radix = radix_t::DEC) noexcept -> char* {
+		return kitoa(buffer, size, static_cast<igros_ssize_t>(value), radix);
+	}
+
+	// Kernel integer to string function
+	[[maybe_unused]]
+	inline auto kitoa(char* const buffer, const igros_usize_t size, const igros_byte_t value, const radix_t radix = radix_t::DEC) noexcept -> char* {
+		return kitoa(buffer, size, static_cast<igros_usize_t>(value), radix);
+	}
+	// Kernel integer to string function
+	[[maybe_unused]]
+	inline auto kitoa(char* const buffer, const igros_usize_t size, const igros_sbyte_t value, const radix_t radix = radix_t::DEC) noexcept -> char* {
+		return kitoa(buffer, size, static_cast<igros_ssize_t>(value), radix);
 	}
 
 	// Kernel size type to string function
-	sbyte_t* kstoa(sbyte_t* buffer, const std::size_t size, const std::size_t value, const radix_t radix = radix_t::DEC) noexcept;
+	[[maybe_unused]]
+	auto kstoa(char* const buffer, const igros_usize_t size, const igros_usize_t value, const radix_t radix = radix_t::DEC) noexcept -> char*;
 
 	// Kernel pointer to string function
-	inline sbyte_t* kptoa(sbyte_t* buffer, const std::size_t size, const pointer_t value) noexcept {
-		return kstoa(buffer, size, reinterpret_cast<std::size_t>(value), radix_t::HEX);
+	[[maybe_unused]]
+	inline auto kptoa(char* const buffer, const igros_usize_t size, const igros_pointer_t value) noexcept -> char* {
+		return kstoa(buffer, size, std::bit_cast<igros_usize_t>(value), radix_t::HEX);
 	}
 
 
 	// Kernel vsnprintf function
-	void kvsnprintf(sbyte_t* buffer, const std::size_t size, const sbyte_t* format, va_list list) noexcept;
+	void	kvsnprintf(char* const buffer, const igros_usize_t size, const char* const format, std::va_list list) noexcept;
 
 	// Kernel snprintf function
-	void ksnprintf(sbyte_t* buffer, const std::size_t size, const sbyte_t* format, ...) noexcept;
+	void	ksnprintf(char* const buffer, const igros_usize_t size, const char* const format, ...) noexcept;
 	// Kernel sprintf function
-	void ksprintf(sbyte_t* buffer, const sbyte_t* format, ...) noexcept;
+	void	ksprintf(char* const buffer, const char* const format, ...) noexcept;
 
 	// Kernel printf function
-	void kprintf(const sbyte_t* format, ...) noexcept;
+	void	kprintf(const char* const format, ...) noexcept;
 
 
 }	// namespace igros::klib

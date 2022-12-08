@@ -5,7 +5,7 @@
 #	File:   msr.s
 #	Date:	18 Jun 2019
 #
-#	Copyright (c) 2017 - 2021, Igor Baklykov
+#	Copyright (c) 2017 - 2022, Igor Baklykov
 #	All rights reserved.
 #
 #

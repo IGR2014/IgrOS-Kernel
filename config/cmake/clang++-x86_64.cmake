@@ -33,7 +33,7 @@ set(
 # Linker
 set(
 	CMAKE_LINKER
-	ld
+	ld.lld
 )
 # Linker flags
 set(

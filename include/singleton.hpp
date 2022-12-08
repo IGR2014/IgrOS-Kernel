@@ -3,9 +3,9 @@
 //	IgrOS singleton implementation
 //
 //	File:	singleton.hpp
-//	Date:	27 Sep 2021
+//	Date:	08 Dec 2022
 //
-//	Copyright (c) 2017 - 2021, Igor Baklykov
+//	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
 //
 //
@@ -36,19 +36,21 @@ namespace igros {
 	protected:
 
 		// Default c-tor
-		singleton() = default;
+		singleton() noexcept = default;
 
 
 	public:
 
 		// Get instance function
-		static T& get() noexcept;
+		[[nodiscard]]
+		static T&	get() noexcept;
 
 
 	};
 
 	// Get instance function
 	template<typename T>
+	[[nodiscard]]
 	T& singleton<T>::get() noexcept {
 		// Create static object (if not yet created)
 		static T s;

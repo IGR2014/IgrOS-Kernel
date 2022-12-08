@@ -3,9 +3,9 @@
 //	FPU operations
 //
 //	File:	fpu.hpp
-//	Date:	05 Jul 2021
+//	Date:	09 Dec 2022
 //
-//	Copyright (c) 2017 - 2021, Igor Baklykov
+//	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
 //
 //
@@ -14,7 +14,7 @@
 #pragma once
 
 
-#include <arch/i386/types.hpp>
+#include <arch/types.hpp>
 
 #include <klib/kprint.hpp>
 
@@ -27,7 +27,8 @@ extern "C" {
 
 
 	// Check FPU
-	inline bool	fpuCheck() noexcept;
+	[[nodiscard]]
+	auto	fpuCheck() noexcept -> bool;
 
 
 #ifdef	__cplusplus
@@ -61,14 +62,16 @@ namespace igros::i386 {
 		fpu() noexcept = default;
 
 		// Check FPU
-		static bool	check() noexcept;
+		[[nodiscard]]
+		static auto	check() noexcept -> bool;
 
 
 	};
 
 
 	// Check FPU
-	inline bool fpu::check() noexcept {
+	[[nodiscard]]
+	inline auto fpu::check() noexcept -> bool {
 		return ::fpuCheck();
 	}
 

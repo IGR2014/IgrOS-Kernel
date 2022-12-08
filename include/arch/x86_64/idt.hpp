@@ -3,9 +3,9 @@
 //	Interrupt descriptor table low-level operations
 //
 //	File:	idt.hpp
-//	Date:	11 Feb 2021
+//	Date:	09 Dec 2022
 //
-//	Copyright (c) 2017 - 2021, Igor Baklykov
+//	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
 //
 //
@@ -14,11 +14,13 @@
 #pragma once
 
 
-#include <cstdint>
 #include <array>
+#include <bit>
+#include <cstdint>
 #include <type_traits>
 
-#include <arch/x86_64/types.hpp>
+#include <arch/types.hpp>
+
 #include <arch/x86_64/irq.hpp>
 #include <arch/x86_64/exceptions.hpp>
 
@@ -31,19 +33,19 @@ namespace igros::x86_64 {
 
 	// IDT entry
 	struct idtEntryx86_64_t {
-		word_t		offsetLow;		// Offset lower part (0..15)
-		word_t		selector;		// Selectod from GDT/LDT
-		byte_t		ist;			// Interrupt service table
-		byte_t		type;			// Type attributes
-		word_t		offsetMiddle;		// Offset middle part (16..31)
-		dword_t		offsetHigh;		// Offset higher part (32..63)
-		dword_t		reserved2;		// Must be zero
+		igros_word_t			offsetLow;		// Offset lower part (0..15)
+		igros_word_t			selector;		// Selectod from GDT/LDT
+		igros_byte_t			ist;			// Interrupt service table
+		igros_byte_t			type;			// Type attributes
+		igros_word_t			offsetMiddle;		// Offset middle part (16..31)
+		igros_dword_t			offsetHigh;		// Offset higher part (32..63)
+		igros_dword_t			reserved2;		// Must be zero
 	};
 
 	// IDT pointer
 	struct idtPointerx86_64_t {
-		word_t			size;		// IDT size
-		const idtEntryx86_64_t*	pointer;	// IDT pointer
+		igros_word_t			size;			// IDT size
+		const idtEntryx86_64_t*		pointer;		// IDT pointer
 	};
 
 #pragma pack(pop)
@@ -58,10 +60,12 @@ extern "C" {
 
 #endif	// __cplusplus
 
+
 	// Load IDT
-	inline void					idtLoad(const igros::x86_64::idtPointerx86_64_t* const idtPtr) noexcept;
+	void	idtLoad(const igros::x86_64::idtPointerx86_64_t* const idtPtr) noexcept;
 	// Store IDT
-	inline const igros::x86_64::idtPointerx86_64_t*	idtStore() noexcept;
+	auto	idtStore() noexcept -> const igros::x86_64::idtPointerx86_64_t*;
+
 
 #ifdef	__cplusplus
 
@@ -81,12 +85,12 @@ namespace igros::x86_64 {
 		using isrPointerx86_64_t			= std::add_pointer_t<void()>;
 
 		// Number of IDT entries
-		constexpr static auto				IDT_SIZE = 256ULL;
+		constexpr static auto IDT_SIZE			{256_usize};
 
 		// Exceptions and IRQ descriptors table (IDT)
 		static std::array<idtEntryx86_64_t, IDT_SIZE>	table;
 		// Pointer to IDT
-		static idtPointerx86_64_t			pointer;
+		static constinit idtPointerx86_64_t		pointer;
 
 
 		// Copy c-tor
@@ -106,89 +110,41 @@ namespace igros::x86_64 {
 		idt() noexcept = default;
 
 		// Set IDT entry
-		static idtEntryx86_64_t		setEntry(const isrPointerx86_64_t offset, const word_t selector, const byte_t type) noexcept;
+		constexpr static auto	setEntry(const isrPointerx86_64_t offset, const igros_word_t selector, const igros_byte_t type) noexcept -> idtEntryx86_64_t;
 		// Calc IDT size
 		[[nodiscard]]
-		constexpr static dword_t	calcSize() noexcept;
+		constexpr static auto	calcSize() noexcept -> igros_dword_t;
 
 		// Init IDT table
-		static void	init() noexcept;
+		static void		init() noexcept;
 
 
 	};
 
 
 	// Set IDT entry
-	inline idtEntryx86_64_t idt::setEntry(const isrPointerx86_64_t offset, const word_t selector, const byte_t type) noexcept {
-		return {
-			.offsetLow	= static_cast<word_t>(reinterpret_cast<std::uintptr_t>(offset) & 0xFFFF),
+	[[nodiscard]]
+	constexpr auto idt::setEntry(const isrPointerx86_64_t offset, const igros_word_t selector, const igros_byte_t type) noexcept -> idtEntryx86_64_t {
+		return idtEntryx86_64_t {
+			.offsetLow	= static_cast<igros_word_t>(std::bit_cast<igros_usize_t>(offset) & 0xFFFF_u64),
 			.selector	= selector,
-			.ist		= 0x00,
+			.ist		= 0_u8,
 			.type		= type,
-			.offsetMiddle	= static_cast<word_t>((reinterpret_cast<std::uintptr_t>(offset) & 0xFFFF0000) >> 16),
-			.offsetHigh	= static_cast<dword_t>((reinterpret_cast<std::uintptr_t>(offset) & 0xFFFFFFFF00000000) >> 32),
-			.reserved2	= 0x00000000
+			.offsetMiddle	= static_cast<igros_word_t>((std::bit_cast<igros_usize_t>(offset) & 0xFFFF0000_u64) >> 16),
+			.offsetHigh	= static_cast<igros_dword_t>((std::bit_cast<igros_usize_t>(offset) & 0xFFFFFFFF00000000_u64) >> 32),
+			.reserved2	= 0_u32
 		};
 	}
 
 	// Calculate IDT size
-	constexpr dword_t idt::calcSize() noexcept {
-		return (IDT_SIZE * sizeof(idtEntryx86_64_t)) - 1U;
+	[[nodiscard]]
+	constexpr auto idt::calcSize() noexcept -> igros_dword_t {
+		return static_cast<igros_dword_t>(IDT_SIZE * sizeof(idtEntryx86_64_t)) - 1_u16;
 	}
 
 
 	// Init IDT table
 	inline void idt::init() noexcept {
-		// Exceptions setup
-		table[0]  = idt::setEntry(::exHandler00, 0x08, 0x8E);
-		table[1]  = idt::setEntry(::exHandler01, 0x08, 0x8E);
-		table[2]  = idt::setEntry(::exHandler02, 0x08, 0x8E);
-		table[3]  = idt::setEntry(::exHandler03, 0x08, 0x8E);
-		table[4]  = idt::setEntry(::exHandler04, 0x08, 0x8E);
-		table[5]  = idt::setEntry(::exHandler05, 0x08, 0x8E);
-		table[6]  = idt::setEntry(::exHandler06, 0x08, 0x8E);
-		table[7]  = idt::setEntry(::exHandler07, 0x08, 0x8E);
-		table[8]  = idt::setEntry(::exHandler08, 0x08, 0x8E);
-		table[9]  = idt::setEntry(::exHandler09, 0x08, 0x8E);
-		table[10] = idt::setEntry(::exHandler0A, 0x08, 0x8E);
-		table[11] = idt::setEntry(::exHandler0B, 0x08, 0x8E);
-		table[12] = idt::setEntry(::exHandler0C, 0x08, 0x8E);
-		table[13] = idt::setEntry(::exHandler0D, 0x08, 0x8E);
-		table[14] = idt::setEntry(::exHandler0E, 0x08, 0x8E);
-		table[15] = idt::setEntry(::exHandler0F, 0x08, 0x8E);
-		table[16] = idt::setEntry(::exHandler10, 0x08, 0x8E);
-		table[17] = idt::setEntry(::exHandler11, 0x08, 0x8E);
-		table[18] = idt::setEntry(::exHandler12, 0x08, 0x8E);
-		table[19] = idt::setEntry(::exHandler13, 0x08, 0x8E);
-		table[20] = idt::setEntry(::exHandler14, 0x08, 0x8E);
-		table[21] = idt::setEntry(::exHandler15, 0x08, 0x8E);
-		table[22] = idt::setEntry(::exHandler16, 0x08, 0x8E);
-		table[23] = idt::setEntry(::exHandler17, 0x08, 0x8E);
-		table[24] = idt::setEntry(::exHandler18, 0x08, 0x8E);
-		table[25] = idt::setEntry(::exHandler19, 0x08, 0x8E);
-		table[26] = idt::setEntry(::exHandler1A, 0x08, 0x8E);
-		table[27] = idt::setEntry(::exHandler1B, 0x08, 0x8E);
-		table[28] = idt::setEntry(::exHandler1C, 0x08, 0x8E);
-		table[29] = idt::setEntry(::exHandler1D, 0x08, 0x8E);
-		table[30] = idt::setEntry(::exHandler1E, 0x08, 0x8E);
-		table[31] = idt::setEntry(::exHandler1F, 0x08, 0x8E);
-		// IRQs setup
-		table[32] = idt::setEntry(::irqHandler0, 0x08, 0x8E);
-		table[33] = idt::setEntry(::irqHandler1, 0x08, 0x8E);
-		table[34] = idt::setEntry(::irqHandler2, 0x08, 0x8E);
-		table[35] = idt::setEntry(::irqHandler3, 0x08, 0x8E);
-		table[36] = idt::setEntry(::irqHandler4, 0x08, 0x8E);
-		table[37] = idt::setEntry(::irqHandler5, 0x08, 0x8E);
-		table[38] = idt::setEntry(::irqHandler6, 0x08, 0x8E);
-		table[39] = idt::setEntry(::irqHandler7, 0x08, 0x8E);
-		table[40] = idt::setEntry(::irqHandler8, 0x08, 0x8E);
-		table[41] = idt::setEntry(::irqHandler9, 0x08, 0x8E);
-		table[42] = idt::setEntry(::irqHandlerA, 0x08, 0x8E);
-		table[43] = idt::setEntry(::irqHandlerB, 0x08, 0x8E);
-		table[44] = idt::setEntry(::irqHandlerC, 0x08, 0x8E);
-		table[45] = idt::setEntry(::irqHandlerD, 0x08, 0x8E);
-		table[46] = idt::setEntry(::irqHandlerE, 0x08, 0x8E);
-		table[47] = idt::setEntry(::irqHandlerF, 0x08, 0x8E);
 		// Load new IDT
 		::idtLoad(&pointer);
 	}

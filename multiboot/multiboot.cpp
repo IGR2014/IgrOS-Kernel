@@ -3,21 +3,23 @@
 //	Multiboot 1 functions
 //
 //	File:	multiboot.cpp
-//	Date:	24 Sep 2021
+//	Date:	09 Dec 2022
 //
-//	Copyright (c) 2017 - 2021, Igor Baklykov
+//	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
 //
 //
 
 
+// C++
 #include <array>
-
+#include <bit>
+// IgrOS-Kernel boot
 #include <multiboot.hpp>
-
+// IgrOS-Kernel arch
 #include <arch/types.hpp>
 #include <arch/cpu.hpp>
-
+// IgrOS-Kernel klib
 #include <klib/kprint.hpp>
 
 
@@ -26,14 +28,16 @@ namespace igros::multiboot {
 
 
 	// Test multiboot
-	void test(const info_t* const multiboot, const dword_t magic) noexcept {
+	void test(const info_t* const multiboot, const igros_dword_t magic) noexcept {
 		// Check multiboot magic
-		if (!multiboot::check(magic)) {
+		if (!multiboot::check(magic)) [[unlikely]] {
 			// Write Multiboot magic error message message
 			klib::kprintf(
-				"BAD MULTIBOOT MAGIC!!!\r\n"
-				"\tMagic:\t\t0x%08x\r\n"
-				"\tAddress:\t0x%p\r\n",
+R"multiboot(
+BAD MULTIBOOT MAGIC!!!
+	Magic:		0x%08x
+	Address:	0x%p
+)multiboot",
 				magic,
 				multiboot
 			);
@@ -47,20 +51,22 @@ namespace igros::multiboot {
 	void info_t::printFlags() const noexcept {
                 // Print header
 		klib::kprintf(
-			"MULTIBOOT header:\r\n"
-			"\tFlags:\t\t\t0x%08x\r\n"
-			"\tBIOS memory map:\t[ %c ]\r\n"
-			"\tBoot device:\t\t[ %c ]\r\n"
-			"\tCommand line:\t\t[ %c ]\r\n"
-			"\tAOUT:\t\t\t[ %c ]\r\n"
-			"\tELF:\t\t\t[ %c ]\r\n"
-			"\tMemory map:\t\t[ %c ]\r\n"
-			"\tDrives:\t\t\t[ %c ]\r\n"
-			"\tTable config:\t\t[ %c ]\r\n"
-			"\tBootloader name:\t[ %c ]\r\n"
-			"\tAPM:\t\t\t[ %c ]\r\n"
-			"\tVBE:\t\t\t[ %c ]\r\n"
-			"\tFB:\t\t\t[ %c ]\r\n",
+R"multiboot(
+MULTIBOOT header:
+	Flags:			0x%08x
+	BIOS memory map:	[ %c ]
+	Boot device:		[ %c ]
+	Command line:		[ %c ]
+	AOUT:			[ %c ]
+	ELF:			[ %c ]
+	Memory map:		[ %c ]
+	Drives:			[ %c ]
+	Table config:		[ %c ]
+	Bootloader name:	[ %c ]
+	APM:			[ %c ]
+	VBE:			[ %c ]
+	FB:			[ %c ]
+)multiboot",
 			flags,
 			hasInfoMemory()		? 'Y' : 'N',
 			hasInfoBootDevice()	? 'Y' : 'N',
@@ -82,9 +88,9 @@ namespace igros::multiboot {
 		// Print header
 		klib::kprintf("MEMORY INFO:\r\n");
 		// Check if memory info exists
-		if (hasInfoMemory()) {
+		if (hasInfoMemory()) [[likely]] {
 			klib::kprintf(
-				"\tLow:\t%d Kb\r\n"
+				"\tLow:\t%d Kb.\r\n"
 				"\tHigh:\t%d Kb.\r\n",
 				memLow,
 				memHigh
@@ -99,7 +105,7 @@ namespace igros::multiboot {
 		// Print header
 		klib::kprintf("MEMORY MAP:\r\n");
 		// Check if memory map exists
-		if (hasInfoMemoryMap()) {
+		if (hasInfoMemoryMap()) [[likely]] {
 			klib::kprintf(
 				"\tSize:\t%d bytes\r\n"
 				"\tAddr:\t0x%p\r\n",
@@ -107,17 +113,17 @@ namespace igros::multiboot {
 				mmapAddr
 			);
 			// Get pointer to memory map
-			auto memoryMap = reinterpret_cast<multiboot::memoryMapEntry*>(mmapAddr);
+			auto memoryMap {std::bit_cast<multiboot::memoryMapEntry*>(static_cast<igros_usize_t>(mmapAddr))};
 			// Loop through memory map
-			while (reinterpret_cast<quad_t>(memoryMap) < (mmapAddr + mmapLength)) {
+			while (std::bit_cast<igros_usize_t>(memoryMap) < (mmapAddr + mmapLength)) {
 				klib::kprintf(
 					"\t[%d] 0x%p - 0x%p",
 					memoryMap->type,
-					reinterpret_cast<pointer_t>(memoryMap->address),
-					reinterpret_cast<pointer_t>(memoryMap->address + memoryMap->length)
+					std::bit_cast<igros_pointer_t>(static_cast<igros_usize_t>(memoryMap->address)),
+					std::bit_cast<igros_pointer_t>(static_cast<igros_usize_t>(memoryMap->address + memoryMap->length))
 				);
 				// Move to next memory map entry
-				memoryMap = reinterpret_cast<multiboot::memoryMapEntry*>(reinterpret_cast<quad_t>(memoryMap) + memoryMap->size + sizeof(memoryMap->size));
+				memoryMap = std::bit_cast<multiboot::memoryMapEntry*>(std::bit_cast<igros_usize_t>(memoryMap) + memoryMap->size + sizeof(memoryMap->size));
 			}
 			klib::kprintf("\r\n");
 		} else {
@@ -129,21 +135,21 @@ namespace igros::multiboot {
 	// Print multiboot VBE info
 	void info_t::printVBEInfo() const noexcept {
 		// Print header
-		klib::kprintf("VBE:\r\n");
+		klib::kprintf("VBE:\n");
 		// Test VBE
-		if (hasInfoVBE()) {
+		if (hasInfoVBE()) [[likely]] {
 			// Get VBE config info
-			const auto config	= reinterpret_cast<multiboot::vbeConfig*>(vbeControlInfo);
+			const auto config	{std::bit_cast<multiboot::vbeConfig*>(static_cast<igros_usize_t>(vbeControlInfo))};
 			// Get current VBE mode
-			const auto mode		= reinterpret_cast<multiboot::vbeMode*>(vbeModeInfo);
+			const auto mode		{std::bit_cast<multiboot::vbeMode*>(static_cast<igros_usize_t>(vbeModeInfo))};
 			// Get OEM string
-			const auto oem		= reinterpret_cast<const char* const>(((config->oem & 0xFFFF0000) >> 12) + (config->oem & 0xFFFF));
+			const auto oem		{std::bit_cast<const char* const>(static_cast<igros_usize_t>(((config->oem & 0xFFFF0000) >> 12) + (config->oem & 0xFFFF)))};
 			// Get vendor string
-			const auto vendor	= reinterpret_cast<const char* const>(((config->vendor & 0xFFFF0000) >> 12) + (config->vendor & 0xFFFF));
+			const auto vendor	{std::bit_cast<const char* const>(static_cast<igros_usize_t>(((config->vendor & 0xFFFF0000) >> 12) + (config->vendor & 0xFFFF)))};
 			// Get product string
-			const auto product	= reinterpret_cast<const char* const>(((config->productName & 0xFFFF0000) >> 12) + (config->productName & 0xFFFF));
+			const auto product	{std::bit_cast<const char* const>(static_cast<igros_usize_t>(((config->productName & 0xFFFF0000) >> 12) + (config->productName & 0xFFFF)))};
 			// Get revision string
-			const auto revision	= reinterpret_cast<const char* const>(((config->productRev & 0xFFFF0000) >> 12) + (config->productRev & 0xFFFF));
+			const auto revision	{std::bit_cast<const char* const>(static_cast<igros_usize_t>(((config->productRev & 0xFFFF0000) >> 12) + (config->productRev & 0xFFFF)))};
 			// Dump VBE
 			klib::kprintf(
 				"Signature:\t%c%c%c%c\r\n"
@@ -158,8 +164,8 @@ namespace igros::multiboot {
 				config->signature[1],
 				config->signature[2],
 				config->signature[3],
-				(config->version >> 8) & 0x00FF,
-				config->version & 0x00FF,
+				(config->version >> 8) & 0x00FF_u16,
+				(config->version & 0x00FF_u16),
 				(nullptr != oem)	? oem		: "Unknown",
 				(nullptr != vendor)	? vendor	: "Unknown",
 				(nullptr != product)	? product	: "Unknown",
@@ -169,7 +175,7 @@ namespace igros::multiboot {
 				mode->height,
 				mode->bpp,
 				mode->physbase,
-				static_cast<dword_t>(config->memory) * 64U
+				static_cast<igros_dword_t>(config->memory) * 64_u32
 			);
 		} else {
 			klib::kprintf("\tNo VBE info provided...\r\n");
@@ -181,17 +187,17 @@ namespace igros::multiboot {
 		// Print header
 		klib::kprintf("FB:\r\n");
 		// Check framebuffer
-		if (hasInfoFrameBuffer()) {
+		if (hasInfoFrameBuffer()) [[likely]] {
 			// Framebuffer type name
-			const char* fbTypeName = "";
+			const auto* fbTypeName {""};
 			// Get framebuffer type
 			switch (fbType) {
 				// Indexed
-				case 0:
+				case 0x00_u8:
 					fbTypeName = "Indexed";
 					break;
 				// RGB
-				case 1:
+				case 0x01_u8:
 					fbTypeName = "RGB";
 					break;
 				// Text
@@ -209,7 +215,7 @@ namespace igros::multiboot {
 				fbBpp,
 				fbPitch,
 				fbTypeName,
-				static_cast<std::size_t>(fbAddress),
+				std::bit_cast<igros_pointer_t>(static_cast<igros_usize_t>(fbAddress)),
 				fbWidth * (fbBpp >> 3) * fbHeight * fbPitch
 			);
 		} else {

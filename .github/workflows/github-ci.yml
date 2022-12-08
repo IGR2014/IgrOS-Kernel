@@ -1,5 +1,5 @@
 # Name
-name: IgrOS-Kernel C/C++ CI
+name: 'IgrOS-Kernel CI/CD'
 
 # Triggered on push
 on: [push]
@@ -7,12 +7,12 @@ on: [push]
 # Project jobs
 jobs:
 
-  # Prepare
-  Build:
+  # Build Kernel
+  BuildKernel:
 
     # Name
-    name: Build with CMake
-    # Ubuntu
+    name: 'Build with CMake'
+    # OS
     runs-on: ubuntu-22.04
 
     # Environment variables
@@ -46,10 +46,21 @@ jobs:
         fetch-depth: 0
 
     # Install dependencies
-    - name: Install Dependencies
+    - name: 'Install Dependencies'
+      shell: bash
       run: |
         sudo apt update
-        sudo apt install -y --no-install-recommends cmake ccache ninja-build gcc clang gcc-multilib g++-multilib
+        sudo apt install -y --no-install-recommends ccache cmake doxygen graphviz g++-multilib gcc-multilib ninja-build
+
+    # Install Clang 15.0.0
+    - name: 'Install Clang 15.0.0'
+      shell: bash
+      run: |
+        wget https://apt.llvm.org/llvm.sh
+        chmod +x llvm.sh
+        sudo ./llvm.sh 15 all
+        sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-15 150
+        sudo update-alternatives --install /usr/bin/ld.lld ld.lld /usr/bin/ld.lld-15 150
 
     # Init CodeQL
     - name: 'CodeQL Init'
@@ -74,7 +85,6 @@ jobs:
         key: build-${{ matrix.arch }}-${{ matrix.compiler }}-${{ github.sha }}
         restore-keys: |
           build-${{ matrix.arch }}-${{ matrix.compiler }}-
-          build-${{ matrix.arch }}-
 
     # Restore CCache Cache
     - name: 'Restore CCache Cache'
@@ -85,25 +95,23 @@ jobs:
         restore-keys: |
           ccache-${{ matrix.arch }}-${{ matrix.compiler }}-
 
-    # Restore Install Cache
-    - name: 'Restore Install Cache'
-      uses: actions/cache@v3
-      with:
-        path: ${{ env.IGROS_KERNEL_DIR_INSTALL }}
-        key: install-${{ matrix.arch }}-${{ matrix.compiler }}-${{ github.sha }}
-        restore-keys: |
-          install-${{ matrix.arch }}-${{ matrix.compiler }}-
-          install-${{ matrix.arch }}-
-
     # Configure
     - name: 'CMake Configure'
+      shell: bash
       run: |
         cmake --preset="config-linux-${{ matrix.arch }}-${{ matrix.compiler }}-debug"
 
     # Build
     - name: 'CMake Build'
+      shell: bash
       run: |
-        build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir build-wrapper cmake --build --preset="build-linux-${{ matrix.arch }}-${{ matrix.compiler }}-debug" --target install
+        build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir build-wrapper cmake --build --preset="build-linux-${{ matrix.arch }}-${{ matrix.compiler }}-debug"
+
+    # Install
+    - name: 'CMake Install'
+      shell: bash
+      run: |
+        cmake --build --preset="build-linux-${{ matrix.arch }}-${{ matrix.compiler }}-debug" --target install
 
     # CodeQL analysis
     - name: 'CodeQL Analysis'
@@ -115,5 +123,5 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       run: |
-        sonar-scanner-${SONAR_CLOUD_BUILD_WRAPPER_VERSION}-linux/bin/sonar-scanner -X -Dsonar.host.url=https://sonarcloud.io -Dsonar.branch.name=master -Dproject.settings=sonar-project.properties
+        sonar-scanner-${SONAR_CLOUD_BUILD_WRAPPER_VERSION}-linux/bin/sonar-scanner -X -Dproject.settings=sonar-project.properties
 

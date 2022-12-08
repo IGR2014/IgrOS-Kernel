@@ -54,13 +54,6 @@ set(
 
 # Get version from GIT
 include(VersionGIT)
-# Set compile definitions
-add_definitions(
-	-DIGROS_GIT_VERSION="${IGROS_GIT_VERSION}"
-	-DIGROS_GIT_COMMIT="${IGROS_GIT_COMMIT}"
-	-DIGROS_GIT_HASH="${IGROS_GIT_HASH}"
-)
-
 # Enable CCache
 include(EnableCCache)
 # Enable Doxygen
@@ -75,27 +68,11 @@ set(
 	IGROS_LINK_SCRIPT
 	"${CMAKE_SOURCE_DIR}/config/link/link-${CMAKE_SYSTEM_PROCESSOR}.ld"
 )
-set(
-	IGROS_VERSION_MAJOR
-	${IGROS_GIT_VERSION_MAJOR}
-)
-set(
-	IGROS_VERSION_MINOR
-	${IGROS_GIT_VERSION_MINOR}
-)
-set(
-	IGROS_VERSION_BUILD
-	${IGROS_GIT_VERSION_PATCH}
-)
-set(
-	IGROS_VERSION
-	${IGROS_GIT_VERSION}.${IGROS_GIT_COMMIT}
-)
 
 # Project
 project(
 	IgrOS-Kernel
-	VERSION ${IGROS_VERSION}
+	VERSION ${IGROS_GIT_VERSION}
 	DESCRIPTION "Simple C++20 Kernel for i386/x86_64"
 	LANGUAGES ASM-ATT CXX
 )
@@ -113,7 +90,7 @@ option(
 option(
 	IGROS_CXX_CLANG_TIDY
 	"Add ClangTidy pass to build process"
-	ON
+	OFF
 )
 
 # Use Clang-Tidy ?
@@ -148,7 +125,7 @@ message(
 	"\n"
 	"===============================\n"
 	"\n"
-	"IgrOS Kernel v${IGROS_VERSION}\n"
+	"IgrOS Kernel v${IGROS_GIT_VERSION}\n"
 	"\n"
 	"Architecture:	${CMAKE_SYSTEM_PROCESSOR}\n"
 	"\n"
@@ -195,9 +172,15 @@ add_executable(
 
 # Kernel definitions
 add_compile_definitions(
+	IGROS_KERNEL
 	IGROS_ARCH_${CMAKE_SYSTEM_PROCESSOR}
 	IGROS_ARCH=${CMAKE_SYSTEM_PROCESSOR}
-	IGROS_KERNEL
+	IGROS_GIT_VERSION_MAJOR=${IGROS_GIT_VERSION_MAJOR}
+	IGROS_GIT_VERSION_MINOR=${IGROS_GIT_VERSION_MINOR}
+	IGROS_GIT_VERSION_PATCH=${IGROS_GIT_VERSION_PATCH}
+	IGROS_GIT_VERSION_BUILD=${IGROS_GIT_COMMIT}
+	IGROS_GIT_VERSION="${IGROS_GIT_VERSION}"
+	IGROS_GIT_HASH="${IGROS_GIT_HASH}"
 )
 
 # Add arch subdirectory

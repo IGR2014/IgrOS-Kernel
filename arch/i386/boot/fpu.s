@@ -5,7 +5,7 @@
 #	File:	fpu.s
 #	Date:	05 Jul 2021
 #
-#	Copyright (c) 2017 - 2021, Igor Baklykov
+#	Copyright (c) 2017 - 2022, Igor Baklykov
 #	All rights reserved.
 #
 #

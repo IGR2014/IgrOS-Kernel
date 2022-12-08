@@ -3,9 +3,9 @@
 //	Task switch registers data structure
 //
 //	File:	register.hpp
-//	Date:	03 Feb 2021
+//	Date:	09 Dec 2022
 //
-//	Copyright (c) 2017 - 2021, Igor Baklykov
+//	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
 //
 //
@@ -14,7 +14,7 @@
 #pragma once
 
 
-#include <arch/i386/types.hpp>
+#include <arch/types.hpp>
 
 
 #ifdef	__cplusplus
@@ -26,56 +26,56 @@ extern "C" {
 
 	// Read CS register
 	[[nodiscard]]
-	igros::word_t volatile	outCS() noexcept;
+	auto	outCS() noexcept -> igros::igros_word_t;
 	// Read DS register
 	[[nodiscard]]
-	igros::word_t volatile	outDS() noexcept;
+	auto	outDS() noexcept -> igros::igros_word_t;
 	// Read ES register
 	[[nodiscard]]
-	igros::word_t volatile	outES() noexcept;
+	auto	outES() noexcept -> igros::igros_word_t;
 	// Read FS register
 	[[nodiscard]]
-	igros::word_t volatile	outFS() noexcept;
+	auto	outFS() noexcept -> igros::igros_word_t;
 	// Read GS register
 	[[nodiscard]]
-	igros::word_t volatile	outGS() noexcept;
+	auto	outGS() noexcept -> igros::igros_word_t;
 	// Read SS register
 	[[nodiscard]]
-	igros::word_t volatile	outSS() noexcept;
+	auto	outSS() noexcept -> igros::igros_word_t;
 
 	// Read EBP register
 	[[nodiscard]]
-	igros::dword_t volatile	outEBP() noexcept;
+	auto	outEBP() noexcept -> igros::igros_dword_t;
 	// Read ESP register
 	[[nodiscard]]
-	igros::dword_t volatile	outESP() noexcept;
+	auto	outESP() noexcept -> igros::igros_dword_t;
 
 	// Read EFLAGS register
 	[[nodiscard]]
-	igros::dword_t volatile	outEFLAGS() noexcept;
+	auto	outEFLAGS() noexcept -> igros::igros_dword_t;
 
 	// Read EAX register
 	[[nodiscard]]
-	igros::dword_t volatile	outEAX() noexcept;
+	auto	outEAX() noexcept -> igros::igros_dword_t;
 	// Read EBX register
 	[[nodiscard]]
-	igros::dword_t volatile	outEBX() noexcept;
+	auto	outEBX() noexcept -> igros::igros_dword_t;
 	// Read ECX register
 	[[nodiscard]]
-	igros::dword_t volatile	outECX() noexcept;
+	auto	outECX() noexcept -> igros::igros_dword_t;
 	// Read EDX register
 	[[nodiscard]]
-	igros::dword_t volatile	outEDX() noexcept;
+	auto	outEDX() noexcept -> igros::igros_dword_t;
 	// Read EDI register
 	[[nodiscard]]
-	igros::dword_t volatile	outEDI() noexcept;
+	auto	outEDI() noexcept -> igros::igros_dword_t;
 	// Read ESI register
 	[[nodiscard]]
-	igros::dword_t volatile	outESI() noexcept;
+	auto	outESI() noexcept -> igros::igros_dword_t;
 
 	// Read EIP register
 	[[nodiscard]]
-	igros::dword_t volatile	outEAX() noexcept;
+	auto	outEAX() noexcept -> igros::igros_dword_t;
 
 
 #ifdef	__cplusplus
@@ -95,29 +95,29 @@ namespace igros::i386 {
 	struct register_t {
 
 		// Segment registers pushed by us
-		dword_t	gs;		// Extra3 segment register
-		dword_t	fs;		// Extra2 segment register
-		dword_t	es;		// Extra segment register
-		dword_t	ds;		// Data segment register
+		igros_dword_t	gs;		// Extra3 segment register
+		igros_dword_t	fs;		// Extra2 segment register
+		igros_dword_t	es;		// Extra segment register
+		igros_dword_t	ds;		// Data segment register
 		// "All" registers pushed by pushal instruction
-		dword_t	edi;		// Destination index register
-		dword_t	esi;		// Source index register
-		dword_t	ebp;		// Stack base pointer register
-		dword_t	esp;		// Stack pointer register
-		dword_t	ebx;		// Base register
-		dword_t	edx;		// Data register
-		dword_t	ecx;		// Counter register
-		dword_t	eax;		// Accumulator register
+		igros_dword_t	edi;		// Destination index register
+		igros_dword_t	esi;		// Source index register
+		igros_dword_t	ebp;		// Stack base pointer register
+		igros_dword_t	esp;		// Stack pointer register
+		igros_dword_t	ebx;		// Base register
+		igros_dword_t	edx;		// Data register
+		igros_dword_t	ecx;		// Counter register
+		igros_dword_t	eax;		// Accumulator register
 		// Exception number pushed by us
-		dword_t	number;		// Exception number
+		igros_dword_t	number;		// Exception number
 		// Param pushed by processor or (0x00) by us
-		dword_t	param;		// Exception param (or null if no param provided)
+		igros_dword_t	param;		// Exception param (or null if no param provided)
 		// This pushed to stack by processor
-		dword_t	eip;		// Instruction pointer register
-		dword_t	cs;		// Code segment register
-		dword_t	eflags;		// Flags register
-		dword_t	userEsp;	// User stack pointer register
-		dword_t	ss;		// Stack segment register
+		igros_dword_t	eip;		// Instruction pointer register
+		igros_dword_t	cs;		// Code segment register
+		igros_dword_t	eflags;		// Flags register
+		igros_dword_t	userEsp;	// User stack pointer register
+		igros_dword_t	ss;		// Stack segment register
 
 	};
 

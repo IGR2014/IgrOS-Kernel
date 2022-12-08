@@ -3,9 +3,9 @@
 //	IgrOS platform description
 //
 //	File:	platform.hpp
-//	Date:	27 Sep 2021
+//	Date:	09 Dec 2022
 //
-//	Copyright (c) 2017 - 2021, Igor Baklykov
+//	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
 //
 //
@@ -20,9 +20,10 @@
 #include <arch/types.hpp>
 
 
-// Kernel start and end
-extern const igros::byte_t _SECTION_KERNEL_START_;
-extern const igros::byte_t _SECTION_KERNEL_END_;
+// Kernel start
+extern const igros::igros_byte_t _SECTION_KERNEL_START_;
+// Kernel end
+extern const igros::igros_byte_t _SECTION_KERNEL_END_;
 
 
 // OS platform namespace
@@ -31,19 +32,19 @@ namespace igros::platform {
 
 	// Get kernel start address
 	[[nodiscard]]
-	constexpr auto KERNEL_START() noexcept {
+	constexpr auto KERNEL_START() noexcept -> const igros_byte_t* {
 		return &_SECTION_KERNEL_START_;
 	}
 
 	// Get kernel end address
 	[[nodiscard]]
-	constexpr auto KERNEL_END() noexcept {
+	constexpr auto KERNEL_END() noexcept -> const igros_byte_t* {
 		return &_SECTION_KERNEL_END_;
 	}
 
 	// Get kernel size
 	[[nodiscard]]
-	constexpr auto KERNEL_SIZE() noexcept {
+	constexpr auto KERNEL_SIZE() noexcept -> igros_usize_t {
 		return (KERNEL_END() - KERNEL_START());
 	}
 
@@ -52,25 +53,31 @@ namespace igros::platform {
 	class description_t final {
 
 		// Platform name ID
-		enum class PLATFORM_ARCH_NAME : dword_t {
-			UNKNOWN		= 0x00000000,
-			I386		= 0x00000001,
-			X86_64		= 0x00000002,
-			ARM		= 0x00000004,
-			ARM64		= 0x00000008,
-			AVR		= 0x00000010
+		enum class PLATFORM_ARCH_NAME : igros_dword_t {
+			UNKNOWN		= 0x00000000_u32,
+			I386		= 0x00000001_u32,
+			X86_64		= 0x00000002_u32,
+			ARM		= 0x00000004_u32,
+			ARM64		= 0x00000008_u32,
+			AVR		= 0x00000010_u32
 		};
 
 
 #if	defined (IGROS_ARCH_i386)
+
 		// i386 platform
-		constexpr static PLATFORM_ARCH_NAME PLATFORM_NAME = PLATFORM_ARCH_NAME::I386;
+		constexpr static auto PLATFORM_NAME	{PLATFORM_ARCH_NAME::I386};
+
 #elif	defined (IGROS_ARCH_x86_64)
+
 		// x86_64 platform
-		constexpr static PLATFORM_ARCH_NAME PLATFORM_NAME = PLATFORM_ARCH_NAME::X86_64;
+		constexpr static auto PLATFORM_NAME	{PLATFORM_ARCH_NAME::X86_64};
+
 #else
+
 		// Unknown platform
-		constexpr static PLATFORM_ARCH_NAME PLATFORM_NAME = PLATFORM_ARCH_NAME::UNKNOWN;
+		constexpr static auto PLATFORM_NAME	{PLATFORM_ARCH_NAME::UNKNOWN};
+
 #endif
 
 
@@ -121,23 +128,23 @@ namespace igros::platform {
 
 		// Check if i386
 		[[nodiscard]]
-		constexpr bool	isI386() const noexcept;
+		constexpr auto	isI386() const noexcept -> bool;
 		// Check if x86_64
 		[[nodiscard]]
-		constexpr bool	isX86_64() const noexcept;
+		constexpr auto	isX86_64() const noexcept -> bool;
 		// Check if arm32
 		[[nodiscard]]
-		constexpr bool	isARM32() const noexcept;
+		constexpr auto	isARM32() const noexcept -> bool;
 		// Check if arm64
 		[[nodiscard]]
-		constexpr bool	isARM64() const noexcept;
+		constexpr auto	isARM64() const noexcept -> bool;
 		// Check if avr
 		[[nodiscard]]
-		constexpr bool	isAVR() const noexcept;
+		constexpr auto	isAVR() const noexcept -> bool;
 
 		// Get platform name
 		[[nodiscard]]
-		auto	name() const noexcept;
+		auto	name() const noexcept -> const char*;
 
 		// Initialize platform
 		void	initialize() const noexcept;
@@ -167,50 +174,50 @@ namespace igros::platform {
 		const reboot_t		reboot,
 		const suspend_t		suspend,
 		const wakeup_t		wakeup
-	) noexcept
-		: mName		(name),
-		  mInit		(init),
-		  mFinalzie	(finalize),
-		  mShutdown	(shutdown),
-		  mReboot	(reboot),
-		  mSuspend	(suspend),
-		  mWakeup	(wakeup) {}
+	) noexcept :
+		mName		(name),
+		mInit		(init),
+		mFinalzie	(finalize),
+		mShutdown	(shutdown),
+		mReboot		(reboot),
+		mSuspend	(suspend),
+		mWakeup		(wakeup) {}
 
 
 	// Check if i386
 	[[nodiscard]]
-	constexpr bool description_t::isI386() const noexcept {
+	constexpr auto description_t::isI386() const noexcept -> bool {
 		return (PLATFORM_ARCH_NAME::I386 == PLATFORM_NAME);
 	}
 
 	// Check if x86_64
 	[[nodiscard]]
-	constexpr bool description_t::isX86_64() const noexcept {
+	constexpr auto description_t::isX86_64() const noexcept -> bool {
 		return (PLATFORM_ARCH_NAME::X86_64 == PLATFORM_NAME);
 	}
 
 	// Check if arm32
 	[[nodiscard]]
-	constexpr bool description_t::isARM32() const noexcept {
+	constexpr auto description_t::isARM32() const noexcept -> bool {
 		return (PLATFORM_ARCH_NAME::ARM == PLATFORM_NAME);
 	}
 
 	// Check if arm64
 	[[nodiscard]]
-	constexpr bool description_t::isARM64() const noexcept {
+	constexpr auto description_t::isARM64() const noexcept -> bool {
 		return (PLATFORM_ARCH_NAME::ARM64 == PLATFORM_NAME);
 	}
 
 	// Check if avr
 	[[nodiscard]]
-	constexpr bool description_t::isAVR() const noexcept {
+	constexpr auto description_t::isAVR() const noexcept -> bool {
 		return (PLATFORM_ARCH_NAME::AVR == PLATFORM_NAME);
 	}
 
 
 	// Get platform name
 	[[nodiscard]]
-	inline auto description_t::name() const noexcept {
+	inline auto description_t::name() const noexcept -> const char* {
 		return mName;
 	}
 

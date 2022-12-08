@@ -3,9 +3,9 @@
 //	CPU operations
 //
 //	File:	cpu.hpp
-//	Date:	24 Sep 2021
+//	Date:	08 Dec 2022
 //
-//	Copyright (c) 2017 - 2021, Igor Baklykov
+//	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
 //
 //
@@ -72,15 +72,25 @@ namespace igros::arch {
 
 
 #if	defined (IGROS_ARCH_i386)
+
 	// CPU type
-	using cpu = cpu_t<i386::cpu>;
+	using cpu	= cpu_t<i386::cpu>;
+
 #elif	defined (IGROS_ARCH_x86_64)
+
 	// CPU type
-	using cpu = cpu_t<x86_64::cpu>;
+	using cpu	= cpu_t<x86_64::cpu>;
+
 #else
+
+	static_assert(
+		false,
+		"Unknown architecture!"
+	);
+
 	// CPU type
-	using cpu = cpu_t<void>;
-	static_assert(false, "Unknown architecture!!!");
+	using cpu	= cpu_t<void>;
+
 #endif
 
 

@@ -3,9 +3,9 @@
 //	Architecture interrupts type deduction
 //
 //	File:	types.hpp
-//	Date:	24 Sep 2021
+//	Date:	08 Dec 2022
 //
-//	Copyright (c) 2017 - 2021, Igor Baklykov
+//	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
 //
 //
@@ -56,28 +56,28 @@ namespace igros::arch {
 		interrupts_t() noexcept = default;
 
 		// Enable interrupts
-		void enable() const noexcept;
+		void	enable() const noexcept;
 		// Disable interrupts
-		void disable() const noexcept;
+		void	disable() const noexcept;
 
 		// Mask interrupt
-		void mask(const irq_t number) const noexcept;
+		void	mask(const irq_t number) const noexcept;
 		// Unmask interrupt
-		void unmask(const irq_t number) const noexcept;
+		void	unmask(const irq_t number) const noexcept;
 
 		// Set interrupts mask
-		void	setMask(const word_t mask = 0xFFFF) const noexcept;
+		void	setMask(const igros_word_t mask = 0xFFFF_u16) const noexcept;
 		// Get interrupts mask
 		[[nodiscard]]
-		word_t	getMask() const noexcept;
+		auto	getMask() const noexcept -> igros_word_t;
 
 		// Install IRQ handler
-		void install(const irq_t number, const isr_t handler) const noexcept;
+		void	install(const irq_t number, const isr_t handler) const noexcept;
 		// Uninstall IRQ handler
-		void uninstall(const irq_t number) const noexcept;
+		void	uninstall(const irq_t number) const noexcept;
 
 		// IRQ done (EOI)
-		void eoi(const irq_t number) const noexcept;
+		void	eoi(const irq_t number) const noexcept;
 
 
 	};
@@ -111,14 +111,14 @@ namespace igros::arch {
 
 	// Set interrupts mask
 	template<typename T, typename T2>
-	inline void interrupts_t<T, T2>::setMask(const word_t mask) const noexcept {
+	inline void interrupts_t<T, T2>::setMask(const igros_word_t mask) const noexcept {
 		T::setMask(mask);
 	}
 
 	// Get interrupts mask
 	template<typename T, typename T2>
 	[[nodiscard]]
-	inline word_t interrupts_t<T, T2>::getMask() const noexcept {
+	inline auto interrupts_t<T, T2>::getMask() const noexcept -> igros_word_t {
 		return T::getMask();
 	}
 
@@ -144,15 +144,25 @@ namespace igros::arch {
 
 
 #if	defined (IGROS_ARCH_i386)
+
 	// IRQ type
 	using irq	= interrupts_t<i386::irq, i386::irq_t>;
+
 #elif	defined (IGROS_ARCH_x86_64)
+
 	// IRQ type
 	using irq	= interrupts_t<x86_64::irq, x86_64::irq_t>;
+
 #else
+
+	static_assert(
+		false,
+		"Unknown architecture!"
+	);
+
 	// IRQ type
 	using irq	= interrupts_t<void, void>;
-	static_assert(false, "Unknown architecture!!!");
+
 #endif
 
 
