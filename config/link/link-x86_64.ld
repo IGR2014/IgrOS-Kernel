@@ -11,7 +11,7 @@
 */
 
 /* Create i386 kernel. Then just jump to x86_64 in code */
-OUTPUT_FORMAT(elf32-i386)
+OUTPUT_FORMAT(elf64-x86-64)
 OUTPUT_ARCH(i386:x86-64)
 
 /* Kernel entry function. Bootloader will jump here to run kernel */
