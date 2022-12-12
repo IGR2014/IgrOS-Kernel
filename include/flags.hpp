@@ -3,7 +3,7 @@
 ///	@brief		Bit flags template datatype
 ///
 ///	@file		kflags.hpp
-///	@date		05 Dec 2022
+///	@date		12 Dec 2022
 ///
 ///	@copyright	Copyright (c) 2017 - 2022,
 ///			All rights reserved.
@@ -60,7 +60,7 @@ namespace igros {
 		constexpr kflags() noexcept = default;
 		/// @brief From initializer list
 		template<typename ...Args>
-		constexpr explicit kflags(Args &&...args) noexcept; 
+		constexpr explicit kflags(std::in_place_t /*tag*/, Args &&...args) noexcept; 
 
 		/// @brief Type conversion operator
 		[[nodiscard]]
@@ -165,11 +165,12 @@ namespace igros {
 	/// @brief From initializer list
 	/// @tparam Args List of set flags
 	/// @param[in] args List of flags
+	/// @param[in] tag Disambiguation tag
 	///
 	template<typename T, typename U>
 	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
 	template<typename ...Args>
-	constexpr kflags<T, U>::kflags(Args &&...args) noexcept :
+	constexpr kflags<T, U>::kflags(std::in_place_t /*tag*/, Args &&...args) noexcept :
 		mValue((static_cast<U>(args) | ...)) {}
 
 
@@ -413,7 +414,7 @@ namespace igros {
 	template<typename T, typename U>
 	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
 	constexpr kflags<T, U>::kflags(const T &value) noexcept :
-		mValue(value) {}
+		mValue(static_cast<U>(value)) {}
 
 	////////////////////////////////////////////////////
 	///
@@ -506,7 +507,49 @@ namespace igros {
 	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
 	[[nodiscard]]
 	constexpr auto kflags<T, U>::test(const igros_usize_t bit) const noexcept -> bool {
-		return std::has_single_bit(static_cast<std::make_unsigned_t<U>>(mValue & static_cast<U>(bit)));
+		return std::has_single_bit(static_cast<std::make_unsigned_t<U>>(mValue & static_cast<U>(1_usize) << bit));
+	}
+
+
+	////////////////////////////////////////////////////
+	///
+	/// @brief Deduction guide
+	/// @tparam T Flags internal representation enum type
+	///
+	template<class T>
+	kflags(T) -> kflags<T>;
+
+
+	////////////////////////////////////////////////////
+	///
+	/// @brief Flags creation helper function from flags value
+	/// @tparam T Flags internal representation enum type
+	/// @param[in] flag Actual flag value
+	/// @return Value of type @c kflags<T>
+	///
+	template<class T>
+	[[nodiscard]]
+	constexpr auto make_kflags(T &&flag) noexcept -> kflags<std::decay_t<T>> {
+		return kflags<std::decay_t<T>> {
+			std::forward<T>(flag)
+		};
+	}
+
+	////////////////////////////////////////////////////
+	///
+	/// @brief Flags creation helper function from flags
+	/// @tparam T Flags internal representation enum type
+	/// @tparam Args List of set flags
+	/// @param[in] args List of flags
+	/// @return Value of type @c kflags<T>
+	///
+	template<class T, class ...Args>
+	[[nodiscard]]
+	constexpr auto make_kflags(Args &&...args) noexcept -> kflags<T> {
+		return kflags<T> {
+			std::in_place,
+			std::forward<Args>(args)...
+		};
 	}
 
 
