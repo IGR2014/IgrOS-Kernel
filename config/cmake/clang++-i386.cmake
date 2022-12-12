@@ -16,7 +16,7 @@ set(
 # Compiler flags
 set(
 	CMAKE_CXX_FLAGS
-	"-Wall -Wextra -w -pedantic -Werror -fno-builtin -fno-builtin-function -ffreestanding -fno-exceptions -fno-rtti -fno-threadsafe-statics -fno-pie -nostdlib -O3 -s -mno-3dnow -mno-sse -mno-sse2 -mno-sse3 -mno-ssse3 -mno-sse4 -mno-sse4.1 -mno-sse4.2 -mno-sse4a -mno-mmx -mno-avx -mno-fma4 -m32 -march=i386 -mno-red-zone -target i386-linux-elf"
+	"-Wall -Wextra -w -pedantic -Werror -fno-builtin -ffreestanding -fno-exceptions -fno-rtti -fno-threadsafe-statics -fpic -fpie -nostdlib -O3 -s -mno-3dnow -mno-sse -mno-sse2 -mno-sse3 -mno-ssse3 -mno-sse4 -mno-sse4.1 -mno-sse4.2 -mno-sse4a -mno-mmx -mno-avx -mno-fma4 -m32 -march=i386 -mno-red-zone -target i386-linux-elf"
 )
 
 # Assembler
