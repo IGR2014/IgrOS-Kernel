@@ -3,7 +3,7 @@
 //	Kernel text print functions
 //
 //	File:	kprint.hpp
-//	Date:	08 Dec 2022
+//	Date:	12 Dec 2022
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -44,34 +44,34 @@ namespace igros::klib {
 	// Kernel unsigned integer to string function
 	[[maybe_unused]]
 	inline auto kitoa(char* const buffer, const igros_usize_t size, const igros_dword_t value, const radix_t radix = radix_t::DEC) noexcept -> char* {
-		return kitoa(buffer, size, static_cast<igros_usize_t>(value), radix);
+		return kitoa(buffer, size, static_cast<igros_quad_t>(value), radix);
 	}
 	// Kernel integer to string function
 	[[maybe_unused]]
 	inline auto kitoa(char* const buffer, const igros_usize_t size, const igros_sdword_t value, const radix_t radix = radix_t::DEC) noexcept -> char* {
-		return kitoa(buffer, size, static_cast<igros_ssize_t>(value), radix);
+		return kitoa(buffer, size, static_cast<igros_squad_t>(value), radix);
 	}
 
 	// Kernel integer to string function
 	[[maybe_unused]]
 	inline auto kitoa(char* const buffer, const igros_usize_t size, const igros_word_t value, const radix_t radix = radix_t::DEC) noexcept -> char* {
-		return kitoa(buffer, size, static_cast<igros_usize_t>(value), radix);
+		return kitoa(buffer, size, static_cast<igros_quad_t>(value), radix);
 	}
 	// Kernel integer to string function
 	[[maybe_unused]]
 	inline auto kitoa(char* const buffer, const igros_usize_t size, const igros_sword_t value, const radix_t radix = radix_t::DEC) noexcept -> char* {
-		return kitoa(buffer, size, static_cast<igros_ssize_t>(value), radix);
+		return kitoa(buffer, size, static_cast<igros_squad_t>(value), radix);
 	}
 
 	// Kernel integer to string function
 	[[maybe_unused]]
 	inline auto kitoa(char* const buffer, const igros_usize_t size, const igros_byte_t value, const radix_t radix = radix_t::DEC) noexcept -> char* {
-		return kitoa(buffer, size, static_cast<igros_usize_t>(value), radix);
+		return kitoa(buffer, size, static_cast<igros_quad_t>(value), radix);
 	}
 	// Kernel integer to string function
 	[[maybe_unused]]
 	inline auto kitoa(char* const buffer, const igros_usize_t size, const igros_sbyte_t value, const radix_t radix = radix_t::DEC) noexcept -> char* {
-		return kitoa(buffer, size, static_cast<igros_ssize_t>(value), radix);
+		return kitoa(buffer, size, static_cast<igros_squad_t>(value), radix);
 	}
 
 	// Kernel size type to string function
