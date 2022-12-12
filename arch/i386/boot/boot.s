@@ -3,7 +3,7 @@
 #	Low-level boot setup function
 #
 #	File:	boot.s
-#	Date:	11 Feb 2021
+#	Date:	12 Dec 2022
 #
 #	Copyright (c) 2017 - 2022, Igor Baklykov
 #	All rights reserved.
@@ -41,9 +41,10 @@
 # Kernel starts here
 .type kernelStart, @function
 kernelStart:
+
 	cli						# Turn off interrupts
 
-	# Start kernel code
+	# Setup stack pointer
 	leal	stackTop - KERNEL_VMA, %esp		# Set stack
 
 	# Save multiboot data for kmain
@@ -78,21 +79,49 @@ kernelStart:
 	calll	*%ebx
 	addl	$4, %esp
 
-	# Reload CS
-	leal	1f, %eax				# Load new CS related address
-	jmpl	*%eax					# Long jump to it
+	# Set Higher Half GDT
+	leal	gdt32Ptr - KERNEL_VMA, %eax		# Load Higher Half GDT pointer address
+	lgdtl	(%eax)					# Load GDT pointer address
 
+	# Jump to Higher Half
+	ljmpl	$0x08, $2f				# Long jump to Higher Half CS
+
+	# Hang on fail
 1:
+	hlt						# Stop CPU
+	jmp	1b					# Hang CPU
+
+2:
 	# Adjust stack to higher half
 	addl	$KERNEL_VMA, %esp			# Add virtual memory offset to ESP
 	# Go to C++
-	calll	kmain					# Call main func
+	leal	kmain, %ebp				# Call main func
+	calll	*%ebp
 
 	# Hang on fail
-2:
+3:
 	hlt						# Stop CPU
-	jmp	2b					# Hang CPU
+	jmp	3b					# Hang CPU
+
 .size kernelStart, . - kernelStart
+
+
+.section .rodata
+.balign 4096
+
+# GDT pointer for jump from Lower Half to Higher Half
+gdt32Ptr:
+	.word	gdt32End - gdt32Start - 1		# GDT size
+	.long	gdt32Start - KERNEL_VMA			# GDT pointer
+
+# GDT with 32-bit code and data descriptors
+gdt32Start:
+	.quad	0x0000000000000000			# Empty
+	.quad	0x00CF9A000000FFFF			# 32-bit code descriptor
+	.quad	0x00CF92000000FFFF			# 32-bit data descriptor
+	.quad	0x0000000000000000			# Empty
+gdt32End:
+
 
 .section .data
 .balign	4096
@@ -107,8 +136,6 @@ bootPageDirectory:
 	.int	PAGE_ENTRY_VALID
 	# Zeroes
 	.fill	(1024 - PAGE_TEMP_KERNEL - 1), 4, PAGE_ENTRY_INVALID
-	# Entry 255 = 4Gb - 1Mb offset (bootPageDirectory recursive) mapped
-	#.int	PAGE_ENTRY_VALID
 
 
 .section .bss
