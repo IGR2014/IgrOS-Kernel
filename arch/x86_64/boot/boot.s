@@ -3,7 +3,7 @@
 #	Low-level boot setup function
 #
 #	File:	boot.s
-#	Date:	02 Feb 2021
+#	Date:	12 Dec 2022
 #
 #	Copyright (c) 2017 - 2022, Igor Baklykov
 #	All rights reserved.
@@ -40,7 +40,9 @@
 .extern	kmain
 
 # Kernel starts here
-kernelStart:						# Kernel starts here
+.type kernelStart, @function
+kernelStart:
+
 	cli						# Turn off interrupts
 
 	# Initialize stack
@@ -88,11 +90,11 @@ kernelStart:						# Kernel starts here
 	movl	%eax, %cr0				# Set new CR0 value
 
 	# Set Long Mode GDT
-	leal	gdt32Ptr - KERNEL_VMA, %eax		# Load 64-bit jump GDT pointer address
-	lgdt	(%eax)					# Load GDT pointer address
+	leal	gdt32Ptr - KERNEL_VMA, %eax		# Load Long Mode GDT pointer address
+	lgdtl	(%eax)					# Load GDT pointer address
 
-	# Jump to long mode
-	ljmp	$0x08, $2f - KERNEL_VMA			# Long jump to 64 bit CS
+	# Jump to Long Mode
+	ljmpl	$0x08, $2f - KERNEL_VMA			# Long jump to 64 bit CS
 
 	# Hang on fail (32 bit)
 1:
@@ -101,11 +103,14 @@ kernelStart:						# Kernel starts here
 
 .code64
 
-# Long Mode (64 bit code)
+	# Long Mode (64 bit code)
 2:
+	# Long Mode GDT pointer
+	leaq	gdt64Ptr, %rdi				# Put pointer to GDT into RDI
+
 	# Set Long Mode GDT
-	movq	$gdt64Ptr, %rdi				# Put pointer to GDT into RDI
-	callq	gdtLoad					# Load new GDT and reset segments
+	movq	$gdtLoad, %rax				# Load new GDT and reset segments
+	callq	*%rax
 
 	# Adjust stack to higher half
 	addq	$KERNEL_VMA, %rsp			# Add virtual memory offset to RSP
@@ -115,13 +120,15 @@ kernelStart:						# Kernel starts here
 	popq	%rsi					# Pop Multiboot magic
 
 	# Go to C++
-	cld						# Clear direction flag
-	callq	kmain					# Call main func
+	movq	$kmain, %rax				# Call main func
+	callq	*%rax
 
 	# Hang on fail (64 bit)
 3:
 	hlt						# Stop CPU
 	jmp	3b					# Hang CPU
+
+.size kernelStart, . - kernelStart
 
 
 .section .rodata
@@ -142,6 +149,7 @@ gdt64Start:
 	.quad	0x0000000000000000			# Empty
 	.quad	0x0020980000000000			# 64-bit code descriptor
 	.quad	0x0020900000000000			# 64-bit data descriptor
+	.quad	0x0000000000000000			# Empty
 gdt64End:
 
 
