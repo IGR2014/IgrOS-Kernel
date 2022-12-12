@@ -25,7 +25,9 @@
 
 
 # Reset segments
+.type gdtResetSegments, @function
 gdtResetSegments:
+	cld					# Clear direction flag
 	movabsq	$1f, %rax			# Move absolute address to RAX
 	jmpq	*%rax				# Jump from RAX for CS changes to take affect
 1:
@@ -37,18 +39,26 @@ gdtResetSegments:
 	movw	%ax, %ss			# --//--
 	retq
 
+.size gdtResetSegments, . - gdtResetSegments
+
 
 # Load GDT
+.type gdtLoad, @function
 gdtLoad:
 	cld					# Clear direction flag
 	lgdtq	(%rdi)				# Load GDT from pointer
 	callq	gdtResetSegments		# Reset segments after GDT change
 	retq
 
+.size gdtLoad, . - gdtLoad
+
 
 # Store GDT
+.type gdtStore, @function
 gdtStore:
 	cld					# Clear direction flag
 	sgdtq	(%rax)				# Load GDT to pointer RAX
 	retq
+
+.size gdtStore, . - gdtStore
 

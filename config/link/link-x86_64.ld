@@ -3,7 +3,7 @@
 **	x86_64 kernel linker script
 **
 **	File:	link.ld
-**	Date:	24 Jan 2020
+**	Date:	12 Dec 2022
 **
 **	Copyright (c) 2017 - 2022, Igor Baklykov
 **	All rights reserved.
@@ -27,6 +27,11 @@ KERNEL_ADDRESS_VIRT	= KERNEL_ADDRESS_PHYS + KERNEL_OFFSET_VIRT;
 /* Kernel sections */
 SECTIONS {
 
+	/* Place bootstrap at predefined physical address */
+	. = KERNEL_ADDRESS_PHYS;
+
+	/* TODO */
+
 	/* Place kernel at precalculated virtual address */
 	. = KERNEL_ADDRESS_VIRT;
 
@@ -36,8 +41,8 @@ SECTIONS {
 	/* Kernel code section */
 	.text ALIGN(4K) : AT(ADDR(.text) - KERNEL_OFFSET_VIRT) {
 	_SECTION_TEXT_START_ = .;
-		KEEP(*(.multiboot))
-		KEEP(*(.boot))
+		*(.multiboot)
+		*(.boot)
 		*(.text)
 	_SECTION_TEXT_END_ = .;
 	}
