@@ -1,0 +1,139 @@
+# Name
+name: 'IgrOS-Kernel CI/CD'
+
+# Triggered on push
+trigger:
+- '*'
+
+# Project jobs
+jobs:
+
+  # Build Linux
+  - job: Build_Linux
+
+     # Name
+    displayName: 'Build with CMake under Linux'
+
+    # OS
+    pool:
+      vmImage: 'ubuntu-22.04'
+
+    # Compiler
+    strategy:
+      maxParallel: 4
+      matrix:
+        clang++-i386:
+          compiler: clang++
+          arch: i386
+        clang++-x86_64:
+          compiler: clang++
+          arch: x86_64
+        g++-i386:
+          compiler: g++
+          arch: i386
+        g++-x86_64:
+          compiler: g++
+          arch: x86_64
+
+    # Job variables
+    variables:
+    - name: IGROS_DIR_BUILD
+      value: "$(Build.SourcesDirectory)/build"
+      readonly: true
+    - name: IGROS_DIR_INSTALL
+      value: "$(Build.SourcesDirectory)/install"
+      readonly: true
+    - name: CCACHE_BASEDIR
+      value: "$(Build.SourcesDirectory)/ccache"
+    - name: CCACHE_DIR
+      value: "$(Build.SourcesDirectory)/ccache/.ccache"
+    - name: CCACHE_COMPRESS
+      value: "true"
+    - name: CCACHE_COMPRESSLEVEL
+      value: "6"
+    - name: CCACHE_MAXSIZE
+      value: "200M"
+    - name: "CLICOLOR_FORCE"
+      value: "1"
+    - name: DEBIAN_FRONTEND
+      value: "noninteractive"
+    - name: NINJA_STATUS
+      value: "[%f/%t %p::%e] "
+
+    # Job steps
+    steps:
+
+      # Checkout
+      - checkout: self
+        fetchDepth: 0
+        fetchTags: true
+        displayName: 'Git Checkout'
+
+      # Install dependencies
+      - task: CmdLine@2
+        inputs:
+          script: |
+            sudo apt-get update
+            sudo apt install -y --no-install-recommends ccache cmake doxygen graphviz g++-multilib gcc-multilib ninja-build
+        displayName: 'Install Dependencies'
+
+      # Install Clang 15.0.0
+      - task: CmdLine@2
+        inputs:
+          script: |
+            wget https://apt.llvm.org/llvm.sh
+            chmod +x llvm.sh
+            sudo ./llvm.sh 15
+            sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-15 150
+            sudo update-alternatives --install /usr/bin/ld.lld ld.lld /usr/bin/ld.lld-15 150
+        displayName: 'Install Clang 15.0.0'
+
+      # Restore Build Cache
+      - task: Cache@2
+        inputs:
+          key: '"build" | "$(compiler)" | "$(arch)" | $(Build.SourceVersion)'
+          restoreKeys: |
+            "build" | "$(compiler)" | "$(arch)"
+          path: $(IGROS_DIR_BUILD)
+        displayName: 'Restore Build Cache'
+
+      # Restore CCache Cache
+      - task: Cache@2
+        inputs:
+          key: '"ccache" | "$(compiler)" | "$(arch)" | $(Build.SourceVersion)'
+          restoreKeys: |
+            "ccache" | "$(compiler)" | "$(arch)"
+          path: $(CCACHE_BASEDIR)
+        displayName: 'Restore CCache Cache'
+
+      # Restore Install Cache
+      - task: Cache@2
+        inputs:
+          key: '"install" | "$(compiler)" | "$(arch)" | $(Build.SourceVersion)'
+          restoreKeys: |
+            "install" | "$(compiler)" | "$(arch)"
+          path: $(IGROS_DIR_INSTALL)
+        displayName: 'Restore Install Cache'
+
+      # CMake Configuration
+      - task: CmdLine@2
+        inputs:
+          script: |
+            mkdir -p "$(CCACHE_DIR)"
+            cmake --preset="config-linux-$(compiler)-$(arch)-debug"
+        displayName: 'CMake Configuration'
+
+      # CMake Build
+      - task: CmdLine@2
+        inputs:
+          script: |
+            cmake --build --preset="build-linux-$(compiler)-$(arch)-debug" --target all
+        displayName: 'CMake Build'
+
+      # CMake Install
+      - task: CmdLine@2
+        inputs:
+          script: |
+            cmake --build --preset="build-linux-$(compiler)-$(arch)-debug" --target install
+        displayName: 'CMake Install'
+
