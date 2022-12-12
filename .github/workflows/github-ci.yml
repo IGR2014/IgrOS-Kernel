@@ -82,36 +82,36 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ${{ env.IGROS_KERNEL_DIR_BUILD }}
-        key: build-${{ matrix.arch }}-${{ matrix.compiler }}-${{ github.sha }}
+        key: build-${{ matrix.compiler }}-${{ matrix.arch }}-${{ github.sha }}
         restore-keys: |
-          build-${{ matrix.arch }}-${{ matrix.compiler }}-
+          build-${{ matrix.compiler }}-${{ matrix.arch }}-
 
     # Restore CCache Cache
     - name: 'Restore CCache Cache'
       uses: actions/cache@v3
       with:
         path: ${{ env.CCACHE_BASEDIR }}
-        key: ccache-${{ matrix.arch }}-${{ matrix.compiler }}-${{ github.sha }}
+        key: ccache-${{ matrix.compiler }}-${{ matrix.arch }}-${{ github.sha }}
         restore-keys: |
-          ccache-${{ matrix.arch }}-${{ matrix.compiler }}-
+          ccache-${{ matrix.compiler }}-${{ matrix.arch }}-
 
     # Configure
     - name: 'CMake Configure'
       shell: bash
       run: |
-        cmake --preset="config-linux-${{ matrix.arch }}-${{ matrix.compiler }}-debug"
+        cmake --preset="config-linux-${{ matrix.compiler }}-${{ matrix.arch }}-debug"
 
     # Build
     - name: 'CMake Build'
       shell: bash
       run: |
-        build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir build-wrapper cmake --build --preset="build-linux-${{ matrix.arch }}-${{ matrix.compiler }}-debug"
+        build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir build-wrapper cmake --build --preset="build-linux-${{ matrix.compiler }}-${{ matrix.arch }}-debug"
 
     # Install
     - name: 'CMake Install'
       shell: bash
       run: |
-        cmake --build --preset="build-linux-${{ matrix.arch }}-${{ matrix.compiler }}-debug" --target install
+        cmake --build --preset="build-linux-${{ matrix.compiler }}-${{ matrix.arch }}-debug" --target install
 
     # CodeQL analysis
     - name: 'CodeQL Analysis'

@@ -33,7 +33,7 @@ set(
 )
 # PIC
 set(
-	CMAKE_PLATFORM_INDEPENDENT_CODE
+	CMAKE_POSITION_INDEPENDENT_CODE
 	ON
 )
 # Compile comands export
@@ -143,7 +143,10 @@ message(
 )
 
 # Message
-message(STATUS "Building Kernel ${CMAKE_SYSTEM_PROCESSOR}")
+message(
+	STATUS
+	"Building Kernel ${CMAKE_SYSTEM_PROCESSOR}"
+)
 
 # Kernel C++ files
 file(
@@ -208,37 +211,28 @@ add_subdirectory(
 	drivers
 )
 
-# Install rules
-install(
-	TARGETS ${IGROS_KERNEL}
-	CONFIGURATIONS ${CMAKE_BUILD_TYPE}
-	DESTINATION ${CMAKE_INSTALL_PREFIX}
-)
-
 # Link command
 set(
 	CMAKE_CXX_LINK_EXECUTABLE
 	"${CMAKE_LINKER} <OBJECTS> -o ${IGROS_KERNEL} ${CMAKE_LINKER_FLAGS}"
 )
 
-# Install proxy
-add_custom_target(
-	install_proxy
-	COMMAND ${CMAKE_COMMAND} --build "${CMAKE_BINARY_DIR}" --target install
-	DEPENDS ${IGROS_KERNEL}
+# Get compiler name
+get_filename_component(
+	IGROS_COMPILER_NAME
+	${CMAKE_CXX_COMPILER}
+	NAME_WE
+)
+# Install rules
+install(
+	TARGETS ${IGROS_KERNEL}
+	DESTINATION "${IGROS_COMPILER_NAME}-${CMAKE_SYSTEM_PROCESSOR}"
 )
 
-# Qemu for specified arch
-set(
-	QEMU
-	"qemu-system-${CMAKE_SYSTEM_PROCESSOR}"
-)
-
-# Test kernel
+# 123
 add_custom_target(
-	test_proxy
-	USES_TERMINAL
-	COMMAND ${QEMU} -kernel "${CMAKE_SOURCE_DIR}/install/${CMAKE_BUILD_TYPE}/${CMAKE_SYSTEM_PROCESSOR}/${IGROS_KERNEL}" -m 2G -vga std -rtc base=localtime -serial mon:stdio
-	DEPENDS install_proxy
+	install_iso
+	COMMAND echo ${IGROS_KERNEL}
+	DEPENDS install ${IGROS_KERNEL}
 )
 
