@@ -3,7 +3,7 @@
 //	UART driver
 //
 //	File:	serial.cpp
-//	Date:	09 Dec 2022
+//	Date:	12 Dec 2022
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -91,18 +91,18 @@ namespace igros::arch {
 		// Calculate BAUD rate
 		const auto rate	{static_cast<igros_word_t>(115200_u32 / static_cast<igros_dword_t>(baudRate))};
 		// LCR value
-		const auto lcr	{
+		const auto lcr	{static_cast<igros_byte_t>(
 			((static_cast<igros_byte_t>(dataSize)	& 0x03_u8))		|
 			((static_cast<igros_byte_t>(stopBits)	& 0x01_u8) << 2)	|
 			((static_cast<igros_byte_t>(parity)	& 0x03_u8) << 3)
-		};
+		)};
 
 		// Disable SERIAL interrupts
 		io::get().writePort8(SERIAL_PORT_IER(SERIAL_PORT_1),	0x00_u8);
 		// Set BAUD rate
 		io::get().writePort8(SERIAL_PORT_LCR(SERIAL_PORT_1),	0x80_u8);
 		// Write BAUD rate low byte
-		io::get().writePort8(SERIAL_PORT_DR(SERIAL_PORT_1),	rate & 0x00FF_u16);
+		io::get().writePort8(SERIAL_PORT_DR(SERIAL_PORT_1),	(rate & 0x00FF_u16));
 		// Write BAUD rate high byte
 		io::get().writePort8(SERIAL_PORT_IER(SERIAL_PORT_1),	(rate >> 8) & 0x00FF_u16);
 		// Write LCR params

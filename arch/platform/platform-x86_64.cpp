@@ -3,7 +3,7 @@
 //	Platform description for x86_64
 //
 //	File:	platform-x86_64.cpp
-//	Date:	08 Dec 2022
+//	Date:	12 Dec 2022
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -33,7 +33,10 @@ namespace igros::x86_64 {
 	// Initialize x86_64
 	void x86_64Init() noexcept {
 
-		klib::kprintf("%s:\tInitializing x86_64 platform...", std::source_location::current().function_name());
+		klib::kprintf(
+			"Initializing x86_64 platform...\n[%s]\n",
+			std::source_location::current().function_name()
+		);
 
 		// Setup Interrupts Descriptor Table
 		x86_64::idt::init();
@@ -54,27 +57,42 @@ namespace igros::x86_64 {
 
 	// Finalize x86_64
 	void x86_64Finalize() noexcept {
-		klib::kprintf("%s:\tNot implemented yet!", std::source_location::current().function_name());
+		klib::kprintf(
+			"Not implemented yet!\n[%s]\n",
+			std::source_location::current().function_name()
+		);
 	}
 
 	// Shutdown x86_64
 	void x86_64Shutdown() noexcept {
-		klib::kprintf("%s:\tNot implemented yet!", std::source_location::current().function_name());
+		klib::kprintf(
+			"Not implemented yet!\n[%s]\n",
+			std::source_location::current().function_name()
+		);
 	}
 
 	// Reboot x86_64
 	void x86_64Reboot() noexcept {
-		klib::kprintf("%s:\tNot implemented yet!", std::source_location::current().function_name());
+		klib::kprintf(
+			"Not implemented yet!\n[%s]\n",
+			std::source_location::current().function_name()
+		);
 	}
 
 	// Suspend x86_64
 	void x86_64Suspend() noexcept {
-		klib::kprintf("%s:\tNot implemented yet!", std::source_location::current().function_name());
+		klib::kprintf(
+			"Not implemented yet!\n[%s]\n",
+			std::source_location::current().function_name()
+		);
 	}
 
 	// Wakeup x86_64
 	void x86_64Wakeup() noexcept {
-		klib::kprintf("%s:\tNot implemented yet!", std::source_location::current().function_name());
+		klib::kprintf(
+			"Not implemented yet!\n[%s]\n",
+			std::source_location::current().function_name()
+		);
 	}
 
 

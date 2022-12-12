@@ -3,7 +3,7 @@
 //	Platform description for x86
 //
 //	File:	platform-i386.cpp
-//	Date:	08 Dec 2022
+//	Date:	12 Dec 2022
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -34,7 +34,11 @@ namespace igros::i386 {
 	// Initialize i386
 	static void i386Init() noexcept {
 
-		klib::kprintf("%s:\tInitializing i386 platform...", std::source_location::current().function_name());
+		// Print
+		klib::kprintf(
+			"Initializing i386 platform...\n[%s]\n",
+			std::source_location::current().function_name()
+		);
 
 		// Setup Interrupts Descriptor Table
 		i386::idt::init();
@@ -58,27 +62,42 @@ namespace igros::i386 {
 
 	// Finalize i386
 	static void i386Finalize() noexcept {
-		klib::kprintf("%s:\tNot implemented yet!", std::source_location::current().function_name());
+		klib::kprintf(
+			"Not implemented yet!\n[%s]\n",
+			std::source_location::current().function_name()
+		);
 	}
 
 	// Shutdown i386
 	static void i386Shutdown() noexcept {
-		klib::kprintf("%s:\tNot implemented yet!", std::source_location::current().function_name());
+		klib::kprintf(
+			"Not implemented yet!\n[%s]\n",
+			std::source_location::current().function_name()
+		);
 	}
 
 	// Reboot i386
 	static void i386Reboot() noexcept {
-		klib::kprintf("%s:\tNot implemented yet!", std::source_location::current().function_name());
+		klib::kprintf(
+			"Not implemented yet!\n[%s]\n",
+			std::source_location::current().function_name()
+		);
 	}
 
 	// Suspend i386
 	static void i386Suspend() noexcept {
-		klib::kprintf("%s:\tNot implemented yet!", std::source_location::current().function_name());
+		klib::kprintf(
+			"Not implemented yet!\n[%s]\n",
+			std::source_location::current().function_name()
+		);
 	}
 
 	// Wakeup i386
 	static void i386Wakeup() noexcept {
-		klib::kprintf("%s:\tNot implemented yet!", std::source_location::current().function_name());
+		klib::kprintf(
+			"Not implemented yet!\n[%s]\n",
+			std::source_location::current().function_name()
+		);
 	}
 
 

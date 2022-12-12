@@ -3,7 +3,7 @@
 //	Interrupts low-level operations
 //
 //	File:	irq.cpp
-//	Date:	09 Dec 2022
+//	Date:	12 Dec 2022
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -104,7 +104,7 @@ namespace igros::i386 {
 	[[nodiscard]]
 	igros_word_t irq::getMask() noexcept {
 		// Read slave PIC current mask
-		auto mask	= static_cast<igros_word_t>(::outPort8(PIC_SLAVE_DATA)) << 8;
+		auto mask	{static_cast<igros_word_t>(::outPort8(PIC_SLAVE_DATA)) << 8};
 		// Read master PIC current mask
 		mask		|= ::outPort8(PIC_MASTER_DATA);
 		// Return IRQ mask

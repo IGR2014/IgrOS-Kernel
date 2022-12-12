@@ -3,7 +3,7 @@
 //	Kernel-space memset for x86
 //
 //	File:	kmemset.hpp
-//	Date:	08 Dec 2022
+//	Date:	12 Dec 2022
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -115,4 +115,23 @@ namespace igros::klib {
 
 
 }	// namespace igros::klib
+
+
+#ifdef	__cplusplus
+
+extern "C" {
+
+#endif	// __cplusplus
+
+
+	// Memset to make GCC/Clang happy
+	[[maybe_unused]]
+	auto memset(igros::igros_pointer_t dst, const igros::igros_byte_t val, const igros::igros_usize_t size) noexcept -> igros::igros_pointer_t;
+
+
+#ifdef	__cplusplus
+
+}
+
+#endif	// __cplusplus
 
