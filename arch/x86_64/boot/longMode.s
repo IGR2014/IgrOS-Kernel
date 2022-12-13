@@ -3,7 +3,7 @@
 #	Long mode low-level preparation operations
 #
 #	File:	longMode.s
-#	Date:	06 Jun 2019
+#	Date:	13 Dec 2022
 #
 #	Copyright (c) 2017 - 2022, Igor Baklykov
 #	All rights reserved.
@@ -11,14 +11,15 @@
 #
 
 
-.code32
+.set	EAXMAGIC,		0x2BADB002
+.set	CPUIDBIT,		1<<21
+.set	CPUIDMAGIC,		0x80000000
+.set	CPUIDEXTENDED,		0x80000001
+.set	LONGMODEBIT,		1<<29
+.set	LONGMODEBITCR,		0xC0000080
 
-.set	EAXMAGIC,	0x2BADB002
-.set	CPUIDBIT,	1<<21
-.set	CPUIDMAGIC,	0x80000000
-.set	CPUIDEXTENDED,	0x80000001
-.set	LONGMODEBIT,	1<<29
-.set	LONGMODEBITCR,	0xC0000080
+
+.code32
 
 .section .text
 .balign	8
@@ -26,7 +27,10 @@
 .global	checkCPUID
 .global	checkLongMode
 
+
+.type checkCPUID, @function
 checkCPUID:
+
 	pushfl
 	pop	%eax
 	movl	%eax, %ecx
@@ -41,11 +45,17 @@ checkCPUID:
 	je	1f
 	movb	$0x01, %al
 	ret
+
 1:
 	movb	$0x00, %al
 	ret
 
+.size checkCPUID, . - checkCPUID
+
+
+.type checkLongMode, @function
 checkLongMode:
+
 	movl	$CPUIDMAGIC, %eax
 	cpuid
 	cmp	$CPUIDEXTENDED, %eax
@@ -56,7 +66,10 @@ checkLongMode:
 	jz	1f
 	movb	$0x01, %al
 	ret
+
 1:
 	movb	$0x00, %al
 	ret
+
+.size checkLongMode, . - checkLongMode
 

@@ -3,7 +3,7 @@
 #	Interrupts descriptor table low-level operations
 #
 #	File:	idt.s
-#	Date:	08 Feb 2021
+#	Date:	13 Dec 2022
 #
 #	Copyright (c) 2017, Igor Baklykov
 #	All rights reserved.
@@ -21,15 +21,23 @@
 
 
 # Load IDT
+.type idtLoad, @function
 idtLoad:
+
 	cld				# Clear direction flag
 	lidtq	(%rdi)			# Load IDT from pointer
 	retq				# Done here
 
+.size idtLoad, . - idtLoad
+
 
 # Store IDT
+.type idtStore, @function
 idtStore:
+
 	cld				# Clear direction flag
-	sidtq	(%rax)			# Load IDT to pointer RAX
+	sidtq	(%rax)			# Store IDT to pointer RAX
 	retq
+
+.size idtStore, . - idtStore
 

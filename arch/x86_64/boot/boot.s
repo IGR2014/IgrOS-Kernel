@@ -3,7 +3,7 @@
 #	Low-level boot setup function
 #
 #	File:	boot.s
-#	Date:	12 Dec 2022
+#	Date:	13 Dec 2022
 #
 #	Copyright (c) 2017 - 2022, Igor Baklykov
 #	All rights reserved.
@@ -30,14 +30,15 @@
 .section .boot
 .balign	8
 
+.extern	checkCPUID					# Extern check CPUID function
+.extern	checkLongMode					# Extern check Lonh Mode function
+
+.extern	gdtLoad						# Extern load GDT function
+
+.extern	kmain						# Extern kernel function
+
 .global	kernelStart					# Kernel main function
 
-.extern	checkCPUID
-.extern checkLongMode
-
-.extern	gdtLoad
-
-.extern	kmain
 
 # Kernel starts here
 .type kernelStart, @function

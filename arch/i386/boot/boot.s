@@ -3,7 +3,7 @@
 #	Low-level boot setup function
 #
 #	File:	boot.s
-#	Date:	12 Dec 2022
+#	Date:	13 Dec 2022
 #
 #	Copyright (c) 2017 - 2022, Igor Baklykov
 #	All rights reserved.
@@ -27,16 +27,17 @@
 .section .boot
 .balign	4
 
+.extern	outCR0						# Extern write CR0 function
+.extern	outCR3						# Extern write CR3 function
+.extern	outCR4						# Extern write CR4 function
+
+.extern	inCR0						# Extern read CR0 function
+.extern	inCR4						# Extern read CR4 function
+
+.extern	kmain						# Extern kernel function
+
 .global	kernelStart					# Kernel main function
 
-.extern outCR0
-.extern outCR3
-.extern outCR4
-
-.extern inCR0
-.extern inCR4
-
-.extern	kmain						# Extern kernel C-function
 
 # Kernel starts here
 .type kernelStart, @function
