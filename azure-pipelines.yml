@@ -74,7 +74,7 @@ jobs:
         inputs:
           script: |
             sudo apt-get update
-            sudo apt install -y --no-install-recommends ccache cmake doxygen graphviz g++-multilib gcc-multilib ninja-build
+            sudo apt install -y --no-install-recommends ccache cmake doxygen graphviz g++-multilib gcc-multilib mtools ninja-build xorriso
         displayName: 'Install Dependencies'
 
       # Install Clang 15.0.0

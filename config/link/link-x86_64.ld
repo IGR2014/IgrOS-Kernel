@@ -3,7 +3,7 @@
 **	x86_64 kernel linker script
 **
 **	File:	link.ld
-**	Date:	12 Dec 2022
+**	Date:	13 Dec 2022
 **
 **	Copyright (c) 2017 - 2022, Igor Baklykov
 **	All rights reserved.
@@ -87,6 +87,12 @@ SECTIONS {
 
 	/* End of the kernel */
 	_SECTION_KERNEL_END_ = .;
+
+	/* Discard comments */
+	/DISCARD/ : {
+		*(.comment)
+		*(.comment.*)
+	}
 
 }
 
