@@ -3,7 +3,7 @@
 #	Interrupt servising routine handler
 #
 #	File:	isr.s
-#	Date:	10 Oct 2019
+#	Date:	12 Dec 2022
 #
 #	Copyright (c) 2017 - 2022, Igor Baklykov
 #	All rights reserved.
@@ -16,11 +16,13 @@
 .section .text
 .balign	8
 
-.global interruptServiceRoutine		# ISR
 .extern	isrHandler			# Extenral main interrupt service routine handler
+
+.global interruptServiceRoutine		# ISR
 
 
 # Interrupt service routine
+.type interruptServiceRoutine, @function
 interruptServiceRoutine:
 
 	pushq	%rax			# Save "all" regisers
@@ -62,4 +64,6 @@ interruptServiceRoutine:
 	addq	$0x10, %rsp		# Stack cleanup
 
 	iretq				# Done here
+
+.size interruptServiceRoutine, . - interruptServiceRoutine
 

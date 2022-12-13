@@ -3,7 +3,7 @@
 #	IRQ low-level handlers
 #
 #	File:	irq.s
-#	Date:	10 Oct 2019
+#	Date:	13 Dec 2022
 #
 #	Copyright (c) 2017 - 2022, Igor Baklykov
 #	All rights reserved.
@@ -40,127 +40,216 @@
 
 
 # IRQ 0
+.type irqHandler0, @function
 irqHandler0:
+
 	cli				# Disable interrupts
 	pushq	$0x00			# Fake parameter
 	pushq	$0x20			# IRQ number
 	jmp	interruptServiceRoutine	# Handle IRQ
 
+.size irqHandler0, . - irqHandler0
+
+
 # IRQ 1
+.type irqHandler1, @function
 irqHandler1:
+
 	cli				# Disable interrupts
 	pushq	$0x00			# Fake parameter
 	pushq	$0x21			# IRQ number
 	jmp	interruptServiceRoutine	# Handle IRQ
 
+.size irqHandler1, . - irqHandler1
+
+
 # IRQ 2
+.type irqHandler2, @function
 irqHandler2:
+
 	cli				# Disable interrupts
 	pushq	$0x00			# Fake parameter
 	pushq	$0x22			# IRQ number
 	jmp	interruptServiceRoutine	# Handle IRQ
 
+.size irqHandler2, . - irqHandler2
+
+
 # IRQ 3
+.type irqHandler3, @function
 irqHandler3:
+
 	cli				# Disable interrupts
 	pushq	$0x00			# Fake parameter
 	pushq	$0x23			# IRQ number
 	jmp	interruptServiceRoutine	# Handle IRQ
 
+.size irqHandler3, . - irqHandler3
+
+
 # IRQ 4
+.type irqHandler4, @function
 irqHandler4:
+
 	cli				# Disable interrupts
 	pushq	$0x00			# Fake parameter
 	pushq	$0x24			# IRQ number
 	jmp	interruptServiceRoutine	# Handle IRQ
 
+.size irqHandler4, . - irqHandler4
+
+
 # IRQ 5
+.type irqHandler5, @function
 irqHandler5:
+
 	cli				# Disable interrupts
 	pushq	$0x00			# Fake parameter
 	pushq	$0x25			# IRQ number
 	jmp	interruptServiceRoutine	# Handle IRQ
 
+.size irqHandler5, . - irqHandler5
+
+
 # IRQ 6
+.type irqHandler6, @function
 irqHandler6:
+
 	cli				# Disable interrupts
 	pushq	$0x00			# Fake parameter
 	pushq	$0x26			# IRQ number
 	jmp	interruptServiceRoutine	# Handle IRQ
 
+.size irqHandler6, . - irqHandler6
+
+
 # IRQ 7
+.type irqHandler7, @function
 irqHandler7:
+
 	cli				# Disable interrupts
 	pushq	$0x00			# Fake parameter
 	pushq	$0x27			# IRQ number
 	jmp	interruptServiceRoutine	# Handle IRQ
 
+.size irqHandler7, . - irqHandler7
+
+
 # IRQ 8
+.type irqHandler8, @function
 irqHandler8:
+
 	cli				# Disable interrupts
 	pushq	$0x00			# Fake parameter
 	pushq	$0x28			# IRQ number
 	jmp	interruptServiceRoutine	# Handle IRQ
 
+.size irqHandler8, . - irqHandler8
+
+
 # IRQ 9
+.type irqHandler9, @function
 irqHandler9:
+
 	cli				# Disable interrupts
 	pushq	$0x00			# Fake parameter
 	pushq	$0x29			# IRQ number
 	jmp	interruptServiceRoutine	# Handle IRQ
 
+.size irqHandler9, . - irqHandler9
+
+
 # IRQ 10
+.type irqHandlerA, @function
 irqHandlerA:
+
 	cli				# Disable interrupts
 	pushq	$0x00			# Fake parameter
 	pushq	$0x2A			# IRQ number
 	jmp	interruptServiceRoutine	# Handle IRQ
 
+.size irqHandlerA, . - irqHandlerA
+
+
 # IRQ 11
+.type irqHandlerB, @function
 irqHandlerB:
+
 	cli				# Disable interrupts
 	pushq	$0x00			# Fake parameter
 	pushq	$0x2B			# IRQ number
 	jmp	interruptServiceRoutine	# Handle IRQ
 
+.size irqHandlerB, . - irqHandlerB
+
+
 # IRQ 12
+.type irqHandlerC, @function
 irqHandlerC:
+
 	cli				# Disable interrupts
 	pushq	$0x00			# Fake parameter
 	pushq	$0x2C			# IRQ number
 	jmp	interruptServiceRoutine	# Handle IRQ
 
+.size irqHandlerC, . - irqHandlerC
+
+
 # IRQ 13
+.type irqHandlerD, @function
 irqHandlerD:
+
 	cli				# Disable interrupts
 	pushq	$0x00			# Fake parameter
 	pushq	$0x2D			# IRQ number
 	jmp	interruptServiceRoutine	# Handle IRQ
 
+.size irqHandlerD, . - irqHandlerD
+
+
 # IRQ 14
+.type irqHandlerE, @function
 irqHandlerE:
+
 	cli				# Disable interrupts
 	pushq	$0x00			# Fake parameter
 	pushq	$0x2E			# IRQ number
 	jmp	interruptServiceRoutine	# Handle IRQ
 
+.size irqHandlerE, . - irqHandlerE
+
+
 # IRQ 15
+.type irqHandlerF, @function
 irqHandlerF:
+
 	cli				# Disable interrupts
 	pushq	$0x00			# Fake parameter
 	pushq	$0x2F			# IRQ number
 	jmp	interruptServiceRoutine	# Handle IRQ
 
+.size irqHandlerF, . - irqHandlerF
+
+
 
 # Enable interrupts
+.type irqEnable, @function
 irqEnable:
+
 	cld				# Clear direction flag
 	sti				# Enable interrupts
 	retq
 
+.size irqEnable, . - irqEnable
+
+
 # Disable interrupts
+.type irqDisable, @function
 irqDisable:
+
 	cld				# Clear direction flag
 	cli				# Disable interrupts
 	retq
+
+.size irqDisable, . - irqDisable
 

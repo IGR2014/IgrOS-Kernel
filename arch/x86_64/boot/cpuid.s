@@ -3,7 +3,7 @@
 #	CPUID instruction functions
 #
 #	File:	cpuid.s
-#	Date:	18 Jun 2019
+#	Date:	13 Dec 2022
 #
 #	Copyright (c) 2017 - 2022, Igor Baklykov
 #	All rights reserved.
@@ -20,10 +20,13 @@
 .section .text
 .balign 8
 
-.global cpuid					# Execute CPUID instruction with required params
+.global cpuCPUID				# Execute CPUID instruction with required params
+
 
 # Execute CPUID with reauired flags
-cpuid:
+.type cpuCPUID, @function
+cpuCPUID:
+
 	cld					# Clear direction flag
 	movl	%edi, %eax			# Put flag to EAX register
 	cpuid					# Execute CPUID
@@ -34,4 +37,6 @@ cpuid:
 	orq	%rdx, %rcx
 	pushq	%rcx
 	retq					# Return structure of CPUID results
+
+.size cpuCPUID, . - cpuCPUID
 
