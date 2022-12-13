@@ -3,7 +3,7 @@
 **	i386 kernel linker script
 **
 **	File:	link.ld
-**	Date:	24 Jan 2020
+**	Date:	12 Dec 2022
 **
 **	Copyright (c) 2017 - 2022, Igor Baklykov
 **	All rights reserved.
@@ -25,6 +25,18 @@ KERNEL_ADDRESS_PHYS	= 0x00100000;
 /* Kernel virtual address = 1Mb + 3Gb */
 KERNEL_ADDRESS_VIRT	= KERNEL_ADDRESS_PHYS + KERNEL_OFFSET_VIRT;
 
+/* Kernel headers */
+PHDRS {
+	/* empty */
+	HDR_EMPTY	PT_NULL		FLAGS(0x00);
+	/* execute + read */
+	HDR_TEXT	PT_LOAD		FLAGS(0x05);
+	/* read */
+	HDR_RODATA	PT_LOAD		FLAGS(0x04);
+	/* write + read */
+	HDR_DATA	PT_LOAD		FLAGS(0x06);
+}
+
 /* Kernel sections */
 SECTIONS {
 
@@ -37,33 +49,37 @@ SECTIONS {
 	/* Kernel code section */
 	.text ALIGN(4K) : AT(ADDR(.text) - KERNEL_OFFSET_VIRT) {
 	_SECTION_TEXT_START_ = .;
-		KEEP(*(.multiboot))
-		KEEP(*(.boot))
+		*(.multiboot)
+		*(.boot)
 		*(.text)
+		*(.text.*)
 	_SECTION_TEXT_END_ = .;
-	}
+	} : HDR_TEXT
 
 	/* Kernel read only section */
 	.rodata ALIGN(4K) : AT(ADDR(.rodata) - KERNEL_OFFSET_VIRT) {
 	_SECTION_RODATA_START_ = .;
 		*(.rodata)
+		*(.rodata.*)
 	_SECTION_RODATA_END_ = .;
-	}
+	} : HDR_RODATA
 
 	/* Kernel read write section */
 	.data ALIGN(4K) : AT(ADDR(.data) - KERNEL_OFFSET_VIRT) {
 	_SECTION_DATA_START_ = .;
 		*(.data)
+		*(.data.*)
 	_SECTION_DATA_END_ = .;
-	}
+	} : HDR_DATA
 
 	/* Kernel stack section */
 	.bss ALIGN(4K) : AT(ADDR(.bss) - KERNEL_OFFSET_VIRT) {
 	_SECTION_BSS_START_ = .;
 		*(COMMON)
 		*(.bss)
+		*(.bss.*)
 	_SECTION_BSS_END_ = .;
-	}
+	} : HDR_DATA
 
 	/* End of the kernel */
 	_SECTION_KERNEL_END_ = .;

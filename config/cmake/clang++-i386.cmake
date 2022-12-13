@@ -38,6 +38,6 @@ set(
 # Linker flags
 set(
 	CMAKE_LINKER_FLAGS
-	"-T ${CMAKE_SOURCE_DIR}/config/link/link-i386.ld -n -m elf_i386 -z max-page-size=0x1000"
+	"-T ${CMAKE_SOURCE_DIR}/config/link/link-i386.ld -n -m elf_i386 -z max-page-size=0x1000 -z noexecstack"
 )
 
