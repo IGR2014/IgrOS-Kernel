@@ -24,13 +24,25 @@ KERNEL_ADDRESS_PHYS	= 0x0000000000100000;
 /* Kernel virtual address = 1Mb + MAX-2Gb */
 KERNEL_ADDRESS_VIRT	= KERNEL_ADDRESS_PHYS + KERNEL_OFFSET_VIRT;
 
+/* Kernel headers */
+PHDRS {
+	/* empty */
+	HDR_EMPTY	PT_NULL		FLAGS(0x00);
+	/* execute + read */
+	HDR_TEXT	PT_LOAD		FLAGS(0x05);
+	/* read */
+	HDR_RODATA	PT_LOAD		FLAGS(0x04);
+	/* write + read */
+	HDR_DATA	PT_LOAD		FLAGS(0x06);
+}
+
 /* Kernel sections */
 SECTIONS {
 
 	/* Place bootstrap at predefined physical address */
 	. = KERNEL_ADDRESS_PHYS;
 
-	/* TODO */
+	/* Maybe, once bootstrap will reside here */
 
 	/* Place kernel at precalculated virtual address */
 	. = KERNEL_ADDRESS_VIRT;
@@ -44,30 +56,34 @@ SECTIONS {
 		*(.multiboot)
 		*(.boot)
 		*(.text)
+		*(.text.*)
 	_SECTION_TEXT_END_ = .;
-	}
+	} : HDR_TEXT
 
 	/* Kernel read only section */
 	.rodata ALIGN(4K) : AT(ADDR(.rodata) - KERNEL_OFFSET_VIRT) {
 	_SECTION_RODATA_START_ = .;
 		*(.rodata)
+		*(.rodata.*)
 	_SECTION_RODATA_END_ = .;
-	}
+	} : HDR_RODATA
 
 	/* Kernel read write section */
 	.data ALIGN(4K) : AT(ADDR(.data) - KERNEL_OFFSET_VIRT) {
 	_SECTION_DATA_START_ = .;
 		*(.data)
+		*(.data.*)
 	_SECTION_DATA_END_ = .;
-	}
+	} : HDR_DATA
 
 	/* Kernel stack section */
 	.bss ALIGN(4K) : AT(ADDR(.bss) - KERNEL_OFFSET_VIRT) {
 	_SECTION_BSS_START_ = .;
 		*(COMMON)
 		*(.bss)
+		*(.bss.*)
 	_SECTION_BSS_END_ = .;
-	}
+	} : HDR_DATA
 
 	/* End of the kernel */
 	_SECTION_KERNEL_END_ = .;
