@@ -105,7 +105,7 @@ jobs:
     - name: 'CMake Build'
       shell: bash
       run: |
-        build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir build-wrapper cmake --build --preset="build-linux-${{ matrix.compiler }}-${{ matrix.arch }}-debug"
+        build-wrapper-linux-x86/build-wrapper-linux-x86-64 --out-dir build-wrapper cmake --build --preset="build-linux-${{ matrix.compiler }}-${{ matrix.arch }}-debug" --target all --parallel
 
     # Install
     - name: 'CMake Install'
