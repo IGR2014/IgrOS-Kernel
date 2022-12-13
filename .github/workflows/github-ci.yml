@@ -50,7 +50,7 @@ jobs:
       shell: bash
       run: |
         sudo apt update
-        sudo apt install -y --no-install-recommends ccache cmake doxygen graphviz g++-multilib gcc-multilib ninja-build
+        sudo apt install -y --no-install-recommends ccache cmake doxygen graphviz g++-multilib gcc-multilib mtools ninja-build xorriso
 
     # Install Clang 15.0.0
     - name: 'Install Clang 15.0.0'

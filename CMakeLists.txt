@@ -223,16 +223,34 @@ get_filename_component(
 	${CMAKE_CXX_COMPILER}
 	NAME_WE
 )
-# Install rules
+
+# Create directory
+install(
+	DIRECTORY
+	DESTINATION "${IGROS_COMPILER_NAME}-${CMAKE_SYSTEM_PROCESSOR}/iso/boot/grub"
+)
+# Create GRUB directory structure
+install(
+	CODE
+"file(
+	WRITE \"${CMAKE_INSTALL_PREFIX}${IGROS_COMPILER_NAME}-${CMAKE_SYSTEM_PROCESSOR}/iso/boot/grub/grub.cfg\"
+\"menuentry \\\"IgrOS-Kernel\\\" {
+	multiboot /boot/${IGROS_KERNEL}
+}\"
+)"
+)
+# Install kernel
 install(
 	TARGETS ${IGROS_KERNEL}
-	DESTINATION "${IGROS_COMPILER_NAME}-${CMAKE_SYSTEM_PROCESSOR}"
+	DESTINATION "${IGROS_COMPILER_NAME}-${CMAKE_SYSTEM_PROCESSOR}/iso/boot"
 )
-
-# 123
-add_custom_target(
-	install_iso
-	COMMAND echo ${IGROS_KERNEL}
-	DEPENDS install ${IGROS_KERNEL}
+# Create ISO
+install(
+	CODE
+"execute_process(
+	COMMAND grub-mkrescue -o \"${CMAKE_INSTALL_PREFIX}${IGROS_COMPILER_NAME}-${CMAKE_SYSTEM_PROCESSOR}/kernel.iso\" \"${CMAKE_INSTALL_PREFIX}${IGROS_COMPILER_NAME}-${CMAKE_SYSTEM_PROCESSOR}/iso\"
+	OUTPUT_QUIET
+	ERROR_QUIET
+)"
 )
 
