@@ -29,6 +29,8 @@ PHDRS {
 	/* empty */
 	HDR_EMPTY	PT_NULL		FLAGS(0x00);
 	/* execute + read */
+	HDR_BOOT	PT_LOAD		FLAGS(0x05);
+	/* execute + read */
 	HDR_TEXT	PT_LOAD		FLAGS(0x05);
 	/* read */
 	HDR_RODATA	PT_LOAD		FLAGS(0x04);
@@ -42,10 +44,16 @@ SECTIONS {
 	/* Place bootstrap at predefined physical address */
 	. = KERNEL_ADDRESS_PHYS;
 
-	/* Maybe, once bootstrap will reside here */
+	/* Kernel bootstrap section */
+	.bootstrap ALIGN(4K) : AT(ADDR(.bootstrap)) {
+	_SECTION_BOOTSTRAP_START_ = .;
+		*/multiboot.o
+		*/boot.o
+	_SECTION_BOOTSTRAP_END_ = .;
+	} : HDR_BOOT
 
 	/* Place kernel at precalculated virtual address */
-	. = KERNEL_ADDRESS_VIRT;
+	. += KERNEL_ADDRESS_VIRT;
 
 	/* Start of the kernel */
 	_SECTION_KERNEL_START_ = .;
@@ -53,8 +61,16 @@ SECTIONS {
 	/* Kernel code section */
 	.text ALIGN(4K) : AT(ADDR(.text) - KERNEL_OFFSET_VIRT) {
 	_SECTION_TEXT_START_ = .;
-		*(.multiboot)
-		*(.boot)
+		*(EXCLUDE_FILE(*/multiboot.o)	.multiboot)
+		*(EXCLUDE_FILE(*/multiboot.o)	.text)
+		*(EXCLUDE_FILE(*/multiboot.o)	.rodata)
+		*(EXCLUDE_FILE(*/multiboot.o)	.data)
+		*(EXCLUDE_FILE(*/multiboot.o)	.bss)
+		*(EXCLUDE_FILE(*/boot.o)	.boot)
+		*(EXCLUDE_FILE(*/boot.o)	.text)
+		*(EXCLUDE_FILE(*/boot.o)	.rodata)
+		*(EXCLUDE_FILE(*/boot.o)	.data)
+		*(EXCLUDE_FILE(*/boot.o)	.bss)
 		*(.text)
 		*(.text.*)
 	_SECTION_TEXT_END_ = .;
