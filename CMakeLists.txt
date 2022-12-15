@@ -253,4 +253,14 @@ install(
 	ERROR_QUIET
 )"
 )
+# Create ISO
+install(
+	CODE
+"execute_process(
+	COMMAND objdump --disassemble-all \"${CMAKE_INSTALL_PREFIX}${IGROS_COMPILER_NAME}-${CMAKE_SYSTEM_PROCESSOR}/iso/boot/kernel.bin\"
+	OUTPUT_FILE \"${CMAKE_INSTALL_PREFIX}${IGROS_COMPILER_NAME}-${CMAKE_SYSTEM_PROCESSOR}/kernel.disasm.txt\"
+	OUTPUT_QUIET
+	ERROR_QUIET
+)"
+)
 
