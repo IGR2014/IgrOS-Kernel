@@ -1,118 +1,54 @@
 {
 	"version": "2.0.0",
 	"tasks": [
-		// Clean i386 build
+		// Clean i386
 		{
 			"label": "Clean i386",
 			"type": "shell",
 			"linux": {
-				"command": "rm",
+				"command": "cmake",
 				"args": [
-					"-rf",
-					"./build/i386"
+					"--build",
+					"--preset=\"config-linux-clang++-x86_64-debug\"",
+					"--target=clean",
+					"--parallel"
 				]
 			},
 			"windows": {
-				"command": "rd",
-				"args": [
-					"/q",
-					"/s",
-					"./build/i386"
-				]
+				"command": ""
 			},
 			"options": {
 				"cwd": "${workspaceFolder}"
 			},
 			"problemMatcher": []
 		},
-		// Clean x86_64 build
+		// Clean x86_64
 		{
 			"label": "Clean x86_64",
 			"type": "shell",
 			"linux": {
-				"command": "rm",
+				"command": "cmake",
 				"args": [
-					"-rf",
-					"./build/x86_64"
+					"--build",
+					"--preset=\"config-linux-clang++-x86_64-debug\"",
+					"--target=clean",
+					"--parallel"
 				]
 			},
 			"windows": {
-				"command": "rd",
-				"args": [
-					"/q",
-					"/s",
-					"./build/x86_64"
-				]
+				"command": ""
 			},
 			"options": {
 				"cwd": "${workspaceFolder}"
 			},
 			"problemMatcher": []
 		},
-		// Clean all builds
+		// Clean all
 		{
 			"label": "Clean all",
 			"dependsOn": [
 				"Clean i386",
 				"Clean x86_64"
-			],
-			"dependsOrder": "parallel",
-			"problemMatcher": []
-		},
-		// Clean i386 release
-		{
-			"label": "Distclean i386",
-			"type": "shell",
-			"linux": {
-				"command": "rm",
-				"args": [
-					"-rf",
-					"./release/i386"
-				]
-			},
-			"windows": {
-				"command": "rd",
-				"args": [
-					"/q",
-					"/s",
-					"./release/i386"
-				]
-			},
-			"options": {
-				"cwd": "${workspaceFolder}"
-			},
-			"problemMatcher": []
-		},
-		// Clean x86_64 release
-		{
-			"label": "Distclean x86_64",
-			"type": "shell",
-			"linux": {
-				"command": "rm",
-				"args": [
-					"-rf",
-					"./release/x86_64"
-				]
-			},
-			"windows": {
-				"command": "rd",
-				"args": [
-					"/q",
-					"/s",
-					"./release/x86_64"
-				]
-			},
-			"options": {
-				"cwd": "${workspaceFolder}"
-			},
-			"problemMatcher": []
-		},
-		// Clean all release
-		{
-			"label": "Distclean all",
-			"dependsOn": [
-				"Distclean i386",
-				"Distclean x86_64"
 			],
 			"dependsOrder": "parallel",
 			"problemMatcher": []
@@ -124,13 +60,11 @@
 			"linux": {
 				"command": "cmake",
 				"args": [
-					"-DCMAKE_BUILD_TYPE=Release",
-					"-DCMAKE_TOOLCHAIN_FILE=\"${workspaceRoot}/config/cmake/clang++-i386.cmake\"",
-					"-H \"${workspaceRoot}\"",
-					"-S \"${workspaceRoot}\"",
-					"-B \"${workspaceRoot}/build/Release\"",
-					"-G \"Ninja\""
+					"--preset=\"config-linux-clang++-i386-debug\""
 				]
+			},
+			"windows": {
+				"command": ""
 			},
 			"options": {
 				"cwd": "${workspaceFolder}"
@@ -144,13 +78,11 @@
 			"linux": {
 				"command": "cmake",
 				"args": [
-					"-DCMAKE_BUILD_TYPE=Release",
-					"-DCMAKE_TOOLCHAIN_FILE=\"${workspaceRoot}/config/cmake/clang++-x86_64.cmake\"",
-					"-H \"${workspaceRoot}\"",
-					"-S \"${workspaceRoot}\"",
-					"-B \"${workspaceRoot}/build/Release\"",
-					"-G \"Ninja\""
+					"--preset=\"config-linux-clang++-x86_64-debug\""
 				]
+			},
+			"windows": {
+				"command": ""
 			},
 			"options": {
 				"cwd": "${workspaceFolder}"
@@ -168,10 +100,13 @@
 				"command": "cmake",
 				"args": [
 					"--build",
-					"\"${workspaceRoot}/build/Release\"",
-					"--target",
-					"all"
+					"--preset=\"config-linux-clang++-i386-debug\"",
+					"--target=all",
+					"--parallel"
 				]
+			},
+			"windows": {
+				"command": ""
 			},
 			"group": "build",
 			"options": {
@@ -190,10 +125,13 @@
 				"command": "cmake",
 				"args": [
 					"--build",
-					"\"${workspaceRoot}/build/Release\"",
-					"--target",
-					"all"
+					"--preset=\"config-linux-clang++-x86_64-debug\"",
+					"--target=all",
+					"--parallel"
 				]
+			},
+			"windows": {
+				"command": ""
 			},
 			"group": "build",
 			"options": {
@@ -250,11 +188,11 @@
 				"isDefault": true
 			}
 		},
-		// Install all
+		// Install i386
 		{
-			"label": "Install all",
+			"label": "Install i386",
 			"dependsOn": [
-				"Rebuild all"
+				"Rebuild i386"
 			],
 			"dependsOrder": "parallel",
 			"type": "shell",
@@ -262,14 +200,52 @@
 				"command": "cmake",
 				"args": [
 					"--build",
-					"\"${workspaceRoot}/build/Release\"",
-					"--target",
-					"install"
+					"--preset=\"config-linux-clang++-i386-debug\"",
+					"--target=install",
+					"--parallel"
 				]
+			},
+			"windows": {
+				"command": ""
 			},
 			"options": {
 				"cwd": "${workspaceFolder}"
 			},
+			"problemMatcher": []
+		},
+		// Install x86_64
+		{
+			"label": "Install x86_64",
+			"dependsOn": [
+				"Rebuild x86_64"
+			],
+			"dependsOrder": "parallel",
+			"type": "shell",
+			"linux": {
+				"command": "cmake",
+				"args": [
+					"--build",
+					"--preset=\"config-linux-clang++-x86_64-debug\"",
+					"--target=install",
+					"--parallel"
+				]
+			},
+			"windows": {
+				"command": ""
+			},
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		// Install all
+		{
+			"label": "Install all",
+			"dependsOn": [
+				"Install i386",
+				"Install x86_64"
+			],
+			"dependsOrder": "parallel",
 			"problemMatcher": []
 		}
 	]
