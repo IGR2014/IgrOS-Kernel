@@ -32,9 +32,11 @@ namespace igros::klib {
 	public:
 
 		// Default c-tor
-		constexpr kstring_view() noexcept;
+		constexpr kstring_view() noexcept = default;
 		// C-tor
-		constexpr kstring_view(const char* const data, const std::size_t length = 0U) noexcept;
+		constexpr kstring_view(const char* const data, const std::size_t length = 0_usize) noexcept;
+		// C-tor
+		constexpr explicit kstring_view(const char* const data) noexcept;
 
 		// Copy c-tor
 		constexpr kstring_view(const kstring_view &other) noexcept = default;
@@ -48,9 +50,6 @@ namespace igros::klib {
 		[[nodiscard]]
 		constexpr auto	operator=(kstring_view &&other) noexcept -> kstring_view& = default;
 
-		// Equality compare operator
-		[[nodiscard]]
-		constexpr auto	operator==(const kstring_view &other) noexcept -> bool;
 		// Ordering compare operator
 		[[nodiscard]]
 		constexpr auto	operator<=>(const kstring_view &other) noexcept;

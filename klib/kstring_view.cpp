@@ -24,28 +24,24 @@
 namespace igros::klib {
 
 
-	// Default c-tor
-	constexpr kstring_view::kstring_view() noexcept :
-		mData	(nullptr),
-		mLength	(0_usize) {}
-
 	// C-tor
 	constexpr kstring_view::kstring_view(const char* const data, const std::size_t length) noexcept :
 		mData	(data),
-		mLength	(0_usize != length ? length : kstrlen(data)) {}
+		mLength	(length) {}
 
+	// C-tor
+	constexpr kstring_view::kstring_view(const char* const data) noexcept :
+		kstring_view(data, kstrlen(data)) {}
 
-	// Equality compare operator
-	[[nodiscard]]
-	constexpr bool kstring_view::operator==(const kstring_view &other) noexcept {
-		// String equality
-		return (0_usize == kstrcmp(mData, other.mData, std::min(mLength, other.mLength)));
-	}
 
 	// Ordering compare operator
 	[[nodiscard]]
 	constexpr auto kstring_view::operator<=>(const kstring_view &other) noexcept {
-		// TODO
+		// Lexicographical compare
+		return std::lexicographical_compare_three_way(
+			&mData[0_usize],	&mData[mLength - 1_usize],
+			&other.mData[0_usize],	&other.mData[mLength - 1_usize]
+		);
 	}
 
 
