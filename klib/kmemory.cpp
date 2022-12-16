@@ -3,7 +3,7 @@
 //	Kernel mem functions
 //
 //	File:	kmemory.cpp
-//	Date:	08 Dec 2022
+//	Date:	16 Dec 2022
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -11,6 +11,7 @@
 //
 
 
+// IgrOS-Kernel library
 #include <klib/kmemory.hpp>
 
 

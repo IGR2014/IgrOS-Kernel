@@ -3,7 +3,7 @@
 //	Keyboard generic handling
 //
 //	File:	keyboard.cpp
-//	Date:	09 Dec 2022
+//	Date:	16 Dec 2022
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -11,11 +11,12 @@
 //
 
 
-#include <arch/types.hpp>
+// IgrOS-Kernel arch
 #include <arch/io.hpp>
 #include <arch/irq.hpp>
 #include <arch/register.hpp>
-
+#include <arch/types.hpp>
+// IgrOS-Kernel library
 #include <klib/kprint.hpp>
 
 

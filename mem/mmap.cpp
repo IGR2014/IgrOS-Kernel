@@ -3,7 +3,7 @@
 //	Memory map operations definition
 //
 //	File:	mmap.cpp
-//	Date:	09 Dec 2022
+//	Date:	16 Dec 2022
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -11,10 +11,11 @@
 //
 
 
+// C++
 #include <cstdint>
-
-#include <platform.hpp>
-
+// IgrOS-Kernel arch platform
+#include <arch/platform/platform.hpp>
+// IgrOS-Kernel memory
 #include <mem/mmap.hpp>
 
 

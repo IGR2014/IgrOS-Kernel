@@ -3,7 +3,7 @@
 //	Kernel math functions declarations
 //
 //	File:	kmath.hpp
-//	Date:	10 Dec 2022
+//	Date:	16 Dec 2022
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -11,8 +11,9 @@
 //
 
 
+// C++
 #include <utility>
-
+// IgrOS-Kernel library
 #include <klib/kmath.hpp>
 
 

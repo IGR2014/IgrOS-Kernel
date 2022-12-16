@@ -1,22 +1,27 @@
 # Message
-message(STATUS "Building UART Drivers")
+message(
+	STATUS
+	"Building UART"
+)
 
-# Kernel UART drivers C++ files
+# Kernel UART drivers header files
+file(
+	GLOB
+	DRIVERS_UART_HDR
+	*.hpp
+)
+# Kernel UART drivers source files
 file(
 	GLOB
 	DRIVERS_UART_SRC
 	*.cpp
 )
 
-# Includes
-include_directories(
-	include/drivers/uart
-)
-
 # Target sources
 target_sources(
 	${IGROS_KERNEL}
 	PRIVATE
+	${DRIVERS_UART_HDR}
 	${DRIVERS_UART_SRC}
 )
 

@@ -3,7 +3,7 @@
 //	Memory paging for x86
 //
 //	File:	paging.cpp
-//	Date:	12 Dec 2022
+//	Date:	16 Dec 2022
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -11,18 +11,19 @@
 //
 
 
+// C++
 #include <array>
 #include <bit>
-
-#include <platform.hpp>
-
+// IgrOS-Kernel arch platform
+#include <arch/platform/platform.hpp>
+// IgrOS-Kernel arch i386
+#include <arch/i386/cpu.hpp>
 #include <arch/i386/cr.hpp>
-#include <arch/i386/irq.hpp>
 #include <arch/i386/exceptions.hpp>
+#include <arch/i386/irq.hpp>
 #include <arch/i386/paging.hpp>
 #include <arch/i386/register.hpp>
-#include <arch/i386/cpu.hpp>
-
+// IgrOS-Kernel library
 #include <klib/kalign.hpp>
 #include <klib/kmemory.hpp>
 #include <klib/kprint.hpp>

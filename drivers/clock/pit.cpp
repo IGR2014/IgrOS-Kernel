@@ -3,7 +3,7 @@
 //	Programmable interrupt timer
 //
 //	File:	pit.cpp
-//	Date:	12 Dec 2022
+//	Date:	16 Dec 2022
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -11,13 +11,14 @@
 //
 
 
-#include <arch/types.hpp>
+// IgrOS-Kernel arch
 #include <arch/io.hpp>
 #include <arch/irq.hpp>
 #include <arch/register.hpp>
-
+#include <arch/types.hpp>
+// IgrOS-Kernel drivers
 #include <drivers/clock/pit.hpp>
-
+// IgrOS-Kernel library
 #include <klib/kmath.hpp>
 #include <klib/kprint.hpp>
 

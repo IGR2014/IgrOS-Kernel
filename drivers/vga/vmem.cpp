@@ -3,7 +3,7 @@
 //	VGA memory low-level operations
 //
 //	File:	vmem.cpp
-//	Date:	08 Dec 2022
+//	Date:	16 Dec 2022
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -11,10 +11,11 @@
 //
 
 
+// IgrOS-Kernel arch
 #include <arch/io.hpp>
-
+// IgrOS-Kernel drivers
 #include <drivers/vga/vmem.hpp>
-
+// IgrOS-Kernel library
 #include <klib/kmemory.hpp>
 #include <klib/kstring.hpp>
 

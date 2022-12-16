@@ -3,7 +3,7 @@
 //	Interrupt service routines low-level operations
 //
 //	File:	isr.cpp
-//	Date:	09 Dec 2022
+//	Date:	16 Dec 2022
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -11,14 +11,15 @@
 //
 
 
+// C++
 #include <array>
-
-#include <arch/i386/register.hpp>
+// IgrOS-Kernel library
+#include <arch/i386/cpu.hpp>
+#include <arch/i386/io.hpp>
 #include <arch/i386/irq.hpp>
 #include <arch/i386/isr.hpp>
-#include <arch/i386/io.hpp>
-#include <arch/i386/cpu.hpp>
-
+#include <arch/i386/register.hpp>
+// IgrOS-Kernel library
 #include <klib/kprint.hpp>
 
 

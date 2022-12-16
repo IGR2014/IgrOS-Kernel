@@ -11,11 +11,12 @@
 //
 
 
+// IgrOS-Kernel arch x86_64
+#include <arch/x86_64/cpu.hpp>
 #include <arch/x86_64/exceptions.hpp>
 #include <arch/x86_64/irq.hpp>
 #include <arch/x86_64/register.hpp>
-#include <arch/x86_64/cpu.hpp>
-
+// IgrOS-Kernel library
 #include <klib/kprint.hpp>
 
 

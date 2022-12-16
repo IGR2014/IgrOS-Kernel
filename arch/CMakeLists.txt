@@ -17,11 +17,6 @@ file(
 	*.cpp
 )
 
-# Includes
-include_directories(
-	"include/arch"
-)
-
 # Target sources
 target_sources(
 	${IGROS_KERNEL}

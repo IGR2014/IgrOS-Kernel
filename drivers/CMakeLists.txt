@@ -1,7 +1,16 @@
 # Message
-message(STATUS "Building Drivers")
+message(
+	STATUS
+	"Building Drivers"
+)
 
-# Kernel drivers C++ files
+# Kernel drivers header files
+file(
+	GLOB
+	DRIVERS_HDR
+	*.hpp
+)
+# Kernel drivers source files
 file(
 	GLOB
 	DRIVERS_SRC
@@ -25,15 +34,11 @@ add_subdirectory(
 	vga
 )
 
-# Includes
-include_directories(
-	include/drivers
-)
-
 # Target sources
 target_sources(
 	${IGROS_KERNEL}
 	PRIVATE
+	${DRIVERS_HDR}
 	${DRIVERS_SRC}
 )
 

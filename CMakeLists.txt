@@ -64,10 +64,6 @@ set(
 	IGROS_KERNEL
 	"kernel.bin"
 )
-set(
-	IGROS_LINK_SCRIPT
-	"${CMAKE_SOURCE_DIR}/config/link/link-${CMAKE_SYSTEM_PROCESSOR}.ld"
-)
 
 # Project
 project(
@@ -163,7 +159,7 @@ file(
 
 # Includes
 include_directories(
-	include
+	${CMAKE_SOURCE_DIR}
 )
 
 # Kernel executable
@@ -190,9 +186,13 @@ add_compile_definitions(
 add_subdirectory(
 	arch
 )
-# Add multiboot subdirectory
+# Add dev subdirectory
 add_subdirectory(
-	multiboot
+	dev
+)
+# Add drivers subdirectory
+add_subdirectory(
+	drivers
 )
 # Add klib subdirectory
 add_subdirectory(
@@ -202,13 +202,13 @@ add_subdirectory(
 add_subdirectory(
 	mem
 )
+# Add multiboot subdirectory
+add_subdirectory(
+	multiboot
+)
 # Add sys subdirectory
 add_subdirectory(
 	sys
-)
-# Add drivers subdirectory
-add_subdirectory(
-	drivers
 )
 
 # Link command

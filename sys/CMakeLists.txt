@@ -1,22 +1,27 @@
 # Message
-message(STATUS "Building sys files")
+message(
+	STATUS
+	"Building sys files"
+)
 
-# Kernel sys C++ files
+# Kernel sys header files
+file(
+	GLOB
+	SYS_HDR
+	*.hpp
+)
+# Kernel sys source files
 file(
 	GLOB
 	SYS_SRC
 	*.cpp
 )
 
-# Includes
-include_directories(
-	include/sys
-)
-
 # Target sources
 target_sources(
 	${IGROS_KERNEL}
 	PRIVATE
+	${SYS_HDR}
 	${SYS_SRC}
 )
 

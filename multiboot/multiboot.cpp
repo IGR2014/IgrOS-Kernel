@@ -3,7 +3,7 @@
 //	Multiboot 1 functions
 //
 //	File:	multiboot.cpp
-//	Date:	09 Dec 2022
+//	Date:	16 Dec 2022
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -14,13 +14,13 @@
 // C++
 #include <array>
 #include <bit>
-// IgrOS-Kernel boot
-#include <multiboot.hpp>
 // IgrOS-Kernel arch
-#include <arch/types.hpp>
 #include <arch/cpu.hpp>
+#include <arch/types.hpp>
 // IgrOS-Kernel klib
 #include <klib/kprint.hpp>
+// IgrOS-Kernel multiboot
+#include <multiboot/multiboot.hpp>
 
 
 // Multiboot code zone

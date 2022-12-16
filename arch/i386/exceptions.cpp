@@ -3,7 +3,7 @@
 //	Exceptions low-level operations
 //
 //	File:	exceptions.cpp
-//	Date:	05 Dec 2022
+//	Date:	16 Dec 2022
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -11,11 +11,12 @@
 //
 
 
+// IgrOS-Kernel arch i386
+#include <arch/i386/cpu.hpp>
 #include <arch/i386/exceptions.hpp>
 #include <arch/i386/irq.hpp>
 #include <arch/i386/register.hpp>
-#include <arch/i386/cpu.hpp>
-
+// IgrOS-Kernel library
 #include <klib/kprint.hpp>
 
 

@@ -1,5 +1,8 @@
 # Message
-message(STATUS "Building boot files")
+message(
+	STATUS
+	"Building boot files"
+)
 
 # Kernel boot i386 Assembler files
 file(
