@@ -3,7 +3,7 @@
 //	Platform description for x86_64
 //
 //	File:	platform-x86_64.cpp
-//	Date:	12 Dec 2022
+//	Date:	16 Dec 2022
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -11,18 +11,19 @@
 //
 
 
+// C++
 #include <source_location>
-
-#include <platform.hpp>
-
+// IgrOS-Kernel arch
 #include <arch/types.hpp>
-
+// IgrOS-Kernel arch platform
+#include <arch/platform/platform.hpp>
+// IgrOS-Kernel arch x86_64
 #include <arch/x86_64/idt.hpp>
 #include <arch/x86_64/exceptions.hpp>
 #include <arch/x86_64/gdt.hpp>
 #include <arch/x86_64/paging.hpp>
 #include <arch/x86_64/irq.hpp>
-
+// IgrOS-Kernel library
 #include <klib/kprint.hpp>
 
 

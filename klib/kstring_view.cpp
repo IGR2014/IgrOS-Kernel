@@ -3,7 +3,7 @@
 //	Kernel string_view class definition
 //
 //	File:	kstring_view.cpp
-//	Date:	01 Oct 2021
+//	Date:	16 Dec 2022
 //
 //	Copyright (c) 2017 - 2021, Igor Baklykov
 //	All rights reserved.
@@ -13,9 +13,9 @@
 
 // C++
 #include <algorithm>
-// Arch
+// IgrOS-Kernel arch
 #include <arch/cpu.hpp>
-// Klib
+// IgrOS-Kernel library
 #include <klib/kstring.hpp>
 #include <klib/kstring_view.hpp>
 

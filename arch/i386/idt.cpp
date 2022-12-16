@@ -3,7 +3,7 @@
 //	Interrupt descriptor table low-level operations
 //
 //	File:	idt.cpp
-//	Date:	08 Dec 2022
+//	Date:	16 Dec 2022
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -11,6 +11,7 @@
 //
 
 
+// IgrOS-Kernel arch i386
 #include <arch/i386/idt.hpp>
 
 

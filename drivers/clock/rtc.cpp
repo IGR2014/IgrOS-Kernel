@@ -3,7 +3,7 @@
 //	RTC clock driver
 //
 //	File:	rtc.cpp
-//	Date:	09 Dec 2022
+//	Date:	16 Dec 2022
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -11,10 +11,11 @@
 //
 
 
+// IgrOS-Kernel arch
 #include <arch/io.hpp>
-
+// IgrOS-Kernel drivers
 #include <drivers/clock/rtc.hpp>
-
+// IgrOS-Kernel library
 #include <klib/kprint.hpp>
 
 

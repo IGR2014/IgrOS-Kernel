@@ -3,7 +3,7 @@
 //	Interrupts low-level operations
 //
 //	File:	irq.cpp
-//	Date:	12 Dec 2022
+//	Date:	16 Dec 2022
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -11,10 +11,11 @@
 //
 
 
-#include <arch/x86_64/isr.hpp>
-#include <arch/x86_64/irq.hpp>
+// IgrOS-Kernel arch x86_64
 #include <arch/x86_64/io.hpp>
-
+#include <arch/x86_64/irq.hpp>
+#include <arch/x86_64/isr.hpp>
+// IgrOS-Kernel library
 #include <klib/kprint.hpp>
 
 

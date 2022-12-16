@@ -3,7 +3,7 @@
 //	UART driver
 //
 //	File:	serial.cpp
-//	Date:	12 Dec 2022
+//	Date:	16 Dec 2022
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -11,18 +11,19 @@
 //
 
 
+// C++
 #include <array>
 #include <bit>
-
+// IgrOS-Kernel arch
 #include <arch/io.hpp>
 #include <arch/irq.hpp>
-
+// IgrOS-Kernel drivers
+#include <drivers/uart/serial.hpp>
+#include <drivers/vga/vmem.hpp>
+// IgrOS-Kernel library
 #include <klib/kmemory.hpp>
 #include <klib/kprint.hpp>
 #include <klib/kstring.hpp>
-
-#include <drivers/vga/vmem.hpp>
-#include <drivers/uart/serial.hpp>
 
 
 // Arch-dependent code zone

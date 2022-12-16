@@ -1,22 +1,27 @@
 # Message
-message(STATUS "Building klib files")
+message(
+	STATUS
+	"Building klib files"
+)
 
-# Kernel klib C++ files
+# Kernel klib header files
+file(
+	GLOB
+	KLIB_HDR
+	*.hpp
+)
+# Kernel klib source files
 file(
 	GLOB
 	KLIB_SRC
 	*.cpp
 )
 
-# Includes
-include_directories(
-	include/klib
-)
-
 # Target sources
 target_sources(
 	${IGROS_KERNEL}
 	PRIVATE
+	${KLIB_HDR}
 	${KLIB_SRC}
 )
 

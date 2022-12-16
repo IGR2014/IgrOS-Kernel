@@ -11,25 +11,26 @@
 //
 
 
-// IgrOS-Kernel Common
-#include <version.hpp>
-#include <multiboot.hpp>
-#include <platform.hpp>
-#include <flags.hpp>
 // IgrOS-Kernel arch
-#include <arch/types.hpp>
 #include <arch/cpu.hpp>
+#include <arch/types.hpp>
+// IgrOS-Kernel arch platform
+#include <arch/platform/platform.hpp>
 // IgrOS-Kernel drivers
-#include <drivers/vga/vmem.hpp>
-#include <drivers/input/keyboard.hpp>
 #include <drivers/clock/pit.hpp>
 #include <drivers/clock/rtc.hpp>
+#include <drivers/input/keyboard.hpp>
 #include <drivers/uart/serial.hpp>
+#include <drivers/vga/vmem.hpp>
 // IgrOS-Kernel library
-#include <klib/kstring.hpp>
+#include <klib/kflags.hpp>
 #include <klib/kprint.hpp>
+#include <klib/kstring.hpp>
+#include <klib/kversion.hpp>
 // IgrOS-Kernel memory
 #include <mem/mmap.hpp>
+// IgrOS-Kernel multiboot
+#include <multiboot/multiboot.hpp>
 
 
 // OS namesapce
