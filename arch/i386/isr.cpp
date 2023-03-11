@@ -3,7 +3,7 @@
 //	Interrupt service routines low-level operations
 //
 //	File:	isr.cpp
-//	Date:	16 Dec 2022
+//	Date:	11 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -28,11 +28,11 @@ namespace igros::i386 {
 
 
 	// Interrupt handlers
-	static auto isrList {std::array<isri386_t, ISR_SIZE> {}};
+	static auto isrList {std::array<isr_t, ISR_SIZE> {}};
 
 
 	// Install interrupt service routine handler
-	void isrHandlerInstall(const igros_dword_t isrNumber, const isri386_t isrHandler) noexcept {
+	void isrHandlerInstall(const igros_dword_t isrNumber, const isr_t isrHandler) noexcept {
 		// Put interrupt service routine handler in ISRs list
 		isrList[isrNumber] = isrHandler;
 	}

@@ -3,7 +3,7 @@
 //	Global descriptor table low-level operations
 //
 //	File:	boot.cpp
-//	Date:	16 Dec 2022
+//	Date:	11 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -20,7 +20,7 @@ namespace igros::i386 {
 
 
 	// Global descriptors table (GDT)
-	constinit std::array<gdtEntryi386_t, gdt::GDT_SIZE> gdt::table {
+	constinit std::array<gdtEntry_t, gdt::GDT_SIZE> gdt::table {
 		gdt::setEntry(0x00000000, 0x00000000, GDT_ENTRY_EMPTY),			// Empty entry (should be there!)
 		gdt::setEntry(0x00000000, 0xFFFFFFFF, GDT_ENTRY_CODE_RING0),		// Kernel code
 		gdt::setEntry(0x00000000, 0xFFFFFFFF, GDT_ENTRY_DATA_RING0),		// Kernel data
@@ -29,7 +29,7 @@ namespace igros::i386 {
 	};
 
 	// Pointer to GDT
-	constinit gdtPointeri386_t gdt::pointer {
+	constinit gdtPointer_t gdt::pointer {
 		gdt::calcSize(),
 		gdt::table.cbegin()
 	};

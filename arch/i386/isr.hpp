@@ -3,7 +3,7 @@
 //	Interrupts low-level operations
 //
 //	File:	isr.hpp
-//	Date:	16 Dec 2022
+//	Date:	11 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -32,10 +32,10 @@ namespace igros::i386 {
 	constexpr auto ISR_SIZE		{256_usize};
 
 	// Interrupt service routine handler type
-	using isri386_t			= std::add_pointer_t<void(const register_t*)>;
+	using isr_t			= std::add_pointer_t<void(const register_t*)>;
 
 	// Install interrupt service routine handler
-	void isrHandlerInstall(const igros_dword_t isrNumber, const isri386_t isrHandler) noexcept;
+	void isrHandlerInstall(const igros_dword_t isrNumber, const isr_t isrHandler) noexcept;
 	// Uninstall interrupt service routine handler
 	void isrHandlerUninstall(const igros_dword_t isrNumber) noexcept;
 
