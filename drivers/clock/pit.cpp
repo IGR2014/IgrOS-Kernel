@@ -114,7 +114,7 @@ namespace igros::arch {
 		pitSetupFrequency(PIT_DEFAULT_FREQUENCY);
 
 		// Install PIT interrupt handler
-		irq::get().install(irq::irq_t::PIT, pitInterruptHandler);
+		irq::get().install<irq::irq_t::PIT, pitInterruptHandler>();
 		// Mask PIT interrupts
 		irq::get().mask(irq::irq_t::PIT);
 

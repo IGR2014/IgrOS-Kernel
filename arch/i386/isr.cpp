@@ -3,7 +3,7 @@
 //	Interrupt service routines low-level operations
 //
 //	File:	isr.cpp
-//	Date:	11 Mar 2023
+//	Date:	12 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -11,8 +11,6 @@
 //
 
 
-// C++
-#include <array>
 // IgrOS-Kernel library
 #include <arch/i386/cpu.hpp>
 #include <arch/i386/io.hpp>
@@ -21,30 +19,6 @@
 #include <arch/i386/register.hpp>
 // IgrOS-Kernel library
 #include <klib/kprint.hpp>
-
-
-// i386 namespace
-namespace igros::i386 {
-
-
-	// Interrupt handlers
-	static auto isrList {std::array<isr_t, ISR_SIZE> {}};
-
-
-	// Install interrupt service routine handler
-	void isrHandlerInstall(const igros_dword_t isrNumber, const isr_t isrHandler) noexcept {
-		// Put interrupt service routine handler in ISRs list
-		isrList[isrNumber] = isrHandler;
-	}
-
-	// Uninstall interrupt service routine handler
-	void isrHandlerUninstall(const igros_dword_t isrNumber) noexcept {
-		// Remove interrupt service routine handler from ISRs list
-		isrList[isrNumber] = nullptr;
-	}
-
-
-}	// namespace igros::i386
 
 
 #ifdef	__cplusplus

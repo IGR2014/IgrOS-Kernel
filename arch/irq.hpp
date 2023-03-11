@@ -3,7 +3,7 @@
 //	Architecture interrupts type deduction
 //
 //	File:	types.hpp
-//	Date:	16 Dec 2022
+//	Date:	12 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -59,9 +59,9 @@ namespace igros::arch {
 		void	disable() const noexcept;
 
 		// Mask interrupt
-		void	mask(const irq_t number) const noexcept;
+		void	mask(const T2 number) const noexcept;
 		// Unmask interrupt
-		void	unmask(const irq_t number) const noexcept;
+		void	unmask(const T2 number) const noexcept;
 
 		// Set interrupts mask
 		void	setMask(const igros_word_t mask = 0xFFFF_u16) const noexcept;
@@ -70,12 +70,14 @@ namespace igros::arch {
 		auto	getMask() const noexcept -> igros_word_t;
 
 		// Install IRQ handler
-		void	install(const irq_t number, const isr_t handler) const noexcept;
+		template<T2 N, std::add_pointer_t<void (const register_t*)> HANDLE>
+		void	install() const noexcept;
 		// Uninstall IRQ handler
-		void	uninstall(const irq_t number) const noexcept;
+		template<T2 N>
+		void	uninstall() const noexcept;
 
 		// IRQ done (EOI)
-		void	eoi(const irq_t number) const noexcept;
+		void	eoi(const T2 number) const noexcept;
 
 
 	};
@@ -96,13 +98,13 @@ namespace igros::arch {
 
 	// Mask interrupt
 	template<typename T, typename T2>
-	inline void interrupts_t<T, T2>::mask(const irq_t number) const noexcept {
+	inline void interrupts_t<T, T2>::mask(const T2 number) const noexcept {
 		T::mask(number);
 	}
 
 	// Unmask interrupt
 	template<typename T, typename T2>
-	inline void interrupts_t<T, T2>::unmask(const irq_t number) const noexcept {
+	inline void interrupts_t<T, T2>::unmask(const T2 number) const noexcept {
 		T::unmask(number);
 	}
 
@@ -123,20 +125,22 @@ namespace igros::arch {
 
 	// Install IRQ handler
 	template<typename T, typename T2>
-	inline void interrupts_t<T, T2>::install(const irq_t number, const isr_t handler) const noexcept {
-		T::install(number, handler);
+	template<T2 N, std::add_pointer_t<void (const register_t*)> HANDLE>
+	inline void interrupts_t<T, T2>::install() const noexcept {
+		T::template install<N, HANDLE>();
 	}
 
 	// Uninstall IRQ handler
 	template<typename T, typename T2>
-	inline void interrupts_t<T, T2>::uninstall(const irq_t number) const noexcept {
-		T::uninstall(number);
+	template<T2 N>
+	inline void interrupts_t<T, T2>::uninstall() const noexcept {
+		T::template uninstall<N>();
 	}
 
 
 	// IRQ done (EOI)
 	template<typename T, typename T2>
-	inline void interrupts_t<T, T2>::eoi(const irq_t number) const noexcept {
+	inline void interrupts_t<T, T2>::eoi(const T2 number) const noexcept {
 		T::eoi(number);
 	}
 
