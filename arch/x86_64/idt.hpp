@@ -3,7 +3,7 @@
 //	Interrupt descriptor table low-level operations
 //
 //	File:	idt.hpp
-//	Date:	16 Dec 2022
+//	Date:	11 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -33,20 +33,20 @@ namespace igros::x86_64 {
 #pragma pack(push, 1)
 
 	// IDT entry
-	struct idtEntryx86_64_t {
-		igros_word_t			offsetLow;		// Offset lower part (0..15)
-		igros_word_t			selector;		// Selectod from GDT/LDT
-		igros_byte_t			ist;			// Interrupt service table
-		igros_byte_t			type;			// Type attributes
-		igros_word_t			offsetMiddle;		// Offset middle part (16..31)
-		igros_dword_t			offsetHigh;		// Offset higher part (32..63)
-		igros_dword_t			reserved2;		// Must be zero
+	struct idtEntry_t {
+		igros_word_t		offsetLow;		// Offset lower part (0..15)
+		igros_word_t		selector;		// Selectod from GDT/LDT
+		igros_byte_t		ist;			// Interrupt service table
+		igros_byte_t		type;			// Type attributes
+		igros_word_t		offsetMiddle;		// Offset middle part (16..31)
+		igros_dword_t		offsetHigh;		// Offset higher part (32..63)
+		igros_dword_t		reserved2;		// Must be zero
 	};
 
 	// IDT pointer
-	struct idtPointerx86_64_t {
-		igros_word_t			size;			// IDT size
-		const idtEntryx86_64_t*		pointer;		// IDT pointer
+	struct idtPointer_t {
+		igros_word_t		size;			// IDT size
+		const idtEntry_t*	pointer;		// IDT pointer
 	};
 
 #pragma pack(pop)
@@ -63,9 +63,9 @@ extern "C" {
 
 
 	// Load IDT
-	void	idtLoad(const igros::x86_64::idtPointerx86_64_t* const idtPtr) noexcept;
+	void	idtLoad(const igros::x86_64::idtPointer_t* const idtPtr) noexcept;
 	// Store IDT
-	auto	idtStore() noexcept -> const igros::x86_64::idtPointerx86_64_t*;
+	auto	idtStore() noexcept -> const igros::x86_64::idtPointer_t*;
 
 
 #ifdef	__cplusplus
@@ -83,15 +83,15 @@ namespace igros::x86_64 {
 	class idt final {
 
 		// IDT ISR pointer
-		using isrPointerx86_64_t			= std::add_pointer_t<void()>;
+		using isrPointer_t			= std::add_pointer_t<void()>;
 
 		// Number of IDT entries
 		constexpr static auto IDT_SIZE			{256_usize};
 
 		// Exceptions and IRQ descriptors table (IDT)
-		static std::array<idtEntryx86_64_t, IDT_SIZE>	table;
+		static std::array<idtEntry_t, IDT_SIZE>		table;
 		// Pointer to IDT
-		static constinit idtPointerx86_64_t		pointer;
+		static constinit idtPointer_t			pointer;
 
 
 		// Copy c-tor
@@ -111,7 +111,7 @@ namespace igros::x86_64 {
 		idt() noexcept = default;
 
 		// Set IDT entry
-		constexpr static auto	setEntry(const isrPointerx86_64_t offset, const igros_word_t selector, const igros_byte_t type) noexcept -> idtEntryx86_64_t;
+		constexpr static auto	setEntry(const isrPointer_t offset, const igros_word_t selector, const igros_byte_t type) noexcept -> idtEntry_t;
 		// Calc IDT size
 		[[nodiscard]]
 		constexpr static auto	calcSize() noexcept -> igros_dword_t;
@@ -125,8 +125,8 @@ namespace igros::x86_64 {
 
 	// Set IDT entry
 	[[nodiscard]]
-	constexpr auto idt::setEntry(const isrPointerx86_64_t offset, const igros_word_t selector, const igros_byte_t type) noexcept -> idtEntryx86_64_t {
-		return idtEntryx86_64_t {
+	constexpr auto idt::setEntry(const isrPointer_t offset, const igros_word_t selector, const igros_byte_t type) noexcept -> idtEntry_t {
+		return idtEntry_t {
 			.offsetLow	= static_cast<igros_word_t>(std::bit_cast<igros_usize_t>(offset) & 0xFFFF_u64),
 			.selector	= selector,
 			.ist		= 0_u8,
@@ -140,7 +140,7 @@ namespace igros::x86_64 {
 	// Calculate IDT size
 	[[nodiscard]]
 	constexpr auto idt::calcSize() noexcept -> igros_dword_t {
-		return static_cast<igros_dword_t>(IDT_SIZE * sizeof(idtEntryx86_64_t)) - 1_u16;
+		return static_cast<igros_dword_t>(IDT_SIZE * sizeof(idtEntry_t)) - 1_u16;
 	}
 
 

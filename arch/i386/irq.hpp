@@ -3,7 +3,7 @@
 //	Interrupts low-level operations
 //
 //	File:	irq.hpp
-//	Date:	16 Dec 2022
+//	Date:	11 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -130,7 +130,7 @@ namespace igros::i386 {
 		static auto	getMask() noexcept -> igros_word_t;
 
 		// Install IRQ handler
-		static void	install(const irq_t number, const isri386_t handler) noexcept;
+		static void	install(const irq_t number, const isr_t handler) noexcept;
 		// Uninstall IRQ handler
 		static void	uninstall(const irq_t number) noexcept;
 
@@ -142,7 +142,7 @@ namespace igros::i386 {
 
 
 	// Install handler
-	inline void irq::install(const irq_t number, const isri386_t handler) noexcept {
+	inline void irq::install(const irq_t number, const isr_t handler) noexcept {
 		// Install ISR
 		isrHandlerInstall(static_cast<igros_dword_t>(number) + IRQ_OFFSET, handler);
 	}

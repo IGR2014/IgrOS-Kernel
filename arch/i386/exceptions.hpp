@@ -3,7 +3,7 @@
 //	Exceptions low-level operations
 //
 //	File:	exceptions.hpp
-//	Date:	16 Dec 2022
+//	Date:	11 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -193,7 +193,7 @@ namespace igros::i386 {
 		static void	init() noexcept;
 
 		// Install exceptions handler
-		static void	install(const NUMBER irqNumber, const isri386_t irqHandler) noexcept;
+		static void	install(const NUMBER irqNumber, const isr_t irqHandler) noexcept;
 		// Uninstall exceptions handler
 		static void	uninstall(const NUMBER irqNumber) noexcept;
 
@@ -205,7 +205,7 @@ namespace igros::i386 {
 
 
 	// Install handler
-	inline void except::install(const NUMBER exNumber, const isri386_t handler) noexcept {
+	inline void except::install(const NUMBER exNumber, const isr_t handler) noexcept {
 		// Install ISR
 		isrHandlerInstall(static_cast<igros_dword_t>(exNumber), handler);
 	}
