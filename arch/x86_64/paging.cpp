@@ -3,7 +3,7 @@
 //	Memory paging for x86_64
 //
 //	File:	paging.cpp
-//	Date:	16 Dec 2022
+//	Date:	11 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -64,7 +64,7 @@ namespace igros::x86_64 {
 	void paging::init() noexcept {
 
 		// Install exception handler for page fault
-		except::install(except::NUMBER::PAGE_FAULT, paging::exHandler);
+		except::install<except::NUMBER::PAGE_FAULT, paging::exHandler>();
 
 		// Get kernel end address
 		const auto kernelEnd	{const_cast<igros_byte_t*>(platform::KERNEL_END())};
