@@ -193,27 +193,31 @@ namespace igros::i386 {
 		static void	init() noexcept;
 
 		// Install exceptions handler
-		static void	install(const NUMBER irqNumber, const isr_t irqHandler) noexcept;
+		template<NUMBER N, isr_t HANDLE>
+		static void	install() noexcept;
 		// Uninstall exceptions handler
-		static void	uninstall(const NUMBER irqNumber) noexcept;
+		template<NUMBER N>
+		static void	uninstall() noexcept;
 
 		// Default exception handler
-		static void	exDefaultHandler(const register_t* regs) noexcept;
+		static void	defaultHandler(const register_t* regs) noexcept;
 
 
 	};
 
 
 	// Install handler
-	inline void except::install(const NUMBER exNumber, const isr_t handler) noexcept {
+	template<except::NUMBER N, isr_t HANDLE>
+	inline void except::install() noexcept {
 		// Install ISR
-		isrHandlerInstall(static_cast<igros_dword_t>(exNumber), handler);
+		isrHandlerInstall(static_cast<igros_dword_t>(N), HANDLE);
 	}
 
 	// Uninstall handler
-	inline void except::uninstall(const NUMBER exNumber) noexcept {
+	template<except::NUMBER N>
+	inline void except::uninstall() noexcept {
 		// Uninstall ISR
-		isrHandlerUninstall(static_cast<igros_dword_t>(exNumber));
+		isrHandlerUninstall(static_cast<igros_dword_t>(N));
 	}
 
 

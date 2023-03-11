@@ -3,7 +3,7 @@
 //	Exceptions low-level operations
 //
 //	File:	exceptions.cpp
-//	Date:	16 Dec 2022
+//	Date:	11 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -29,30 +29,30 @@ namespace igros::i386 {
 		// Using enum
 		using enum except::NUMBER;
 		// Set default exception handlers
-		except::install(DIVIDE_BY_ZERO,			except::exDefaultHandler);
-		except::install(DEBUG,				except::exDefaultHandler);
-		except::install(NON_MASKABLE_IRQ,		except::exDefaultHandler);
-		except::install(BREAKPOINT,			except::exDefaultHandler);
-		except::install(INTO_DETECTED_OVERFLOW,		except::exDefaultHandler);
-		except::install(BOUND_RANGE_EXCEEDED,		except::exDefaultHandler);
-		except::install(INVALID_OPCODE,			except::exDefaultHandler);
-		except::install(NO_COPROCESSOR,			except::exDefaultHandler);
-		except::install(DOUBLE_FAULT,			except::exDefaultHandler);
-		except::install(COPROCESSOR_SEGMENT_OVERRUN,	except::exDefaultHandler);
-		except::install(INVALID_TSS,			except::exDefaultHandler);
-		except::install(SEGMENT_NOT_PRESENT,		except::exDefaultHandler);
-		except::install(STACK_FAULT,			except::exDefaultHandler);
-		except::install(GENERAL_PROTECTION_FAULT,	except::exDefaultHandler);
-		except::install(PAGE_FAULT,			except::exDefaultHandler);
-		except::install(UNKNOWN_IRQ,			except::exDefaultHandler);
-		except::install(COPROCESSOR_FAULT,		except::exDefaultHandler);
-		except::install(ALIGNMENT_CHECK,		except::exDefaultHandler);
-		except::install(MACHINE_CHECK,			except::exDefaultHandler);
+		except::install<DIVIDE_BY_ZERO,			except::defaultHandler>();
+		except::install<DEBUG,				except::defaultHandler>();
+		except::install<NON_MASKABLE_IRQ,		except::defaultHandler>();
+		except::install<BREAKPOINT,			except::defaultHandler>();
+		except::install<INTO_DETECTED_OVERFLOW,		except::defaultHandler>();
+		except::install<BOUND_RANGE_EXCEEDED,		except::defaultHandler>();
+		except::install<INVALID_OPCODE,			except::defaultHandler>();
+		except::install<NO_COPROCESSOR,			except::defaultHandler>();
+		except::install<DOUBLE_FAULT,			except::defaultHandler>();
+		except::install<COPROCESSOR_SEGMENT_OVERRUN,	except::defaultHandler>();
+		except::install<INVALID_TSS,			except::defaultHandler>();
+		except::install<SEGMENT_NOT_PRESENT,		except::defaultHandler>();
+		except::install<STACK_FAULT,			except::defaultHandler>();
+		except::install<GENERAL_PROTECTION_FAULT,	except::defaultHandler>();
+		except::install<PAGE_FAULT,			except::defaultHandler>();
+		except::install<UNKNOWN_IRQ,			except::defaultHandler>();
+		except::install<COPROCESSOR_FAULT,		except::defaultHandler>();
+		except::install<ALIGNMENT_CHECK,		except::defaultHandler>();
+		except::install<MACHINE_CHECK,			except::defaultHandler>();
 	}
 
 
 	// Default exception handler
-	void except::exDefaultHandler(const register_t* regs) noexcept {
+	void except::defaultHandler(const register_t* regs) noexcept {
 		// Disable interrupts
 		irq::disable();
 		// Print exception name
