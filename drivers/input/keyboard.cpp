@@ -3,7 +3,7 @@
 //	Keyboard generic handling
 //
 //	File:	keyboard.cpp
-//	Date:	16 Dec 2022
+//	Date:	12 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -53,7 +53,7 @@ namespace igros::arch {
 	void keyboardSetup() {
 
 		// Install keyboard interrupt handler
-		irq::get().install(irq::irq_t::KEYBOARD, keyboardInterruptHandler);
+		irq::get().install<irq::irq_t::KEYBOARD, keyboardInterruptHandler>();
 		// Mask Keyboard interrupts
 		irq::get().mask(irq::irq_t::KEYBOARD);
 

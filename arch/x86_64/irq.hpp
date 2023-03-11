@@ -3,7 +3,7 @@
 //	Interrupts low-level operations
 //
 //	File:	irq.hpp
-//	Date:	11 Mar 2023
+//	Date:	12 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -130,9 +130,11 @@ namespace igros::x86_64 {
 		static auto	getMask() noexcept -> igros_word_t;
 
 		// Install IRQ handler
-		static void	install(const irq_t number, const isr_t handler) noexcept;
+		template<irq_t N, isr_t HANDLE>
+		static void	install() noexcept;
 		// Uninstall IRQ handler
-		static void	uninstall(const irq_t number) noexcept;
+		template<irq_t N>
+		static void	uninstall() noexcept;
 
 		// Send EOI (IRQ done)
 		static void	eoi(const irq_t number) noexcept;
@@ -142,15 +144,17 @@ namespace igros::x86_64 {
 
 
 	// Install handler
-	inline void irq::install(const irq_t number, const isr_t handler) noexcept {
+	template<irq_t N, isr_t HANDLE>
+	inline void irq::install() noexcept {
 		// Install ISR
-		isrHandlerInstall(static_cast<igros_dword_t>(number) + IRQ_OFFSET, handler);
+		isrHandlerInstall<static_cast<igros_dword_t>(N) + IRQ_OFFSET, HANDLE>();
 	}
 
 	// Uninstall handler
-	inline void irq::uninstall(const irq_t number) noexcept {
+	template<irq_t N>
+	inline void irq::uninstall() noexcept {
 		// Uninstall ISR
-		isrHandlerUninstall(static_cast<igros_dword_t>(number) + IRQ_OFFSET);
+		isrHandlerUninstall<static_cast<igros_dword_t>(N) + IRQ_OFFSET>();
 	}
 
 

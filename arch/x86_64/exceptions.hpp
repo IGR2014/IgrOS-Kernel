@@ -3,7 +3,7 @@
 //	Exceptions low-level operations
 //
 //	File:	exceptions.hpp
-//	Date:	11 Mar 2023
+//	Date:	12 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -210,14 +210,14 @@ namespace igros::x86_64 {
 	template<except::NUMBER N, isr_t HANDLE>
 	inline void except::install() noexcept {
 		// Install ISR
-		isrHandlerInstall(static_cast<igros_dword_t>(N), HANDLE);
+		isrHandlerInstall<static_cast<igros_dword_t>(N), HANDLE>();
 	}
 
 	// Uninstall handler
 	template<except::NUMBER N>
 	inline void except::uninstall() noexcept {
 		// Uninstall ISR
-		isrHandlerUninstall(static_cast<igros_dword_t>(N));
+		isrHandlerUninstall<static_cast<igros_dword_t>(N)>();
 	}
 
 

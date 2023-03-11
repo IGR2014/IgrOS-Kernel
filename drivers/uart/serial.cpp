@@ -3,7 +3,7 @@
 //	UART driver
 //
 //	File:	serial.cpp
-//	Date:	16 Dec 2022
+//	Date:	12 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -240,12 +240,12 @@ namespace igros::arch {
 		}
 
 		// Install UART1 interrupt handler
-		irq::get().install(irq::irq_t::UART1, serialInterruptHandler);
+		irq::get().install<irq::irq_t::UART1, serialInterruptHandler>();
 		// Mask UART1 interrupts
 		irq::get().mask(irq::irq_t::UART1);
 
 		// Install UART2 interrupt handler
-		irq::get().install(irq::irq_t::UART2, serialInterruptHandler);
+		irq::get().install<irq::irq_t::UART2, serialInterruptHandler>();
 		// Mask UART2 interrupts
 		irq::get().mask(irq::irq_t::UART2);
 
