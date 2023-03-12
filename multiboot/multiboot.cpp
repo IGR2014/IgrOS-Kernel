@@ -3,7 +3,7 @@
 //	Multiboot 1 functions
 //
 //	File:	multiboot.cpp
-//	Date:	16 Dec 2022
+//	Date:	12 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -15,8 +15,8 @@
 #include <array>
 #include <bit>
 // IgrOS-Kernel arch
-#include <arch/cpu.hpp>
 #include <arch/types.hpp>
+#include <arch/cpu.hpp>
 // IgrOS-Kernel klib
 #include <klib/kprint.hpp>
 // IgrOS-Kernel multiboot
@@ -85,30 +85,40 @@ MULTIBOOT header:
 
 	// Print multiboot memory info
 	void info_t::printMemInfo() const noexcept {
-		// Print header
-		klib::kprintf("MEMORY INFO:\r\n");
 		// Check if memory info exists
 		if (hasInfoMemory()) [[likely]] {
 			klib::kprintf(
-				"\tLow:\t%d Kb.\r\n"
-				"\tHigh:\t%d Kb.\r\n",
+R"multiboot(
+MEMORY INFO:
+	Low:	%d Kb.
+	High:	%d Kb.
+
+)multiboot",
 				memLow,
 				memHigh
 			);
 		} else {
-			klib::kprintf("\tNo memory info provided...\r\n");
+			klib::kprintf(
+R"multiboot(
+MEMORY INFO:
+	No memory info provided...
+
+)multiboot"
+			);
 		}
 	}
 
 	// Dump multiboot memory map
 	void info_t::printMemMap() const noexcept {
-		// Print header
-		klib::kprintf("MEMORY MAP:\r\n");
 		// Check if memory map exists
 		if (hasInfoMemoryMap()) [[likely]] {
 			klib::kprintf(
-				"\tSize:\t%d bytes\r\n"
-				"\tAddr:\t0x%p\r\n",
+R"multiboot(
+MEMORY MAP:
+	Size:	%d bytes
+	Addr:	0x%p
+
+)multiboot",
 				mmapLength,
 				mmapAddr
 			);
@@ -117,7 +127,9 @@ MULTIBOOT header:
 			// Loop through memory map
 			while (std::bit_cast<igros_usize_t>(memoryMap) < (mmapAddr + mmapLength)) {
 				klib::kprintf(
-					"\t[%d] 0x%p - 0x%p",
+R"multiboot(
+	[%d] 0x%p - 0x%p"
+)multiboot",
 					memoryMap->type,
 					std::bit_cast<igros_pointer_t>(static_cast<igros_usize_t>(memoryMap->address)),
 					std::bit_cast<igros_pointer_t>(static_cast<igros_usize_t>(memoryMap->address + memoryMap->length))
@@ -125,17 +137,21 @@ MULTIBOOT header:
 				// Move to next memory map entry
 				memoryMap = std::bit_cast<multiboot::memoryMapEntry*>(std::bit_cast<igros_usize_t>(memoryMap) + memoryMap->size + sizeof(memoryMap->size));
 			}
-			klib::kprintf("\r\n");
+			klib::kprintf("\n");
 		} else {
-			klib::kprintf("\tNo memory map provided...\r\n");
+			klib::kprintf(
+R"multiboot(
+MEMORY MAP:
+	No memory map provided...
+
+)multiboot"
+			);
 		}
 	}
 
 
 	// Print multiboot VBE info
 	void info_t::printVBEInfo() const noexcept {
-		// Print header
-		klib::kprintf("VBE:\n");
 		// Test VBE
 		if (hasInfoVBE()) [[likely]] {
 			// Get VBE config info
@@ -152,24 +168,28 @@ MULTIBOOT header:
 			const auto revision	{std::bit_cast<const char* const>(static_cast<igros_usize_t>(((config->productRev & 0xFFFF0000) >> 12) + (config->productRev & 0xFFFF)))};
 			// Dump VBE
 			klib::kprintf(
-				"Signature:\t%c%c%c%c\r\n"
-				"Version:\t%d.%d\r\n"
-				"OEM:\t\t\"%s\"\r\n"
-				"Vendor name:\t\"%s\"\r\n"
-				"Card name:\t\"%s\"\r\n"
-				"Card rev.:\t\"%s\"\r\n"
-				"Current mode:\t#%d (%dx%d, %dbpp, 0x%p)\r\n"
-				"Video memory:\t%d Kb.\r\n",
+R"multiboot(
+VBE:
+	Signature:	%c%c%c%c
+	Version:	%d.%d
+	OEM:		"%s"
+	Vendor name:	"%s"
+	Card name:	"%s"
+	Card rev.:	"%s"
+	Current mode:	#%d (%dx%d, %dbpp, 0x%p)
+	Video memory:	%d Kb.
+
+)multiboot",
 				config->signature[0],
 				config->signature[1],
 				config->signature[2],
 				config->signature[3],
 				(config->version >> 8) & 0x00FF_u16,
 				(config->version & 0x00FF_u16),
-				(nullptr != oem)	? oem		: "Unknown",
-				(nullptr != vendor)	? vendor	: "Unknown",
-				(nullptr != product)	? product	: "Unknown",
-				(nullptr != revision)	? revision	: "Unknown",
+				(nullptr != oem)	? oem		: "<none>",
+				(nullptr != vendor)	? vendor	: "<none>",
+				(nullptr != product)	? product	: "<none>",
+				(nullptr != revision)	? revision	: "<none>",
 				vbeModeCurrent,
 				mode->width,
 				mode->height,
@@ -178,7 +198,13 @@ MULTIBOOT header:
 				static_cast<igros_dword_t>(config->memory) * 64_u32
 			);
 		} else {
-			klib::kprintf("\tNo VBE info provided...\r\n");
+			klib::kprintf(
+R"multiboot(
+VBE:
+	No VBE info provided...
+
+)multiboot"
+			);
 		}
 	}
 
@@ -207,9 +233,13 @@ MULTIBOOT header:
 			}
 			// Dump FB
 			klib::kprintf(
-				"Current mode:\t(%dx%d, %dbpp, %d, %s)\r\n"
-				"Address:\t0x%p\r\n"
-				"Size:\t\t%z\r\n",
+R"multiboot(
+FrameBuffer:
+	Current mode:	(%dx%d, %dbpp, %d, %s)
+	Address:	0x%p
+	Size:		%z
+
+)multiboot",
 				fbWidth,
 				fbHeight,
 				fbBpp,
@@ -219,7 +249,13 @@ MULTIBOOT header:
 				fbWidth * (fbBpp >> 3) * fbHeight * fbPitch
 			);
 		} else {
-			klib::kprintf("\tNo framebuffer info provided...\r\n");
+			klib::kprintf(
+R"multiboot(
+FrameBuffer:
+	No FrameBuffer info provided...
+
+)multiboot"
+			);
 		}
 	}
 
