@@ -62,12 +62,6 @@ jobs:
         sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-15 150
         sudo update-alternatives --install /usr/bin/ld.lld ld.lld /usr/bin/ld.lld-15 150
 
-    # Init CodeQL
-    - name: 'CodeQL Init'
-      uses: github/codeql-action/init@v2
-      with:
-        languages: cpp
-
     # Init SonarCloud Wrapper
     - name: 'SonarCloud Init'
       shell: bash
@@ -112,10 +106,6 @@ jobs:
       shell: bash
       run: |
         cmake --build --preset="build-linux-${{ matrix.compiler }}-${{ matrix.arch }}-debug" --target install
-
-    # CodeQL analysis
-    - name: 'CodeQL Analysis'
-      uses: github/codeql-action/analyze@v2
 
     # SonarCloud Wrapper analysis
     - name: 'SonarCloud Analysis'
