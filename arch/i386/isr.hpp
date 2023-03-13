@@ -40,14 +40,14 @@ namespace igros::i386 {
 
 	// Install interrupt service routine handler
 	template<igros_dword_t N, isr_t HANDLE>
-	void isrHandlerInstall() noexcept {
+	constexpr void isrHandlerInstall() noexcept {
 		// Put interrupt service routine handler in ISRs list
 		isrList[N] = HANDLE;
 	}
 
 	// Uninstall interrupt service routine handler
 	template<igros_dword_t N>
-	void isrHandlerUninstall() noexcept {
+	constexpr void isrHandlerUninstall() noexcept {
 		// Remove interrupt service routine handler from ISRs list
 		isrList[N] = nullptr;
 	}

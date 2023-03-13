@@ -3,7 +3,7 @@
 //	Multiboot 1 functions
 //
 //	File:	multiboot.cpp
-//	Date:	13 Mar 2023
+//	Date:	14 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -31,7 +31,6 @@ namespace igros::multiboot {
 
 
 	// Test multiboot
-	[[nodiscard]]
 	void info_t::test(const igros_dword_t magic) const noexcept {
 		// Check multiboot magic
 		if (!multiboot::check(magic)) [[unlikely]] {

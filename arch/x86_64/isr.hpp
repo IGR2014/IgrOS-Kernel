@@ -3,7 +3,7 @@
 //	Interrupts low-level operations
 //
 //	File:	isr.hpp
-//	Date:	13 Mar 2023
+//	Date:	14 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -40,14 +40,14 @@ namespace igros::x86_64 {
 
 	// Install interrupt service routine handler
 	template<igros_dword_t N, isr_t HANDLE>
-	inline void isrHandlerInstall() noexcept{
+	constexpr void isrHandlerInstall() noexcept{
 		// Put interrupt service routine handler in ISRs list
 		isrList[N] = HANDLE;
 	}
 
 	// Uninstall interrupt service routine handler
 	template<igros_dword_t N>
-	inline void isrHandlerUninstall() noexcept {
+	constexpr void isrHandlerUninstall() noexcept {
 		// Remove interrupt service routine handler from ISRs list
 		isrList[N] = nullptr;
 	}
