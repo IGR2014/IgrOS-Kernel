@@ -35,6 +35,7 @@ extern "C" {
 
 
 	// Kernel main function
+	[[noreturn]]
 	void kmain(const igros::multiboot::info_t* const multiboot, const igros::igros_dword_t magic) noexcept {
 
 		// Initialize platform

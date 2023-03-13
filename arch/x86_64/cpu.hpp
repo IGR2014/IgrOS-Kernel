@@ -3,7 +3,7 @@
 //	CPU operations
 //
 //	File:	cpu.hpp
-//	Date:	16 Dec 2022
+//	Date:	13 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -29,6 +29,7 @@ extern "C" {
 
 
 	// Halt CPU
+	[[noreturn]]
 	void	cpuHalt() noexcept;
 
 
@@ -63,6 +64,7 @@ namespace igros::x86_64 {
 		cpu() noexcept = default;
 
 		// Halt CPU
+		[[noreturn]]
 		static void	halt() noexcept;
 
 		// Dump CPU registers
@@ -73,6 +75,7 @@ namespace igros::x86_64 {
 
 
 	// Halt CPU
+	[[noreturn]]
 	inline void cpu::halt() noexcept {
 		::cpuHalt();
 	}
