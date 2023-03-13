@@ -3,7 +3,7 @@
 //	CPU operations
 //
 //	File:	cpu.hpp
-//	Date:	16 Dec 2022
+//	Date:	13 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -47,6 +47,7 @@ namespace igros::arch {
 		cpu_t() noexcept = default;
 
 		// Halt CPU
+		[[noreturn]]
 		void	halt() const noexcept;
 
 		// Dump CPU registers
@@ -58,6 +59,7 @@ namespace igros::arch {
 
 	// Halt CPU
 	template<typename T>
+	[[noreturn]]
 	inline void cpu_t<T>::halt() const noexcept {
 		T::halt();
 	}
