@@ -3,7 +3,7 @@
 //	Interrupt descriptor table low-level operations
 //
 //	File:	idt.hpp
-//	Date:	11 Mar 2023
+//	Date:	13 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -82,9 +82,6 @@ namespace igros::x86_64 {
 	// IDT structure
 	class idt final {
 
-		// IDT ISR pointer
-		using isrPointer_t			= std::add_pointer_t<void()>;
-
 		// Number of IDT entries
 		constexpr static auto IDT_SIZE			{256_usize};
 
@@ -107,11 +104,16 @@ namespace igros::x86_64 {
 
 	public:
 
+		// IDT offset type
+		using offset_t = std::add_pointer_t<void ()>;
+
 		// Default c-tor
 		idt() noexcept = default;
 
 		// Set IDT entry
-		constexpr static auto	setEntry(const isrPointer_t offset, const igros_word_t selector, const igros_byte_t type) noexcept -> idtEntry_t;
+		template<offset_t HANDLE, igros_word_t SELECTOR, igros_byte_t TYPE>
+		[[nodiscard]]
+		constexpr static auto	setEntry() noexcept -> idtEntry_t;
 		// Calc IDT size
 		[[nodiscard]]
 		constexpr static auto	calcSize() noexcept -> igros_dword_t;
@@ -124,15 +126,16 @@ namespace igros::x86_64 {
 
 
 	// Set IDT entry
+	template<idt::offset_t HANDLE, igros_word_t SELECTOR, igros_byte_t TYPE>
 	[[nodiscard]]
-	constexpr auto idt::setEntry(const isrPointer_t offset, const igros_word_t selector, const igros_byte_t type) noexcept -> idtEntry_t {
+	constexpr auto idt::setEntry() noexcept -> idtEntry_t {
 		return idtEntry_t {
-			.offsetLow	= static_cast<igros_word_t>(std::bit_cast<igros_usize_t>(offset) & 0xFFFF_u64),
-			.selector	= selector,
+			.offsetLow	= static_cast<igros_word_t>(std::bit_cast<igros_usize_t>(HANDLE) & 0xFFFF_u64),
+			.selector	= SELECTOR,
 			.ist		= 0_u8,
-			.type		= type,
-			.offsetMiddle	= static_cast<igros_word_t>((std::bit_cast<igros_usize_t>(offset) & 0xFFFF0000_u64) >> 16),
-			.offsetHigh	= static_cast<igros_dword_t>((std::bit_cast<igros_usize_t>(offset) & 0xFFFFFFFF00000000_u64) >> 32),
+			.type		= TYPE,
+			.offsetMiddle	= static_cast<igros_word_t>((std::bit_cast<igros_usize_t>(HANDLE) & 0xFFFF0000_u64) >> 16),
+			.offsetHigh	= static_cast<igros_dword_t>((std::bit_cast<igros_usize_t>(HANDLE) & 0xFFFFFFFF00000000_u64) >> 32),
 			.reserved2	= 0_u32
 		};
 	}

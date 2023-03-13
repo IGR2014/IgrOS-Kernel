@@ -80,9 +80,6 @@ namespace igros::i386 {
 	// IDT structure
 	class idt final {
 
-		// IDT ISR pointer
-		using isrPointer_t				= std::add_pointer_t<void()>;
-
 		// Number of IDT entries
 		constexpr static auto IDT_SIZE			{56_usize};
 
@@ -105,12 +102,16 @@ namespace igros::i386 {
 
 	public:
 
+		// IDT offset type
+		using offset_t = std::add_pointer_t<void ()>;
+
 		// Default c-tor
 		idt() noexcept = default;
 
 		// Set IDT entry
+		template<offset_t HANDLE, igros_word_t SELECTOR, igros_byte_t TYPE>
 		[[nodiscard]]
-		constexpr static auto	setEntry(const isrPointer_t offset, const igros_word_t selector, const igros_byte_t type) noexcept -> idtEntry_t;
+		constexpr static auto	setEntry() noexcept -> idtEntry_t;
 		// Calc IDT size
 		[[nodiscard]]
 		constexpr static auto	calcSize() noexcept -> igros_word_t;
@@ -123,14 +124,15 @@ namespace igros::i386 {
 
 
 	// Set IDT entry
+	template<idt::offset_t HANDLE, igros_word_t SELECTOR, igros_byte_t TYPE>
 	[[nodiscard]]
-	constexpr auto idt::setEntry(const isrPointer_t offset, const igros_word_t selector, const igros_byte_t type) noexcept -> idtEntry_t {
+	constexpr auto idt::setEntry() noexcept -> idtEntry_t {
 		return idtEntry_t {
-			.offsetLow	= static_cast<igros_word_t>(std::bit_cast<igros_usize_t>(offset) & 0xFFFF_usize),
-			.selector	= selector,
+			.offsetLow	= static_cast<igros_word_t>(std::bit_cast<igros_usize_t>(HANDLE) & 0xFFFF_usize),
+			.selector	= SELECTOR,
 			.reserved	= 0_u8,
-			.type		= type,
-			.offsetHigh	= static_cast<igros_word_t>((std::bit_cast<igros_usize_t>(offset) >> 16) & 0xFFFF_usize)
+			.type		= TYPE,
+			.offsetHigh	= static_cast<igros_word_t>((std::bit_cast<igros_usize_t>(HANDLE) >> 16) & 0xFFFF_usize)
 		};
 	}
 

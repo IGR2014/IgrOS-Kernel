@@ -3,7 +3,7 @@
 //	Interrupts low-level operations
 //
 //	File:	isr.hpp
-//	Date:	12 Mar 2023
+//	Date:	13 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -33,7 +33,7 @@ namespace igros::x86_64 {
 	constexpr auto ISR_SIZE		{256_usize};
 
 	// Interrupt service routine handler type
-	using isr_t			= std::add_pointer_t<void(const register_t*)>;
+	using isr_t			= std::add_pointer_t<void (const register_t*)>;
 
 	// Interrupt handlers
 	static auto isrList		{std::array<isr_t, ISR_SIZE> {}};
