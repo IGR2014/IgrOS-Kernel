@@ -3,7 +3,7 @@
 //	Platform description for x86_64
 //
 //	File:	platform-x86_64.cpp
-//	Date:	13 Mar 2023
+//	Date:	14 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -40,15 +40,6 @@ namespace igros::x86_64 {
 	// Initialize x86_64
 	void x86_64Init() noexcept {
 
-		// Init VGA memory
-		arch::vmemInit();
-
-		// Debug print
-		klib::kprintf(
-			"Initializing x86_64 platform...\n[%s]\n",
-			std::source_location::current().function_name()
-		);
-
 		// Setup Interrupts Descriptor Table
 		x86_64::idt::init();
 		// Init exceptions
@@ -64,6 +55,8 @@ namespace igros::x86_64 {
 		// Enable interrupts
 		x86_64::irq::enable();
 
+		// Setup VGA
+		arch::vmemInit();
 		// Setup keyboard
 		arch::keyboardSetup();
 		// Setup UART (#1, 115200 8N1)
@@ -72,6 +65,12 @@ namespace igros::x86_64 {
 		arch::rtcSetup();
 		// Setup PIT
 		//arch::pitSetup();
+
+		// Debug print
+		klib::kprintf(
+			"Platform x86_64 initialized...\n[%s]\n",
+			std::source_location::current().function_name()
+		);
 
 	}
 
