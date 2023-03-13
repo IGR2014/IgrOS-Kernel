@@ -3,7 +3,7 @@
 //	Global descriptor table low-level operations
 //
 //	File:	gdt.hpp
-//	Date:	11 Mar 2023
+//	Date:	13 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -131,18 +131,18 @@ namespace igros::x86_64 {
 
 
 		// Empty GDT entry (the first one)
-		constexpr static auto	GDT_ENTRY_EMPTY		{flags_t::GDT_SEG_EMPTY};
+		constexpr static auto	GDT_ENTRY_EMPTY			{flags_t::GDT_SEG_EMPTY};
 		// Kernel code page (4 Mb page, ring 0, code)
-		constexpr static auto	GDT_ENTRY_CODE_RING0	{flags_t::GDT_SEG_RING0_CODE};
+		constexpr static auto	GDT_ENTRY_CODE_RING0		{flags_t::GDT_SEG_RING0_CODE};
 		// Kernel data page (4 Mb page, ring 0, data)
-		constexpr static auto	GDT_ENTRY_DATA_RING0	{flags_t::GDT_SEG_RING0_DATA};
+		constexpr static auto	GDT_ENTRY_DATA_RING0		{flags_t::GDT_SEG_RING0_DATA};
 		// User code page (4 Mb page, ring 3, code)
-		constexpr static auto	GDT_ENTRY_CODE_RING3	{flags_t::GDT_SEG_RING3_CODE};
+		constexpr static auto	GDT_ENTRY_CODE_RING3		{flags_t::GDT_SEG_RING3_CODE};
 		// User data page (4 Mb page, ring 3, data)
-		constexpr static auto	GDT_ENTRY_DATA_RING3	{flags_t::GDT_SEG_RING3_DATA};
+		constexpr static auto	GDT_ENTRY_DATA_RING3		{flags_t::GDT_SEG_RING3_DATA};
 
 		// Number of GDT entries
-		constexpr static auto	GDT_SIZE		{5_usize};
+		constexpr static auto	GDT_SIZE			{5_usize};
 
 		// Global descriptors table (GDT)
 		static constinit std::array<gdtEntry_t, GDT_SIZE>	table;
@@ -167,8 +167,9 @@ namespace igros::x86_64 {
 		gdt() noexcept = default;
 
 		// Set GDT entry
+		template<igros_dword_t BASE, igros_dword_t LIMIT, flags_t FLAGS>
 		[[nodiscard]]
-		constexpr static auto	setEntry(const igros_dword_t base, const igros_dword_t &limit, const flags_t flags) noexcept -> gdtEntry_t;
+		constexpr static auto	setEntry() noexcept -> gdtEntry_t;
 		// Calc GDT size
 		[[nodiscard]]
 		constexpr static auto	calcSize() noexcept -> igros_word_t;
@@ -181,15 +182,16 @@ namespace igros::x86_64 {
 
 
 	// Set GDT entry
+	template<igros_dword_t BASE, igros_dword_t LIMIT, gdt::flags_t FLAGS>
 	[[nodiscard]]
-	constexpr auto gdt::setEntry(const igros_dword_t base, const igros_dword_t &limit, const flags_t flags) noexcept -> gdtEntry_t {
+	constexpr auto gdt::setEntry() noexcept -> gdtEntry_t {
 		return gdtEntry_t {
-			.limitLow	= static_cast<igros_word_t>(limit & 0xFFFF_u32),
-			.baseLow	= static_cast<igros_word_t>(base & 0xFFFF_u32),
-			.baseMid	= static_cast<igros_byte_t>((base & 0xFF0000_u32) >> 16),
-			.access		= static_cast<igros_byte_t>(flags & 0x00FF_u16),
-			.limitFlags	= static_cast<igros_byte_t>(((limit & 0xF0000_u32) >> 16) | (static_cast<igros_word_t>(flags & 0x0F00_u16) >> 4)),
-			.baseHigh	= static_cast<igros_byte_t>((base & 0xFF000000_u32) >> 24)
+			.limitLow	= static_cast<igros_word_t>(LIMIT & 0xFFFF_u32),
+			.baseLow	= static_cast<igros_word_t>(BASE & 0xFFFF_u32),
+			.baseMid	= static_cast<igros_byte_t>((BASE & 0xFF0000_u32) >> 16),
+			.access		= static_cast<igros_byte_t>(FLAGS & 0x00FF_u16),
+			.limitFlags	= static_cast<igros_byte_t>(((LIMIT & 0xF0000_u32) >> 16) | (static_cast<igros_word_t>(FLAGS & 0x0F00_u16) >> 4)),
+			.baseHigh	= static_cast<igros_byte_t>((BASE & 0xFF000000_u32) >> 24)
 		};
 	}
 
