@@ -3,7 +3,7 @@
 //	Platform description for x86
 //
 //	File:	platform-i386.cpp
-//	Date:	16 Dec 2022
+//	Date:	13 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -24,6 +24,12 @@
 #include <arch/i386/paging.hpp>
 #include <arch/i386/irq.hpp>
 #include <arch/i386/fpu.hpp>
+// IgrOS-Kernel drivers
+#include <drivers/clock/pit.hpp>
+#include <drivers/clock/rtc.hpp>
+#include <drivers/input/keyboard.hpp>
+#include <drivers/uart/serial.hpp>
+#include <drivers/vga/vmem.hpp>
 // IgrOS-Kernel library
 #include <klib/kprint.hpp>
 
@@ -35,7 +41,10 @@ namespace igros::i386 {
 	// Initialize i386
 	static void i386Init() noexcept {
 
-		// Print
+		// Init VGA memory
+		arch::vmemInit();
+
+		// Debug print
 		klib::kprintf(
 			"Initializing i386 platform...\n[%s]\n",
 			std::source_location::current().function_name()
@@ -58,6 +67,15 @@ namespace igros::i386 {
 
 		// Check FPU
 		i386::fpu::check();
+
+		// Setup keyboard
+		arch::keyboardSetup();
+		// Setup UART (#1, 115200 8N1)
+		arch::serialSetup();
+		// Setup RTC
+		arch::rtcSetup();
+		// Setup PIT
+		//arch::pitSetup();
 
 	}
 

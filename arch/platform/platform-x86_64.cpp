@@ -3,7 +3,7 @@
 //	Platform description for x86_64
 //
 //	File:	platform-x86_64.cpp
-//	Date:	16 Dec 2022
+//	Date:	13 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -23,6 +23,12 @@
 #include <arch/x86_64/gdt.hpp>
 #include <arch/x86_64/paging.hpp>
 #include <arch/x86_64/irq.hpp>
+// IgrOS-Kernel drivers
+#include <drivers/clock/pit.hpp>
+#include <drivers/clock/rtc.hpp>
+#include <drivers/input/keyboard.hpp>
+#include <drivers/uart/serial.hpp>
+#include <drivers/vga/vmem.hpp>
 // IgrOS-Kernel library
 #include <klib/kprint.hpp>
 
@@ -34,6 +40,10 @@ namespace igros::x86_64 {
 	// Initialize x86_64
 	void x86_64Init() noexcept {
 
+		// Init VGA memory
+		arch::vmemInit();
+
+		// Debug print
 		klib::kprintf(
 			"Initializing x86_64 platform...\n[%s]\n",
 			std::source_location::current().function_name()
@@ -53,6 +63,15 @@ namespace igros::x86_64 {
 		x86_64::irq::init();
 		// Enable interrupts
 		x86_64::irq::enable();
+
+		// Setup keyboard
+		arch::keyboardSetup();
+		// Setup UART (#1, 115200 8N1)
+		arch::serialSetup();
+		// Setup RTC
+		arch::rtcSetup();
+		// Setup PIT
+		//arch::pitSetup();
 
 	}
 
