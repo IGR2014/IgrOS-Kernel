@@ -89,7 +89,7 @@
 			},
 			"description": "Default Debug config, used as common",
 			"environment": {
-				"NINJA_STATUS": "[%f/%t %p::%e] ",
+				"NINJA_STATUS": "[%f/%t\t%p::%e]\t",
 				"CLICOLOR_FORCE": "1"
 			},
 			"hidden": true,
@@ -105,7 +105,7 @@
 			},
 			"description": "Default Release config, used as common",
 			"environment": {
-				"NINJA_STATUS": "[%f/%t %p::%e] ",
+				"NINJA_STATUS": "[%f/%t\t%p::%e]\t",
 				"CLICOLOR_FORCE": "1"
 			},
 			"hidden": true,
