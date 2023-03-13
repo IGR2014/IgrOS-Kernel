@@ -3,7 +3,7 @@
 //	Multiboot 1 functions
 //
 //	File:	multiboot.cpp
-//	Date:	12 Mar 2023
+//	Date:	13 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -17,8 +17,11 @@
 // IgrOS-Kernel arch
 #include <arch/types.hpp>
 #include <arch/cpu.hpp>
+// IgrOS-Kernel arch platform
+#include <arch/platform/platform.hpp>
 // IgrOS-Kernel klib
 #include <klib/kprint.hpp>
+#include <klib/kversion.hpp>
 // IgrOS-Kernel multiboot
 #include <multiboot/multiboot.hpp>
 
@@ -28,7 +31,8 @@ namespace igros::multiboot {
 
 
 	// Test multiboot
-	void test(const info_t* const multiboot, const igros_dword_t magic) noexcept {
+	[[nodiscard]]
+	void info_t::test(const igros_dword_t magic) const noexcept {
 		// Check multiboot magic
 		if (!multiboot::check(magic)) [[unlikely]] {
 			// Write Multiboot magic error message message
@@ -39,7 +43,7 @@ BAD MULTIBOOT MAGIC!!!
 	Address:	0x%p
 )multiboot",
 				magic,
-				multiboot
+				this
 			);
 			// Hang CPU
 			arch::cpu::get().halt();
@@ -68,25 +72,25 @@ MULTIBOOT header:
 	FB:			[ %c ]
 )multiboot",
 			flags,
-			hasInfoMemory()		? 'Y' : 'N',
-			hasInfoBootDevice()	? 'Y' : 'N',
-			hasInfoCommandLine()	? 'Y' : 'N',
-			hasInfoAOUT()		? 'Y' : 'N',
-			hasInfoELF()		? 'Y' : 'N',
-			hasInfoMemoryMap()	? 'Y' : 'N',
-			hasInfoDrives()		? 'Y' : 'N',
-			hasInfoConfig()		? 'Y' : 'N',
-			hasInfoBootloaderName()	? 'Y' : 'N',
-			hasInfoAPM()		? 'Y' : 'N',
-			hasInfoVBE()		? 'Y' : 'N',
-			hasInfoFrameBuffer()	? 'Y' : 'N'
+			info_t::hasInfoMemory()		? 'Y' : 'N',
+			info_t::hasInfoBootDevice()	? 'Y' : 'N',
+			info_t::hasInfoCommandLine()	? 'Y' : 'N',
+			info_t::hasInfoAOUT()		? 'Y' : 'N',
+			info_t::hasInfoELF()		? 'Y' : 'N',
+			info_t::hasInfoMemoryMap()	? 'Y' : 'N',
+			info_t::hasInfoDrives()		? 'Y' : 'N',
+			info_t::hasInfoConfig()		? 'Y' : 'N',
+			info_t::hasInfoBootloaderName()	? 'Y' : 'N',
+			info_t::hasInfoAPM()		? 'Y' : 'N',
+			info_t::hasInfoVBE()		? 'Y' : 'N',
+			info_t::hasInfoFrameBuffer()	? 'Y' : 'N'
 		);
         }
 
 	// Print multiboot memory info
 	void info_t::printMemInfo() const noexcept {
 		// Check if memory info exists
-		if (hasInfoMemory()) [[likely]] {
+		if (info_t::hasInfoMemory()) [[likely]] {
 			klib::kprintf(
 R"multiboot(
 MEMORY INFO:
@@ -111,7 +115,7 @@ MEMORY INFO:
 	// Dump multiboot memory map
 	void info_t::printMemMap() const noexcept {
 		// Check if memory map exists
-		if (hasInfoMemoryMap()) [[likely]] {
+		if (info_t::hasInfoMemoryMap()) [[likely]] {
 			klib::kprintf(
 R"multiboot(
 MEMORY MAP:
@@ -153,19 +157,31 @@ MEMORY MAP:
 	// Print multiboot VBE info
 	void info_t::printVBEInfo() const noexcept {
 		// Test VBE
-		if (hasInfoVBE()) [[likely]] {
+		if (info_t::hasInfoVBE()) [[likely]] {
 			// Get VBE config info
-			const auto config	{std::bit_cast<multiboot::vbeConfig*>(static_cast<igros_usize_t>(vbeControlInfo))};
+			const auto* const config	{
+				std::bit_cast<const multiboot::vbeConfig* const>(static_cast<igros_usize_t>(vbeControlInfo))
+			};
 			// Get current VBE mode
-			const auto mode		{std::bit_cast<multiboot::vbeMode*>(static_cast<igros_usize_t>(vbeModeInfo))};
+			const auto* const mode		{
+				std::bit_cast<const multiboot::vbeMode* const>(static_cast<igros_usize_t>(vbeModeInfo))
+			};
 			// Get OEM string
-			const auto oem		{std::bit_cast<const char* const>(static_cast<igros_usize_t>(((config->oem & 0xFFFF0000) >> 12) + (config->oem & 0xFFFF)))};
+			const auto* const oem		{
+				std::bit_cast<const char* const>(static_cast<igros_usize_t>(((config->oem & 0xFFFF0000) >> 12) + (config->oem & 0xFFFF)))
+			};
 			// Get vendor string
-			const auto vendor	{std::bit_cast<const char* const>(static_cast<igros_usize_t>(((config->vendor & 0xFFFF0000) >> 12) + (config->vendor & 0xFFFF)))};
+			const auto* const vendor	{
+				std::bit_cast<const char* const>(static_cast<igros_usize_t>(((config->vendor & 0xFFFF0000) >> 12) + (config->vendor & 0xFFFF)))
+			};
 			// Get product string
-			const auto product	{std::bit_cast<const char* const>(static_cast<igros_usize_t>(((config->productName & 0xFFFF0000) >> 12) + (config->productName & 0xFFFF)))};
+			const auto* const product	{
+				std::bit_cast<const char* const>(static_cast<igros_usize_t>(((config->productName & 0xFFFF0000) >> 12) + (config->productName & 0xFFFF)))
+			};
 			// Get revision string
-			const auto revision	{std::bit_cast<const char* const>(static_cast<igros_usize_t>(((config->productRev & 0xFFFF0000) >> 12) + (config->productRev & 0xFFFF)))};
+			const auto* const revision	{
+				std::bit_cast<const char* const>(static_cast<igros_usize_t>(((config->productRev & 0xFFFF0000) >> 12) + (config->productRev & 0xFFFF)))
+			};
 			// Dump VBE
 			klib::kprintf(
 R"multiboot(
@@ -213,7 +229,7 @@ VBE:
 		// Print header
 		klib::kprintf("FB:\r\n");
 		// Check framebuffer
-		if (hasInfoFrameBuffer()) [[likely]] {
+		if (info_t::hasInfoFrameBuffer()) [[likely]] {
 			// Framebuffer type name
 			const auto* fbTypeName {""};
 			// Get framebuffer type
@@ -257,6 +273,37 @@ FrameBuffer:
 )multiboot"
 			);
 		}
+	}
+
+
+	// Print kernel header
+	void info_t::printHeader() const noexcept {
+		// Write kernel info
+		klib::kprintf(
+R"info(
+Kernel info:
+Arch:		%s
+Start addr:	0x%p
+End addr:	0x%p
+Size:		%d Kb.
+Build:		%s, %s
+Version:	%s
+Author:		Igor Baklykov (c) %d - %d
+Loader:		"%s"
+Command line:	"%s"
+)info",
+			platform::CURRENT_PLATFORM.name(),
+			platform::KERNEL_START(),
+			platform::KERNEL_END(),
+			platform::KERNEL_SIZE() >> 10,
+			__DATE__,
+			__TIME__,
+			KERNEL_VERSION_STRING(),
+			2017,
+			2023,
+			info_t::loaderName(),
+			info_t::commandLine()
+		);
 	}
 
 

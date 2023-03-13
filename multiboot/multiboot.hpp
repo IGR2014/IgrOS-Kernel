@@ -131,6 +131,9 @@ namespace igros::multiboot {
 		igros_byte_t		fbColorInfo[6_usize];		// Multiboot FB color info
 
 
+		// Test multiboot
+		void	test(const igros_dword_t magic) const noexcept;
+
 		// Multiboot contains valid memory info
 		[[nodiscard]]
 		auto	hasInfoMemory() const noexcept -> bool;
@@ -188,6 +191,9 @@ namespace igros::multiboot {
 		void	printVBEInfo() const noexcept;
 		// Print multiboot FB info
 		void	printFBInfo() const noexcept;
+
+		// Print kernel header
+		void	printHeader() const noexcept;
 
 
 	};
@@ -357,10 +363,6 @@ namespace igros::multiboot {
 	};
 
 #pragma pack(pop)
-
-
-	// Test multiboot
-	void	test(const info_t* const multiboot, const igros_dword_t magic) noexcept;
 
 
 }	// namespace igros::multiboot
