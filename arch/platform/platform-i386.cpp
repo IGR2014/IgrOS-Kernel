@@ -3,7 +3,7 @@
 //	Platform description for x86
 //
 //	File:	platform-i386.cpp
-//	Date:	13 Mar 2023
+//	Date:	14 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -41,15 +41,6 @@ namespace igros::i386 {
 	// Initialize i386
 	static void i386Init() noexcept {
 
-		// Init VGA memory
-		arch::vmemInit();
-
-		// Debug print
-		klib::kprintf(
-			"Initializing i386 platform...\n[%s]\n",
-			std::source_location::current().function_name()
-		);
-
 		// Setup Interrupts Descriptor Table
 		i386::idt::init();
 		// Init exceptions
@@ -68,6 +59,8 @@ namespace igros::i386 {
 		// Check FPU
 		i386::fpu::check();
 
+		// Setup VGA
+		arch::vmemInit();
 		// Setup keyboard
 		arch::keyboardSetup();
 		// Setup UART (#1, 115200 8N1)
@@ -76,6 +69,12 @@ namespace igros::i386 {
 		arch::rtcSetup();
 		// Setup PIT
 		//arch::pitSetup();
+
+		// Debug print
+		klib::kprintf(
+			"Platform i386 initialized...\n[%s]\n",
+			std::source_location::current().function_name()
+		);
 
 	}
 
