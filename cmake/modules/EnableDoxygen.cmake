@@ -1,5 +1,5 @@
 # - Find Doxygen
-# Find the Doxygen and enables it
+# Find the Doxygen and enable it
 #
 
 
@@ -15,14 +15,14 @@ if(DOXYGEN_FOUND)
 	# Documentation output directory
 	set(
 		DOXYGEN_OUTPUT_DIRECTORY
-		"${PROJECT_SOURCE_DIR}/doc/"
+		"${PROJECT_SOURCE_DIR}/docs/"
 	)
 
 	# Documentation build target
 	doxygen_add_docs(
 		documentation
-		"${PROJECT_SOURCE_DIR}/"
-		WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+		${PROJECT_SOURCE_DIR}
+		WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
 		COMMENT "Generate documentation"
 	)
 

@@ -125,8 +125,8 @@
 			},
 			"description": "Default Linux x86_64 build Config, used as common",
 			"environment": {
-				"CCACHE_BASEDIR": "${sourceDir}/ccache",
-				"CCACHE_DIR": "${sourceDir}/ccache/.ccache",
+				"CCACHE_BASEDIR": "${sourceDir}/.ccache",
+				"CCACHE_DIR": "${sourceDir}/.ccache/ccache",
 				"CCACHE_COMPRESS": "true",
 				"CCACHE_COMPRESSLEVEL": "6",
 				"CCACHE_MAXSIZE": "200M"
