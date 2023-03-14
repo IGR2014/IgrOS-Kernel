@@ -15,7 +15,7 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 	# GCC minimum required version
 	set(
 		IGROS_COMPILER_VERSION_MINIMUM
-		"12.0.0"
+		"11.0.0"
 	)
 # Unknown compiler
 else()
@@ -35,7 +35,7 @@ endif()
 if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS "${IGROS_COMPILER_VERSION_MINIMUM}")
 	# Error message
 	message(
-		FATAL_ERRROR
+		FATAL_ERROR
 		"Unsupported ${CMAKE_CXX_COMPILER_ID} version: ${IGROS_COMPILER_VERSION_MINIMUM}+ required, ${CMAKE_CXX_COMPILER_VERSION} found!"
 	)
 endif()
