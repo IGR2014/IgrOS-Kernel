@@ -43,16 +43,18 @@ jobs:
     - name: IGROS_DIR_INSTALL
       value: "$(Build.SourcesDirectory)/install"
       readonly: true
+    - name: CCACHE_CONFIGPATH
+      value: "$(Build.SourcesDirectory)/.ccache"
     - name: CCACHE_BASEDIR
       value: "$(Build.SourcesDirectory)/.ccache"
-    - name: CCACHE_DIR
-      value: "$(Build.SourcesDirectory)/.ccache/ccache"
     - name: CCACHE_COMPRESS
       value: "true"
     - name: CCACHE_COMPRESSLEVEL
       value: "6"
-    - name: CCACHE_MAXSIZE
-      value: "200M"
+    - name: CCACHE_DIR
+      value: "$(Build.SourcesDirectory)/.ccache/ccache"
+    - name: CCACHE_LOGFILE
+      value: "$(Build.SourcesDirectory)/.ccache/ccache_log.txt"
     - name: "CLICOLOR_FORCE"
       value: "1"
     - name: DEBIAN_FRONTEND
@@ -136,4 +138,16 @@ jobs:
           script: |
             cmake --build --preset="build-linux-$(compiler)-$(arch)-debug" --target install
         displayName: 'CMake Install'
+
+      # CCache Statistics
+      - task: CmdLine@2
+        inputs:
+          script: |
+            ccache -sv
+        displayName: 'CCache Statistics'
+
+      # CCache Log Artifacts
+      - publish: "$(CCACHE_LOGFILE)"
+        artifact: "$(compiler)-$(arch)-ccache-log"
+        displayName: "CCache Log Artifacts"
 

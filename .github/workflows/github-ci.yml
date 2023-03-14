@@ -19,10 +19,12 @@ jobs:
     env:
       IGROS_KERNEL_DIR_BUILD: "${{ github.workspace }}/build"
       IGROS_KERNEL_DIR_INSTALL: "${{ github.workspace }}/install"
+      CCACHE_CONFIGPATH: "${{ github.workspace }}/.ccache"
       CCACHE_BASEDIR: "${{ github.workspace }}/.ccache"
-      CCACHE_DIR: "${{ github.workspace }}/.ccache/ccache"
       CCACHE_COMPRESS: "true"
       CCACHE_COMPRESSLEVEL: "6"
+      CCACHE_DIR: "${{ github.workspace }}/.ccache/ccache"
+      CCACHE_LOGFILE: "${{ github.workspace }}/.ccache/ccache_log.txt"
       CCACHE_MAXSIZE: "200M"
       CLICOLOR_FORCE: "1"
       NINJA_STATUS: "[%f/%t\t%p::%e]\t"
@@ -114,4 +116,18 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       run: |
         sonar-scanner-${SONAR_CLOUD_BUILD_WRAPPER_VERSION}-linux/bin/sonar-scanner -X -Dproject.settings=sonar-project.properties
+
+    # CCache Statistics
+    - name: 'CCache Statistics'
+      shell: bash
+      run: |
+        ccache -sv
+
+    # CCache Log Artifacts
+    - name: 'CCache Log Artifacts'
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ matrix.compiler }}-${{ matrix.arch }}-ccache-log
+        path: ${{ env.CCACHE_LOGFILE }}
+        retention-days: 3
 
