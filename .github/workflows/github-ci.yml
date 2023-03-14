@@ -27,7 +27,7 @@ jobs:
       CCACHE_LOGFILE: "${{ github.workspace }}/.ccache/ccache_log.txt"
       CCACHE_MAXSIZE: "200M"
       CLICOLOR_FORCE: "1"
-      NINJA_STATUS: "[%f/%t\t%p::%e]\t"
+      NINJA_STATUS: "[%p::%e\t%f/%t]\t"
       SONAR_CLOUD_BUILD_WRAPPER_VERSION: "4.6.2.2472"
 
     # Strategy with languages matrix

@@ -45,7 +45,7 @@ jobs:
       CCACHE_COMPRESSLEVEL: "6"
       CCACHE_MAXSIZE: "200M"
       CLICOLOR_FORCE: "1"
-      NINJA_STATUS: "[%f/%t\t%p::%e]\t"
+      NINJA_STATUS: "[%p::%e\t%f/%t]\t"
 
     steps:
     - name: Checkout repository

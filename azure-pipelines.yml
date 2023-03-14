@@ -60,7 +60,7 @@ jobs:
     - name: DEBIAN_FRONTEND
       value: "noninteractive"
     - name: NINJA_STATUS
-      value: "[%f/%t\t%p::%e]\t"
+      value: "[%p::%e\t%f/%t]\t"
 
     # Job steps
     steps:

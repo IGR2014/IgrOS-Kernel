@@ -10,12 +10,10 @@
 # GRUB configs
 *.cfg
 
+# Cache folder
+.ccache/
 # Build folder
-/build
-/ccache
-/install
-# Release, Profiling, Debug folders
-/Release
-/Profiling
-/Debug
+build/
+# Install folder
+install/
 
