@@ -31,10 +31,20 @@ set(
 	CMAKE_CXX_EXTENSIONS
 	OFF
 )
+# LTO
+set(
+	CMAKE_INTERPROCEDURAL_OPTIMIZATION
+	"$<BOOL:$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>>>"
+)
 # PIC
 set(
 	CMAKE_POSITION_INDEPENDENT_CODE
 	ON
+)
+# Hidden inlines
+set(
+	CMAKE_VISIBILITY_INLINES_HIDDEN
+	True
 )
 # Compile comands export
 set(
@@ -54,12 +64,6 @@ set(
 
 # Get version from GIT
 include(VersionGIT)
-# Check Compiler
-include(CheckCompiler)
-# Enable CCache
-include(EnableCCache)
-# Enable Doxygen
-include(EnableDoxygen)
 
 # Preset parameters
 set(
@@ -74,6 +78,13 @@ project(
 	DESCRIPTION "Simple C++20 Kernel for i386/x86_64"
 	LANGUAGES ASM-ATT CXX
 )
+
+# Check Compiler
+include(CheckCompiler)
+# Enable CCache
+include(EnableCCache)
+# Enable Doxygen
+include(EnableDoxygen)
 
 # Enable CTest
 enable_testing()
@@ -111,12 +122,6 @@ if (IGROS_CXX_CLANG_TIDY)
 		${IGROS_CLANG_TIDY_ARGS}
 	)
 endif()
-
-# LTO
-set(
-	CMAKE_INTERPROCEDURAL_OPTIMIZATION
-	"$<BOOL:$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>>>"
-)
 
 # Header
 message(
@@ -173,6 +178,24 @@ add_compile_definitions(
 	IGROS_GIT_VERSION_BUILD=${IGROS_GIT_COMMIT}
 	IGROS_GIT_VERSION="${IGROS_GIT_VERSION}"
 	IGROS_GIT_HASH="${IGROS_GIT_HASH}"
+)
+
+# Clang compiler flags
+set(
+	IGROS_CLANG_COMPILER_FLAGS
+	"$<$<BOOL:IGROS_CXX_COLORED_OUTPUT>:-fcolor-diagnostics>"
+)
+# GNU compiler flags
+set(
+	IGROS_GNU_COMPILER_FLAGS
+	"$<$<BOOL:IGROS_CXX_COLORED_OUTPUT>:-fdiagnostics-color=always>"
+)
+# Compile options
+add_compile_options(
+	# Add compiler flags if Clang
+	"$<$<CXX_COMPILER_ID:Clang>:${IGROS_CLANG_COMPILER_FLAGS}>"
+	# Add compiler flags if GCC
+	"$<$<CXX_COMPILER_ID:GNU>:${IGROS_GNU_COMPILER_FLAGS}>"
 )
 
 # Add arch subdirectory
