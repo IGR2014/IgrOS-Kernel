@@ -54,6 +54,8 @@ set(
 
 # Get version from GIT
 include(VersionGIT)
+# Check Compiler
+include(CheckCompiler)
 # Enable CCache
 include(EnableCCache)
 # Enable Doxygen
@@ -118,23 +120,14 @@ set(
 
 # Header
 message(
-	"\n"
 	"===============================\n"
-	"\n"
 	"IgrOS Kernel v${IGROS_GIT_VERSION}\n"
-	"\n"
 	"Architecture:	${CMAKE_SYSTEM_PROCESSOR}\n"
-	"\n"
 	"Compiler:	${CMAKE_CXX_COMPILER}\n"
-	"\n"
 	"Assembler:	${CMAKE_ASM_COMPILER}\n"
-	"\n"
 	"Linker:		${CMAKE_LINKER}\n"
-	"\n"
 	"Script:		${CMAKE_TOOLCHAIN_FILE}\n"
-	"\n"
 	"Binary:		${IGROS_KERNEL}\n"
-	"\n"
 	"===============================\n"
 )
 

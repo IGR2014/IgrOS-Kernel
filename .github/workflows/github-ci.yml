@@ -13,14 +13,14 @@ jobs:
     # Name
     name: 'Build with CMake'
     # OS
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
     # Environment variables
     env:
       IGROS_KERNEL_DIR_BUILD: "${{ github.workspace }}/build"
       IGROS_KERNEL_DIR_INSTALL: "${{ github.workspace }}/install"
-      CCACHE_BASEDIR: "${{ github.workspace }}/ccache"
-      CCACHE_DIR: "${{ github.workspace }}/ccache/.ccache"
+      CCACHE_BASEDIR: "${{ github.workspace }}/.ccache"
+      CCACHE_DIR: "${{ github.workspace }}/.ccache/ccache"
       CCACHE_COMPRESS: "true"
       CCACHE_COMPRESSLEVEL: "6"
       CCACHE_MAXSIZE: "200M"

@@ -44,9 +44,9 @@ jobs:
       value: "$(Build.SourcesDirectory)/install"
       readonly: true
     - name: CCACHE_BASEDIR
-      value: "$(Build.SourcesDirectory)/ccache"
+      value: "$(Build.SourcesDirectory)/.ccache"
     - name: CCACHE_DIR
-      value: "$(Build.SourcesDirectory)/ccache/.ccache"
+      value: "$(Build.SourcesDirectory)/.ccache/ccache"
     - name: CCACHE_COMPRESS
       value: "true"
     - name: CCACHE_COMPRESSLEVEL
