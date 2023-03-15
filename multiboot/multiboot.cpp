@@ -3,7 +3,7 @@
 //	Multiboot 1 functions
 //
 //	File:	multiboot.cpp
-//	Date:	14 Mar 2023
+//	Date:	15 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -70,7 +70,7 @@ MULTIBOOT header:
 	VBE:			[ %c ]
 	FB:			[ %c ]
 )multiboot",
-			flags,
+			flags.value(),
 			info_t::hasInfoMemory()		? 'Y' : 'N',
 			info_t::hasInfoBootDevice()	? 'Y' : 'N',
 			info_t::hasInfoCommandLine()	? 'Y' : 'N',
