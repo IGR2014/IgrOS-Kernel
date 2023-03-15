@@ -73,9 +73,10 @@ set(
 
 # Project
 project(
-	IgrOS-Kernel
+	"IgrOS-Kernel"
 	VERSION ${IGROS_GIT_VERSION}
 	DESCRIPTION "Simple C++20 Kernel for i386/x86_64"
+	HOMEPAGE_URL "https://github.com/IGR2014/IgrOS-Kernel"
 	LANGUAGES ASM-ATT CXX
 )
 
