@@ -12,8 +12,8 @@
 
 # Cache folder
 .ccache/
-# Build folder
+# Build, docs, install folder
 build/
-# Install folder
+docs/
 install/
 
