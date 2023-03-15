@@ -3,7 +3,7 @@
 //	Memory paging for x86_64
 //
 //	File:	paging.cpp
-//	Date:	11 Mar 2023
+//	Date:	15 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -46,7 +46,7 @@ namespace igros::x86_64 {
 	};
 
 	// Kernel memory map
-	inline static const std::array<PAGE_MAP_t, 4_usize> PAGE_MAP {{
+	static const auto PAGE_MAP {std::array<PAGE_MAP_t, 4_usize> {{
 		// Identity map first 4MB of physical memory to first 4MB in virtual memory
 		// 0Mb						->	0Mb
 		{nullptr,					nullptr},
@@ -57,7 +57,7 @@ namespace igros::x86_64 {
 		{nullptr,					std::bit_cast<igros_pointer_t>(0xFFFFFFFF80000000_usize)},
 		// 2Mb						->	128Tb + 2Mb
 		{std::bit_cast<page_t*>(0x2000000_usize),	std::bit_cast<igros_pointer_t>(0xFFFFFFFF82000000_usize)}
-	}};
+	}}};
 
 
 	// Setup paging
@@ -67,7 +67,7 @@ namespace igros::x86_64 {
 		except::install<except::NUMBER::PAGE_FAULT, paging::exHandler>();
 
 		// Get kernel end address
-		const auto kernelEnd	{const_cast<igros_byte_t*>(platform::KERNEL_END())};
+		constexpr auto kernelEnd {const_cast<igros_byte_t*>(platform::KERNEL_END())};
 		// Initialize pages for page tables
 		paging::heap(kernelEnd, PAGE_SIZE << 6);
 
