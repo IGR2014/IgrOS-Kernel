@@ -1,0 +1,82 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "Debug Clang++ i386 Kernel",
+			"type": "cppdbg",
+			"request": "launch",
+			"program": "${workspaceRoot}/install/Debug/clang++-i386/iso/boot/kernel.bin",
+			"cwd": "${workspaceRoot}",
+			"args": [],
+			"sourceFileMap": {
+				"<source-path>": "<target-path>"
+			},
+			"targetArchitecture": "x86",
+			"MIMode": "gdb",
+			"miDebuggerPath": "",
+			"miDebuggerServerAddress": "localhost:1234",
+			"miDebuggerArgs": "",
+			"customLaunchSetupCommands": [
+				{
+					"text": "target remote localhost:1234",
+					"description": "Connect to QEMU remote debugger"
+				},
+				{
+					"text": "symbol-file ${workspaceRoot}/install/Debug/clang++-i386/iso/boot/kernel.bin",
+					"description": "Load symbol file"
+				},
+				{
+					"text": "break kmain",
+					"description": "Breakpoint at kmain"
+				}
+			],
+			"setupCommands": [
+				{
+					"description": "GDB pretty printing",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				}
+			],
+			"preLaunchTask": "Debug QEMU i386"
+		},
+		{
+			"name": "Debug Clang++ x86_64 Kernel",
+			"type": "cppdbg",
+			"request": "launch",
+			"program": "${workspaceRoot}/install/Debug/clang++-x86_64/iso/boot/kernel.bin",
+			"cwd": "${workspaceRoot}",
+			"args": [],
+			"sourceFileMap": {
+				"<source-path>": "<target-path>"
+			},
+			"targetArchitecture": "x64",
+			"MIMode": "gdb",
+			"miDebuggerPath": "",
+			"miDebuggerServerAddress": "localhost:1234",
+			"miDebuggerArgs": "",
+			"customLaunchSetupCommands": [
+				{
+					"text": "target remote localhost:1234",
+					"description": "Connect to QEMU remote debugger"
+				},
+				{
+					"text": "symbol-file ${workspaceRoot}/install/Debug/clang++-x86_64/iso/boot/kernel.bin",
+					"description": "Load symbol file"
+				},
+				{
+					"text": "break kmain",
+					"description": "Breakpoint at kmain"
+				}
+			],
+			"setupCommands": [
+				{
+					"description": "GDB pretty printing",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				}
+			],
+			"preLaunchTask": "Debug QEMU x86_64",
+		}
+	]
+}
+
