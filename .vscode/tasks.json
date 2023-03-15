@@ -9,7 +9,7 @@
 				"command": "cmake",
 				"args": [
 					"--build",
-					"--preset=\"config-linux-clang++-x86_64-debug\"",
+					"--preset=\"build-linux-clang++-i386-debug\"",
 					"--target=clean",
 					"--parallel"
 				]
@@ -30,7 +30,7 @@
 				"command": "cmake",
 				"args": [
 					"--build",
-					"--preset=\"config-linux-clang++-x86_64-debug\"",
+					"--preset=\"build-linux-clang++-x86_64-debug\"",
 					"--target=clean",
 					"--parallel"
 				]
@@ -100,7 +100,7 @@
 				"command": "cmake",
 				"args": [
 					"--build",
-					"--preset=\"config-linux-clang++-i386-debug\"",
+					"--preset=\"build-linux-clang++-i386-debug\"",
 					"--target=all",
 					"--parallel"
 				]
@@ -125,7 +125,7 @@
 				"command": "cmake",
 				"args": [
 					"--build",
-					"--preset=\"config-linux-clang++-x86_64-debug\"",
+					"--preset=\"build-linux-clang++-x86_64-debug\"",
 					"--target=all",
 					"--parallel"
 				]
@@ -200,7 +200,7 @@
 				"command": "cmake",
 				"args": [
 					"--build",
-					"--preset=\"config-linux-clang++-i386-debug\"",
+					"--preset=\"build-linux-clang++-i386-debug\"",
 					"--target=install",
 					"--parallel"
 				]
@@ -225,7 +225,7 @@
 				"command": "cmake",
 				"args": [
 					"--build",
-					"--preset=\"config-linux-clang++-x86_64-debug\"",
+					"--preset=\"build-linux-clang++-x86_64-debug\"",
 					"--target=install",
 					"--parallel"
 				]
@@ -247,6 +247,122 @@
 			],
 			"dependsOrder": "parallel",
 			"problemMatcher": []
+		},
+		// Debug QEMU i386
+		{
+			"label": "Debug QEMU i386",
+			"dependsOn": [
+				"Install i386"
+			],
+			"type": "shell",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared",
+				"showReuseMessage": true,
+				"clear": false
+			},
+			"isBackground": true,
+			"problemMatcher": [
+				{
+					"pattern": [
+						{
+							"regexp": ".",
+							"file": 1,
+							"location": 2,
+							"message": 3
+						}
+					],
+					"background": {
+						"activeOnStart": true,
+						"beginsPattern": ".",
+						"endsPattern": "."
+					}
+				}
+			],
+			"linux": {
+				"command": "qemu-system-i386",
+				"args": [
+					"-s",
+					"-S",
+					"./install/Debug/clang++-i386/kernel.iso"
+				]
+			}
+		},
+		// Debug QEMU x86_64
+		{
+			"label": "Debug QEMU x86_64",
+			"dependsOn": [
+				"Install x86_64"
+			],
+			"type": "shell",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared",
+				"showReuseMessage": true,
+				"clear": false
+			},
+			"isBackground": true,
+			"problemMatcher": [
+				{
+					"pattern": [
+						{
+							"regexp": ".",
+							"file": 1,
+							"location": 2,
+							"message": 3
+						}
+					],
+					"background": {
+						"activeOnStart": true,
+						"beginsPattern": ".",
+						"endsPattern": "."
+					}
+				}
+			],
+			"linux": {
+				"command": "qemu-system-x86_64",
+				"args": [
+					"-s",
+					"-S",
+					"./install/Debug/clang++-x86_64/kernel.iso"
+				]
+			}
+		},
+		// Debug BOCHS i386
+		{
+			"label": "Debug BOCHS i386",
+			"dependsOn": [
+				"Install i386"
+			],
+			"type": "shell",
+			"problemMatcher": [],
+			"linux": {
+				"command": "bochs",
+				"args": [
+					"-f",
+					"./config/test/bochs-i386"
+				]
+			}
+		},
+		// Debug BOCHS x86_64
+		{
+			"label": "Debug BOCHS x86_64",
+			"dependsOn": [
+				"Install x86_64"
+			],
+			"type": "shell",
+			"problemMatcher": [],
+			"linux": {
+				"command": "bochs",
+				"args": [
+					"-f",
+					"./config/test/bochs-x86_64"
+				]
+			}
 		}
 	]
 }
