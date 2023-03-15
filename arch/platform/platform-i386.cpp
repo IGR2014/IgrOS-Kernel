@@ -3,7 +3,7 @@
 //	Platform description for x86
 //
 //	File:	platform-i386.cpp
-//	Date:	14 Mar 2023
+//	Date:	15 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -61,10 +61,10 @@ namespace igros::i386 {
 
 		// Setup VGA
 		arch::vmemInit();
-		// Setup keyboard
-		arch::keyboardSetup();
 		// Setup UART (#1, 115200 8N1)
 		arch::serialSetup();
+		// Setup keyboard
+		arch::keyboardSetup();
 		// Setup RTC
 		arch::rtcSetup();
 		// Setup PIT
