@@ -3,7 +3,7 @@
 //	Boot low-level main setup function
 //
 //	File:	boot.cpp
-//	Date:	05 Dec 2022
+//	Date:	16 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -13,16 +13,8 @@
 
 // IgrOS-Kernel arch
 #include <arch/cpu.hpp>
-#include <arch/types.hpp>
 // IgrOS-Kernel arch platform
 #include <arch/platform/platform.hpp>
-// IgrOS-Kernel library
-#include <klib/kflags.hpp>
-#include <klib/kprint.hpp>
-#include <klib/kstring.hpp>
-#include <klib/kversion.hpp>
-// IgrOS-Kernel memory
-#include <mem/mmap.hpp>
 // IgrOS-Kernel multiboot
 #include <multiboot/multiboot.hpp>
 

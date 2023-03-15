@@ -77,7 +77,7 @@ project(
 	VERSION ${IGROS_GIT_VERSION}
 	DESCRIPTION "Simple C++20 Kernel for i386/x86_64"
 	HOMEPAGE_URL "https://github.com/IGR2014/IgrOS-Kernel"
-	LANGUAGES ASM-ATT CXX
+	LANGUAGES ASM ASM-ATT CXX
 )
 
 # Check Compiler
@@ -126,15 +126,32 @@ endif()
 
 # Header
 message(
-	"===============================\n"
-	"IgrOS Kernel v${IGROS_GIT_VERSION}\n"
-	"Architecture:	${CMAKE_SYSTEM_PROCESSOR}\n"
-	"Compiler:	${CMAKE_CXX_COMPILER}\n"
-	"Assembler:	${CMAKE_ASM_COMPILER}\n"
-	"Linker:		${CMAKE_LINKER}\n"
-	"Script:		${CMAKE_TOOLCHAIN_FILE}\n"
-	"Binary:		${IGROS_KERNEL}\n"
-	"===============================\n"
+	STATUS
+	"IgrOS Kernel"
+)
+message(
+	STATUS
+	"Architecture: ${CMAKE_SYSTEM_PROCESSOR}"
+)
+message(
+	STATUS
+	"Compiler: ${CMAKE_CXX_COMPILER}"
+)
+message(
+	STATUS
+	"Assembler: ${CMAKE_ASM_COMPILER}"
+)
+message(
+	STATUS
+	"Linker: ${CMAKE_LINKER}"
+)
+message(
+	STATUS
+	"Script: ${CMAKE_TOOLCHAIN_FILE}"
+)
+message(
+	STATUS
+	"Binary: ${IGROS_KERNEL}"
 )
 
 # Message

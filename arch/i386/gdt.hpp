@@ -3,7 +3,7 @@
 //	Global descriptor table low-level operations
 //
 //	File:	gdt.hpp
-//	Date:	13 Mar 2023
+//	Date:	16 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -19,7 +19,7 @@
 // IgrOS-Kernel arch
 #include <arch/types.hpp>
 // IgrOS-Kernel library
-#include <klib/kflags.hpp>
+#include <klib/kFlags.hpp>
 
 
 // i386 namespace

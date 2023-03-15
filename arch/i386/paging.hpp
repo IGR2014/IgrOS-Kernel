@@ -3,7 +3,7 @@
 //	Memory paging for x86
 //
 //	File:	paging.hpp
-//	Date:	16 Dec 2022
+//	Date:	16 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -20,7 +20,7 @@
 #include <arch/i386/cr.hpp>
 #include <arch/i386/register.hpp>
 // IgrOS-Kernel library
-#include <klib/kflags.hpp>
+#include <klib/kFlags.hpp>
 
 
 // i386 namespace
@@ -146,20 +146,20 @@ namespace igros::i386 {
 
 		// Check table flags
 		[[nodiscard]]
-		static auto	checkFlags(const table_t* table, const kflags<FLAGS> flags) noexcept -> bool;
+		static auto	checkFlags(const table_t* table, const klib::kFlags<FLAGS> flags) noexcept -> bool;
 		// Check page flags
 		[[nodiscard]]
-		static auto	checkFlags(const page_t* page, const kflags<FLAGS> flags) noexcept -> bool;
+		static auto	checkFlags(const page_t* page, const klib::kFlags<FLAGS> flags) noexcept -> bool;
 
 		// Map virtual page to physical page (whole table, explicit page directory)
-		static void	mapTable(directory_t* const dir, const page_t* phys, const igros_pointer_t virt, const kflags<FLAGS> flags) noexcept;
+		static void	mapTable(directory_t* const dir, const page_t* phys, const igros_pointer_t virt, const klib::kFlags<FLAGS> flags) noexcept;
 		// Map virtual page to physical page (whole table)
-		static void	mapTable(const page_t* phys, const igros_pointer_t virt, const kflags<FLAGS> flags) noexcept;
+		static void	mapTable(const page_t* phys, const igros_pointer_t virt, const klib::kFlags<FLAGS> flags) noexcept;
 
 		// Map virtual page to physical page (single page, explicit page directory)
-		static void	mapPage(directory_t* const dir, const page_t* phys, const igros_pointer_t virt, const kflags<FLAGS> flags) noexcept;
+		static void	mapPage(directory_t* const dir, const page_t* phys, const igros_pointer_t virt, const klib::kFlags<FLAGS> flags) noexcept;
 		// Map virtual page to physical page (single page)
-		static void	mapPage(const page_t* phys, const igros_pointer_t virt, const kflags<FLAGS> flags) noexcept;
+		static void	mapPage(const page_t* phys, const igros_pointer_t virt, const klib::kFlags<FLAGS> flags) noexcept;
 
 		// Convert virtual address to physical address
 		[[nodiscard]]
