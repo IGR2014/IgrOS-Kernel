@@ -3,7 +3,7 @@
 //	Memory paging for x86
 //
 //	File:	paging.hpp
-//	Date:	16 Dec 2022
+//	Date:	16 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -17,7 +17,7 @@
 // IgrOS-Kernel arch
 #include <arch/types.hpp>
 // IgrOS-Kernel library
-#include <klib/kflags.hpp>
+#include <klib/kFlags.hpp>
 
 
 // x86_64 namespace
@@ -161,41 +161,41 @@ namespace igros::x86_64 {
 
 		// Check directory pointer flags
 		[[nodiscard]]
-		static auto	checkFlags(const directory_pointer_t* dirPtr, const kflags<FLAGS> flags) noexcept -> bool;
+		static auto	checkFlags(const directory_pointer_t* dirPtr, const klib::kFlags<FLAGS> flags) noexcept -> bool;
 		// Check directory flags
 		[[nodiscard]]
-		static auto	checkFlags(const directory_t* dir, const kflags<FLAGS> flags) noexcept -> bool;
+		static auto	checkFlags(const directory_t* dir, const klib::kFlags<FLAGS> flags) noexcept -> bool;
 		// Check table flags
 		[[nodiscard]]
-		static auto	checkFlags(const table_t* table, const kflags<FLAGS> flags) noexcept -> bool;
+		static auto	checkFlags(const table_t* table, const klib::kFlags<FLAGS> flags) noexcept -> bool;
 		// Check page flags
 		[[nodiscard]]
-		static auto	checkFlags(const page_t* page, const kflags<FLAGS> flags) noexcept -> bool;
+		static auto	checkFlags(const page_t* page, const klib::kFlags<FLAGS> flags) noexcept -> bool;
 
 		// Map virtual page to physical page (whole pml4, explicit pml4)
-		static void	mapPML4(pml4_t* const  pml4, const page_t* phys, const igros_pointer_t virt, const kflags<FLAGS> flags) noexcept;
+		static void	mapPML4(pml4_t* const  pml4, const page_t* phys, const igros_pointer_t virt, const klib::kFlags<FLAGS> flags) noexcept;
 		// Map virtual page to physical page (whole pml4)
-		static void	mapPML4(const page_t* phys, const igros_pointer_t virt, const kflags<FLAGS> flags) noexcept;
+		static void	mapPML4(const page_t* phys, const igros_pointer_t virt, const klib::kFlags<FLAGS> flags) noexcept;
 
 		// Map virtual page to physical page (single directory pointer, explicit pml4)
-		static void	mapDirectoryPointer(pml4_t* const pml4, const page_t* phys, const igros_pointer_t virt, const kflags<FLAGS> flags) noexcept;
+		static void	mapDirectoryPointer(pml4_t* const pml4, const page_t* phys, const igros_pointer_t virt, const klib::kFlags<FLAGS> flags) noexcept;
 		// Map virtual page to physical page (single directory pointer)
-		static void	mapDirectoryPointer(const page_t* phys, const igros_pointer_t virt, const kflags<FLAGS> flags) noexcept;
+		static void	mapDirectoryPointer(const page_t* phys, const igros_pointer_t virt, const klib::kFlags<FLAGS> flags) noexcept;
 
 		// Map virtual page to physical page (single directory, explicit pml4)
-		static void	mapDirectory(pml4_t* const pml4, const page_t* phys, const igros_pointer_t virt, const kflags<FLAGS> flags) noexcept;
+		static void	mapDirectory(pml4_t* const pml4, const page_t* phys, const igros_pointer_t virt, const klib::kFlags<FLAGS> flags) noexcept;
 		// Map virtual page to physical page (single directory)
-		static void	mapDirectory(const page_t* phys, const igros_pointer_t virt, const kflags<FLAGS> flags) noexcept;
+		static void	mapDirectory(const page_t* phys, const igros_pointer_t virt, const klib::kFlags<FLAGS> flags) noexcept;
 
 		// Map virtual page to physical page (single table, explicit pml4)
-		static void	mapTable(pml4_t* const pml4, const page_t* phys, const igros_pointer_t virt, const kflags<FLAGS> flags) noexcept;
+		static void	mapTable(pml4_t* const pml4, const page_t* phys, const igros_pointer_t virt, const klib::kFlags<FLAGS> flags) noexcept;
 		// Map virtual page to physical page (single table)
-		static void	mapTable(const page_t* phys, const igros_pointer_t virt, const kflags<FLAGS> flags) noexcept;
+		static void	mapTable(const page_t* phys, const igros_pointer_t virt, const klib::kFlags<FLAGS> flags) noexcept;
 
 		// Map virtual page to physical page (single page, explicit page directory)
-		static void	mapPage(pml4_t* const dir, const page_t* phys, const igros_pointer_t virt, const kflags<FLAGS> flags) noexcept;
+		static void	mapPage(pml4_t* const dir, const page_t* phys, const igros_pointer_t virt, const klib::kFlags<FLAGS> flags) noexcept;
 		// Map virtual page to physical page (single page)
-		static void	mapPage(const page_t* phys, const igros_pointer_t virt, const kflags<FLAGS> flags) noexcept;
+		static void	mapPage(const page_t* phys, const igros_pointer_t virt, const klib::kFlags<FLAGS> flags) noexcept;
 
 		// Convert virtual address to physical address
 		[[nodiscard]]

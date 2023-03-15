@@ -3,7 +3,7 @@
 //	Memory paging for x86
 //
 //	File:	paging.cpp
-//	Date:	15 Mar 2023
+//	Date:	16 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -66,7 +66,7 @@ namespace igros::i386 {
 		paging::heap(kernelEnd, PAGE_SIZE << 6);
 
 		// Create flags
-		const auto flags	{make_kflags<FLAGS>(FLAGS::WRITABLE, FLAGS::PRESENT)};
+		const auto flags	{klib::make_kflags<FLAGS>(FLAGS::WRITABLE, FLAGS::PRESENT)};
 		// Create page directory
 		const auto dir		{paging::makeDirectory()};
 		// Map memory
@@ -190,7 +190,7 @@ namespace igros::i386 {
 		// Allocate page directory
 		const auto dir {static_cast<directory_t*>(paging::allocate())};
 		// Zero enties of page directory
-		klib::kmemset(dir, (sizeof(directory_t) >> 2), kflags(FLAGS::CLEAR).value());
+		klib::kmemset(dir, (sizeof(directory_t) >> 2), klib::kFlags(FLAGS::CLEAR).value());
 		// Return page directory
 		return dir;
 	}
@@ -201,7 +201,7 @@ namespace igros::i386 {
 		// Allocate page table
 		const auto table {static_cast<table_t*>(paging::allocate())};
 		// Zero enties of page table
-		klib::kmemset(table, (sizeof(table_t) >> 2), kflags(FLAGS::CLEAR).value());
+		klib::kmemset(table, (sizeof(table_t) >> 2), klib::kFlags(FLAGS::CLEAR).value());
 		// Return page table
 		return table;
 	}
@@ -209,29 +209,29 @@ namespace igros::i386 {
 
 	// Check table flags
 	[[nodiscard]]
-	bool paging::checkFlags(const table_t* table, const kflags<FLAGS> flags) noexcept {
+	bool paging::checkFlags(const table_t* table, const klib::kFlags<FLAGS> flags) noexcept {
 		// Mask flags
 		const auto maskedFlags	{flags & FLAGS::FLAGS_MASK};
 		// Get table flags
-		const auto tableFlags	{make_kflags<FLAGS>(std::bit_cast<igros_usize_t>(table))};
+		const auto tableFlags	{klib::make_kflags<FLAGS>(std::bit_cast<igros_usize_t>(table))};
 		// Check flags
 		return maskedFlags != (tableFlags & maskedFlags);
 	}
 
 	// Check page flags
 	[[nodiscard]]
-	bool paging::checkFlags(const page_t* page, const kflags<FLAGS> flags) noexcept {
+	bool paging::checkFlags(const page_t* page, const klib::kFlags<FLAGS> flags) noexcept {
 		// Mask flags
 		const auto maskedFlags	{flags & FLAGS::FLAGS_MASK};
 		// Get page flags
-		const auto pageFlags	{make_kflags<FLAGS>(std::bit_cast<igros_usize_t>(page))};
+		const auto pageFlags	{klib::make_kflags<FLAGS>(std::bit_cast<igros_usize_t>(page))};
 		// Check flags
 		return maskedFlags != (pageFlags & maskedFlags);
 	}
 
 
 	// Map virtual page to physical page (whole page, explicit page directory)
-	void paging::mapTable(directory_t* const dir, const page_t* phys, const igros_pointer_t virt, const kflags<FLAGS> flags) noexcept {
+	void paging::mapTable(directory_t* const dir, const page_t* phys, const igros_pointer_t virt, const klib::kFlags<FLAGS> flags) noexcept {
 
 		// Check alignment
 		if (
@@ -248,7 +248,7 @@ namespace igros::i386 {
 		// Get page table pointer
 		auto &table		{dir->tables[dirID]};
 		// Check if page table is present or not
-		if (!paging::checkFlags(table, make_kflags<FLAGS>(FLAGS::PRESENT))) {
+		if (!paging::checkFlags(table, klib::make_kflags<FLAGS>(FLAGS::PRESENT))) {
 			// Create page table
 			table = paging::makeTable();
 		}
@@ -256,20 +256,20 @@ namespace igros::i386 {
 		// Get page pointer and map physical page
 		for (auto i {0_usize}; i < (sizeof(page_t) >> 2); i++) {
 			// Get phys page ID
-			const auto page	{make_kflags<FLAGS>(std::bit_cast<igros_usize_t>(phys) + (i << PAGE_SHIFT),	flags & FLAGS::FLAGS_MASK)};
+			const auto page	{klib::make_kflags<FLAGS>(std::bit_cast<igros_usize_t>(phys) + (i << PAGE_SHIFT),	flags & FLAGS::FLAGS_MASK)};
 			// Map page
 			table->pages[i]	= std::bit_cast<page_t*>(page.value());
 		}
 
 		// Get table flags
-		const auto tableFlags	{make_kflags<FLAGS>(std::bit_cast<igros_usize_t>(table) & 0x3FFFFFFF_usize,	flags & FLAGS::FLAGS_MASK)};
+		const auto tableFlags	{klib::make_kflags<FLAGS>(std::bit_cast<igros_usize_t>(table) & 0x3FFFFFFF_usize,	flags & FLAGS::FLAGS_MASK)};
 		// Set new page table flags
 		table = std::bit_cast<table_t*>(tableFlags.value());
 
 	}
 
 	// Map virtual page to physical page (whole page)
-	void paging::mapTable(const page_t* phys, const igros_pointer_t virt, const kflags<FLAGS> flags) noexcept {
+	void paging::mapTable(const page_t* phys, const igros_pointer_t virt, const klib::kFlags<FLAGS> flags) noexcept {
 		// Get pointer to page directory
 		const auto dir {std::bit_cast<directory_t*>(::outCR3())};
 		// Map page to curent page directory
@@ -278,7 +278,7 @@ namespace igros::i386 {
 
 
 	// Map virtual page to physical page (explicit page directory)
-	void paging::mapPage(directory_t* const dir, const page_t* phys, const igros_pointer_t virt, const kflags<FLAGS> flags) noexcept {
+	void paging::mapPage(directory_t* const dir, const page_t* phys, const igros_pointer_t virt, const klib::kFlags<FLAGS> flags) noexcept {
 
 		// Check alignment
 		if (
@@ -297,7 +297,7 @@ namespace igros::i386 {
 		// Get page table pointer
 		auto &table		{dir->tables[dirID]};
 		// Check if page table is present or not
-		if (!paging::checkFlags(table, make_kflags<FLAGS>(FLAGS::PRESENT))) {
+		if (!paging::checkFlags(table, klib::make_kflags<FLAGS>(FLAGS::PRESENT))) {
 			// Create page table
 			table = paging::makeTable();
 		}
@@ -306,9 +306,9 @@ namespace igros::i386 {
 		auto &page		{table->pages[tabID]};
 
 		// Get table flags
-		const auto tableFlags	{make_kflags<FLAGS>(std::bit_cast<igros_usize_t>(table) & 0x3FFFFFFF_usize,	flags & FLAGS::FLAGS_MASK)};
+		const auto tableFlags	{klib::make_kflags<FLAGS>(std::bit_cast<igros_usize_t>(table) & 0x3FFFFFFF_usize,	flags & FLAGS::FLAGS_MASK)};
 		// Get page flags
-		const auto pageFlags	{make_kflags<FLAGS>(std::bit_cast<igros_usize_t>(page) & 0x3FFFFFFF_usize,	flags & FLAGS::FLAGS_MASK)};
+		const auto pageFlags	{klib::make_kflags<FLAGS>(std::bit_cast<igros_usize_t>(page) & 0x3FFFFFFF_usize,	flags & FLAGS::FLAGS_MASK)};
 
 		// Insert page table
 		table	= std::bit_cast<table_t*>(tableFlags.value());
@@ -318,7 +318,7 @@ namespace igros::i386 {
 	}
 
 	// Map virtual page to physical page (single page)
-	void paging::mapPage(const page_t* phys, const igros_pointer_t virt, const kflags<FLAGS> flags) noexcept {
+	void paging::mapPage(const page_t* phys, const igros_pointer_t virt, const klib::kFlags<FLAGS> flags) noexcept {
 		// Get pointer to page directory
 		const auto dir {std::bit_cast<directory_t*>(::outCR3())};
 		// Map page to curent page directory
@@ -341,7 +341,7 @@ namespace igros::i386 {
 		// Get page table pointer
 		const auto table	{dir->tables[dirID]};
 		// Check if page table is present or not
-		if (!paging::checkFlags(table, make_kflags<FLAGS>(FLAGS::PRESENT))) {
+		if (!paging::checkFlags(table, klib::make_kflags<FLAGS>(FLAGS::PRESENT))) {
 			// Page or table is not present
 			return nullptr;
 		}
@@ -349,15 +349,15 @@ namespace igros::i386 {
 		// Get page pointer
 		const auto page		{table->pages[tabID]};
 		// Check if page table is present or not
-		if (!paging::checkFlags(page, make_kflags<FLAGS>(FLAGS::PRESENT))) {
+		if (!paging::checkFlags(page, klib::make_kflags<FLAGS>(FLAGS::PRESENT))) {
 			// Page or table is not present
 			return nullptr;
 		}
 
 		// Get physical address of page from page table (20 MSB)
-		const auto address	{make_kflags<FLAGS>(std::bit_cast<igros_usize_t>(page))};
+		const auto address	{klib::make_kflags<FLAGS>(std::bit_cast<igros_usize_t>(page))};
 		// Get physical offset in psge from virtual address`s (12 LSB)
-		const auto offset	{make_kflags<FLAGS>(std::bit_cast<igros_usize_t>(virt))};
+		const auto offset	{klib::make_kflags<FLAGS>(std::bit_cast<igros_usize_t>(virt))};
 		// Return physical address
 		return std::bit_cast<igros_pointer_t>(((address & FLAGS::PHYS_ADDR_MASK) | (offset & FLAGS::FLAGS_MASK)).value());
 

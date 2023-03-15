@@ -3,7 +3,7 @@
 //	Paging operations
 //
 //	File:	paging.hpp
-//	Date:	16 Dec 2022
+//	Date:	16 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -61,7 +61,7 @@ namespace igros::arch {
 		auto	translate(const virt_t addr) const noexcept -> phys_t;
 
 		// Map virtual address to physical address
-		void	map(const phys_t phys, const virt_t virt, const igros_usize_t count, const kflags<flags_t> flags) noexcept;
+		void	map(const phys_t phys, const virt_t virt, const igros_usize_t count, const klib::kFlags<flags_t> flags) noexcept;
 
 		// Get paging data
 		[[nodiscard]]
@@ -96,7 +96,7 @@ namespace igros::arch {
 
 	// Map virtual address to physical address
 	template<typename T>
-	void paging_t<T>::map(const phys_t phys, const virt_t virt, const igros_usize_t count, const kflags<flags_t> flags) noexcept {
+	void paging_t<T>::map(const phys_t phys, const virt_t virt, const igros_usize_t count, const klib::kFlags<flags_t> flags) noexcept {
 		// TODO
 	}
 

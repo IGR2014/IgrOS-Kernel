@@ -3,7 +3,7 @@
 //	Multiboot 1 header info
 //
 //	File:	multiboot.hpp
-//	Date:	14 Mar 2023
+//	Date:	16 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -19,7 +19,7 @@
 // IgrOS-Kernel arch
 #include <arch/types.hpp>
 // IgrOS-Kernel library
-#include <klib/kflags.hpp>
+#include <klib/kFlags.hpp>
 
 
 // Multiboot code zone
@@ -89,7 +89,7 @@ namespace igros::multiboot {
 	// Multiboot 1 information from bootloader
 	struct info_t final {
 
-		kflags<flags_t>		flags;				// Multiboot present features flag
+		klib::kFlags<flags_t>	flags;				// Multiboot present features flag
 
 		igros_dword_t		memLow;				// Multiboot bios memory low info
 		igros_dword_t		memHigh;			// Multiboot bios memory high info
