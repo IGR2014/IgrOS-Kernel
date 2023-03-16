@@ -68,7 +68,6 @@ jobs:
       # Checkout
       - checkout: self
         fetchDepth: 0
-        fetchTags: true
         displayName: 'Git Checkout'
 
       # Install dependencies
