@@ -166,6 +166,7 @@ namespace igros::i386 {
 		static auto	translate(const igros_pointer_t addr) noexcept -> igros_pointer_t;
 
 		// Page Fault Exception handler
+		[[noreturn]]
 		static void	exHandler(const register_t* regs) noexcept;
 
 		// Set page directory

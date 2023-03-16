@@ -3,7 +3,7 @@
 //	Exceptions low-level operations
 //
 //	File:	exceptions.hpp
-//	Date:	14 Mar 2023
+//	Date:	16 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -200,6 +200,7 @@ namespace igros::x86_64 {
 		constexpr static void	uninstall() noexcept;
 
 		// Default exception handler
+		[[noreturn]]
 		static void	defaultHandler(const register_t* regs) noexcept;
 
 

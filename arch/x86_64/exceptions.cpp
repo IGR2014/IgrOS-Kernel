@@ -52,6 +52,7 @@ namespace igros::x86_64 {
 
 
 	// Default exception handler
+	[[noreturn]]
 	void except::defaultHandler(const register_t* regs) noexcept {
 		// Disable interrupts
 		irq::disable();
