@@ -28,65 +28,68 @@ namespace igros::x86_64 {
 	struct register_t;
 
 
-	// Page Map Level 4 max entries count
-	constexpr auto	PAGE_MAP_LEVEL_4_SIZE		{512_usize};
-	// Page Directory Pointer max entries count
-	constexpr auto	PAGE_DIRECTORY_POINTR_SIZE	{PAGE_MAP_LEVEL_4_SIZE};
-	// Page Directory max entries count
-	constexpr auto	PAGE_DIRECTORY_SIZE		{PAGE_MAP_LEVEL_4_SIZE};
-	// Page Table max entries count
-	constexpr auto	PAGE_TABLE_SIZE			{PAGE_MAP_LEVEL_4_SIZE};
-	// Page shift
-	constexpr auto	PAGE_SHIFT			{12_usize};
-	// Page size
-	constexpr auto	PAGE_SIZE			{1_usize << PAGE_SHIFT};
-	// Page mask
-	constexpr auto	PAGE_MASK			{PAGE_SIZE - 1_usize};
+	// Paging structure
+	class paging final {
+
+	public:
+
+		// Page Map Level 4 max entries count
+		constexpr static auto	PAGE_MAP_LEVEL_4_SIZE		{512_usize};
+		// Page Directory Pointer max entries count
+		constexpr static auto	PAGE_DIRECTORY_POINTR_SIZE	{PAGE_MAP_LEVEL_4_SIZE};
+		// Page Directory max entries count
+		constexpr static auto	PAGE_DIRECTORY_SIZE		{PAGE_MAP_LEVEL_4_SIZE};
+		// Page Table max entries count
+		constexpr static auto	PAGE_TABLE_SIZE			{PAGE_MAP_LEVEL_4_SIZE};
+		// Page shift
+		constexpr static auto	PAGE_SHIFT			{12_usize};
+		// Page size
+		constexpr static auto	PAGE_SIZE			{1_usize << PAGE_SHIFT};
+		// Page mask
+		constexpr static auto	PAGE_MASK			{PAGE_SIZE - 1_usize};
 
 
 #pragma push(pack, 1)
 
 
-	// Page
-	union alignas(4096_usize) page_t {
-		igros_pointer_t		next;					// Pointer to next page
-		igros_byte_t		bytes[PAGE_SIZE];			// Page raw bytes
-	};
+		// Page
+		union alignas(4096_usize) page_t {
+			igros_pointer_t		next;					// Pointer to next page
+			igros_byte_t		bytes[PAGE_SIZE];			// Page raw bytes
+		};
 
 
-	// Page table
-	union alignas(4096_usize) table_t {
-		igros_pointer_t		next;					// Pointer to next table
-		page_t*			pages[PAGE_TABLE_SIZE];			// Page table entries
-	};
+		// Page table
+		union alignas(4096_usize) table_t {
+			igros_pointer_t		next;					// Pointer to next table
+			page_t*			pages[PAGE_TABLE_SIZE];			// Page table entries
+		};
 
 
-	// Page directory
-	union alignas(4096_usize) directory_t {
-		igros_pointer_t		next;					// Pointer to next directory
-		table_t*		tables[PAGE_DIRECTORY_SIZE];		// Page directory entries
-	};
+		// Page directory
+		union alignas(4096_usize) directory_t {
+			igros_pointer_t		next;					// Pointer to next directory
+			table_t*		tables[PAGE_DIRECTORY_SIZE];		// Page directory entries
+		};
 
 
-	// Page directory pointer
-	union alignas(4096_usize) directory_pointer_t {
-		igros_pointer_t		next;					// Pointer to next directory pointer
-		directory_t*		directories[PAGE_DIRECTORY_SIZE];	// Page directory entries
-	};
+		// Page directory pointer
+		union alignas(4096_usize) directory_pointer_t {
+			igros_pointer_t		next;					// Pointer to next directory pointer
+			directory_t*		directories[PAGE_DIRECTORY_SIZE];	// Page directory entries
+		};
 
 
-	// Page Map Level 4
-	union alignas(4096_usize) pml4_t {
-		directory_pointer_t*	pointers[PAGE_DIRECTORY_SIZE];		// Page Map Level 4 entries
-	};
+		// Page Map Level 4
+		union alignas(4096_usize) pml4_t {
+			directory_pointer_t*	pointers[PAGE_DIRECTORY_SIZE];		// Page Map Level 4 entries
+		};
 
 
 #pragma pop(pack)
 
 
-	// Paging structure
-	class paging final {
-
+	private:
 
 		static table_t*		mFreePages;				// Free pages list
 
