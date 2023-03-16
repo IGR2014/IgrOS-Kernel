@@ -3,7 +3,7 @@
 //	Exceptions low-level operations
 //
 //	File:	exceptions.cpp
-//	Date:	11 Mar 2023
+//	Date:	16 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -52,6 +52,7 @@ namespace igros::i386 {
 
 
 	// Default exception handler
+	[[noreturn]]
 	void except::defaultHandler(const register_t* regs) noexcept {
 		// Disable interrupts
 		irq::disable();

@@ -617,6 +617,7 @@ namespace igros::x86_64 {
 
 
 	// Page Fault Exception handler
+	[[noreturn]]
 	void paging::exHandler(const register_t* regs) noexcept {
 		// Disable IRQ
 		irq::disable();
