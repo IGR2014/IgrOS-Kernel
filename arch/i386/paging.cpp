@@ -34,12 +34,12 @@ namespace igros::i386 {
 
 
 	// Free pages list
-	page_t* paging::mFreePages	{std::bit_cast<page_t*>(&paging::mFreePages)};
+	paging::page_t* paging::mFreePages	{std::bit_cast<page_t*>(&paging::mFreePages)};
 
 
 	// Kernel memory map structure
 	struct PAGE_MAP_t {
-		const page_t*		phys;
+		const paging::page_t*	phys;
 		const igros_pointer_t	virt;
 	};
 
@@ -186,7 +186,7 @@ namespace igros::i386 {
 
 	// Make page directory
 	[[nodiscard]]
-	directory_t* paging::makeDirectory() noexcept {
+	paging::directory_t* paging::makeDirectory() noexcept {
 		// Allocate page directory
 		const auto dir {static_cast<directory_t*>(paging::allocate())};
 		// Zero enties of page directory
@@ -197,7 +197,7 @@ namespace igros::i386 {
 
 	// Make page table
 	[[nodiscard]]
-	table_t* paging::makeTable() noexcept {
+	paging::table_t* paging::makeTable() noexcept {
 		// Allocate page table
 		const auto table {static_cast<table_t*>(paging::allocate())};
 		// Zero enties of page table

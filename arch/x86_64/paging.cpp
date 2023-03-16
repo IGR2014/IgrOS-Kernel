@@ -36,27 +36,27 @@ namespace igros::x86_64 {
 
 
 	// Free pages list
-	table_t* paging::mFreePages	{std::bit_cast<table_t*>(&paging::mFreePages)};
+	paging::table_t* paging::mFreePages	{std::bit_cast<table_t*>(&paging::mFreePages)};
 
 
 	// Kernel memory map structure
 	struct PAGE_MAP_t {
-		const page_t*		phys;
+		const paging::page_t*	phys;
 		const igros_pointer_t	virt;
 	};
 
 	// Kernel memory map
 	static const auto PAGE_MAP {std::array<PAGE_MAP_t, 4_usize> {{
 		// Identity map first 4MB of physical memory to first 4MB in virtual memory
-		// 0Mb						->	0Mb
-		{nullptr,					nullptr},
-		// 2Mb						->	2Mb
-		{std::bit_cast<page_t*>(0x2000000_usize),	std::bit_cast<igros_pointer_t>(0x2000000_usize)},
+		// 0Mb							->	0Mb
+		{nullptr,						nullptr},
+		// 2Mb							->	2Mb
+		{std::bit_cast<paging::page_t*>(0x2000000_usize),	std::bit_cast<igros_pointer_t>(0x2000000_usize)},
 		// Also map first 4MB of physical memory to 128TB offset in virtual memory
-		// 0Mb						->	128Tb + 0Mb
-		{nullptr,					std::bit_cast<igros_pointer_t>(0xFFFFFFFF80000000_usize)},
-		// 2Mb						->	128Tb + 2Mb
-		{std::bit_cast<page_t*>(0x2000000_usize),	std::bit_cast<igros_pointer_t>(0xFFFFFFFF82000000_usize)}
+		// 0Mb							->	128Tb + 0Mb
+		{nullptr,						std::bit_cast<igros_pointer_t>(0xFFFFFFFF80000000_usize)},
+		// 2Mb							->	128Tb + 2Mb
+		{std::bit_cast<paging::page_t*>(0x2000000_usize),	std::bit_cast<igros_pointer_t>(0xFFFFFFFF82000000_usize)}
 	}}};
 
 
@@ -179,7 +179,7 @@ namespace igros::x86_64 {
 
 	// Make PML4
 	[[nodiscard]]
-	pml4_t* paging::makePML4() noexcept {
+	paging::pml4_t* paging::makePML4() noexcept {
 		// Allocate page map level 4
 		const auto pml4 {static_cast<pml4_t*>(paging::allocate())};
 		// Zero enties of page map level 4
@@ -190,7 +190,7 @@ namespace igros::x86_64 {
 
 	// Make page directory pointer
 	[[nodiscard]]
-	directory_pointer_t* paging::makeDirectoryPointer() noexcept {
+	paging::directory_pointer_t* paging::makeDirectoryPointer() noexcept {
 		// Allocate page directory pointer
 		const auto dirPtr {static_cast<directory_pointer_t*>(paging::allocate())};
 		// Zero enties of page directory pointer
@@ -201,7 +201,7 @@ namespace igros::x86_64 {
 
 	// Make page directory
 	[[nodiscard]]
-	directory_t* paging::makeDirectory() noexcept {
+	paging::directory_t* paging::makeDirectory() noexcept {
 		// Allocate page directory
 		const auto dir {static_cast<directory_t*>(paging::allocate())};
 		// Zero enties of page directory
@@ -212,7 +212,7 @@ namespace igros::x86_64 {
 
 	// Make page table
 	[[nodiscard]]
-	table_t* paging::makeTable() noexcept {
+	paging::table_t* paging::makeTable() noexcept {
 		// Allocate page table
 		const auto table {static_cast<table_t*>(paging::allocate())};
 		// Zero enties of page table
