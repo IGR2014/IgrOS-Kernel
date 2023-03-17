@@ -28,110 +28,6 @@
 namespace igros::klib {
 
 
-	// Default temporary buffer for kitoa
-	constexpr auto	KITOA_BUFF_LEN		{65_usize};
-	// Constant integer symbols values buffer
-	constexpr auto	KITOA_CONST_BUFFER	{std::array<char, 16_usize> {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'}};
-
-
-	// Kernel large unsigned integer to string function
-	[[maybe_unused]]
-	auto kitoa(char* const buffer, const igros_usize_t size, const igros_quad_t value, const radix_t radix) noexcept -> char* {
-
-		// Temporary copy of value
-		auto tempValue	{value};
-		auto tempSize	{size};
-
-		// Temporary buffer for value text representation
-		std::array<char, KITOA_BUFF_LEN> tempBuffer;
-		// Zero-initialize
-		kmemset(tempBuffer.data(), tempBuffer.size(), '\0');
-
-		// Setup counter to last - 1 position in temporary buffer
-		auto pos {KITOA_BUFF_LEN - 2_usize};
-		// Loop through all digits while number is greater than base.
-		// Digits are stored from the end of the start of temporary buffer
-		// (this makes easier dealing with reverse routine by removing it)
-		do {
-			// Calculate digit index
-			auto divres		{kudivmod(tempValue, static_cast<igros_dword_t>(radix))};
-			// Save current digit to temporary buffer
-			tempBuffer[pos--]	= KITOA_CONST_BUFFER[divres.reminder];
-			// Divide value by base to remove current digit
-			tempValue		= divres.quotient;
-		} while (tempValue > 0_usize);
-
-		// Resulting string length
-		auto strLength {KITOA_BUFF_LEN - ++pos};
-		// Check size fit
-		if (strLength > tempSize) [[unlikely]] {
-			return buffer;
-		}
-		// Revert temporary buffer we created from value to src buffer
-		return kstrcpy(&tempBuffer[pos], buffer, strLength);
-
-	}
-
-	// Kernel large integer to string function
-	[[maybe_unused]]
-	auto kitoa(char* const buffer, const igros_usize_t size, const igros_squad_t value, const radix_t radix) noexcept -> char* {
-
-		// Temporary copy of value
-		auto tempValue	{value};
-		auto tempSize	{size};
-
-		// Temporary buffer for value text representation
-		std::array<char, KITOA_BUFF_LEN> tempBuffer;
-		// Zero-initialize
-		kmemset(tempBuffer.data(), tempBuffer.size(), '\0');
-
-		// Check if sign is negative and value should be represented
-		// as decimal (binary, octal and hexidemical values have no sign)
-		if (
-			(value		< 0_ssize)	&&
-			(radix_t::DEC	== radix)
-		) {
-			// Write minus sign to buffer
-			tempBuffer[1_usize] = '-';
-			// Decrement size counter
-			--tempSize;
-			// Made value positive
-			tempValue = -tempValue;
-		}
-
-		// Setup counter to last - 1 position in temporary buffer
-		auto pos {KITOA_BUFF_LEN - 2_usize};
-		// Loop through all digits while number is greater than base.
-		// Digits are stored from the end of the start of temporary buffer
-		// (this makes easier dealing with reverse routine by removing it)
-		do {
-			// Calculate digit index
-			auto divres		{kudivmod(tempValue, static_cast<igros_dword_t>(radix))};
-			// Save current digit to temporary buffer
-			tempBuffer[pos--]	= KITOA_CONST_BUFFER[divres.reminder];
-			// Divide value by base to remove current digit
-			tempValue		= divres.quotient;
-		} while (tempValue > 0_usize);
-
-		// Resulting string length
-		auto strLength {KITOA_BUFF_LEN - ++pos};
-		// Check size fit
-		if (strLength > tempSize) [[unlikely]] {
-			return buffer;
-		}
-		// Revert temporary buffer we created from value to src buffer
-		return kstrcpy(&tempBuffer[pos], buffer, strLength);
-
-	}
-
-
-	// Kernel size type to string function
-	[[maybe_unused]]
-	auto kstoa(char* const buffer, const igros_usize_t size, const igros_usize_t value, const radix_t radix) noexcept -> char* {
-		return kitoa(buffer, size, static_cast<igros_quad_t>(value), radix);
-	}
-
-
 	// Kernel vsnprintf function
 	void kvsnprintf(char* const buffer, const igros_usize_t size, const char* const format, std::va_list list) noexcept {
 
@@ -150,6 +46,8 @@ namespace igros::klib {
 		// String pointer holder
 		auto str		{static_cast<char*>(nullptr)};
 
+		// Default temporary buffer for kitoa
+		constexpr auto KITOA_BUFF_LEN {65_usize};
 		// Number holder
 		std::array<char, KITOA_BUFF_LEN> number;
 		// Zero-initialize
@@ -354,7 +252,7 @@ namespace igros::klib {
 					// Size
 					case 'z': {
 						// Convert pointer to string
-						kstoa(number.data(), (sizeof(igros_usize_t) << 3) + 1_usize, va_arg(list, igros_usize_t));
+						kitoa(number.data(), (sizeof(igros_usize_t) << 3) + 1_usize, va_arg(list, igros_usize_t));
 						// Get string length
 						const auto len {kstrlen(number.data())};
 						// Fill with preceding symbols
