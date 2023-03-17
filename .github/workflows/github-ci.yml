@@ -104,6 +104,16 @@ jobs:
       run: |
         cmake --build --preset="build-linux-${{ matrix.compiler }}-${{ matrix.arch }}-debug" --target install
 
+    # Kernel Artifacts
+    - name: 'Kernel Artifacts'
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ matrix.compiler }}-${{ matrix.arch }}-kernel
+        path: |
+          ${{ env.IGROS_KERNEL_DIR_INSTALL }}/Debug/${{ matrix.compiler }}-${{ matrix.arch }}/iso/boot/kernel.bin
+          ${{ env.IGROS_KERNEL_DIR_INSTALL }}/Debug/${{ matrix.compiler }}-${{ matrix.arch }}/kernel.iso
+        retention-days: 7
+
     # SonarCloud Wrapper analysis
     - name: 'SonarCloud Analysis'
       env:
