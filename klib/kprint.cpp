@@ -3,7 +3,7 @@
 //	Kernel text print functions
 //
 //	File:	kprint.cpp
-//	Date:	16 Dec 2022
+//	Date:	17 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -31,6 +31,7 @@ namespace igros::klib {
 	// Kernel vsnprintf function
 	void kvsnprintf(char* const buffer, const igros_usize_t size, const char* const format, std::va_list list) noexcept {
 
+		// Error checks
 		if ((nullptr == buffer) || (0_usize == size) || (nullptr == format)) [[unlikely]] {
 			return;
 		}
@@ -46,17 +47,10 @@ namespace igros::klib {
 		// String pointer holder
 		auto str		{static_cast<char*>(nullptr)};
 
-		// Default temporary buffer for kitoa
-		constexpr auto KITOA_BUFF_LEN {65_usize};
-		// Number holder
-		std::array<char, KITOA_BUFF_LEN> number;
-		// Zero-initialize
-		kmemset(number.data(), number.size(), '\0');
-
 		// Preceding char fill lambda
 		constexpr auto fillPreceding = [](auto &str, const auto len, const auto width, const auto fill) constexpr noexcept {
 			// Check if value should be extended with fillChar
-			if (len < width) {
+			if (std::cmp_less(len, width)) [[likely]] {
 				// Calc remaining length
 				auto sz {width - len};
 				// Copy string
@@ -71,56 +65,142 @@ namespace igros::klib {
 			BYTE	= 0x01_u8,
 			WORD	= 0x02_u8,
 			DWORD	= 0x04_u8,
-			QUAD	= 0x08_u8
+			QUAD	= 0x08_u8,
+			SIZE	= 0x10_u8,
+			PNTR	= 0x80_u8
 		};
 
 		// Integer print lambda
-		auto printInteger = [&list, &fillPreceding](auto &str, const auto radix, const auto type, const auto width, const auto fill, const auto sign) noexcept {
+		auto printInteger = [&list, &fillPreceding](auto &str, const auto radix, const auto type, const auto width, const auto fill, const auto sign) constexpr noexcept {
+			// Default temporary buffer for kitoa
+			constexpr auto KITOA_BUFF_LEN {65_usize};
 			// Number holder
-			std::array<char, KITOA_BUFF_LEN> number;
-			// Zero-initialize
-			kmemset(number.data(), number.size(), '\0');
-			// Value
-			auto value {0_usize};
+			auto number {std::array<char, KITOA_BUFF_LEN> {}};
+			// Output length
+			auto length {0_usize};
 			// Check argument size specifier
 			switch (type) {
+				// Convert size to string
+				case argType_t::PNTR:
+					// Print signed or unsigned 64-bit value and get length of resulting string
+					length = kstrlen(
+						kptoa(
+							number.data(),
+							number.size(),
+							va_arg(list, igros_pointer_t)
+						)
+					);
+					// Done
+					break;
+				// Convert size to string
+				case argType_t::SIZE:
+					// Print signed or unsigned 64-bit value and get length of resulting string
+					length = kstrlen(
+						kitoa(
+							number.data(),
+							number.size(),
+							va_arg(list, igros_usize_t),
+							radix
+						)
+					);
+					// Done
+					break;
 				// Convert quad word to string
 				case argType_t::QUAD:
-					// Signed or unsigned
-					value = sign ? va_arg(list, igros_squad_t) : va_arg(list, igros_quad_t);
-					break;
-				// Convert word to string
-				case argType_t::WORD:
-					// Signed or unsigned
-					value = sign ? static_cast<igros_sword_t>(va_arg(list, igros_sdword_t)) : static_cast<igros_word_t>(va_arg(list, igros_dword_t));
-					break;
-				// Convert byte to string
-				case argType_t::BYTE:
-					// Signed or unsigned
-					value = sign ? static_cast<igros_sbyte_t>(va_arg(list, igros_sdword_t)) : static_cast<igros_byte_t>(va_arg(list, igros_dword_t));
+					// Print signed or unsigned 64-bit value and get length of resulting string
+					length = kstrlen(
+						sign ?
+						kitoa(
+							number.data(),
+							number.size(),
+							va_arg(list, igros_squad_t),
+							radix
+						) :
+						kitoa(
+							number.data(),
+							number.size(),
+							va_arg(list, igros_quad_t),
+							radix
+						)
+					);
+					// Done
 					break;
 				// Convert double word to string
 				case argType_t::DWORD:
-					// Signed or unsigned
-					value = sign ? va_arg(list, igros_sdword_t) : va_arg(list, igros_dword_t);
+					// Print signed or unsigned 32-bit value and get length of resulting string
+					length = kstrlen(
+						sign ?
+						kitoa(
+							number.data(),
+							number.size(),
+							va_arg(list, igros_sdword_t),
+							radix
+						) :
+						kitoa(
+							number.data(),
+							number.size(),
+							va_arg(list, igros_dword_t),
+							radix
+						)
+					);
+					// Done
+					break;
+				// Convert word to string
+				case argType_t::WORD:
+					// Print signed or unsigned 16-bit value and get length of resulting string
+					length = kstrlen(
+						sign ?
+						kitoa(
+							number.data(),
+							number.size(),
+							static_cast<igros_sword_t>(va_arg(list, igros_sdword_t)),
+							radix
+						) :
+						kitoa(
+							number.data(),
+							number.size(),
+							static_cast<igros_word_t>(va_arg(list, igros_dword_t)),
+							radix
+						)
+					);
+					// Done
+					break;
+				// Convert byte to string
+				case argType_t::BYTE:
+					// Print signed or unsigned 8-bit value and get length of resulting string
+					length = kstrlen(
+						sign ?
+						kitoa(
+							number.data(),
+							number.size(),
+							static_cast<igros_sbyte_t>(va_arg(list, igros_sdword_t)),
+							radix
+						) :
+						kitoa(
+							number.data(),
+							number.size(),
+							static_cast<igros_byte_t>(va_arg(list, igros_dword_t)),
+							radix
+						)
+					);
+					// Done
 					break;
 				// Unknown
 				default:
+					// Done
 					break;
 			}
-			// Get string length
-			const auto len {kstrlen(kitoa(number.data(), number.size(), value, radix))};
 			// Fill with preceding symbols
-			fillPreceding(str, len, width, fill);
+			fillPreceding(str, length, width, fill);
 			// Copy string
-			kstrcpy(number.data(), str, len);
+			kstrcpy(number.data(), str, length);
 			// Move iterator to string's end
-			str += len;
+			str += length;
 		};
 
 		// Iterate through format string
 		while (
-			(fmtIterator < size)		&&
+			(std::cmp_less(fmtIterator, size))	&&
 			('\0' != format[fmtIterator])
 		) {
 
@@ -154,7 +234,7 @@ namespace igros::klib {
 				}
 
 				// Argument type (dword by default)
-				auto argType = argType_t::DWORD;
+				auto argType {argType_t::DWORD};
 				// Check if quad specifier
 				if ('l' == format[fmtIterator + 1_usize]) {
 					// Check if quad specifier
@@ -188,6 +268,7 @@ namespace igros::klib {
 					case '%':
 						// Copy placeholder symbol '%'
 						*(strIterator++) = format[fmtIterator];
+						// Done
 						break;
 
 					// Character
@@ -196,18 +277,21 @@ namespace igros::klib {
 						fillPreceding(strIterator, sizeof(igros_sbyte_t), fillWidth, fillChar);
 						// Copy character to resulting string
 						*(strIterator++) = static_cast<igros_sbyte_t>(va_arg(list, igros_dword_t));
+						// Done
 						break;
 
 					// Binary integer
 					case 'b':
 						// Print integer
 						printInteger(strIterator, radix_t::BIN, argType, fillWidth, fillChar, false);
+						// Done
 						break;
 
 					// Octal integer
 					case 'o':
 						// Print integer
 						printInteger(strIterator, radix_t::OCT, argType, fillWidth, fillChar, false);
+						// Done
 						break;
 
 					// Integer
@@ -217,51 +301,36 @@ namespace igros::klib {
 					case 'i':
 						// Print integer
 						printInteger(strIterator, radix_t::DEC, argType, fillWidth, fillChar, true);
+						// Done
 						break;
 
 					// Unsigned integer
 					case 'u':
 						// Print integer
 						printInteger(strIterator, radix_t::DEC, argType, fillWidth, fillChar, false);
+						// Done
 						break;
 
 					// Hexidemical integer
 					case 'x':
 						// Print integer
 						printInteger(strIterator, radix_t::HEX, argType, fillWidth, fillChar, false);
+						// Done
 						break;
 
 					// Address
-					case 'p': {
-						// For pointers width is always size of igros_pointer_t (aka void*) on current platform
-						// And fill char is always '0'
-						fillWidth	= sizeof(igros_pointer_t) << 1;
-						fillChar	= '0';
-						// Convert pointer to string
-						kptoa(number.data(), (sizeof(igros_pointer_t) << 3) + 1_usize, va_arg(list, igros_pointer_t));
-						// Get string length
-						const auto len {kstrlen(number.data())};
-						// Fill with preceding symbols
-						fillPreceding(strIterator, len, fillWidth, fillChar);
-						// Copy string
-						kstrcpy(number.data(), strIterator, len);
-						// Move iterator to string's end
-						strIterator += len;
-					} break;
+					case 'p':
+						// Print integer
+						printInteger(strIterator, radix_t::HEX, argType_t::PNTR, (sizeof(igros_pointer_t) << 1), '0', false);
+						// Done
+						break;
 
 					// Size
-					case 'z': {
-						// Convert pointer to string
-						kitoa(number.data(), (sizeof(igros_usize_t) << 3) + 1_usize, va_arg(list, igros_usize_t));
-						// Get string length
-						const auto len {kstrlen(number.data())};
-						// Fill with preceding symbols
-						fillPreceding(strIterator, len, fillWidth, fillChar);
-						// Copy string
-						kstrcpy(number.data(), strIterator, len);
-						// Move iterator to string's end
-						strIterator += len;
-					} break;
+					case 'z':
+						// Print integer
+						printInteger(strIterator, radix_t::DEC, argType_t::SIZE, fillWidth, fillChar, false);
+						// Done
+						break;
 
 					// String
 					case 's': {
@@ -273,12 +342,14 @@ namespace igros::klib {
 						kstrcpy(str, strIterator, len);
 						// Move iterator to string's end
 						strIterator += len;
+					// Done
 					} break;
 
 					// Default action
 					default:
 						// Copy character to resulting string
 						*(strIterator++) = '?';
+						// Done
 						break;
 
 				}
@@ -324,9 +395,7 @@ namespace igros::klib {
 	// Kernel printf function
 	void kprintf(const char* const format, ...) noexcept {
 		// Text buffer
-		std::array<char, 1024_usize> buffer;
-		// Zero-initialize
-		kmemset(buffer.data(), buffer.size(), '\0');
+		auto buffer {std::array<char, 1024_usize> {}};
 		// Kernel variadic argument list
 		std::va_list list {};
 		// Initialize variadic arguments list
