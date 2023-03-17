@@ -20,7 +20,6 @@
 // IgrOS-Kernel library
 #include <klib/kprint.hpp>
 #include <klib/kstring.hpp>
-#include <klib/kmath.hpp>
 #include <klib/kmemory.hpp>
 
 
