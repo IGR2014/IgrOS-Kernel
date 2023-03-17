@@ -3,7 +3,7 @@
 //	Programmable interrupt timer
 //
 //	File:	pit.cpp
-//	Date:	16 Dec 2022
+//	Date:	17 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -86,7 +86,7 @@ namespace igros::arch {
 		if (0_usize == (++PIT_TICKS % PIT_FREQUENCY)) [[unlikely]] {
 			// Current time to HH:MM:SS.zzz
 			const auto elapsed	{pitGetTicks()};
-			const auto res		{klib::kudivmod(elapsed, PIT_MAIN_FREQUENCY)};
+			const auto res		{klib::kdivmod(elapsed, PIT_MAIN_FREQUENCY)};
 			const auto nanoseconds	{static_cast<igros_dword_t>(res.reminder)};
 			const auto seconds	{static_cast<igros_dword_t>(res.quotient)};
 			const auto minutes	{seconds / 60_u32};

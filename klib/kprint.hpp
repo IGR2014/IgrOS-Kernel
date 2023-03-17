@@ -24,6 +24,8 @@
 #include <utility>
 // IgrOS-Kernel arch
 #include <arch/types.hpp>
+// IgrOS-Kernel library
+#include <klib/kmath.hpp>
 
 
 // Kernel library code zone
@@ -58,10 +60,12 @@ namespace igros::klib {
 		// Digits are stored from the end of the start of temporary buffer
 		// (this makes easier dealing with reverse routine by removing it)
 		do {
+			// Calculate divisio/modulo operation
+			const auto divResult	{kdivmod<T>(tempValue, static_cast<T>(radix))};
 			// Save current digit to temporary buffer
-			tempBuffer[--pos]   = KITOA_CONST_BUFFER[tempValue % static_cast<T>(radix)];
+			tempBuffer[--pos]	= KITOA_CONST_BUFFER[divResult.reminder];
 			// Divide value by base to remove current digit
-			tempValue           /= static_cast<T>(radix);
+			tempValue		= static_cast<T>(divResult.quotient);
 		// The `do-while` instead of `while` here allows to process value fo zero
 		} while (std::cmp_greater(tempValue, static_cast<std::make_unsigned_t<T>>(0)));
 
