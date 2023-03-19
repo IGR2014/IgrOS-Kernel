@@ -3,7 +3,7 @@
 //	Multiboot 1 functions
 //
 //	File:	multiboot.cpp
-//	Date:	16 Mar 2023
+//	Date:	20 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -129,9 +129,7 @@ MEMORY MAP:
 			// Loop through memory map
 			while (std::bit_cast<igros_usize_t>(memoryMap) < (mmapAddr + mmapLength)) {
 				klib::kprintf(
-R"multiboot(
-	[%d] 0x%p - 0x%p"
-)multiboot",
+R"multiboot(	[%d] 0x%p - 0x%p")multiboot",
 					memoryMap->type,
 					std::bit_cast<igros_pointer_t>(static_cast<igros_usize_t>(memoryMap->address)),
 					std::bit_cast<igros_pointer_t>(static_cast<igros_usize_t>(memoryMap->address + memoryMap->length))
