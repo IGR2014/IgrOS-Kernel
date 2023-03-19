@@ -3,7 +3,7 @@
 //	Kernel math functions definitions
 //
 //	File:	kmath.hpp
-//	Date:	17 Mar 2023
+//	Date:	19 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -17,6 +17,7 @@
 // C++
 #include <concepts>
 #include <cstdint>
+#include <utility>
 // IgrOS-Kernel arch
 #include <arch/types.hpp>
 
