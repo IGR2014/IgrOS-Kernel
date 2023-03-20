@@ -3,7 +3,7 @@
 //	UART driver
 //
 //	File:	serial.cpp
-//	Date:	12 Mar 2023
+//	Date:	21 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -112,23 +112,6 @@ namespace igros::arch {
 		io::get().writePort8(SERIAL_PORT_IIR(SERIAL_PORT_1),	0xC7_u8);
 		// IRQs enabled, RTS/DSR set
 		io::get().writePort8(SERIAL_PORT_MCR(SERIAL_PORT_1),	0x0B_u8);
-		// Set loopback mode, test the serial chip
-		io::get().writePort8(SERIAL_PORT_MCR(SERIAL_PORT_1),	0x1E_u8);
-		// Test port with 0xA5 byte
-		io::get().writePort8(SERIAL_PORT_DR(SERIAL_PORT_1),	0xA5_u8);
-
-		// Check loopback
-		if (0xA5_u8 != io::get().readPort8(SERIAL_PORT_DR(SERIAL_PORT_1))) {
-			// Debug
-			klib::kprintf(
-				"Serial Port #1:\t ERROR - not functional!\n"
-			);
-			// Could not setup serial port
-			return false;
-		}
-
-		// Set normal mode (not-loopback with IRQs enabled and OUT#1 and OUT#2 bits enabled)
-		io::get().writePort8(SERIAL_PORT_MCR(SERIAL_PORT_1), 0x0F_u8);
 
 		// Debug
 		klib::kprintf(
