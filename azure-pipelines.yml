@@ -78,16 +78,16 @@ jobs:
             sudo apt install -y --no-install-recommends ccache cmake doxygen graphviz g++-multilib gcc-multilib mtools ninja-build xorriso
         displayName: 'Install Dependencies'
 
-      # Install Clang 15.0.0
+      # Install Clang 16.0.0
       - task: CmdLine@2
         inputs:
           script: |
             wget https://apt.llvm.org/llvm.sh
             chmod +x llvm.sh
-            sudo ./llvm.sh 15
-            sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-15 150
-            sudo update-alternatives --install /usr/bin/ld.lld ld.lld /usr/bin/ld.lld-15 150
-        displayName: 'Install Clang 15.0.0'
+            sudo ./llvm.sh 16 all
+            sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-16 160
+            sudo update-alternatives --install /usr/bin/ld.lld ld.lld /usr/bin/ld.lld-16 160
+        displayName: 'Install Clang 16.0.0'
 
       # Restore Build Cache
       - task: Cache@2
