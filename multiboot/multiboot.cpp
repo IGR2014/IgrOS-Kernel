@@ -94,7 +94,6 @@ R"multiboot(
 MEMORY INFO:
 	Low:	%d Kb.
 	High:	%d Kb.
-
 )multiboot",
 				memLow,
 				memHigh
@@ -104,7 +103,6 @@ MEMORY INFO:
 R"multiboot(
 MEMORY INFO:
 	No memory info provided...
-
 )multiboot"
 			);
 		}
@@ -119,7 +117,6 @@ R"multiboot(
 MEMORY MAP:
 	Size:	%d bytes
 	Addr:	0x%p
-
 )multiboot",
 				mmapLength,
 				mmapAddr
@@ -129,7 +126,7 @@ MEMORY MAP:
 			// Loop through memory map
 			while (std::bit_cast<igros_usize_t>(memoryMap) < (mmapAddr + mmapLength)) {
 				klib::kprintf(
-R"multiboot(	[%d] 0x%p - 0x%p")multiboot",
+R"multiboot(	[%d] 0x%p - 0x%p)multiboot",
 					memoryMap->type,
 					std::bit_cast<igros_pointer_t>(static_cast<igros_usize_t>(memoryMap->address)),
 					std::bit_cast<igros_pointer_t>(static_cast<igros_usize_t>(memoryMap->address + memoryMap->length))
@@ -143,7 +140,6 @@ R"multiboot(	[%d] 0x%p - 0x%p")multiboot",
 R"multiboot(
 MEMORY MAP:
 	No memory map provided...
-
 )multiboot"
 			);
 		}
@@ -190,7 +186,6 @@ VBE:
 	Card rev.:	"%s"
 	Current mode:	#%d (%dx%d, %dbpp, 0x%p)
 	Video memory:	%d Kb.
-
 )multiboot",
 				config->signature[0],
 				config->signature[1],
@@ -214,7 +209,6 @@ VBE:
 R"multiboot(
 VBE:
 	No VBE info provided...
-
 )multiboot"
 			);
 		}
@@ -222,8 +216,6 @@ VBE:
 
 	// Print multiboot FB info
 	void info_t::printFBInfo() const noexcept {
-		// Print header
-		klib::kprintf("FB:\r\n");
 		// Check framebuffer
 		if (info_t::hasInfoFrameBuffer()) [[likely]] {
 			// Framebuffer type name
@@ -250,7 +242,6 @@ FrameBuffer:
 	Current mode:	(%dx%d, %dbpp, %d, %s)
 	Address:	0x%p
 	Size:		%z
-
 )multiboot",
 				fbWidth,
 				fbHeight,
@@ -265,7 +256,6 @@ FrameBuffer:
 R"multiboot(
 FrameBuffer:
 	No FrameBuffer info provided...
-
 )multiboot"
 			);
 		}
