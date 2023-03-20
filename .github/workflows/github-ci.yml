@@ -54,15 +54,15 @@ jobs:
         sudo apt update
         sudo apt install -y --no-install-recommends ccache cmake doxygen graphviz g++-multilib gcc-multilib mtools ninja-build xorriso
 
-    # Install Clang 15.0.0
-    - name: 'Install Clang 15.0.0'
+    # Install Clang 16.0.0
+    - name: 'Install Clang 16.0.0'
       shell: bash
       run: |
         wget https://apt.llvm.org/llvm.sh
         chmod +x llvm.sh
-        sudo ./llvm.sh 15 all
-        sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-15 150
-        sudo update-alternatives --install /usr/bin/ld.lld ld.lld /usr/bin/ld.lld-15 150
+        sudo ./llvm.sh 16 all
+        sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-16 160
+        sudo update-alternatives --install /usr/bin/ld.lld ld.lld /usr/bin/ld.lld-16 160
 
     # Init SonarCloud Wrapper
     - name: 'SonarCloud Init'
