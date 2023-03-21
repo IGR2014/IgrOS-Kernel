@@ -3,7 +3,7 @@
 #	General purpose, segment, stack and flags registers access
 #
 #	File:	port.s
-#	Date:	13 Dec 2022
+#	Date:	22 Mar 2023
 #
 #	Copyright (c) 2017 - 2022, Igor Baklykov
 #	All rights reserved.
@@ -44,7 +44,7 @@
 
 
 # Read CS register value
-.type outCS, @function
+.type outCS, %function
 outCS:
 
 	movw	%cs, %ax		# Get CS value
@@ -54,7 +54,7 @@ outCS:
 
 
 # Read DS register value
-.type outDS, @function
+.type outDS, %function
 outDS:
 
 	movw	%ds, %ax		# Get DS value
@@ -64,7 +64,7 @@ outDS:
 
 
 # Read ES register value
-.type outES, @function
+.type outES, %function
 outES:
 
 	movw	%es, %ax		# Get ES value
@@ -74,7 +74,7 @@ outES:
 
 
 # Read FS register value
-.type outFS, @function
+.type outFS, %function
 outFS:
 
 	movw	%fs, %ax		# Get FS value
@@ -84,7 +84,7 @@ outFS:
 
 
 # Read GS register value
-.type outGS, @function
+.type outGS, %function
 outGS:
 
 	movw	%gs, %ax		# Get GS value
@@ -94,7 +94,7 @@ outGS:
 
 
 # Read SS register value
-.type outSS, @function
+.type outSS, %function
 outSS:
 
 	movw	%ss, %ax		# Get SS value
@@ -105,7 +105,7 @@ outSS:
 
 
 # Read EBP register value
-.type outEBP, @function
+.type outEBP, %function
 outEBP:
 
 	movl	%ebp, %eax		# Get EBP value
@@ -114,7 +114,7 @@ outEBP:
 .size outEBP, . - outEBP
 
 # Read ESP register value
-.type outESP, @function
+.type outESP, %function
 outESP:
 
 	movl	%esp, %eax		# Get ESP value
@@ -125,7 +125,7 @@ outESP:
 
 
 # Read EFLAGS register value
-.type outEFLAGS, @function
+.type outEFLAGS, %function
 outEFLAGS:
 
 	pushf				# Push EFLAGS to stack
@@ -137,7 +137,7 @@ outEFLAGS:
 
 
 # Read EAX register value
-.type outEAX, @function
+.type outEAX, %function
 outEAX:
 
 	retl				# EAX value already in EAX register :D
@@ -146,7 +146,7 @@ outEAX:
 
 
 # Read EBX register value
-.type outEBX, @function
+.type outEBX, %function
 outEBX:
 
 	movl	%ebx, %eax		# Get EBX value
@@ -156,7 +156,7 @@ outEBX:
 
 
 # Read ECX register value
-.type outECX, @function
+.type outECX, %function
 outECX:
 
 	movl	%ecx, %eax		# Get ECX value
@@ -166,7 +166,7 @@ outECX:
 
 
 # Read EDX register value
-.type outEDX, @function
+.type outEDX, %function
 outEDX:
 
 	movl	%edx, %eax		# Get EDX value
@@ -176,7 +176,7 @@ outEDX:
 
 
 # Read EDI register value
-.type outEDI, @function
+.type outEDI, %function
 outEDI:
 
 	movl	%edi, %eax		# Get EDI value
@@ -186,7 +186,7 @@ outEDI:
 
 
 # Read ESI register value
-.type outESI, @function
+.type outESI, %function
 outESI:
 
 	movl	%esi, %eax		# Get ESI value
@@ -197,7 +197,7 @@ outESI:
 
 
 # Read EIP register value
-.type outEIP, @function
+.type outEIP, %function
 outEIP:
 
 	leal	(%esp), %eax		# Get EIP value (Note - can only be read from stack after call!)

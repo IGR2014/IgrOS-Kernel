@@ -3,7 +3,7 @@
 #	MSR in/out operations
 #
 #	File:   msr.s
-#	Date:	13 Dec 2022
+#	Date:	22 Mar 2023
 #
 #	Copyright (c) 2017 - 2022, Igor Baklykov
 #	All rights reserved.
@@ -21,7 +21,7 @@
 
 
 # Write MSR register
-.type inMSR, @function
+.type inMSR, %function
 inMSR:
 
 	cld				# Clear direction flag
@@ -34,7 +34,7 @@ inMSR:
 
 
 # Read MSR register
-.type outMSR, @function
+.type outMSR, %function
 outMSR:
 
 	cld				# Clear direction flag

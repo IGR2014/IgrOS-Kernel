@@ -3,7 +3,7 @@
 #	CPUID instruction functions
 #
 #	File:	cpuid.s
-#	Date:	13 Dec 2022
+#	Date:	22 Mar 2023
 #
 #	Copyright (c) 2017 - 2022, Igor Baklykov
 #	All rights reserved.
@@ -24,7 +24,7 @@
 
 
 # Execute CPUID with reauired flags
-.type cpuCPUID, @function
+.type cpuCPUID, %function
 cpuCPUID:
 
 	cld					# Clear direction flag

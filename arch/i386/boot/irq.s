@@ -3,7 +3,7 @@
 #	IRQ low-level handlers
 #
 #	File:	irq.s
-#	Date:	13 Dec 2022
+#	Date:	22 Mar 2023
 #
 #	Copyright (c) 2017 - 2022, Igor Baklykov
 #	All rights reserved.
@@ -40,7 +40,7 @@
 
 
 # IRQ 0
-.type irqHandler0, @function
+.type irqHandler0, %function
 irqHandler0:
 
 	cli				# Disable interrupts
@@ -52,7 +52,7 @@ irqHandler0:
 
 
 # IRQ 1
-.type irqHandler1, @function
+.type irqHandler1, %function
 irqHandler1:
 
 	cli				# Disable interrupts
@@ -64,7 +64,7 @@ irqHandler1:
 
 
 # IRQ 2
-.type irqHandler2, @function
+.type irqHandler2, %function
 irqHandler2:
 
 	cli				# Disable interrupts
@@ -76,7 +76,7 @@ irqHandler2:
 
 
 # IRQ 3
-.type irqHandler3, @function
+.type irqHandler3, %function
 irqHandler3:
 
 	cli				# Disable interrupts
@@ -88,7 +88,7 @@ irqHandler3:
 
 
 # IRQ 4
-.type irqHandler4, @function
+.type irqHandler4, %function
 irqHandler4:
 
 	cli				# Disable interrupts
@@ -100,7 +100,7 @@ irqHandler4:
 
 
 # IRQ 5
-.type irqHandler5, @function
+.type irqHandler5, %function
 irqHandler5:
 
 	cli				# Disable interrupts
@@ -112,7 +112,7 @@ irqHandler5:
 
 
 # IRQ 6
-.type irqHandler6, @function
+.type irqHandler6, %function
 irqHandler6:
 
 	cli				# Disable interrupts
@@ -124,7 +124,7 @@ irqHandler6:
 
 
 # IRQ 7
-.type irqHandler7, @function
+.type irqHandler7, %function
 irqHandler7:
 
 	cli				# Disable interrupts
@@ -136,7 +136,7 @@ irqHandler7:
 
 
 # IRQ 8
-.type irqHandler8, @function
+.type irqHandler8, %function
 irqHandler8:
 
 	cli				# Disable interrupts
@@ -149,7 +149,7 @@ irqHandler8:
 
 # IRQ 9
 irqHandler9:
-.type irqHandler9, @function
+.type irqHandler9, %function
 
 	cli				# Disable interrupts
 	pushl	$0x00			# Fake parameter
@@ -160,7 +160,7 @@ irqHandler9:
 
 
 # IRQ 10
-.type irqHandlerA, @function
+.type irqHandlerA, %function
 irqHandlerA:
 
 	cli				# Disable interrupts
@@ -172,7 +172,7 @@ irqHandlerA:
 
 
 # IRQ 11
-.type irqHandlerB, @function
+.type irqHandlerB, %function
 irqHandlerB:
 
 	cli				# Disable interrupts
@@ -184,7 +184,7 @@ irqHandlerB:
 
 
 # IRQ 12
-.type irqHandlerC, @function
+.type irqHandlerC, %function
 irqHandlerC:
 
 	cli				# Disable interrupts
@@ -196,7 +196,7 @@ irqHandlerC:
 
 
 # IRQ 13
-.type irqHandlerD, @function
+.type irqHandlerD, %function
 irqHandlerD:
 
 	cli				# Disable interrupts
@@ -208,7 +208,7 @@ irqHandlerD:
 
 
 # IRQ 14
-.type irqHandlerE, @function
+.type irqHandlerE, %function
 irqHandlerE:
 
 	cli				# Disable interrupts
@@ -220,7 +220,7 @@ irqHandlerE:
 
 
 # IRQ 15
-.type irqHandlerF, @function
+.type irqHandlerF, %function
 irqHandlerF:
 
 	cli				# Disable interrupts
@@ -233,7 +233,7 @@ irqHandlerF:
 
 
 # Enable interrupts
-.type irqEnable, @function
+.type irqEnable, %function
 irqEnable:
 
 	sti				# Enable interrupts
@@ -243,7 +243,7 @@ irqEnable:
 
 
 # Disable interrupts
-.type irqDisable, @function
+.type irqDisable, %function
 irqDisable:
 
 	cli				# Disable interrupts

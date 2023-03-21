@@ -3,7 +3,7 @@
 #	Long mode low-level preparation operations
 #
 #	File:	longMode.s
-#	Date:	13 Dec 2022
+#	Date:	22 Mar 2023
 #
 #	Copyright (c) 2017 - 2022, Igor Baklykov
 #	All rights reserved.
@@ -28,7 +28,7 @@
 .global	checkLongMode
 
 
-.type checkCPUID, @function
+.type checkCPUID, %function
 checkCPUID:
 
 	pushfl
@@ -53,7 +53,7 @@ checkCPUID:
 .size checkCPUID, . - checkCPUID
 
 
-.type checkLongMode, @function
+.type checkLongMode, %function
 checkLongMode:
 
 	movl	$CPUIDMAGIC, %eax

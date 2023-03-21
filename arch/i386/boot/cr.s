@@ -3,7 +3,7 @@
 #	CR0-CR4 in/out operations
 #
 #	File:	cr.s
-#	Date:	13 Dec 2022
+#	Date:	22 Mar 2023
 #
 #	Copyright (c) 2017 - 2022, Igor Baklykov
 #	All rights reserved.
@@ -26,7 +26,7 @@
 
 
 # Read CR0 register
-.type outCR0, @function
+.type outCR0, %function
 outCR0:
 
 	movl	%cr0, %eax
@@ -36,7 +36,7 @@ outCR0:
 
 
 # Read CR2 register
-.type outCR2, @function
+.type outCR2, %function
 outCR2:
 
 	movl	%cr2, %eax
@@ -46,7 +46,7 @@ outCR2:
 
 
 # Read CR3 register
-.type outCR3, @function
+.type outCR3, %function
 outCR3:
 
 	movl	%cr3, %eax
@@ -56,7 +56,7 @@ outCR3:
 
 
 # Read CR4 register
-.type outCR4, @function
+.type outCR4, %function
 outCR4:
 
 	movl	%cr4, %eax
@@ -67,7 +67,7 @@ outCR4:
 
 
 # Write CR0 register
-.type inCR0, @function
+.type inCR0, %function
 inCR0:
 
 	movl	4(%esp), %eax
@@ -78,7 +78,7 @@ inCR0:
 
 
 # Write CR3 register
-.type inCR3, @function
+.type inCR3, %function
 inCR3:
 
 	movl	4(%esp), %eax
@@ -89,7 +89,7 @@ inCR3:
 
 
 # Write CR4 register
-.type inCR4, @function
+.type inCR4, %function
 inCR4:
 
 	movl	4(%esp), %eax

@@ -3,7 +3,7 @@
 #	IO low-level port operations
 #
 #	File:	port.s
-#	Date:	13 Dec 2022
+#	Date:	22 Mar 2023
 #
 #	Copyright (c) 2017 - 2022, Igor Baklykov
 #	All rights reserved.
@@ -25,7 +25,7 @@
 
 
 # Read byte from port function
-.type outPort8, @function
+.type outPort8, %function
 outPort8:
 
 	cld				# Clear direction flag
@@ -37,7 +37,7 @@ outPort8:
 
 
 # Read word from port function
-.type outPort16, @function
+.type outPort16, %function
 outPort16:
 
 	cld				# Clear direction flag
@@ -49,7 +49,7 @@ outPort16:
 
 
 # Read long from port function
-.type outPort32, @function
+.type outPort32, %function
 outPort32:
 
 	cld				# Clear direction flag
@@ -61,7 +61,7 @@ outPort32:
 
 
 # Write byte to port function
-.type inPort8, @function
+.type inPort8, %function
 inPort8:
 
 	cld				# Clear direction flag
@@ -74,7 +74,7 @@ inPort8:
 
 
 # Write word to port function
-.type inPort16, @function
+.type inPort16, %function
 inPort16:
 
 	cld				# Clear direction flag
@@ -87,7 +87,7 @@ inPort16:
 
 
 # Write long to port function
-.type inPort32, @function
+.type inPort32, %function
 inPort32:
 
 	cld				# Clear direction flag
