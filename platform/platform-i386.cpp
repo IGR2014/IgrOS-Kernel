@@ -28,6 +28,7 @@
 #include <drivers/vga/vmem.hpp>
 // IgrOS-Kernel library
 #include <klib/kprint.hpp>
+#include <klib/kSingleton.hpp>
 // IgrOS-Kernel platform
 #include <platform/platform.hpp>
 
@@ -126,16 +127,20 @@ namespace igros::i386 {
 namespace igros::platform {
 
 
-	// Platform description
-	const auto CURRENT_PLATFORM {Platform {
-		"i386",
-		i386::platformInit,
-		i386::platformFinalize,
-		i386::platformShutdown,
-		i386::platformReboot,
-		i386::platformSuspend,
-		i386::platformWakeup
-	}};
+	// Get kernel current platform
+	[[nodiscard]]
+	auto Platform::current() noexcept -> const Platform& {
+		// Current i386 platform reference
+		return klib::kSingleton<Platform>::get(
+			"i386",
+			i386::platformInit,
+			i386::platformFinalize,
+			i386::platformShutdown,
+			i386::platformReboot,
+			i386::platformSuspend,
+			i386::platformWakeup
+		);
+	}
 
 
 }	// namespace igros::platform

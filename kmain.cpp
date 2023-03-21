@@ -31,7 +31,7 @@ extern "C" {
 	void kmain(const igros::multiboot::info_t* const multiboot, const igros::igros_dword_t magic) noexcept {
 
 		// Initialize platform
-		igros::platform::Platform::get().initialize();
+		igros::platform::Platform::current().initialize();
 
 		// Write Multiboot magic error message message
 		igros::klib::kprintf("IgrOS kernel");

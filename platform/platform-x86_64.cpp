@@ -27,6 +27,7 @@
 #include <drivers/vga/vmem.hpp>
 // IgrOS-Kernel library
 #include <klib/kprint.hpp>
+#include <klib/kSingleton.hpp>
 // IgrOS-Kernel platform
 #include <platform/platform.hpp>
 
@@ -125,16 +126,20 @@ namespace igros::x86_64 {
 namespace igros::platform {
 
 
-	// Platform description
-	const auto CURRENT_PLATFORM {Platform {
-		"x86_64",
-		x86_64::platformInit,
-		x86_64::platformFinalize,
-		x86_64::platformShutdown,
-		x86_64::platformReboot,
-		x86_64::platformSuspend,
-		x86_64::platformWakeup
-	}};
+	// Get kernel current platform
+	[[nodiscard]]
+	auto Platform::current() noexcept -> const Platform& {
+		// Current x86_64 platform reference
+		return klib::kSingleton<Platform>::get(
+			"x86_64",
+			x86_64::platformInit,
+			x86_64::platformFinalize,
+			x86_64::platformShutdown,
+			x86_64::platformReboot,
+			x86_64::platformSuspend,
+			x86_64::platformWakeup
+		);
+	}
 
 
 }	// namespace igros::platform

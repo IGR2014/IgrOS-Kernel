@@ -15,6 +15,10 @@
 #pragma once
 
 
+// C++
+#include <utility>
+
+
 ////////////////////////////////////////////////////////////////
 ///
 /// @brief IgrOS Kernel Library namespace
@@ -52,8 +56,9 @@ namespace igros::klib {
 	public:
 
 		/// @brief Get instance function
+		template<class ...Args>
 		[[nodiscard]]
-		constexpr static auto	get() noexcept -> T&;
+		static auto	get(Args &&...args) noexcept -> T&;
 
 
 	};
@@ -62,15 +67,20 @@ namespace igros::klib {
 	////////////////////////////////////////////////////////////////
 	///
 	/// @brief Get instance function
+	/// @tparam Args Singleton object class constructor arguments types
+	/// @param[in] args Singleton object class constructor arguments values
 	/// @return Reference to static instance ot type @c T
 	///
 	template<class T>
+	template<class ...Args>
 	[[nodiscard]]
-	constexpr auto kSingleton<T>::get() noexcept -> T& {
-		// Create static object (if not yet created)
-		static T s {};
-		// Return reference to it
-		return s;
+	auto kSingleton<T>::get(Args &&...args) noexcept -> T& {
+		// Create instance
+		static T instance {
+			std::forward<Args>(args)...
+		};
+		// Return instance reference
+		return instance;
 	}
 
 
