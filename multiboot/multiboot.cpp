@@ -268,15 +268,15 @@ FrameBuffer:
 		klib::kprintf(
 R"info(
 Kernel info:
-Arch:		%s
-Start addr:	0x%p
-End addr:	0x%p
-Size:		%d Kb.
-Build:		%s, %s
-Version:	%s
-Author:		Igor Baklykov (c) %d - %d
-Loader:		"%s"
-Command line:	"%s"
+	Arch:		%s
+	Start addr:	0x%p
+	End addr:	0x%p
+	Size:		%d Kb.
+	Build:		%s, %s
+	Version:	%s
+	Author:		Igor Baklykov (c) %d - %d
+	Loader:		"%s"
+	Command line:	"%s"
 )info",
 			platform::Platform::current().name(),
 			platform::Platform::kernelStart(),
