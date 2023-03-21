@@ -118,12 +118,6 @@ namespace igros::arch {
 		// Mask PIT interrupts
 		irq::get().mask(irq::irq_t::PIT);
 
-		// Print
-		klib::kprintf(
-			"IRQ #%d [PIT] installed\n",
-			irq::irq_t::PIT
-		);
-
 	}
 
 
