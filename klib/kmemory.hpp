@@ -17,12 +17,11 @@
 // C++
 #include <algorithm>
 #include <array>
+#include <bit>
 #include <cstdint>
 #include <type_traits>
 // IgrOS-Kernel arch
 #include <arch/types.hpp>
-// IgrOS-Kernel library
-#include <klib/kalign.hpp>
 
 
 // Kernel library code zone
