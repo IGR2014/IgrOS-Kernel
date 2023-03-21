@@ -3,7 +3,7 @@
 //	Memory map operations definition
 //
 //	File:	mmap.cpp
-//	Date:	16 Dec 2022
+//	Date:	21 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -13,10 +13,10 @@
 
 // C++
 #include <cstdint>
-// IgrOS-Kernel arch platform
-#include <arch/platform/platform.hpp>
 // IgrOS-Kernel memory
 #include <mem/mmap.hpp>
+// IgrOS-Kernel platform
+#include <platform/platform.hpp>
 
 
 // Memory code zone
@@ -39,8 +39,8 @@ namespace igros::mem {
 			if (
 				(multiboot::MEMORY_MAP_TYPE::AVAILABLE	== entry->type)		&&
 				(
-					(std::bit_cast<igros_usize_t>(entry)	< std::bit_cast<igros_usize_t>(platform::KERNEL_START()))	||
-					(std::bit_cast<igros_usize_t>(entry)	> std::bit_cast<igros_usize_t>(platform::KERNEL_END()))
+					(std::bit_cast<igros_usize_t>(entry)	< std::bit_cast<igros_usize_t>(platform::Platform::kernelStart()))	||
+					(std::bit_cast<igros_usize_t>(entry)	> std::bit_cast<igros_usize_t>(platform::Platform::kernelEnd()))
 				)
 			) {
 				// Initial entry's memory offset

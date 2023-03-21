@@ -29,8 +29,4 @@ target_sources(
 add_subdirectory(
 	${CMAKE_SYSTEM_PROCESSOR}
 )
-# Add platform subdirectory
-add_subdirectory(
-	platform
-)
 

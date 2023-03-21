@@ -1,63 +1,78 @@
 ////////////////////////////////////////////////////////////////
-//
-//	IgrOS singleton implementation
-//
-//	File:	singleton.hpp
-//	Date:	16 Dec 2022
-//
-//	Copyright (c) 2017 - 2022, Igor Baklykov
-//	All rights reserved.
-//
-//
+///
+///	@brief		IgrOS singleton implementation
+///
+///	@file		kSingleton.hpp
+///	@date		21 Mar 2023
+///
+///	@copyright	Copyright (c) 2017 - 2022,
+///			All rights reserved.
+///	@author		Igor Baklykov
+///
+///
 
 
 #pragma once
 
 
-// OS namespace
-namespace igros {
+////////////////////////////////////////////////////////////////
+///
+/// @brief IgrOS Kernel Library namespace
+/// @namespace igros::klib
+///
+namespace igros::klib {
 
 
-	// Singleton
+	////////////////////////////////////////////////////////////////
+	///
+	/// @brief Kernel singleton implementation
+	/// @class kSingleton
+	/// @tparam T Wrapped CRTP class
+	///
 	template<typename T>
-	class singleton {
+	class kSingleton {
 
-		// No copy construction
-		singleton(const singleton &other) = delete;
-		// No copy assignment
-		singleton& operator=(const singleton &other) = delete;
+		/// @brief No copy construction
+		constexpr kSingleton(const kSingleton &other) = delete;
+		/// @brief No copy assignment
+		constexpr kSingleton& operator=(const kSingleton &other) = delete;
 
-		// No move construction
-		singleton(singleton &&other) = delete;
-		// No move assignment
-		singleton& operator=(singleton &&other) = delete;
+		/// @brief No move construction
+		constexpr kSingleton(kSingleton &&other) = delete;
+		/// @brief No move assignment
+		constexpr kSingleton& operator=(kSingleton &&other) = delete;
 
 
 	protected:
 
-		// Default c-tor
-		singleton() noexcept = default;
+		/// @brief Default c-tor
+		constexpr kSingleton() noexcept = default;
 
 
 	public:
 
-		// Get instance function
+		/// @brief Get instance function
 		[[nodiscard]]
-		static T&	get() noexcept;
+		constexpr static auto	get() noexcept -> T&;
 
 
 	};
 
-	// Get instance function
+
+	////////////////////////////////////////////////////////////////
+	///
+	/// @brief Get instance function
+	/// @return Reference to static instance ot type @c T
+	///
 	template<typename T>
 	[[nodiscard]]
-	T& singleton<T>::get() noexcept {
+	constexpr auto kSingleton<T>::get() noexcept -> T& {
 		// Create static object (if not yet created)
-		static T s;
+		static T s {};
 		// Return reference to it
 		return s;
 	}
 
 
-}	// namespace igros
+}	// namespace igros::klib
 

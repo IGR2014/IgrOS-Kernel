@@ -3,7 +3,7 @@
 //	I/O operations
 //
 //	File:	io.hpp
-//	Date:	16 Dec 2022
+//	Date:	21 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -21,7 +21,7 @@
 // IgrOS-Kernel arch x86_64
 #include <arch/x86_64/io.hpp>
 // IgrOS-Kernel library
-#include <klib/ksingleton.hpp>
+#include <klib/kSingleton.hpp>
 
 
 // Arch namespace
@@ -30,7 +30,7 @@ namespace igros::arch {
 
 	// I/O description type
 	template<typename T, typename T2>
-	class io_t final : public singleton<io_t<T, T2>> {
+	class io_t final : public klib::kSingleton<io_t<T, T2>> {
 
 		// No copy construction
 		io_t(const io_t &other) noexcept = delete;

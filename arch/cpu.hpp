@@ -3,7 +3,7 @@
 //	CPU operations
 //
 //	File:	cpu.hpp
-//	Date:	13 Mar 2023
+//	Date:	21 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -19,7 +19,7 @@
 // IgrOS-Kernel arch x86_64
 #include <arch/x86_64/cpu.hpp>
 // IgrOS-Kernel library
-#include <klib/ksingleton.hpp>
+#include <klib/kSingleton.hpp>
 
 
 // Arch namespace
@@ -28,7 +28,7 @@ namespace igros::arch {
 
 	// CPU description type
 	template<typename T>
-	class cpu_t final : public singleton<cpu_t<T>> {
+	class cpu_t final : public klib::kSingleton<cpu_t<T>> {
 
 		// No copy construction
 		cpu_t(const cpu_t &other) noexcept = delete;

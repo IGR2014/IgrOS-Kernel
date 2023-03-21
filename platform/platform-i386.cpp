@@ -3,7 +3,7 @@
 //	Platform description for x86
 //
 //	File:	platform-i386.cpp
-//	Date:	15 Mar 2023
+//	Date:	21 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -13,17 +13,13 @@
 
 // c++
 #include <source_location>
-// IgrOS-Kernel arch
-#include <arch/types.hpp>
-// IgrOS-Kernel arch platform
-#include <arch/platform/platform.hpp>
 // IgrOS-Kernel arch i386
-#include <arch/i386/idt.hpp>
 #include <arch/i386/exceptions.hpp>
-#include <arch/i386/gdt.hpp>
-#include <arch/i386/paging.hpp>
-#include <arch/i386/irq.hpp>
 #include <arch/i386/fpu.hpp>
+#include <arch/i386/gdt.hpp>
+#include <arch/i386/idt.hpp>
+#include <arch/i386/irq.hpp>
+#include <arch/i386/paging.hpp>
 // IgrOS-Kernel drivers
 #include <drivers/clock/pit.hpp>
 #include <drivers/clock/rtc.hpp>
@@ -32,6 +28,8 @@
 #include <drivers/vga/vmem.hpp>
 // IgrOS-Kernel library
 #include <klib/kprint.hpp>
+// IgrOS-Kernel platform
+#include <platform/platform.hpp>
 
 
 // i386 namespace
@@ -39,7 +37,7 @@ namespace igros::i386 {
 
 
 	// Initialize i386
-	static void i386Init() noexcept {
+	static void platformInit() noexcept {
 
 		// Setup Interrupts Descriptor Table
 		i386::idt::init();
@@ -48,16 +46,13 @@ namespace igros::i386 {
 		// Setup Global Descriptors Table
 		i386::gdt::init();
 
-		// Setup paging (And identity map first 4MB where kernel physically is)
-		i386::paging::init();
-
 		// Init interrupts
 		i386::irq::init();
 		// Enable interrupts
 		i386::irq::enable();
 
-		// Check FPU
-		i386::fpu::check();
+		// Setup paging (And identity map first 4MB where kernel physically is)
+		i386::paging::init();
 
 		// Setup VGA
 		arch::vmemInit();
@@ -72,48 +67,53 @@ namespace igros::i386 {
 
 		// Debug print
 		klib::kprintf(
-			"Platform i386 initialized...\n[%s]\n",
+			"[%s]\n",
 			std::source_location::current().function_name()
 		);
 
 	}
 
 	// Finalize i386
-	static void i386Finalize() noexcept {
+	static void platformFinalize() noexcept {
+		// Debug print
 		klib::kprintf(
-			"Not implemented yet!\n[%s]\n",
+			"[%s]\n",
 			std::source_location::current().function_name()
 		);
 	}
 
 	// Shutdown i386
-	static void i386Shutdown() noexcept {
+	static void platformShutdown() noexcept {
+		// Debug print
 		klib::kprintf(
-			"Not implemented yet!\n[%s]\n",
+			"[%s]\n",
 			std::source_location::current().function_name()
 		);
 	}
 
 	// Reboot i386
-	static void i386Reboot() noexcept {
+	static void platformReboot() noexcept {
+		// Debug print
 		klib::kprintf(
-			"Not implemented yet!\n[%s]\n",
+			"[%s]\n",
 			std::source_location::current().function_name()
 		);
 	}
 
 	// Suspend i386
-	static void i386Suspend() noexcept {
+	static void platformSuspend() noexcept {
+		// Debug print
 		klib::kprintf(
-			"Not implemented yet!\n[%s]\n",
+			"[%s]\n",
 			std::source_location::current().function_name()
 		);
 	}
 
 	// Wakeup i386
-	static void i386Wakeup() noexcept {
+	static void platformWakeup() noexcept {
+		// Debug print
 		klib::kprintf(
-			"Not implemented yet!\n[%s]\n",
+			"[%s]\n",
 			std::source_location::current().function_name()
 		);
 	}
@@ -127,15 +127,15 @@ namespace igros::platform {
 
 
 	// Platform description
-	const description_t CURRENT_PLATFORM {
+	const auto CURRENT_PLATFORM {Platform {
 		"i386",
-		i386::i386Init,
-		i386::i386Finalize,
-		i386::i386Shutdown,
-		i386::i386Reboot,
-		i386::i386Suspend,
-		i386::i386Wakeup
-	};
+		i386::platformInit,
+		i386::platformFinalize,
+		i386::platformShutdown,
+		i386::platformReboot,
+		i386::platformSuspend,
+		i386::platformWakeup
+	}};
 
 
 }	// namespace igros::platform

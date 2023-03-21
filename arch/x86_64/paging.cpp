@@ -3,7 +3,7 @@
 //	Memory paging for x86_64
 //
 //	File:	paging.cpp
-//	Date:	16 Mar 2023
+//	Date:	21 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -14,8 +14,6 @@
 // C++
 #include <array>
 #include <bit>
-// IgrOS-Kernel arch platform
-#include <arch/platform/platform.hpp>
 // IgrOS-Kernel arch x86_64
 #include <arch/x86_64/cpu.hpp>
 #include <arch/x86_64/cr.hpp>
@@ -29,6 +27,8 @@
 #include <klib/kFlags.hpp>
 #include <klib/kmemory.hpp>
 #include <klib/kprint.hpp>
+// IgrOS-Kernel platform
+#include <platform/platform.hpp>
 
 
 // x86_64 namespace
@@ -67,7 +67,7 @@ namespace igros::x86_64 {
 		except::install<except::NUMBER::PAGE_FAULT, paging::exHandler>();
 
 		// Get kernel end address
-		constexpr auto kernelEnd {const_cast<igros_byte_t*>(platform::KERNEL_END())};
+		constexpr auto kernelEnd {const_cast<igros_byte_t*>(platform::Platform::kernelEnd())};
 		// Initialize pages for page tables
 		paging::heap(kernelEnd, PAGE_SIZE << 6);
 

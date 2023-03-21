@@ -3,7 +3,7 @@
 //	Architecture interrupts type deduction
 //
 //	File:	irq.hpp
-//	Date:	13 Mar 2023
+//	Date:	21 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -21,7 +21,7 @@
 // IgrOS-Kernel arch x86_64
 #include <arch/x86_64/irq.hpp>
 // IgrOS-Kernel library
-#include <klib/ksingleton.hpp>
+#include <klib/kSingleton.hpp>
 
 
 // Arch namespace
@@ -30,7 +30,7 @@ namespace igros::arch {
 
 	// Interrupts description type
 	template<typename T, typename T2>
-	class interrupts_t final : public singleton<interrupts_t<T, T2>> {
+	class interrupts_t final : public klib::kSingleton<interrupts_t<T, T2>> {
 
 		// No copy construction
 		interrupts_t(const interrupts_t &other) noexcept = delete;
