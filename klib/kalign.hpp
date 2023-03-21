@@ -3,7 +3,7 @@
 //	Kernel alignment functions definitions
 //
 //	File:	kalign.hpp
-//	Date:	16 Dec 2022
+//	Date:	21 Dec 2022
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -32,7 +32,7 @@ namespace igros::klib {
 	}
 
 	// Align up
-	template<typename T>
+	template<class T>
 	[[nodiscard]]
 	constexpr T* kalignUp(const T* ptr, const igros_usize_t offset = alignof(T)) noexcept {
 		// Address addition
@@ -42,7 +42,7 @@ namespace igros::klib {
 	}
 
 	// Align down
-	template<typename T>
+	template<class T>
 	[[nodiscard]]
 	constexpr T* kalignDown(const T* ptr, const igros_usize_t offset = alignof(T)) noexcept {
 		// Address addition
@@ -52,7 +52,7 @@ namespace igros::klib {
 	}
 
 	// Check alignment
-	template<typename T>
+	template<class T>
 	[[nodiscard]]
 	constexpr bool kalignCheck(const T* ptr, const igros_usize_t offset = alignof(T)) noexcept {
 		return (0_usize == (std::bit_cast<igros_usize_t>(ptr) & kalignMask(offset)));

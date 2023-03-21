@@ -3,7 +3,7 @@
 //	Kernel-space memset for x86
 //
 //	File:	kmemset.hpp
-//	Date:	16 Dec 2022
+//	Date:	21 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -103,7 +103,7 @@ namespace igros::klib {
 
 
 	// Set required memory with specified data
-	template<igros_usize_t S, typename T>
+	template<igros_usize_t S, class T>
 	[[maybe_unused]]
 	inline auto kmemset(T (&arr)[S], const T val) noexcept -> igros_pointer_t {
 		return kmemset(arr, S, val);

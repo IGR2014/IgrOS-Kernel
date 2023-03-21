@@ -29,7 +29,7 @@ namespace igros::arch {
 
 
 	// I/O description type
-	template<typename T, typename T2>
+	template<class T, class T2>
 	class io_t final : public klib::kSingleton<io_t<T, T2>> {
 
 		// No copy construction
@@ -124,21 +124,21 @@ namespace igros::arch {
 
 
 	// Read byte from port
-	template<typename T, typename T2>
+	template<class T, class T2>
 	[[nodiscard]]
 	inline auto io_t<T, T2>::readPort8(const port_t addr) const noexcept -> igros_byte_t {
 		return T::readPort8(addr);
 	}
 
 	// Read word from port
-	template<typename T, typename T2>
+	template<class T, class T2>
 	[[nodiscard]]
 	inline auto io_t<T, T2>::readPort16(const port_t addr) const noexcept -> igros_word_t {
 		return T::readPort16(addr);
 	}
 
 	// Read double word from port
-	template<typename T, typename T2>
+	template<class T, class T2>
 	[[nodiscard]]
 	inline auto io_t<T, T2>::readPort32(const port_t addr) const noexcept -> igros_dword_t {
 		return T::readPort32(addr);
@@ -146,7 +146,7 @@ namespace igros::arch {
 
 
 	// Read count bytes from port
-	template<typename T, typename T2>
+	template<class T, class T2>
 	[[maybe_unused]]
 	inline auto io_t<T, T2>::readPort8Rep(const port_t addr, igros_byte_t* const base, const igros_usize_t count) const noexcept -> igros_byte_t* {
 		// Read count of bytes to base buffer
@@ -158,7 +158,7 @@ namespace igros::arch {
 	}
 
 	// Read count words from port
-	template<typename T, typename T2>
+	template<class T, class T2>
 	[[maybe_unused]]
 	inline auto io_t<T, T2>::readPort16Rep(const port_t addr, igros_word_t* const base, const igros_usize_t count) const noexcept -> igros_word_t* {
 		// Read count of words to base buffer
@@ -170,7 +170,7 @@ namespace igros::arch {
 	}
 
 	// Read count double words from port
-	template<typename T, typename T2>
+	template<class T, class T2>
 	[[maybe_unused]]
 	inline auto io_t<T, T2>::readPort32Rep(const port_t addr, igros_dword_t* const base, const igros_usize_t count) const noexcept -> igros_dword_t* {
 		// Read count of double words to base buffer
@@ -183,26 +183,26 @@ namespace igros::arch {
 
 
 	// Write byte to port
-	template<typename T, typename T2>
+	template<class T, class T2>
 	inline void io_t<T, T2>::writePort8(const port_t addr, const igros_byte_t value) const noexcept {
 		T::writePort8(addr, value);
 	}
 
 	// Write word to port
-	template<typename T, typename T2>
+	template<class T, class T2>
 	inline void io_t<T, T2>::writePort16(const port_t addr, const igros_word_t value) const noexcept {
 		T::writePort16(addr, value);
 	}
 
 	// Write double word to port
-	template<typename T, typename T2>
+	template<class T, class T2>
 	inline void io_t<T, T2>::writePort32(const port_t addr, const igros_dword_t value) const noexcept {
 		T::writePort32(addr, value);
 	}
 
 
 	// Write count bytes to port
-	template<typename T, typename T2>
+	template<class T, class T2>
 	inline void io_t<T, T2>::writePort8Rep(const port_t addr, const igros_byte_t* const value, const igros_usize_t count) const noexcept {
 		// Write count of bytes to port
 		for (auto i {0_usize}; i < count; i++) {
@@ -211,7 +211,7 @@ namespace igros::arch {
 	}
 
 	// Write count words to port
-	template<typename T, typename T2>
+	template<class T, class T2>
 	inline void io_t<T, T2>::writePort16Rep(const port_t addr, const igros_word_t* const value, const igros_usize_t count) const noexcept {
 		// Write count of words to port
 		for (auto i {0_usize}; i < count; i++) {
@@ -220,7 +220,7 @@ namespace igros::arch {
 	}
 
 	// Write count double words to port
-	template<typename T, typename T2>
+	template<class T, class T2>
 	inline void io_t<T, T2>::writePort32Rep(const port_t addr, const igros_dword_t* const value, const igros_usize_t count) const noexcept {
 		// Write count of double words to port
 		for (auto i {0_usize}; i < count; i++) {
@@ -230,21 +230,21 @@ namespace igros::arch {
 
 
 	// Read byte from I/O memory
-	template<typename T, typename T2>
+	template<class T, class T2>
 	[[nodiscard]]
 	inline auto io_t<T, T2>::readMemory8(const igros_byte_t* const addr) const noexcept -> igros_byte_t {
 		return T::readMemory8(addr);
 	}
 
 	// Read word from I/O memory
-	template<typename T, typename T2>
+	template<class T, class T2>
 	[[nodiscard]]
 	inline auto io_t<T, T2>::readMemory16(const igros_word_t* const addr) const noexcept -> igros_word_t {
 		return T::readMemory16(addr);
 	}
 
 	// Read double word from I/O memory
-	template<typename T, typename T2>
+	template<class T, class T2>
 	[[nodiscard]]
 	inline auto io_t<T, T2>::readMemory32(const igros_dword_t* const addr) const noexcept -> igros_dword_t {
 		return T::readMemory32(addr);
@@ -252,7 +252,7 @@ namespace igros::arch {
 
 
 	// Read count bytes from I/O memory
-	template<typename T, typename T2>
+	template<class T, class T2>
 	[[maybe_unused]]
 	inline auto io_t<T, T2>::readMemory8Rep(const igros_byte_t* const addr, igros_byte_t* const base, const igros_usize_t count) const noexcept -> igros_byte_t* {
 		// Read count of bytes to base buffer
@@ -264,7 +264,7 @@ namespace igros::arch {
 	}
 
 	// Read count words from I/O memory
-	template<typename T, typename T2>
+	template<class T, class T2>
 	[[maybe_unused]]
 	inline auto io_t<T, T2>::readMemory16Rep(const igros_word_t* const addr, igros_word_t* const base, const igros_usize_t count) const noexcept -> igros_word_t* {
 		// Read count of words to base buffer
@@ -276,7 +276,7 @@ namespace igros::arch {
 	}
 
 	// Read count double words from I/O memory
-	template<typename T, typename T2>
+	template<class T, class T2>
 	[[maybe_unused]]
 	inline auto io_t<T, T2>::readMemory32Rep(const igros_dword_t* const addr, igros_dword_t* const base, const igros_usize_t count) const noexcept -> igros_dword_t* {
 		// Read count of double words to base buffer
@@ -289,26 +289,26 @@ namespace igros::arch {
 
 
 	// Write byte to I/O memory
-	template<typename T, typename T2>
+	template<class T, class T2>
 	inline void io_t<T, T2>::writeMemory8(igros_byte_t* const addr, const igros_byte_t value) const noexcept {
 		T::writeMemory8(addr, value);
 	}
 
 	// Write word to I/O memory
-	template<typename T, typename T2>
+	template<class T, class T2>
 	inline void io_t<T, T2>::writeMemory16(igros_word_t* const addr, const igros_word_t value) const noexcept {
 		T::writeMemory16(addr, value);
 	}
 
 	// Write double word to I/O memory
-	template<typename T, typename T2>
+	template<class T, class T2>
 	inline void io_t<T, T2>::writeMemory32(igros_dword_t* const addr, const igros_dword_t value) const noexcept {
 		T::writeMemory32(addr, value);
 	}
 
 
 	// Write byte to I/O memory
-	template<typename T, typename T2>
+	template<class T, class T2>
 	inline void io_t<T, T2>::writeMemory8Rep(igros_byte_t* const addr, const igros_byte_t* const value, const igros_usize_t count) const noexcept {
 		// Write count of bytes to I/O memory
 		for (auto i {0_usize}; i < count; i++) {
@@ -317,7 +317,7 @@ namespace igros::arch {
 	}
 
 	// Write word to I/O memory
-	template<typename T, typename T2>
+	template<class T, class T2>
 	inline void io_t<T, T2>::writeMemory16Rep(igros_word_t* const addr, const igros_word_t* const value, const igros_usize_t count) const noexcept {
 		// Write count of words to I/O memory
 		for (auto i {0_usize}; i < count; i++) {
@@ -326,7 +326,7 @@ namespace igros::arch {
 	}
 
 	// Write double word to I/O memory
-	template<typename T, typename T2>
+	template<class T, class T2>
 	inline void io_t<T, T2>::writeMemory32Rep(igros_dword_t* const addr, const igros_dword_t* const value, const igros_usize_t count) const noexcept {
 		// Write count of double words to I/O memory
 		for (auto i {0_usize}; i < count; i++) {

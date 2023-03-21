@@ -27,7 +27,7 @@ namespace igros::arch {
 
 
 	// CPU description type
-	template<typename T>
+	template<class T>
 	class cpu_t final : public klib::kSingleton<cpu_t<T>> {
 
 		// No copy construction
@@ -58,7 +58,7 @@ namespace igros::arch {
 
 
 	// Halt CPU
-	template<typename T>
+	template<class T>
 	[[noreturn]]
 	inline void cpu_t<T>::halt() const noexcept {
 		T::halt();
@@ -66,7 +66,7 @@ namespace igros::arch {
 
 
 	// Dump CPU registers
-	template<typename T>
+	template<class T>
 	inline void cpu_t<T>::dumpRegisters(const register_t* const regs) const noexcept {
 		T::dumpRegisters(regs);
 	}

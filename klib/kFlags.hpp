@@ -3,7 +3,7 @@
 ///	@brief		Bit flags template datatype
 ///
 ///	@file		kFlags.hpp
-///	@date		16 Mar 2023
+///	@date		21 Mar 2023
 ///
 ///	@copyright	Copyright (c) 2017 - 2022,
 ///			All rights reserved.
@@ -38,7 +38,7 @@ namespace igros::klib {
 	/// @tparam T Flags internal representation enum type
 	/// @tparam U Flags internal underlying representation enum type
 	///
-	template<typename T, typename U = std::underlying_type_t<T>>
+	template<class T, class U = std::underlying_type_t<T>>
 	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
 	class kFlags {
 
@@ -59,7 +59,7 @@ namespace igros::klib {
 		/// @brief Default c-tor
 		constexpr kFlags() noexcept = default;
 		/// @brief From initializer list
-		template<typename ...Args>
+		template<class ...Args>
 		constexpr explicit kFlags(std::in_place_t /*tag*/, Args &&...args) noexcept; 
 
 		/// @brief Type conversion operator
@@ -167,9 +167,9 @@ namespace igros::klib {
 	/// @param[in] args List of flags
 	/// @param[in] tag Disambiguation tag
 	///
-	template<typename T, typename U>
+	template<class T, class U>
 	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
-	template<typename ...Args>
+	template<class ...Args>
 	constexpr kFlags<T, U>::kFlags(std::in_place_t /*tag*/, Args &&...args) noexcept :
 		mValue((static_cast<U>(args) | ...)) {}
 
@@ -179,7 +179,7 @@ namespace igros::klib {
 	/// @brief Type conversion operator
 	/// @return Flag value of type @c T
 	///
-	template<typename T, typename U>
+	template<class T, class U>
 	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
 	[[nodiscard]]
 	constexpr kFlags<T, U>::operator T() const noexcept {
@@ -191,7 +191,7 @@ namespace igros::klib {
 	/// @brief Type conversion operator
 	/// @return Flag underlying value of type @c U
 	///
-	template<typename T, typename U>
+	template<class T, class U>
 	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
 	[[nodiscard]]
 	constexpr kFlags<T, U>::operator U() const noexcept {
@@ -205,7 +205,7 @@ namespace igros::klib {
 	/// @param[in] other Other flags value of type @c T
 	/// @return Indicates if flag values are equal
 	///
-	template<typename T, typename U>
+	template<class T, class U>
 	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
 	constexpr auto kFlags<T, U>::operator==(const T &other) const noexcept -> bool {
 		return mValue == static_cast<U>(other);
@@ -217,7 +217,7 @@ namespace igros::klib {
 	/// @param[in] other Other flags value of type @c T
 	/// @return Indicates if flag values are not equal
 	///
-	template<typename T, typename U>
+	template<class T, class U>
 	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
 	constexpr auto kFlags<T, U>::operator!=(const T &other) const noexcept -> bool {
 		return !(*this == other);
@@ -230,7 +230,7 @@ namespace igros::klib {
 	/// @param[in] other Other flags value
 	/// @return Reference to @c this for chaining
 	///
-	template<typename T, typename U>
+	template<class T, class U>
 	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
 	[[maybe_unused]]
 	constexpr auto kFlags<T, U>::operator&=(const kFlags<T, U> &other) noexcept -> kFlags<T, U>& {
@@ -243,7 +243,7 @@ namespace igros::klib {
 	/// @param[in] other Other flags value
 	/// @return Reference to @c this for chaining
 	///
-	template<typename T, typename U>
+	template<class T, class U>
 	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
 	[[maybe_unused]]
 	constexpr auto kFlags<T, U>::operator|=(const kFlags<T, U> &other) noexcept -> kFlags<T, U>& {
@@ -256,7 +256,7 @@ namespace igros::klib {
 	/// @param[in] other Other flags value
 	/// @return Reference to @c this for chaining
 	///
-	template<typename T, typename U>
+	template<class T, class U>
 	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
 	[[maybe_unused]]
 	constexpr auto kFlags<T, U>::operator^=(const kFlags<T, U> &other) noexcept -> kFlags<T, U>& {
@@ -270,7 +270,7 @@ namespace igros::klib {
 	/// @param[in] other Other flags value
 	/// @return Result of (this AND other)
 	///
-	template<typename T, typename U>
+	template<class T, class U>
 	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
 	[[nodiscard]]
 	constexpr auto kFlags<T, U>::operator&(const kFlags<T, U> &other) const noexcept -> kFlags<T, U> {
@@ -283,7 +283,7 @@ namespace igros::klib {
 	/// @param[in] other Other flags value
 	/// @return Result of (this OR other)
 	///
-	template<typename T, typename U>
+	template<class T, class U>
 	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
 	[[nodiscard]]
 	constexpr auto kFlags<T, U>::operator|(const kFlags<T, U> &other) const noexcept -> kFlags<T, U> {
@@ -296,7 +296,7 @@ namespace igros::klib {
 	/// @param[in] other Other flags value
 	/// @return Result of (this XOR other)
 	///
-	template<typename T, typename U>
+	template<class T, class U>
 	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
 	[[nodiscard]]
 	constexpr auto kFlags<T, U>::operator^(const kFlags<T, U> &other) const noexcept -> kFlags<T, U> {
@@ -310,7 +310,7 @@ namespace igros::klib {
 	/// @param[in] other Other flags value of type @c T
 	/// @return Reference to @c this for chaining
 	///
-	template<typename T, typename U>
+	template<class T, class U>
 	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
 	[[maybe_unused]]
 	constexpr auto kFlags<T, U>::operator&=(const T &other) noexcept -> kFlags<T, U>& {
@@ -326,7 +326,7 @@ namespace igros::klib {
 	/// @param[in] other Other flags value of type @c T
 	/// @return Reference to @c this for chaining
 	///
-	template<typename T, typename U>
+	template<class T, class U>
 	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
 	[[maybe_unused]]
 	constexpr auto kFlags<T, U>::operator|=(const T &other) noexcept -> kFlags<T, U>& {
@@ -342,7 +342,7 @@ namespace igros::klib {
 	/// @param[in] other Other flags value of type @c T
 	/// @return Reference to @c this for chaining
 	///
-	template<typename T, typename U>
+	template<class T, class U>
 	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
 	[[maybe_unused]]
 	constexpr auto kFlags<T, U>::operator^=(const T &other) noexcept -> kFlags<T, U>& {
@@ -359,7 +359,7 @@ namespace igros::klib {
 	/// @param[in] other Other flags value of type @c T
 	/// @return Result of (this AND other)
 	///
-	template<typename T, typename U>
+	template<class T, class U>
 	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
 	[[nodiscard]]
 	constexpr auto kFlags<T, U>::operator&(const T &other) const noexcept -> kFlags<T, U> {
@@ -372,7 +372,7 @@ namespace igros::klib {
 	/// @param[in] other Other flags value of type @c T
 	/// @return Result of (this OR other)
 	///
-	template<typename T, typename U>
+	template<class T, class U>
 	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
 	[[nodiscard]]
 	constexpr auto kFlags<T, U>::operator|(const T &other) const noexcept -> kFlags<T, U> {
@@ -385,7 +385,7 @@ namespace igros::klib {
 	/// @param[in] other Other flags value of type @c T
 	/// @return Result of (this XOR other)
 	///
-	template<typename T, typename U>
+	template<class T, class U>
 	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
 	[[nodiscard]]
 	constexpr auto kFlags<T, U>::operator^(const T &other) const noexcept -> kFlags<T, U> {
@@ -398,7 +398,7 @@ namespace igros::klib {
 	/// @brief Bitwise NOT operator
 	/// @return Result of (NOT this)
 	///
-	template<typename T, typename U>
+	template<class T, class U>
 	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
 	[[nodiscard]]
 	constexpr auto kFlags<T, U>::operator~() const noexcept -> kFlags<T, U> {
@@ -411,7 +411,7 @@ namespace igros::klib {
 	/// @brief Type copy c-tor
 	/// @param[in] value Other flags value of type @c T
 	///
-	template<typename T, typename U>
+	template<class T, class U>
 	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
 	constexpr kFlags<T, U>::kFlags(const T &value) noexcept :
 		mValue(static_cast<U>(value)) {}
@@ -422,7 +422,7 @@ namespace igros::klib {
 	/// @param[in] value Other flags value of type @c T
 	/// @return Reference to @c this for chaining
 	///
-	template<typename T, typename U>
+	template<class T, class U>
 	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
 	constexpr auto kFlags<T, U>::operator=(const T &value) noexcept -> kFlags<T, U>& {
 		// Set new value
@@ -437,7 +437,7 @@ namespace igros::klib {
 	/// @brief Type move c-tor
 	/// @param[in] value Other flags value of type @c T
 	///
-	template<typename T, typename U>
+	template<class T, class U>
 	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
 	constexpr kFlags<T, U>::kFlags(T &&value) noexcept :
 		mValue(std::move(static_cast<U>(value))) {}
@@ -448,7 +448,7 @@ namespace igros::klib {
 	/// @param[in] value Other flags value of type @c T
 	/// @return Reference to @c this for chaining
 	///
-	template<typename T, typename U>
+	template<class T, class U>
 	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
 	constexpr auto kFlags<T, U>::operator=(T &&value) noexcept -> kFlags<T, U>& {
 		// Set new value
@@ -463,7 +463,7 @@ namespace igros::klib {
 	/// @brief Get value
 	/// @return Flags underlying value of type @c U
 	///
-	template<typename T, typename U>
+	template<class T, class U>
 	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
 	[[nodiscard]]
 	constexpr auto kFlags<T, U>::value() const noexcept -> U {
@@ -476,7 +476,7 @@ namespace igros::klib {
 	/// @brief Check if empty
 	/// @return State of checked flag @c value
 	///
-	template<typename T, typename U>
+	template<class T, class U>
 	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
 	[[nodiscard]]
 	constexpr auto kFlags<T, U>::isEmpty() const noexcept -> bool {
@@ -489,7 +489,7 @@ namespace igros::klib {
 	/// @param[in] value Tested flag
 	/// @return State of checked flag @c value
 	///
-	template<typename T, typename U>
+	template<class T, class U>
 	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
 	[[nodiscard]]
 	constexpr auto kFlags<T, U>::isSet(const T value) const noexcept -> bool {
@@ -503,7 +503,7 @@ namespace igros::klib {
 	/// @param[in] bit Bit number [0 .. MAX]
 	/// @return Bit value [false, true] calculated as (1 SHL bit) = (this AND (1 SHL bit))
 	///
-	template<typename T, typename U>
+	template<class T, class U>
 	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
 	[[nodiscard]]
 	constexpr auto kFlags<T, U>::test(const igros_usize_t bit) const noexcept -> bool {

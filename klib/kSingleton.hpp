@@ -29,7 +29,7 @@ namespace igros::klib {
 	/// @class kSingleton
 	/// @tparam T Wrapped CRTP class
 	///
-	template<typename T>
+	template<class T>
 	class kSingleton {
 
 		/// @brief No copy construction
@@ -64,7 +64,7 @@ namespace igros::klib {
 	/// @brief Get instance function
 	/// @return Reference to static instance ot type @c T
 	///
-	template<typename T>
+	template<class T>
 	[[nodiscard]]
 	constexpr auto kSingleton<T>::get() noexcept -> T& {
 		// Create static object (if not yet created)
