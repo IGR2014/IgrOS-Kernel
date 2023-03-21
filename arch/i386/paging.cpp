@@ -22,7 +22,7 @@
 #include <arch/i386/paging.hpp>
 #include <arch/i386/register.hpp>
 // IgrOS-Kernel library
-#include <klib/kalign.hpp>
+#include <klib/kAlign.hpp>
 #include <klib/kmemory.hpp>
 #include <klib/kprint.hpp>
 // IgrOS-Kernel platform
@@ -131,7 +131,7 @@ namespace igros::i386 {
 	void paging::heap(const igros_pointer_t phys, const igros_usize_t size) noexcept {
 
 		// Temporary data
-		const auto tempPhys	{klib::kalignUp(phys, PAGE_SHIFT)};
+		const auto tempPhys	{klib::kAlign::up(phys, PAGE_SHIFT)};
 		const auto tempSize	{size - (std::bit_cast<igros_usize_t>(tempPhys) - std::bit_cast<igros_usize_t>(phys))};
 
 		// Get number of pages
@@ -175,7 +175,7 @@ namespace igros::i386 {
 	// Deallocate page
 	void paging::deallocate(const igros_pointer_t page) noexcept {
 		// Check alignment
-		if (!klib::kalignCheck(page, PAGE_SHIFT)) {
+		if (!klib::kAlign::check(page, PAGE_SHIFT)) {
 			return;
 		}
 		// Deallocate page back to heap free list
@@ -235,8 +235,8 @@ namespace igros::i386 {
 
 		// Check alignment
 		if (
-			!klib::kalignCheck(phys, PAGE_SHIFT)	||
-			!klib::kalignCheck(virt, PAGE_SHIFT)
+			!klib::kAlign::check(phys, PAGE_SHIFT)	||
+			!klib::kAlign::check(virt, PAGE_SHIFT)
 		) {
 			// Bad align detected
 			return;
@@ -282,8 +282,8 @@ namespace igros::i386 {
 
 		// Check alignment
 		if (
-			!klib::kalignCheck(phys, PAGE_SHIFT)	||
-			!klib::kalignCheck(virt, PAGE_SHIFT)
+			!klib::kAlign::check(phys, PAGE_SHIFT)	||
+			!klib::kAlign::check(virt, PAGE_SHIFT)
 		) {
 			// Bad align detected
 			return;
