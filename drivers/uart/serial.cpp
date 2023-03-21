@@ -161,8 +161,6 @@ namespace igros::arch {
 	// Serial write
 	[[maybe_unused]]
 	auto serialWrite(const char* const src, const igros_usize_t size) noexcept -> igros_usize_t {
-		// Wait for write ready
-		while (!serialReadyWrite());
 		// Writed size
 		auto i {0_usize};
 		// Write data
@@ -189,8 +187,6 @@ namespace igros::arch {
 	// Serial read
 	[[maybe_unused]]
 	auto serialRead(char* const src, const igros_usize_t size) noexcept -> igros_usize_t {
-		// Wait for read ready
-		//while (!serialReadyRead());
 		// Readed size
 		auto i {0_usize};
 		// Read data
