@@ -3,7 +3,7 @@
 #	Low-level boot setup function
 #
 #	File:	boot.s
-#	Date:	13 Dec 2022
+#	Date:	22 Mar 2023
 #
 #	Copyright (c) 2017 - 2022, Igor Baklykov
 #	All rights reserved.
@@ -41,7 +41,7 @@
 
 
 # Kernel starts here
-.type kernelStart, @function
+.type kernelStart, %function
 kernelStart:
 
 	cli						# Turn off interrupts

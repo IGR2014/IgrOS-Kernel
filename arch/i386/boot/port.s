@@ -3,7 +3,7 @@
 #	IO low-level port operations
 #
 #	File:	port.s
-#	Date:	13 Dec 2022
+#	Date:	22 Mar 2023
 #
 #	Copyright (c) 2017 - 2022, Igor Baklykov
 #	All rights reserved.
@@ -25,7 +25,7 @@
 
 
 # Read byte from port
-.type outPort8, @function
+.type outPort8, %function
 outPort8:
 
 	movw	4(%esp), %dx		# Port address
@@ -36,7 +36,7 @@ outPort8:
 
 
 # Read word from port
-.type outPort16, @function
+.type outPort16, %function
 outPort16:
 
 	movw	4(%esp), %dx		# Port address
@@ -47,7 +47,7 @@ outPort16:
 
 
 # Read long from port
-.type outPort32, @function
+.type outPort32, %function
 outPort32:
 
 	movw	4(%esp), %dx		# Port address
@@ -59,7 +59,7 @@ outPort32:
 
 
 # Write byte to port
-.type inPort8, @function
+.type inPort8, %function
 inPort8:
 
 	movw	4(%esp), %dx		# Port address
@@ -71,7 +71,7 @@ inPort8:
 
 
 # Write word to port
-.type inPort16, @function
+.type inPort16, %function
 inPort16:
 
 	movw	4(%esp), %dx		# Port address
@@ -83,7 +83,7 @@ inPort16:
 
 
 # Write long to port
-.type inPort32, @function
+.type inPort32, %function
 inPort32:
 
 	movw	4(%esp), %dx		# Port address

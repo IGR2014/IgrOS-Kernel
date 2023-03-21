@@ -3,7 +3,7 @@
 #	Exception low-level handlers
 #
 #	File:	exceptions.s
-#	Date:	13 Dec 2022
+#	Date:	22 Mar 2023
 #
 #	Copyright (c) 2017 - 2022, Igor Baklykov
 #	All rights reserved.
@@ -53,7 +53,7 @@
 
 
 # 0 Division By Zero Exception
-.type exHandler00, @function
+.type exHandler00, %function
 exHandler00:
 
 	cli				# Disable interrupts
@@ -65,7 +65,7 @@ exHandler00:
 
 
 # 1 Debug Exception
-.type exHandler01, @function
+.type exHandler01, %function
 exHandler01:
 
 	cli				# Disable interrupts
@@ -77,7 +77,7 @@ exHandler01:
 
 
 # 2 Non-Maskable Interrupt Exception
-.type exHandler02, @function
+.type exHandler02, %function
 exHandler02:
 
 	cli				# Disable interrupts
@@ -89,7 +89,7 @@ exHandler02:
 
 
 # 3 Breakpoint Exception
-.type exHandler03, @function
+.type exHandler03, %function
 exHandler03:
 
 	cli				# Disable interrupts
@@ -101,7 +101,7 @@ exHandler03:
 
 
 # 4 Into Detected Overflow Exception
-.type exHandler04, @function
+.type exHandler04, %function
 exHandler04:
 
 	cli				# Disable interrupts
@@ -113,7 +113,7 @@ exHandler04:
 
 
 # 5 Out of Bounds Exception
-.type exHandler05, @function
+.type exHandler05, %function
 exHandler05:
 
 	cli				# Disable interrupts
@@ -125,7 +125,7 @@ exHandler05:
 
 
 # 6 Invalid Opcode Exception
-.type exHandler06, @function
+.type exHandler06, %function
 exHandler06:
 
 	cli				# Disable interrupts
@@ -137,7 +137,7 @@ exHandler06:
 
 
 # 7 No Coprocessor Exception
-.type exHandler07, @function
+.type exHandler07, %function
 exHandler07:
 
 	cli				# Disable interrupts
@@ -149,7 +149,7 @@ exHandler07:
 
 
 # 8 Double Fault Exception
-.type exHandler08, @function
+.type exHandler08, %function
 exHandler08:
 
 	cli				# Disable interrupts
@@ -160,7 +160,7 @@ exHandler08:
 
 
 # 9 Coprocessor Segment Overrun Exception
-.type exHandler09, @function
+.type exHandler09, %function
 exHandler09:
 
 	cli				# Disable interrupts
@@ -172,7 +172,7 @@ exHandler09:
 
 
 # 10 Bad TSS Exception
-.type exHandler0A, @function
+.type exHandler0A, %function
 exHandler0A:
 
 	cli				# Disable interrupts
@@ -183,7 +183,7 @@ exHandler0A:
 
 
 # 11 Segment Not Present Exception
-.type exHandler0B, @function
+.type exHandler0B, %function
 exHandler0B:
 
 	cli				# Disable interrupts
@@ -194,7 +194,7 @@ exHandler0B:
 
 
 # 12 Stack Fault Exception
-.type exHandler0C, @function
+.type exHandler0C, %function
 exHandler0C:
 
 	cli				# Disable interrupts
@@ -205,7 +205,7 @@ exHandler0C:
 
 
 # 13 General Protection Fault Exception
-.type exHandler0D, @function
+.type exHandler0D, %function
 exHandler0D:
 
 	cli				# Disable interrupts
@@ -216,7 +216,7 @@ exHandler0D:
 
 
 # 14 Page Fault Exception
-.type exHandler0E, @function
+.type exHandler0E, %function
 exHandler0E:
 
 	cli				# Disable interrupts
@@ -227,7 +227,7 @@ exHandler0E:
 
 
 # 15 Unknown Interrupt Exception
-.type exHandler0F, @function
+.type exHandler0F, %function
 exHandler0F:
 
 	cli				# Disable interrupts
@@ -239,7 +239,7 @@ exHandler0F:
 
 
 # 16 Coprocessor Fault Exception
-.type exHandler10, @function
+.type exHandler10, %function
 exHandler10:
 
 	cli				# Disable interrupts
@@ -251,7 +251,7 @@ exHandler10:
 
 
 # 17 Alignment Check Exception
-.type exHandler11, @function
+.type exHandler11, %function
 exHandler11:
 
 	cli				# Disable interrupts
@@ -263,7 +263,7 @@ exHandler11:
 
 
 # 18 Machine Check Exception
-.type exHandler12, @function
+.type exHandler12, %function
 exHandler12:
 
 	cli				# Disable interrupts
@@ -275,7 +275,7 @@ exHandler12:
 
 
 # 19 Reserved Exception
-.type exHandler13, @function
+.type exHandler13, %function
 exHandler13:
 
 	cli				# Disable interrupts
@@ -287,7 +287,7 @@ exHandler13:
 
 
 # 20 Reserved Exception
-.type exHandler14, @function
+.type exHandler14, %function
 exHandler14:
 
 	cli				# Disable interrupts
@@ -299,7 +299,7 @@ exHandler14:
 
 
 # 21 Reserved Exception
-.type exHandler15, @function
+.type exHandler15, %function
 exHandler15:
 
 	cli				# Disable interrupts
@@ -311,7 +311,7 @@ exHandler15:
 
 
 # 22 Reserved Exception
-.type exHandler16, @function
+.type exHandler16, %function
 exHandler16:
 
 	cli				# Disable interrupts
@@ -323,7 +323,7 @@ exHandler16:
 
 
 # 23 Reserved Exception
-.type exHandler17, @function
+.type exHandler17, %function
 exHandler17:
 
 	cli				# Disable interrupts
@@ -335,7 +335,7 @@ exHandler17:
 
 
 # 24 Reserved Exception
-.type exHandler18, @function
+.type exHandler18, %function
 exHandler18:
 
 	cli				# Disable interrupts
@@ -347,7 +347,7 @@ exHandler18:
 
 
 # 25 Reserved Exception
-.type exHandler19, @function
+.type exHandler19, %function
 exHandler19:
 
 	cli				# Disable interrupts
@@ -359,7 +359,7 @@ exHandler19:
 
 
 # 26 Reserved Exception
-.type exHandler1A, @function
+.type exHandler1A, %function
 exHandler1A:
 
 	cli				# Disable interrupts
@@ -371,7 +371,7 @@ exHandler1A:
 
 
 # 27 Reserved Exception
-.type exHandler1B, @function
+.type exHandler1B, %function
 exHandler1B:
 
 	cli				# Disable interrupts
@@ -383,7 +383,7 @@ exHandler1B:
 
 
 # 28 Reserved Exception
-.type exHandler1C, @function
+.type exHandler1C, %function
 exHandler1C:
 
 	cli				# Disable interrupts
@@ -395,7 +395,7 @@ exHandler1C:
 
 
 # 29 Reserved Exception
-.type exHandler1D, @function
+.type exHandler1D, %function
 exHandler1D:
 
 	cli				# Disable interrupts
@@ -407,7 +407,7 @@ exHandler1D:
 
 
 # 30 Reserved Exception
-.type exHandler1E, @function
+.type exHandler1E, %function
 exHandler1E:
 
 	cli				# Disable interrupts
@@ -419,7 +419,7 @@ exHandler1E:
 
 
 # 31 Reserved Exception
-.type exHandler1F, @function
+.type exHandler1F, %function
 exHandler1F:
 
 	cli				# Disable interrupts

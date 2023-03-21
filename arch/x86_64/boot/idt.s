@@ -3,7 +3,7 @@
 #	Interrupts descriptor table low-level operations
 #
 #	File:	idt.s
-#	Date:	13 Dec 2022
+#	Date:	22 Mar 2023
 #
 #	Copyright (c) 2017, Igor Baklykov
 #	All rights reserved.
@@ -21,7 +21,7 @@
 
 
 # Load IDT
-.type idtLoad, @function
+.type idtLoad, %function
 idtLoad:
 
 	cld				# Clear direction flag
@@ -32,7 +32,7 @@ idtLoad:
 
 
 # Store IDT
-.type idtStore, @function
+.type idtStore, %function
 idtStore:
 
 	cld				# Clear direction flag

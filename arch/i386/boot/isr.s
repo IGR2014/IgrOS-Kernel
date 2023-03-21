@@ -3,7 +3,7 @@
 #	Interrupt servising routine handler
 #
 #	File:	isr.s
-#	Date:	13 Dec 2022
+#	Date:	22 Mar 2023
 #
 #	Copyright (c) 2017 - 2022, Igor Baklykov
 #	All rights reserved.
@@ -22,7 +22,7 @@
 
 
 # Interrupt service routine
-.type interruptServiceRoutine, @function
+.type interruptServiceRoutine, %function
 interruptServiceRoutine:
 
 	pushal				# Save "all" regisers

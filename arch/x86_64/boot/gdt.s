@@ -3,7 +3,7 @@
 #	Global descriptor table low-level operations
 #
 #	File:	gdt.s
-#	Date:	13 Dec 2022
+#	Date:	22 Mar 2023
 #
 #	Copyright (c) 2017 - 2022, Igor Baklykov
 #	All rights reserved.
@@ -25,7 +25,7 @@
 
 
 # Reset segments
-.type gdtResetSegments, @function
+.type gdtResetSegments, %function
 gdtResetSegments:
 
 	cld					# Clear direction flag
@@ -45,7 +45,7 @@ gdtResetSegments:
 
 
 # Load GDT
-.type gdtLoad, @function
+.type gdtLoad, %function
 gdtLoad:
 
 	cld					# Clear direction flag
@@ -58,7 +58,7 @@ gdtLoad:
 
 
 # Store GDT
-.type gdtStore, @function
+.type gdtStore, %function
 gdtStore:
 
 	cld					# Clear direction flag

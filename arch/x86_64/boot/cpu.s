@@ -3,7 +3,7 @@
 #	CPU operations
 #
 #	File:	cpu.s
-#	Date:	13 Dec 2022
+#	Date:	22 Mar 2023
 #
 #	Copyright (c) 2017 - 2022, Igor Baklykov
 #	All rights reserved.
@@ -20,7 +20,7 @@
 
 
 # Halt CPU
-.type cpuHalt, @function
+.type cpuHalt, %function
 cpuHalt:
 
 1:

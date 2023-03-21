@@ -3,7 +3,7 @@
 #	FPU operations
 #
 #	File:	fpu.s
-#	Date:	13 Dec 2022
+#	Date:	22 Mar 2023
 #
 #	Copyright (c) 2017 - 2022, Igor Baklykov
 #	All rights reserved.
@@ -24,7 +24,7 @@
 
 
 # Check FPU
-.type fpuCheck, @function
+.type fpuCheck, %function
 fpuCheck:
 
 	fninit					# Initialize FPU
