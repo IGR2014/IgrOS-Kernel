@@ -3,7 +3,7 @@
 //	Paging operations
 //
 //	File:	paging.hpp
-//	Date:	16 Mar 2023
+//	Date:	21 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -19,7 +19,7 @@
 // IgrOS-Kernel arch x86_64
 #include <arch/x86_64/paging.hpp>
 // IgrOS-Kernel library
-#include <klib/ksingleton.hpp>
+#include <klib/kSingleton.hpp>
 
 
 // Arch namespace
@@ -28,7 +28,7 @@ namespace igros::arch {
 
 	// Paging description type
 	template<typename T>
-	class paging_t final : public singleton<paging_t<T>> {
+	class paging_t final : public klib::kSingleton<paging_t<T>> {
 
 		// No copy construction
 		paging_t(const paging_t &other) noexcept = delete;

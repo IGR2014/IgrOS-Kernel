@@ -3,7 +3,7 @@
 //	Boot low-level main setup function
 //
 //	File:	boot.cpp
-//	Date:	16 Mar 2023
+//	Date:	21 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -13,10 +13,10 @@
 
 // IgrOS-Kernel arch
 #include <arch/cpu.hpp>
-// IgrOS-Kernel arch platform
-#include <arch/platform/platform.hpp>
 // IgrOS-Kernel multiboot
 #include <multiboot/multiboot.hpp>
+// IgrOS-Kernel platform
+#include <platform/platform.hpp>
 
 
 #ifdef	__cplusplus
@@ -31,7 +31,7 @@ extern "C" {
 	void kmain(const igros::multiboot::info_t* const multiboot, const igros::igros_dword_t magic) noexcept {
 
 		// Initialize platform
-		igros::platform::CURRENT_PLATFORM.initialize();
+		igros::platform::Platform::get().initialize();
 
 		// Write Multiboot magic error message message
 		igros::klib::kprintf("IgrOS kernel");

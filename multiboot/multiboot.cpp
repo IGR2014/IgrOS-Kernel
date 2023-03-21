@@ -3,7 +3,7 @@
 //	Multiboot 1 functions
 //
 //	File:	multiboot.cpp
-//	Date:	20 Mar 2023
+//	Date:	21 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -17,7 +17,7 @@
 // IgrOS-Kernel arch
 #include <arch/cpu.hpp>
 // IgrOS-Kernel arch platform
-#include <arch/platform/platform.hpp>
+#include <platform/platform.hpp>
 // IgrOS-Kernel klib
 #include <klib/kprint.hpp>
 #include <klib/kVersion.hpp>
@@ -278,10 +278,10 @@ Author:		Igor Baklykov (c) %d - %d
 Loader:		"%s"
 Command line:	"%s"
 )info",
-			platform::CURRENT_PLATFORM.name(),
-			platform::KERNEL_START(),
-			platform::KERNEL_END(),
-			platform::KERNEL_SIZE() >> 10,
+			platform::Platform::get().name(),
+			platform::Platform::kernelStart(),
+			platform::Platform::kernelEnd(),
+			platform::Platform::kernelSize() >> 10,
 			__DATE__,
 			__TIME__,
 			klib::kVersion::text(),

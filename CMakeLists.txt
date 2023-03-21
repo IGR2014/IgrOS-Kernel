@@ -240,6 +240,10 @@ add_subdirectory(
 add_subdirectory(
 	multiboot
 )
+# Add platform subdirectory
+add_subdirectory(
+	platform
+)
 # Add sys subdirectory
 add_subdirectory(
 	sys
