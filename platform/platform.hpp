@@ -18,8 +18,6 @@
 #include <string_view>
 // IgrOS-Kernel arch
 #include <arch/types.hpp>
-// IgrOS-Kernel library
-#include <klib/kSingleton.hpp>
 
 
 // Kernel start
@@ -33,7 +31,7 @@ namespace igros::platform {
 
 
 	// Platform desciption structure
-	class Platform final : public klib::kSingleton<Platform> {
+	class Platform final {
 
 		// Platform name ID
 		enum class ARCH_NAME : igros_dword_t {
@@ -80,24 +78,22 @@ namespace igros::platform {
 		using wakeup_t		= std::add_pointer_t<void ()>;
 
 
-		const char* const	mName;			// Platform name
+		const char* const	mName		{nullptr};		// Platform name
 
-		init_t			mInit;			// Init function
-		finalize_t		mFinalzie;		// Finalize function
+		init_t			mInit		{nullptr};		// Init function
+		finalize_t		mFinalzie	{nullptr};		// Finalize function
 
-		shutdown_t		mShutdown;		// Shutdown function
-		reboot_t		mReboot;		// Reboot function
+		shutdown_t		mShutdown	{nullptr};		// Shutdown function
+		reboot_t		mReboot		{nullptr};		// Reboot function
 
-		suspend_t		mSuspend;		// Suspend platform
-		wakeup_t		mWakeup;		// Wakeup platform
-
-
-		// Default c-tor
-		Platform() = delete;
+		suspend_t		mSuspend	{nullptr};		// Suspend platform
+		wakeup_t		mWakeup		{nullptr};		// Wakeup platform
 
 
 	public:
 
+		// Default c-tor
+		constexpr Platform() noexcept = default;
 		// C-tor
 		constexpr Platform(
 			const char* const	name,
@@ -108,34 +104,6 @@ namespace igros::platform {
 			const suspend_t		suspend,
 			const wakeup_t		wakeup
 		) noexcept;
-
-
-		// Get kernel start address
-		[[nodiscard]]
-		constexpr static auto	kernelStart() noexcept -> const igros_byte_t*;
-		// Get kernel end address
-		[[nodiscard]]
-		constexpr static auto	kernelEnd() noexcept -> const igros_byte_t*;
-		// Get kernel size
-		[[nodiscard]]
-		constexpr static auto	kernelSize() noexcept -> igros_usize_t;
-
-
-		// Check if i386
-		[[nodiscard]]
-		constexpr static auto	isI386() noexcept -> bool;
-		// Check if x86_64
-		[[nodiscard]]
-		constexpr static auto	isX86_64() noexcept -> bool;
-		// Check if arm32
-		[[nodiscard]]
-		constexpr static auto	isARM32() noexcept -> bool;
-		// Check if arm64
-		[[nodiscard]]
-		constexpr static auto	isARM64() noexcept -> bool;
-		// Check if avr
-		[[nodiscard]]
-		constexpr static auto	isAVR() noexcept -> bool;
 
 		// Get platform name
 		[[nodiscard]]
@@ -155,6 +123,36 @@ namespace igros::platform {
 		void	suspend() const noexcept;
 		// Wakeup platform
 		void	wakeup() const noexcept;
+
+		// Get kernel start address
+		[[nodiscard]]
+		constexpr static auto	kernelStart() noexcept -> const igros_byte_t*;
+		// Get kernel end address
+		[[nodiscard]]
+		constexpr static auto	kernelEnd() noexcept -> const igros_byte_t*;
+		// Get kernel size
+		[[nodiscard]]
+		constexpr static auto	kernelSize() noexcept -> igros_usize_t;
+
+		// Check if i386
+		[[nodiscard]]
+		constexpr static auto	isI386() noexcept -> bool;
+		// Check if x86_64
+		[[nodiscard]]
+		constexpr static auto	isX86_64() noexcept -> bool;
+		// Check if arm32
+		[[nodiscard]]
+		constexpr static auto	isARM32() noexcept -> bool;
+		// Check if arm64
+		[[nodiscard]]
+		constexpr static auto	isARM64() noexcept -> bool;
+		// Check if avr
+		[[nodiscard]]
+		constexpr static auto	isAVR() noexcept -> bool;
+
+		// Get kernel current platform (implemented in corresponding platform file)
+		[[nodiscard]]
+		static auto	current() noexcept -> const Platform&;
 
 
 	};
@@ -177,64 +175,6 @@ namespace igros::platform {
 		mReboot		(reboot),
 		mSuspend	(suspend),
 		mWakeup		(wakeup) {}
-
-
-	// Get kernel start address
-	[[nodiscard]]
-	constexpr auto Platform::kernelStart() noexcept -> const igros_byte_t* {
-		// Pointer to kernel start (from linker script)
-		return &_SECTION_KERNEL_START_;
-	}
-
-	// Get kernel end address
-	[[nodiscard]]
-	constexpr auto Platform::kernelEnd() noexcept -> const igros_byte_t* {
-		// Pointer to kernel end (from linker script)
-		return &_SECTION_KERNEL_END_;
-	}
-
-	// Get kernel size
-	[[nodiscard]]
-	constexpr auto Platform::kernelSize() noexcept -> igros_usize_t {
-		// Kernel size (end - start)
-		return Platform::kernelEnd() - Platform::kernelStart();
-	}
-
-
-	// Check if i386
-	[[nodiscard]]
-	constexpr auto Platform::isI386() noexcept -> bool {
-		// Check platform i386
-		return ARCH_NAME::I386 == PLATFORM_NAME;
-	}
-
-	// Check if x86_64
-	[[nodiscard]]
-	constexpr auto Platform::isX86_64() noexcept -> bool {
-		// Check platform x86_64
-		return ARCH_NAME::X86_64 == PLATFORM_NAME;
-	}
-
-	// Check if arm32
-	[[nodiscard]]
-	constexpr auto Platform::isARM32() noexcept -> bool {
-		// Check platform arm
-		return ARCH_NAME::ARM == PLATFORM_NAME;
-	}
-
-	// Check if arm64
-	[[nodiscard]]
-	constexpr auto Platform::isARM64() noexcept -> bool {
-		// Check platform arm64
-		return ARCH_NAME::ARM64 == PLATFORM_NAME;
-	}
-
-	// Check if avr
-	[[nodiscard]]
-	constexpr auto Platform::isAVR() noexcept -> bool {
-		// Check platform avr
-		return ARCH_NAME::AVR == PLATFORM_NAME;
-	}
 
 
 	// Get platform name
@@ -312,8 +252,62 @@ namespace igros::platform {
 	}
 
 
-	// Platform description
-	extern const Platform	CURRENT_PLATFORM;
+	// Get kernel start address
+	[[nodiscard]]
+	constexpr auto Platform::kernelStart() noexcept -> const igros_byte_t* {
+		// Pointer to kernel start (from linker script)
+		return &_SECTION_KERNEL_START_;
+	}
+
+	// Get kernel end address
+	[[nodiscard]]
+	constexpr auto Platform::kernelEnd() noexcept -> const igros_byte_t* {
+		// Pointer to kernel end (from linker script)
+		return &_SECTION_KERNEL_END_;
+	}
+
+	// Get kernel size
+	[[nodiscard]]
+	constexpr auto Platform::kernelSize() noexcept -> igros_usize_t {
+		// Kernel size (end - start)
+		return Platform::kernelEnd() - Platform::kernelStart();
+	}
+
+
+	// Check if i386
+	[[nodiscard]]
+	constexpr auto Platform::isI386() noexcept -> bool {
+		// Check platform i386
+		return ARCH_NAME::I386 == PLATFORM_NAME;
+	}
+
+	// Check if x86_64
+	[[nodiscard]]
+	constexpr auto Platform::isX86_64() noexcept -> bool {
+		// Check platform x86_64
+		return ARCH_NAME::X86_64 == PLATFORM_NAME;
+	}
+
+	// Check if arm32
+	[[nodiscard]]
+	constexpr auto Platform::isARM32() noexcept -> bool {
+		// Check platform arm
+		return ARCH_NAME::ARM == PLATFORM_NAME;
+	}
+
+	// Check if arm64
+	[[nodiscard]]
+	constexpr auto Platform::isARM64() noexcept -> bool {
+		// Check platform arm64
+		return ARCH_NAME::ARM64 == PLATFORM_NAME;
+	}
+
+	// Check if avr
+	[[nodiscard]]
+	constexpr auto Platform::isAVR() noexcept -> bool {
+		// Check platform avr
+		return ARCH_NAME::AVR == PLATFORM_NAME;
+	}
 
 
 }       // namespace igros::platform

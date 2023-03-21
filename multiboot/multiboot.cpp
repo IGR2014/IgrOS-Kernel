@@ -278,7 +278,7 @@ Author:		Igor Baklykov (c) %d - %d
 Loader:		"%s"
 Command line:	"%s"
 )info",
-			platform::Platform::get().name(),
+			platform::Platform::current().name(),
 			platform::Platform::kernelStart(),
 			platform::Platform::kernelEnd(),
 			platform::Platform::kernelSize() >> 10,
