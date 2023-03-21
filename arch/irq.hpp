@@ -29,7 +29,7 @@ namespace igros::arch {
 
 
 	// Interrupts description type
-	template<typename T, typename T2>
+	template<class T, class T2>
 	class interrupts_t final : public klib::kSingleton<interrupts_t<T, T2>> {
 
 		// No copy construction
@@ -84,39 +84,39 @@ namespace igros::arch {
 
 
 	// Enable interrupts
-	template<typename T, typename T2>
+	template<class T, class T2>
 	inline void interrupts_t<T, T2>::enable() const noexcept {
 		T::enable();
 	}
 
 	// Disable interrupts
-	template<typename T, typename T2>
+	template<class T, class T2>
 	inline void interrupts_t<T, T2>::disable() const noexcept {
 		T::disable();
 	}
 
 
 	// Mask interrupt
-	template<typename T, typename T2>
+	template<class T, class T2>
 	inline void interrupts_t<T, T2>::mask(const irq_t number) const noexcept {
 		T::mask(number);
 	}
 
 	// Unmask interrupt
-	template<typename T, typename T2>
+	template<class T, class T2>
 	inline void interrupts_t<T, T2>::unmask(const irq_t number) const noexcept {
 		T::unmask(number);
 	}
 
 
 	// Set interrupts mask
-	template<typename T, typename T2>
+	template<class T, class T2>
 	inline void interrupts_t<T, T2>::setMask(const igros_word_t mask) const noexcept {
 		T::setMask(mask);
 	}
 
 	// Get interrupts mask
-	template<typename T, typename T2>
+	template<class T, class T2>
 	[[nodiscard]]
 	inline auto interrupts_t<T, T2>::getMask() const noexcept -> igros_word_t {
 		return T::getMask();
@@ -124,22 +124,22 @@ namespace igros::arch {
 
 
 	// Install IRQ handler
-	template<typename T, typename T2>
-	template<typename interrupts_t<T, T2>::irq_t N, typename interrupts_t<T, T2>::isr_t HANDLE>
+	template<class T, class T2>
+	template<interrupts_t<T, T2>::irq_t N, interrupts_t<T, T2>::isr_t HANDLE>
 	inline void interrupts_t<T, T2>::install() const noexcept {
 		T::template install<N, HANDLE>();
 	}
 
 	// Uninstall IRQ handler
-	template<typename T, typename T2>
-	template<typename interrupts_t<T, T2>::irq_t N>
+	template<class T, class T2>
+	template<interrupts_t<T, T2>::irq_t N>
 	inline void interrupts_t<T, T2>::uninstall() const noexcept {
 		T::template uninstall<N>();
 	}
 
 
 	// IRQ done (EOI)
-	template<typename T, typename T2>
+	template<class T, class T2>
 	inline void interrupts_t<T, T2>::eoi(const irq_t number) const noexcept {
 		T::eoi(number);
 	}

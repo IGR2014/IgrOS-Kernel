@@ -27,7 +27,7 @@ namespace igros::arch {
 
 
 	// Paging description type
-	template<typename T>
+	template<class T>
 	class paging_t final : public klib::kSingleton<paging_t<T>> {
 
 		// No copy construction
@@ -74,20 +74,20 @@ namespace igros::arch {
 
 
 	// Enable paging
-	template<typename T>
+	template<class T>
 	void paging_t<T>::enable() const noexcept {
 		T::enable();
 	}
 
 	// Disable paging
-	template<typename T>
+	template<class T>
 	void paging_t<T>::disable() const noexcept {
 		T::disable();
 	}
 
 
 	// Translate virtual address to physical
-	template<typename T>
+	template<class T>
 	[[nodiscard]]
 	auto paging_t<T>::translate(const virt_t addr) const noexcept -> paging_t<T>::phys_t {
 		return T::translate(addr);
@@ -95,21 +95,21 @@ namespace igros::arch {
 
 
 	// Map virtual address to physical address
-	template<typename T>
+	template<class T>
 	void paging_t<T>::map(const phys_t phys, const virt_t virt, const igros_usize_t count, const klib::kFlags<flags_t> flags) noexcept {
 		// TODO
 	}
 
 
 	// Get paging data
-	template<typename T>
+	template<class T>
 	[[nodiscard]]
 	auto paging_t<T>::directory() const noexcept -> paging_t<T>::phys_t {
 		return nullptr;
 	}
 
 	// Flush paging data
-	template<typename T>
+	template<class T>
 	void paging_t<T>::flush(const phys_t addr) noexcept {
 		T::setDirectory(addr);
 	}

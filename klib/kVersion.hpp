@@ -3,7 +3,7 @@
 ///	@brief		IgrOS version info
 ///
 ///	@file		kVersion.hpp
-///	@date		16 Mar 2023
+///	@date		21 Mar 2023
 ///
 ///	@copyright	Copyright (c) 2017 - 2023,
 ///			All rights reserved.
@@ -47,11 +47,11 @@ namespace igros::klib {
 
 		/// @brief Kernel version to integer
 		[[nodiscard]]
-		constexpr static auto value() noexcept -> igros_quad_t;
+		constexpr static auto	value() noexcept -> igros_quad_t;
 
 		/// @brief Kernel version to string
 		[[nodiscard]]
-		constexpr static auto text() noexcept -> const char*;
+		constexpr static auto	text() noexcept -> const char*;
 
 
 	};
