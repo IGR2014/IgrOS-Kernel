@@ -17,16 +17,16 @@ file(
 	*.cpp
 )
 
-# Add boot subdirectory
-add_subdirectory(
-	boot
-)
-
 # Target sources
 target_sources(
 	${IGROS_KERNEL}
 	PRIVATE
 	${x86_64_HDR}
 	${x86_64_SRC}
+)
+
+# Add boot subdirectory
+add_subdirectory(
+	boot
 )
 
