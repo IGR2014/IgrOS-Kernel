@@ -57,11 +57,6 @@ namespace igros::arch {
 		// Mask Keyboard interrupts
 		irq::get().mask(irq::irq_t::KEYBOARD);
 
-		klib::kprintf(
-			"IRQ #%d [Keyboard] installed\n",
-			irq::irq_t::KEYBOARD
-		);
-
 	}
 
 

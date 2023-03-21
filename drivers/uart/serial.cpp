@@ -112,6 +112,23 @@ namespace igros::arch {
 		io::get().writePort8(SERIAL_PORT_IIR(SERIAL_PORT_1),	0xC7_u8);
 		// IRQs enabled, RTS/DSR set
 		io::get().writePort8(SERIAL_PORT_MCR(SERIAL_PORT_1),	0x0B_u8);
+		// Set loopback mode, test the serial chip
+		io::get().writePort8(SERIAL_PORT_MCR(SERIAL_PORT_1),	0x1E_u8);
+		// Test port with 0xA5 byte
+		io::get().writePort8(SERIAL_PORT_DR(SERIAL_PORT_1),	0xA5_u8);
+
+		// Check loopback
+		if (0xA5_u8 != io::get().readPort8(SERIAL_PORT_DR(SERIAL_PORT_1))) {
+			// Debug
+			klib::kprintf(
+				"Serial Port #1:\t ERROR - not functional!\n"
+			);
+			// Could not setup serial port
+			return false;
+		}
+
+		// Set normal mode (not-loopback with IRQs enabled and OUT#1 and OUT#2 bits enabled)
+		io::get().writePort8(SERIAL_PORT_MCR(SERIAL_PORT_1),	0x0F_u8);
 
 		// Debug
 		klib::kprintf(
@@ -173,7 +190,7 @@ namespace igros::arch {
 	[[maybe_unused]]
 	auto serialRead(char* const src, const igros_usize_t size) noexcept -> igros_usize_t {
 		// Wait for read ready
-		while (!serialReadyRead());
+		//while (!serialReadyRead());
 		// Readed size
 		auto i {0_usize};
 		// Read data
@@ -231,26 +248,6 @@ namespace igros::arch {
 		irq::get().install<irq::irq_t::UART2, serialInterruptHandler>();
 		// Mask UART2 interrupts
 		irq::get().mask(irq::irq_t::UART2);
-
-		// Debug
-		klib::kprintf(
-			"IRQ #%d [UART1] installed\n"
-			"IRQ #%d [UART2] installed\n",
-			irq::irq_t::UART1,
-			irq::irq_t::UART2
-		);
-
-		// Test serial
-		const auto res {serialWrite("Hello World\n")};
-		// Error check
-		if (res != klib::kstrlen("Hello World\n")) {
-			// Debug
-			klib::kprintf(
-				"Serial Port #1:\tERROR - bad write (%d of %d bytes)",
-				res,
-				klib::kstrlen("Hello World\n")
-			);
-		}
 
 	}
 
