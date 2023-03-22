@@ -3,7 +3,7 @@
 //	Platform description for x86
 //
 //	File:	platform-i386.cpp
-//	Date:	21 Mar 2023
+//	Date:	22 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -53,7 +53,7 @@ namespace igros::i386 {
 		i386::irq::enable();
 
 		// Setup paging (And identity map first 4MB where kernel physically is)
-		i386::paging::init();
+		//i386::paging::init();
 
 		// Setup VGA
 		arch::vmemInit();

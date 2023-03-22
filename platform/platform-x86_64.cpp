@@ -3,7 +3,7 @@
 //	Platform description for x86_64
 //
 //	File:	platform-x86_64.cpp
-//	Date:	21 Mar 2023
+//	Date:	22 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -52,7 +52,7 @@ namespace igros::x86_64 {
 		x86_64::irq::enable();
 
 		// Setup paging (And identity map first 4MB where kernel physically is)
-		x86_64::paging::init();
+		//x86_64::paging::init();
 
 		// Setup VGA
 		arch::vmemInit();
