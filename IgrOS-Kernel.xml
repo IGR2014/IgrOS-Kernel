@@ -1,0 +1,222 @@
+<NotepadPlus>
+    <Project name="IgrOS-Kernel">
+        <Folder name=".github">
+            <Folder name="ISSUE_TEMPLATE">
+                <File name=".github\ISSUE_TEMPLATE\bug_report.md" />
+            </Folder>
+            <Folder name="workflows">
+                <File name=".github\workflows\codeql.yml" />
+                <File name=".github\workflows\github-ci.yml" />
+            </Folder>
+        </Folder>
+        <Folder name=".vscode">
+            <File name=".vscode\c_cpp_properties.json" />
+            <File name=".vscode\launch.json" />
+            <File name=".vscode\settings.json" />
+            <File name=".vscode\tasks.json" />
+        </Folder>
+        <Folder name="arch">
+            <Folder name="i386">
+                <Folder name="boot">
+                    <File name="arch\i386\boot\boot.s" />
+                    <File name="arch\i386\boot\CMakeLists.txt" />
+                    <File name="arch\i386\boot\cpu.s" />
+                    <File name="arch\i386\boot\cr.s" />
+                    <File name="arch\i386\boot\exceptions.s" />
+                    <File name="arch\i386\boot\fpu.s" />
+                    <File name="arch\i386\boot\gdt.s" />
+                    <File name="arch\i386\boot\idt.s" />
+                    <File name="arch\i386\boot\irq.s" />
+                    <File name="arch\i386\boot\isr.s" />
+                    <File name="arch\i386\boot\multiboot.s" />
+                    <File name="arch\i386\boot\port.s" />
+                    <File name="arch\i386\boot\reg.s" />
+                </Folder>
+                <File name="arch\i386\CMakeLists.txt" />
+                <File name="arch\i386\cpu.hpp" />
+                <File name="arch\i386\cr.hpp" />
+                <File name="arch\i386\exceptions.cpp" />
+                <File name="arch\i386\exceptions.hpp" />
+                <File name="arch\i386\fpu.hpp" />
+                <File name="arch\i386\gdt.cpp" />
+                <File name="arch\i386\gdt.hpp" />
+                <File name="arch\i386\idt.cpp" />
+                <File name="arch\i386\idt.hpp" />
+                <File name="arch\i386\io.hpp" />
+                <File name="arch\i386\irq.cpp" />
+                <File name="arch\i386\irq.hpp" />
+                <File name="arch\i386\isr.cpp" />
+                <File name="arch\i386\isr.hpp" />
+                <File name="arch\i386\paging.cpp" />
+                <File name="arch\i386\paging.hpp" />
+                <File name="arch\i386\register.hpp" />
+            </Folder>
+            <Folder name="x86_64">
+                <Folder name="boot">
+                    <File name="arch\x86_64\boot\boot.s" />
+                    <File name="arch\x86_64\boot\CMakeLists.txt" />
+                    <File name="arch\x86_64\boot\cpu.s" />
+                    <File name="arch\x86_64\boot\cpuid.s" />
+                    <File name="arch\x86_64\boot\cr.s" />
+                    <File name="arch\x86_64\boot\exceptions.s" />
+                    <File name="arch\x86_64\boot\gdt.s" />
+                    <File name="arch\x86_64\boot\idt.s" />
+                    <File name="arch\x86_64\boot\irq.s" />
+                    <File name="arch\x86_64\boot\isr.s" />
+                    <File name="arch\x86_64\boot\longMode.s" />
+                    <File name="arch\x86_64\boot\msr.s" />
+                    <File name="arch\x86_64\boot\multiboot.s" />
+                    <File name="arch\x86_64\boot\port.s" />
+                </Folder>
+                <File name="arch\x86_64\CMakeLists.txt" />
+                <File name="arch\x86_64\cpu.hpp" />
+                <File name="arch\x86_64\cpuid.hpp" />
+                <File name="arch\x86_64\cr.hpp" />
+                <File name="arch\x86_64\exceptions.cpp" />
+                <File name="arch\x86_64\exceptions.hpp" />
+                <File name="arch\x86_64\gdt.cpp" />
+                <File name="arch\x86_64\gdt.hpp" />
+                <File name="arch\x86_64\idt.cpp" />
+                <File name="arch\x86_64\idt.hpp" />
+                <File name="arch\x86_64\io.hpp" />
+                <File name="arch\x86_64\irq.cpp" />
+                <File name="arch\x86_64\irq.hpp" />
+                <File name="arch\x86_64\isr.cpp" />
+                <File name="arch\x86_64\isr.hpp" />
+                <File name="arch\x86_64\longMode.hpp" />
+                <File name="arch\x86_64\msr.hpp" />
+                <File name="arch\x86_64\paging.cpp" />
+                <File name="arch\x86_64\paging.hpp" />
+                <File name="arch\x86_64\register.hpp" />
+            </Folder>
+            <File name="arch\CMakeLists.txt" />
+            <File name="arch\cpu.hpp" />
+            <File name="arch\io.hpp" />
+            <File name="arch\irq.hpp" />
+            <File name="arch\paging.hpp" />
+            <File name="arch\register.hpp" />
+            <File name="arch\types.hpp" />
+        </Folder>
+        <Folder name="cmake">
+            <Folder name="modules">
+                <File name="cmake\modules\CheckCompiler.cmake" />
+                <File name="cmake\modules\EnableCCache.cmake" />
+                <File name="cmake\modules\EnableDoxygen.cmake" />
+                <File name="cmake\modules\VersionGIT.cmake" />
+            </Folder>
+        </Folder>
+        <Folder name="config">
+            <Folder name="cmake">
+                <File name="config\cmake\clang++-i386.cmake" />
+                <File name="config\cmake\clang++-x86_64.cmake" />
+                <File name="config\cmake\g++-i386.cmake" />
+                <File name="config\cmake\g++-x86_64.cmake" />
+            </Folder>
+            <Folder name="link">
+                <File name="config\link\link-i386.ld" />
+                <File name="config\link\link-x86_64.ld" />
+            </Folder>
+            <Folder name="script">
+                <File name="config\script\build-all.sh" />
+                <File name="config\script\build-i386.sh" />
+                <File name="config\script\build-x86_64.sh" />
+                <File name="config\script\clean-all.sh" />
+                <File name="config\script\deploy-all.sh" />
+                <File name="config\script\deploy-i386.sh" />
+                <File name="config\script\deploy-x86_64.sh" />
+                <File name="config\script\distclean-all.sh" />
+                <File name="config\script\run-bochs-i386.sh" />
+                <File name="config\script\run-bochs-x86_64.sh" />
+                <File name="config\script\run-qemu-i386.sh" />
+                <File name="config\script\run-qemu-x86_64.sh" />
+                <File name="config\script\test-i386.sh" />
+                <File name="config\script\test-x86_64.sh" />
+            </Folder>
+            <Folder name="test">
+                <File name="config\test\bochs-i386" />
+                <File name="config\test\bochs-x86_64" />
+            </Folder>
+        </Folder>
+        <Folder name="dev">
+            <File name="dev\CMakeLists.txt" />
+            <File name="dev\device.hpp" />
+        </Folder>
+        <Folder name="drivers">
+            <Folder name="clock">
+                <File name="drivers\clock\CMakeLists.txt" />
+                <File name="drivers\clock\pit.cpp" />
+                <File name="drivers\clock\pit.hpp" />
+                <File name="drivers\clock\rtc.cpp" />
+                <File name="drivers\clock\rtc.hpp" />
+            </Folder>
+            <Folder name="input">
+                <File name="drivers\input\CMakeLists.txt" />
+                <File name="drivers\input\keyboard.cpp" />
+                <File name="drivers\input\keyboard.hpp" />
+            </Folder>
+            <Folder name="uart">
+                <File name="drivers\uart\CMakeLists.txt" />
+                <File name="drivers\uart\serial.cpp" />
+                <File name="drivers\uart\serial.hpp" />
+            </Folder>
+            <Folder name="vga">
+                <File name="drivers\vga\CMakeLists.txt" />
+                <File name="drivers\vga\vmem.cpp" />
+                <File name="drivers\vga\vmem.hpp" />
+            </Folder>
+            <File name="drivers\CMakeLists.txt" />
+        </Folder>
+        <Folder name="klib">
+            <File name="klib\CMakeLists.txt" />
+            <File name="klib\kAlign.hpp" />
+            <File name="klib\kconsole.cpp" />
+            <File name="klib\kconsole.hpp" />
+            <File name="klib\kFlags.hpp" />
+            <File name="klib\kmath.hpp" />
+            <File name="klib\kmemory.cpp" />
+            <File name="klib\kmemory.hpp" />
+            <File name="klib\kprint.cpp" />
+            <File name="klib\kprint.hpp" />
+            <File name="klib\kSingleton.hpp" />
+            <File name="klib\kstring.hpp" />
+            <File name="klib\kstring_view.cpp" />
+            <File name="klib\kstring_view.hpp" />
+            <File name="klib\kVersion.hpp" />
+        </Folder>
+        <Folder name="mem">
+            <File name="mem\CMakeLists.txt" />
+            <File name="mem\mmap.cpp" />
+            <File name="mem\mmap.hpp" />
+        </Folder>
+        <Folder name="multiboot">
+            <File name="multiboot\CMakeLists.txt" />
+            <File name="multiboot\multiboot.cpp" />
+            <File name="multiboot\multiboot.hpp" />
+        </Folder>
+        <Folder name="platform">
+            <File name="platform\CMakeLists.txt" />
+            <File name="platform\platform-i386.cpp" />
+            <File name="platform\platform-x86_64.cpp" />
+            <File name="platform\platform.hpp" />
+        </Folder>
+        <Folder name="sys">
+            <File name="sys\CMakeLists.txt" />
+            <File name="sys\elf.cpp" />
+            <File name="sys\elf.hpp" />
+            <File name="sys\init.hpp" />
+        </Folder>
+        <File name=".gitattributes" />
+        <File name=".gitignore" />
+        <File name=".gitlab-ci.yml" />
+        <File name="azure-pipelines.yml" />
+        <File name="CMakeLists.txt" />
+        <File name="CMakePresets.json" />
+        <File name="CODE_OF_CONDUCT.md" />
+        <File name="CONTRIBUTING.md" />
+        <File name="IgrOS-Kernel.code-workspace" />
+        <File name="kmain.cpp" />
+        <File name="LICENSE" />
+        <File name="README.md" />
+        <File name="sonar-project.properties" />
+    </Project>
+</NotepadPlus>
