@@ -90,6 +90,7 @@ jobs:
     - name: 'CMake Configure'
       shell: bash
       run: |
+        mkdir -p ${{ env.CCACHE_BASEDIR }}
         cmake --preset="config-linux-${{ matrix.compiler }}-${{ matrix.arch }}-debug"
 
     # Build
