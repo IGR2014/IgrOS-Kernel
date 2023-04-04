@@ -16,7 +16,7 @@ jobs:
 
     # OS
     pool:
-      vmImage: 'ubuntu-22.04'
+      vmImage: 'ubuntu-latest'
 
     # Compiler
     strategy:
@@ -120,7 +120,7 @@ jobs:
       - task: CmdLine@2
         inputs:
           script: |
-            mkdir -p "$(CCACHE_DIR)"
+            mkdir -p $(CCACHE_DIR)
             cmake --preset="config-linux-$(compiler)-$(arch)-debug"
         displayName: 'CMake Configuration'
 
