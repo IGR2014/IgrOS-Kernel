@@ -3,7 +3,7 @@
 //	Interrupt descriptor table low-level operations
 //
 //	File:	idt.hpp
-//	Date:	13 Mar 2023
+//	Date:	14 Dec 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -83,7 +83,7 @@ namespace igros::x86_64 {
 	class idt final {
 
 		// Number of IDT entries
-		constexpr static auto IDT_SIZE			{256_usize};
+		constexpr static auto IDT_SIZE			{48_usize};
 
 		// Exceptions and IRQ descriptors table (IDT)
 		static std::array<idtEntry_t, IDT_SIZE>		table;
@@ -143,7 +143,7 @@ namespace igros::x86_64 {
 	// Calculate IDT size
 	[[nodiscard]]
 	constexpr auto idt::calcSize() noexcept -> igros_dword_t {
-		return static_cast<igros_dword_t>(IDT_SIZE * sizeof(idtEntry_t)) - 1_u16;
+		return static_cast<igros_dword_t>(idt::table.size() * sizeof(idtEntry_t)) - 1_u16;
 	}
 
 

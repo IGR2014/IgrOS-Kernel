@@ -3,7 +3,7 @@
 //	Interrupt descriptor table low-level operations
 //
 //	File:	idt.hpp
-//	Date:	11 Mar 2023
+//	Date:	14 Dec 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -18,6 +18,7 @@
 #include <array>
 #include <bit>
 #include <cstdint>
+#include <limits>
 #include <type_traits>
 // IgrOS-Kernel arch
 #include <arch/types.hpp>
@@ -81,7 +82,7 @@ namespace igros::i386 {
 	class idt final {
 
 		// Number of IDT entries
-		constexpr static auto IDT_SIZE			{56_usize};
+		constexpr static auto IDT_SIZE			{48_usize};
 
 		// Exceptions and IRQ descriptors table (IDT)
 		static std::array<idtEntry_t, IDT_SIZE>		table;
@@ -132,14 +133,14 @@ namespace igros::i386 {
 			.selector	= SELECTOR,
 			.reserved	= 0_u8,
 			.type		= TYPE,
-			.offsetHigh	= static_cast<igros_word_t>((std::bit_cast<igros_usize_t>(HANDLE) >> 16) & 0xFFFF_usize)
+			.offsetHigh	= static_cast<igros_word_t>((std::bit_cast<igros_usize_t>(HANDLE) >> std::numeric_limits<igros_word_t>::digits) & 0xFFFF_usize)
 		};
 	}
 
 	// Calculate IDT size
 	[[nodiscard]]
 	constexpr auto idt::calcSize() noexcept -> igros_word_t {
-		return static_cast<igros_word_t>(IDT_SIZE * sizeof(idtEntry_t)) - 1_u16;
+		return static_cast<igros_word_t>(idt::table.size() * sizeof(idtEntry_t)) - 1_u16;
 	}
 
 

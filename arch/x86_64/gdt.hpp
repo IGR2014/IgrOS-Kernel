@@ -3,7 +3,7 @@
 //	Global descriptor table low-level operations
 //
 //	File:	gdt.hpp
-//	Date:	16 Mar 2023
+//	Date:	14 Dec 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -142,7 +142,7 @@ namespace igros::x86_64 {
 		constexpr static auto	GDT_ENTRY_DATA_RING3		{flags_t::GDT_SEG_RING3_DATA};
 
 		// Number of GDT entries
-		constexpr static auto	GDT_SIZE			{5_usize};
+		constexpr static auto	GDT_SIZE			{6_usize};
 
 		// Global descriptors table (GDT)
 		static constinit std::array<gdtEntry_t, GDT_SIZE>	table;

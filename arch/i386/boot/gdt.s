@@ -3,7 +3,7 @@
 #	Global descriptor table low-level operations
 #
 #	File:	gdt.s
-#	Date:	22 Mar 2023
+#	Date:	14 Dec 2023
 #
 #	Copyright (c) 2017 - 2022, Igor Baklykov
 #	All rights reserved.
@@ -29,7 +29,7 @@
 .type gdtResetSegments, %function
 gdtResetSegments:
 
-	ljmp	$KERNEL_SEGMENT_CODE, $1f	# Long jump for CS changes to take affect
+	ljmpl	$KERNEL_SEGMENT_CODE, $1f	# Long jump for CS changes to take affect
 
 1:
 	movw	$KERNEL_SEGMENT_DATA, %ax	# Set proper segment registers
