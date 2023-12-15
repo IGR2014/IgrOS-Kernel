@@ -3,7 +3,7 @@
 #	Low-level boot setup function
 #
 #	File:	boot.s
-#	Date:	22 Mar 2023
+#	Date:	14 Dec 2023
 #
 #	Copyright (c) 2017 - 2022, Igor Baklykov
 #	All rights reserved.
@@ -25,18 +25,22 @@
 .set	MBOOT_STACK_PHOLDER,	0x00000000		# Multiboot stack placeholder (MSB 32 bits)
 
 
+# 32-bit code
 .code32
 
+# Boot code section
 .section .boot
 .balign	8
 
+# Check funciotns
 .extern	checkCPUID					# Extern check CPUID function
-.extern	checkLongMode					# Extern check Lonh Mode function
-
+.extern	checkLongMode					# Extern check Long Mode function
+# GDT function
 .extern	gdtLoad						# Extern load GDT function
-
+# Main function
 .extern	kmain						# Extern kernel function
 
+# Export kernelStart function
 .global	kernelStart					# Kernel main function
 
 
@@ -97,14 +101,15 @@ kernelStart:
 	# Jump to Long Mode
 	ljmpl	$0x08, $2f - KERNEL_VMA			# Long jump to 64 bit CS
 
-	# Hang on fail (32 bit)
+# Hang on fail (32 bit)
 1:
 	hlt						# Stop CPU
 	jmp	1b					# Hang CPU
 
+# 64-bit code
 .code64
 
-	# Long Mode (64 bit code)
+# Long Mode (64 bit code)
 2:
 	# Long Mode GDT pointer
 	leaq	gdt64Ptr, %rdi				# Put pointer to GDT into RDI
@@ -124,14 +129,16 @@ kernelStart:
 	movq	$kmain, %rax				# Call main func
 	callq	*%rax
 
-	# Hang on fail (64 bit)
+# Hang on fail (64 bit)
 3:
 	hlt						# Stop CPU
 	jmp	3b					# Hang CPU
 
+# End of kernel function
 .size kernelStart, . - kernelStart
 
 
+# Read-only data section
 .section .rodata
 .balign	4096
 
@@ -148,12 +155,13 @@ gdt64Ptr:
 # GDT with 64-bit code and data descriptors
 gdt64Start:
 	.quad	0x0000000000000000			# Empty
-	.quad	0x0020980000000000			# 64-bit code descriptor
-	.quad	0x0020900000000000			# 64-bit data descriptor
+	.quad	0x00A09A0000000000			# 64-bit code descriptor
+	.quad	0x00A0920000000000			# 64-bit data descriptor
 	.quad	0x0000000000000000			# Empty
 gdt64End:
 
 
+# Data section
 .section .data
 .balign	4096
 
@@ -189,6 +197,7 @@ bootPageDirectory:
 	.quad	bootPageMapLevel4 - KERNEL_VMA + PAGE_ENTRY_VALID
 
 
+# Stack section
 .section .bss
 .balign	16
 

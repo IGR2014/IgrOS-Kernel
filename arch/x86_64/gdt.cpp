@@ -3,7 +3,7 @@
 //	Global descriptor table low-level operations
 //
 //	File:	gdt.cpp
-//	Date:	13 Mar 2023
+//	Date:	14 Dec 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -25,13 +25,14 @@ namespace igros::x86_64 {
 		gdt::setEntry<0x00000000, 0xFFFFFFFF, GDT_ENTRY_CODE_RING0>(),		// Kernel code
 		gdt::setEntry<0x00000000, 0xFFFFFFFF, GDT_ENTRY_DATA_RING0>(),		// Kernel data
 		gdt::setEntry<0x00000000, 0xFFFFFFFF, GDT_ENTRY_CODE_RING3>(),		// User code
-		gdt::setEntry<0x00000000, 0xFFFFFFFF, GDT_ENTRY_DATA_RING3>()		// User data
+		gdt::setEntry<0x00000000, 0xFFFFFFFF, GDT_ENTRY_DATA_RING3>(),		// User data
+		gdt::setEntry<0x00000000, 0x00000000, GDT_ENTRY_EMPTY>()		// Empty entry
 	};
 
 	// Pointer to GDT
 	constinit gdtPointer_t gdt::pointer {
 		gdt::calcSize(),
-		gdt::table.cbegin()
+		gdt::table.data()
 	};
 
 

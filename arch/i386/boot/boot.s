@@ -3,7 +3,7 @@
 #	Low-level boot setup function
 #
 #	File:	boot.s
-#	Date:	22 Mar 2023
+#	Date:	14 Dec 2023
 #
 #	Copyright (c) 2017 - 2022, Igor Baklykov
 #	All rights reserved.
@@ -22,20 +22,24 @@
 .set	PAGE_BIT_PE,		0x80000000		# Paging Enable bit
 
 
+# 32-bit code
 .code32
 
+# Boot code section
 .section .boot
 .balign	4
 
+# CR write functions
 .extern	outCR0						# Extern write CR0 function
 .extern	outCR3						# Extern write CR3 function
 .extern	outCR4						# Extern write CR4 function
-
+# SR read functions
 .extern	inCR0						# Extern read CR0 function
 .extern	inCR4						# Extern read CR4 function
-
+# Main function
 .extern	kmain						# Extern kernel function
 
+# Export kernelStart function
 .global	kernelStart					# Kernel main function
 
 
@@ -87,11 +91,12 @@ kernelStart:
 	# Jump to Higher Half
 	ljmpl	$0x08, $2f				# Long jump to Higher Half CS
 
-	# Hang on fail
+# Hang on fail
 1:
 	hlt						# Stop CPU
 	jmp	1b					# Hang CPU
 
+# continue kernel execution
 2:
 	# Adjust stack to higher half
 	addl	$KERNEL_VMA, %esp			# Add virtual memory offset to ESP
@@ -99,14 +104,16 @@ kernelStart:
 	leal	kmain, %ebp				# Call main func
 	calll	*%ebp
 
-	# Hang on fail
+# Hang on fail
 3:
 	hlt						# Stop CPU
 	jmp	3b					# Hang CPU
 
+# End of kernel function
 .size kernelStart, . - kernelStart
 
 
+# Read-only data section
 .section .rodata
 .balign 4096
 
@@ -124,6 +131,7 @@ gdt32Start:
 gdt32End:
 
 
+# Data section
 .section .data
 .balign	4096
 
@@ -139,6 +147,7 @@ bootPageDirectory:
 	.fill	(1024 - PAGE_TEMP_KERNEL - 1), 4, PAGE_ENTRY_INVALID
 
 
+# Stack section
 .section .bss
 .balign 16
 

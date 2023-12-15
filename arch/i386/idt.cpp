@@ -3,7 +3,7 @@
 //	Interrupt descriptor table low-level operations
 //
 //	File:	idt.cpp
-//	Date:	13 Mar 2023
+//	Date:	14 Dec 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -76,7 +76,7 @@ namespace igros::i386 {
 	// Pointer to IDT
 	constinit idtPointer_t idt::pointer {
 		idt::calcSize(),
-		idt::table.cbegin()
+		idt::table.data()
 	};
 
 
