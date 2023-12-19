@@ -3,7 +3,7 @@
 //	Interrupt service routines low-level operations
 //
 //	File:	isr.cpp
-//	Date:	12 Mar 2023
+//	Date:	19 Dec 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -21,6 +21,30 @@
 #include <klib/kprint.hpp>
 
 
+// i386 namespace
+namespace igros::i386 {
+
+
+	// Interrupt handlers
+	static auto isrList {std::array<isr_t, ISR_SIZE> {}};
+
+
+	// Install interrupt service routine handler
+	void isrHandlerInstall(const igros_usize_t number, const isr_t handle) noexcept {
+		// Put interrupt service routine handler in ISRs list
+		isrList[number] = handle;
+	}
+
+	// Uninstall interrupt service routine handler
+	void isrHandlerUninstall(const igros_usize_t number) noexcept {
+		// Remove interrupt service routine handler from ISRs list
+		isrList[number] = nullptr;
+	}
+
+
+}	// namespace igros::i386
+
+
 #ifdef	__cplusplus
 
 extern "C" {
@@ -31,7 +55,7 @@ extern "C" {
 	// Interrupts handler function
 	void isrHandler(const igros::i386::register_t* regs) noexcept {
 		// Check if irq/exception handler installed
-		if (const auto isr = igros::i386::isrList[regs->number]; nullptr != isr) {
+		if (const auto isr {igros::i386::isrList[regs->number]}; nullptr != isr) {
 			// Handle ISR
 			isr(regs);
 		} else {
@@ -39,8 +63,10 @@ extern "C" {
 			igros::i386::irq::disable();
 			// Debug
 			igros::klib::kprintf(
-				"%s -> [#%d]\n"
-				"State:\t\tUNHANDLED! CPU halted!\n",
+R"unhandled(
+%s -> [#%d]
+	UNHANDLED! CPU halted!
+)unhandled",
 				((regs->number >= igros::i386::IRQ_OFFSET) ? "IRQ" : "EXCEPTION"),
 				((regs->number >= igros::i386::IRQ_OFFSET) ? (regs->number - igros::i386::IRQ_OFFSET) : regs->number)
 			);
