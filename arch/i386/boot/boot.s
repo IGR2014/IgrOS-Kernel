@@ -3,7 +3,7 @@
 #	Low-level boot setup function
 #
 #	File:	boot.s
-#	Date:	14 Dec 2023
+#	Date:	19 Dec 2023
 #
 #	Copyright (c) 2017 - 2022, Igor Baklykov
 #	All rights reserved.
@@ -61,31 +61,31 @@ kernelStart:
 
 	# Set new page directory (phys address)
 	leal	bootPageDirectory - KERNEL_VMA, %eax	# Load temporary boot page directory phys address
-	pushl	%eax					# Set new CR3 value
-	leal	inCR3  - KERNEL_VMA, %ebx
-	calll	*%ebx
-	addl	$4, %esp
+	pushl	%eax					# Call prepare: Stack push temporary boot page directory phys address
+	leal	inCR3 - KERNEL_VMA, %ebp		# Call prepare: inCR3 function address
+	calll	*%ebp					# Call: set new CR3 value
+	addl	$4, %esp				# Stack cleanup
 
 	# Enable Page Size Extension (4 Mb pages)
-	leal	outCR4  - KERNEL_VMA, %ebx		# Get CR4 value
-	calll	*%ebx
+	leal	outCR4 - KERNEL_VMA, %ebp		# Call prepare: outCR4 function address
+	calll	*%ebp					# Call: get CR4 value
 	orl	$PAGE_BIT_PSE, %eax			# Set PSE bit
-	pushl	%eax					# Set new CR4 value
-	leal	inCR4  - KERNEL_VMA, %ebx
-	calll	*%ebx
-	addl	$4, %esp
+	pushl	%eax					# Call prepare: Stack push new CR4 value
+	leal	inCR4 - KERNEL_VMA, %ebp		# Call prepare: inCR4 function address
+	calll	*%ebp					# Call: set new CR4 value
+	addl	$4, %esp				# Stack cleanup
 
 	# Enable paging
-	leal	outCR0  - KERNEL_VMA, %ebx		# Get CR0 value
-	calll	*%ebx
+	leal	outCR0 - KERNEL_VMA, %ebp		# Call prepare: outCR0 function address
+	calll	*%ebp					# Call: get CR0 value
 	orl	$PAGE_BIT_PE, %eax			# Set PE bit
-	pushl	%eax					# Set new CR0 value
-	leal	inCR0  - KERNEL_VMA, %ebx
-	calll	*%ebx
-	addl	$4, %esp
+	pushl	%eax					# Call prepare: Stack push new CR0 value
+	leal	inCR0 - KERNEL_VMA, %ebp		# Call prepare: inCR0 function address
+	calll	*%ebp					# Call: set new CR0 value
+	addl	$4, %esp				# Stack cleanup
 
 	# Set Higher Half GDT
-	leal	gdt32Ptr - KERNEL_VMA, %eax		# Load Higher Half GDT pointer address
+	leal	gdt32Ptr, %eax				# Load Higher Half GDT pointer address
 	lgdtl	(%eax)					# Load GDT pointer address
 
 	# Jump to Higher Half
@@ -101,8 +101,8 @@ kernelStart:
 	# Adjust stack to higher half
 	addl	$KERNEL_VMA, %esp			# Add virtual memory offset to ESP
 	# Go to C++
-	leal	kmain, %ebp				# Call main func
-	calll	*%ebp
+	leal	kmain, %ebp				# Kernel main func address
+	calll	*%ebp					# Call: kernel main func
 
 # Hang on fail
 3:

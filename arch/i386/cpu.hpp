@@ -85,31 +85,20 @@ namespace igros::i386 {
 	inline void cpu::dumpRegisters(const register_t* const regs) noexcept {
 		// Print regs
 		klib::kprintf(
-R"registers(
-Registers dump:
-EAX=[%p] EBX=[%p] ECX=[%p] EDX=[%p]
-ESI=[%p] EDI=[%p]
-ESP=[%p] EBP=[%p]
-EIP=[%p]
-EFLAGS=[%p]
+R"registers(Registers dump:
+	EAX=[%p] EBX=[%p] ECX=[%p] EDX=[%p]
+	ESI=[%p] EDI=[%p] ESP=[%p] EBP=[%p]
+	EIP=[%p] EFLAGS=[%p]
 Segments:
-CS=[%p]
-DS=[%p]
-SS=[%p]
-ES=[%p]
-FS=[%p]
-GS=[%p]
-)registers",
-			regs->eax,
-			regs->ebx,
-			regs->ecx,
-			regs->edx,
-			regs->esi,
-			regs->edi,
-			regs->esp,
-			regs->ebp,
-			regs->eip,
-			regs->eflags,
+	CS=[%p]
+	DS=[%p]
+	SS=[%p]
+	ES=[%p]
+	FS=[%p]
+	GS=[%p])registers",
+			regs->eax, regs->ebx, regs->ecx, regs->edx,
+			regs->esi, regs->edi, regs->esp, regs->ebp,
+			regs->eip, regs->eflags,
 			regs->cs,
 			regs->ds,
 			regs->ss,

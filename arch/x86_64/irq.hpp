@@ -3,7 +3,7 @@
 //	Interrupts low-level operations
 //
 //	File:	irq.hpp
-//	Date:	12 Mar 2023
+//	Date:	19 Dec 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -97,12 +97,12 @@ namespace igros::x86_64 {
 		// Copy c-tor
 		irq(const irq &other) = delete;
 		// Copy assignment
-		irq& operator=(const irq &other) = delete;
+		auto	operator=(const irq &other) -> irq& = delete;
 
 		// Move c-tor
 		irq(irq &&other) = delete;
 		// Move assignment
-		irq& operator=(irq &&other) = delete;
+		auto	operator=(irq &&other) -> irq& = delete;
 
 
 	public:

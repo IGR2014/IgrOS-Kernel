@@ -3,7 +3,7 @@
 //	Global descriptor table low-level operations
 //
 //	File:	gdt.hpp
-//	Date:	14 Dec 2023
+//	Date:	19 Dec 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -20,57 +20,6 @@
 #include <arch/types.hpp>
 // IgrOS-Kernel library
 #include <klib/kFlags.hpp>
-
-
-// i386 namespace
-namespace igros::i386 {
-
-
-#pragma pack(push, 1)
-
-	// GDT entry
-	struct gdtEntry_t {
-		igros_word_t		limitLow;
-		igros_word_t		baseLow;
-		igros_byte_t		baseMid;
-		igros_byte_t		access;
-		igros_byte_t		limitFlags;
-		igros_byte_t		baseHigh;
-	};
-
-	// GDT pointer
-	struct gdtPointer_t {
-		igros_word_t		size;			// GDT size
-		const gdtEntry_t*	pointer;		// GDT pointer
-	};
-
-#pragma pack(pop)
-
-
-}	// namespace igros::i386
-
-
-#ifdef	__cplusplus
-
-extern "C" {
-
-#endif	// __cplusplus
-
-
-	// Reset segments to apply new GDT
-	void	gdtResetSegments() noexcept;
-
-	// Load GDT
-	void	gdtLoad(const igros::i386::gdtPointer_t* const gdtPtr) noexcept;
-	// Store GDT
-	auto	gdtStore() noexcept -> const igros::i386::gdtPointer_t*;
-	
-
-#ifdef	__cplusplus
-
-}
-
-#endif	// __cplusplus
 
 
 // i386 namespace
@@ -144,24 +93,41 @@ namespace igros::i386 {
 		// Number of GDT entries
 		constexpr static auto	GDT_SIZE			{6_usize};
 
-		// Global descriptors table (GDT)
-		static constinit std::array<gdtEntry_t, GDT_SIZE>	table;
-		// Pointer to GDT
-		static constinit gdtPointer_t				pointer;
-
-
 		// Copy c-tor
 		gdt(const gdt &other) = delete;
 		// Copy assignment
-		gdt& operator=(const gdt &other) = delete;
+		auto	operator=(const gdt &other) -> gdt& = delete;
 
 		// Move c-tor
 		gdt(gdt &&other) = delete;
 		// Move assignment
-		gdt& operator=(gdt &&other) = delete;
+		auto	operator=(gdt &&other) -> gdt& = delete;
 
 
 	public:
+
+#pragma pack(push, 1)
+
+		// GDT table entry
+		struct entry_t {
+			igros_word_t	limitLow;
+			igros_word_t	baseLow;
+			igros_byte_t	baseMid;
+			igros_byte_t	access;
+			igros_byte_t	limitFlags;
+			igros_byte_t	baseHigh;
+		};
+
+		// GDT table pointer
+		struct pointer_t {
+			igros_word_t	size;		// GDT size
+			const entry_t*	pointer;	// GDT pointer
+		};
+
+#pragma pack(pop)
+
+		// GDT table
+		using table_t = std::array<gdt::entry_t, gdt::GDT_SIZE>;
 
 		// Default c-tor
 		gdt() noexcept = default;
@@ -169,10 +135,13 @@ namespace igros::i386 {
 		// Set GDT entry
 		template<igros_dword_t BASE, igros_dword_t LIMIT, gdt::flags_t FLAGS>
 		[[nodiscard]]
-		constexpr static auto	setEntry() noexcept -> gdtEntry_t;
+		constexpr static auto	setEntry() noexcept -> entry_t;
 		// Calc GDT size
 		[[nodiscard]]
-		constexpr static auto	calcSize() noexcept -> igros_word_t;
+		constexpr static auto	calcSize(const table_t &table) noexcept -> igros_word_t;
+
+		// Set GDT pointer
+		static void		setPointer(const pointer_t &pointer) noexcept;
 
 		// Init GDT table
 		static void		init() noexcept;
@@ -184,8 +153,8 @@ namespace igros::i386 {
 	// Set GDT entry
 	template<igros_dword_t BASE, igros_dword_t LIMIT, gdt::flags_t FLAGS>
 	[[nodiscard]]
-	constexpr auto gdt::setEntry() noexcept -> gdtEntry_t {
-		return gdtEntry_t {
+	constexpr auto gdt::setEntry() noexcept -> entry_t {
+		return entry_t {
 			.limitLow	= static_cast<igros_word_t>(LIMIT & 0xFFFF_u32),
 			.baseLow	= static_cast<igros_word_t>(BASE & 0xFFFF_u32),
 			.baseMid	= static_cast<igros_byte_t>((BASE & 0xFF0000_u32) >> 16),
@@ -197,16 +166,9 @@ namespace igros::i386 {
 
 	// Calculate GDT size
 	[[nodiscard]]
-	constexpr auto gdt::calcSize() noexcept -> igros_word_t {
+	constexpr auto gdt::calcSize(const table_t &table) noexcept -> igros_word_t {
 		// Size equals to (Num of entries * Entry size) - 1
-		return static_cast<igros_word_t>(gdt::table.size() * sizeof(gdtEntry_t)) - 1_u16;
-	}
-
-
-	// Init GDT table
-	inline void gdt::init() noexcept {
-		// Load new GDT
-		::gdtLoad(&pointer);
+		return static_cast<igros_word_t>(table.size() * sizeof(entry_t)) - 1_u16;
 	}
 
 
