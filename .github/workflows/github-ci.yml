@@ -2,7 +2,12 @@
 name: 'IgrOS-Kernel CI/CD'
 
 # Triggered on push
-on: [push]
+on:
+  push:
+    branches: [ 'master' ]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ 'master' ]
 
 # Project jobs
 jobs:
@@ -28,7 +33,6 @@ jobs:
       CCACHE_MAXSIZE: "200M"
       CLICOLOR_FORCE: "1"
       NINJA_STATUS: "[%p::%e\t%f/%t]\t"
-      SONAR_CLOUD_BUILD_WRAPPER_OUTPUT: build-wrapper
 
     # Strategy with languages matrix
     strategy:
@@ -43,7 +47,7 @@ jobs:
 
     # Checkout
     - name: 'Checkout repository'
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0
 
@@ -63,10 +67,6 @@ jobs:
         sudo ./llvm.sh 16 all
         sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-16 160
         sudo update-alternatives --install /usr/bin/ld.lld ld.lld /usr/bin/ld.lld-16 160
-
-    # Init SonarCloud Wrapper
-    - name: 'SonarCloud Init'
-      uses: SonarSource/sonarcloud-github-c-cpp@v1.3
 
     # Restore Build Cache
     - name: 'Restore Build Cache'
@@ -97,7 +97,7 @@ jobs:
     - name: 'CMake Build'
       shell: bash
       run: |
-        build-wrapper-linux-x86-64 --out-dir ${{ env.SONAR_CLOUD_BUILD_WRAPPER_OUTPUT }} cmake --build --preset="build-linux-${{ matrix.compiler }}-${{ matrix.arch }}-debug" --target all --parallel
+        cmake --build --preset="build-linux-${{ matrix.compiler }}-${{ matrix.arch }}-debug" --target all --parallel
 
     # Install
     - name: 'CMake Install'
@@ -107,21 +107,13 @@ jobs:
 
     # Kernel Artifacts
     - name: 'Kernel Artifacts'
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ${{ matrix.compiler }}-${{ matrix.arch }}-kernel
         path: |
           ${{ env.IGROS_KERNEL_DIR_INSTALL }}/Debug/${{ matrix.compiler }}-${{ matrix.arch }}/iso/boot/kernel.bin
           ${{ env.IGROS_KERNEL_DIR_INSTALL }}/Debug/${{ matrix.compiler }}-${{ matrix.arch }}/kernel.iso
         retention-days: 7
-
-    # SonarCloud Wrapper analysis
-    - name: 'SonarCloud Analysis'
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: |
-        sonar-scanner --define sonar.cfamily.build-wrapper-output="${{ env.SONAR_CLOUD_BUILD_WRAPPER_OUTPUT }}" -X -Dproject.settings=sonar-project.properties
 
     # CCache Statistics
     - name: 'CCache Statistics'
@@ -131,7 +123,7 @@ jobs:
 
     # CCache Log Artifacts
     - name: 'CCache Log Artifacts'
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ${{ matrix.compiler }}-${{ matrix.arch }}-ccache-log
         path: ${{ env.CCACHE_LOGFILE }}

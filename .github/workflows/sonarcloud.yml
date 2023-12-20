@@ -1,0 +1,108 @@
+name: 'SonarCloud'
+
+on:
+  workflow_run:
+    workflows: [ 'IgrOS-Kernel CI/CD' ]
+    types:
+      - completed
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        arch: [ 'i386', 'x86_64' ]
+        compiler: [ 'clang++', 'g++' ]
+
+    # Environment variables
+    env:
+      IGROS_KERNEL_DIR_BUILD: "${{ github.workspace }}/build"
+      IGROS_KERNEL_DIR_INSTALL: "${{ github.workspace }}/install"
+      CCACHE_BASEDIR: "${{ github.workspace }}/.ccache"
+      CCACHE_DIR: "${{ github.workspace }}/.ccache/ccache"
+      CCACHE_COMPRESS: "true"
+      CCACHE_COMPRESSLEVEL: "6"
+      CCACHE_MAXSIZE: "200M"
+      CLICOLOR_FORCE: "1"
+      NINJA_STATUS: "[%p::%e\t%f/%t]\t"
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+   # Install dependencies
+    - name: 'Install Dependencies'
+      shell: bash
+      run: |
+        sudo apt update
+        sudo apt install -y --no-install-recommends ccache cmake doxygen graphviz g++-multilib gcc-multilib mtools ninja-build xorriso
+
+    # Install Clang 16.0.0
+    - name: 'Install Clang 16.0.0'
+      shell: bash
+      run: |
+        wget https://apt.llvm.org/llvm.sh
+        chmod +x llvm.sh
+        sudo ./llvm.sh 16 all
+        sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-16 160
+        sudo update-alternatives --install /usr/bin/ld.lld ld.lld /usr/bin/ld.lld-16 160
+
+    # Init SonarCloud Wrapper
+    - name: 'SonarCloud Init'
+      uses: SonarSource/sonarcloud-github-c-cpp@v2
+
+    # Restore Build Cache
+    - name: 'Restore Build Cache'
+      uses: actions/cache@v3
+      with:
+        path: ${{ env.IGROS_KERNEL_DIR_BUILD }}
+        key: build-${{ matrix.compiler }}-${{ matrix.arch }}-${{ github.sha }}
+        restore-keys: |
+          build-${{ matrix.compiler }}-${{ matrix.arch }}-
+
+    # Restore CCache Cache
+    - name: 'Restore CCache Cache'
+      uses: actions/cache@v3
+      with:
+        path: ${{ env.CCACHE_BASEDIR }}
+        key: ccache-${{ matrix.compiler }}-${{ matrix.arch }}-${{ github.sha }}
+        restore-keys: |
+          ccache-${{ matrix.compiler }}-${{ matrix.arch }}-
+
+    # Configure
+    - name: 'CMake Configure'
+      shell: bash
+      run: |
+        mkdir -p ${{ env.CCACHE_BASEDIR }}
+        cmake --preset="config-linux-${{ matrix.compiler }}-${{ matrix.arch }}-debug"
+
+    # Build
+    - name: 'CMake Build'
+      shell: bash
+      run: |
+        cmake --build --preset="build-linux-${{ matrix.compiler }}-${{ matrix.arch }}-debug" --target all --parallel
+
+    # Install
+    - name: 'CMake Install'
+      shell: bash
+      run: |
+        cmake --build --preset="build-linux-${{ matrix.compiler }}-${{ matrix.arch }}-debug" --target install
+
+    # SonarCloud Wrapper analysis
+    - name: 'SonarCloud Analysis'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: |
+        sonar-scanner --define sonar.cfamily.compile-commands="${{ env.IGROS_KERNEL_DIR_BUILD }}/Debug/config-linux-${{ matrix.compiler }}-${{ matrix.arch }}-debug/compile_commands.json" -X -Dproject.settings=sonar-project.properties
+
