@@ -3,7 +3,7 @@
 //	Common C++ types redefinition
 //
 //	File:	types.hpp
-//	Date:	05 Dec 2022
+//	Date:	20 Dec 2022
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -80,7 +80,7 @@ namespace igros {
 	/// @see @c igros_sbyte_t
 	///
 	[[nodiscard]]
-	constexpr auto operator""_i8(const unsigned long long value) noexcept -> igros_sbyte_t {
+	consteval auto operator""_i8(const unsigned long long value) noexcept -> igros_sbyte_t {
 		// Return value
 		return static_cast<igros_sbyte_t>(value);
 	}
@@ -93,7 +93,7 @@ namespace igros {
 	/// @see @c igros_sword_t
 	///
 	[[nodiscard]]
-	constexpr auto operator""_i16(const unsigned long long value) noexcept -> igros_sword_t {
+	consteval auto operator""_i16(const unsigned long long value) noexcept -> igros_sword_t {
 		// Return value
 		return static_cast<igros_sword_t>(value);
 	}
@@ -106,7 +106,7 @@ namespace igros {
 	/// @see @c igros_sdword_t
 	///
 	[[nodiscard]]
-	constexpr auto operator""_i32(const unsigned long long value) noexcept -> igros_sdword_t {
+	consteval auto operator""_i32(const unsigned long long value) noexcept -> igros_sdword_t {
 		// Return value
 		return static_cast<igros_sdword_t>(value);
 	}
@@ -119,7 +119,7 @@ namespace igros {
 	/// @see @c igros_squad_t
 	///
 	[[nodiscard]]
-	constexpr auto operator""_i64(const unsigned long long value) noexcept -> igros_squad_t {
+	consteval auto operator""_i64(const unsigned long long value) noexcept -> igros_squad_t {
 		// Return value
 		return static_cast<igros_squad_t>(value);
 	}
@@ -133,7 +133,7 @@ namespace igros {
 	/// @see @c igros_byte_t
 	///
 	[[nodiscard]]
-	constexpr auto operator""_u8(const unsigned long long value) noexcept -> igros_byte_t {
+	consteval auto operator""_u8(const unsigned long long value) noexcept -> igros_byte_t {
 		// Return value
 		return static_cast<igros_byte_t>(value);
 	}
@@ -146,7 +146,7 @@ namespace igros {
 	/// @see @c igros_word_t
 	///
 	[[nodiscard]]
-	constexpr auto operator""_u16(const unsigned long long value) noexcept -> igros_word_t {
+	consteval auto operator""_u16(const unsigned long long value) noexcept -> igros_word_t {
 		// Return value
 		return static_cast<igros_word_t>(value);
 	}
@@ -159,7 +159,7 @@ namespace igros {
 	/// @see @c igros_dword_t
 	///
 	[[nodiscard]]
-	constexpr auto operator""_u32(const unsigned long long value) noexcept -> igros_dword_t {
+	consteval auto operator""_u32(const unsigned long long value) noexcept -> igros_dword_t {
 		// Return value
 		return static_cast<igros_dword_t>(value);
 	}
@@ -172,7 +172,7 @@ namespace igros {
 	/// @see @c igros_quad_t
 	///
 	[[nodiscard]]
-	constexpr auto operator""_u64(const unsigned long long value) noexcept -> igros_quad_t {
+	consteval auto operator""_u64(const unsigned long long value) noexcept -> igros_quad_t {
 		// Return value
 		return static_cast<igros_quad_t>(value);
 	}
@@ -186,7 +186,7 @@ namespace igros {
 	/// @see @c igros_real32_t
 	///
 	[[nodiscard]]
-	constexpr auto operator""_f32(const unsigned long long value) noexcept -> igros_real32_t {
+	consteval auto operator""_f32(const unsigned long long value) noexcept -> igros_real32_t {
 		// Return value
 		return static_cast<igros_real32_t>(value);
 	}
@@ -199,7 +199,7 @@ namespace igros {
 	/// @see @c igros_real32_t
 	///
 	[[nodiscard]]
-	constexpr auto operator""_f32(const long double value) noexcept -> igros_real32_t {
+	consteval auto operator""_f32(const long double value) noexcept -> igros_real32_t {
 		// Return value
 		return static_cast<igros_real32_t>(value);
 	}
@@ -212,7 +212,7 @@ namespace igros {
 	/// @see @c igros_real64_t
 	///
 	[[nodiscard]]
-	constexpr auto operator""_f64(const unsigned long long value) noexcept -> igros_real64_t {
+	consteval auto operator""_f64(const unsigned long long value) noexcept -> igros_real64_t {
 		// Return value
 		return static_cast<igros_real64_t>(value);
 	}
@@ -225,7 +225,7 @@ namespace igros {
 	/// @see @c igros_real64_t
 	///
 	[[nodiscard]]
-	constexpr auto operator""_f64(const long double value) noexcept -> igros_real64_t {
+	consteval auto operator""_f64(const long double value) noexcept -> igros_real64_t {
 		// Return value
 		return static_cast<igros_real64_t>(value);
 	}
@@ -239,7 +239,7 @@ namespace igros {
 	/// @see @c igros_usize_t
 	///
 	[[nodiscard]]
-	constexpr auto operator""_usize(const unsigned long long value) noexcept -> igros_usize_t {
+	consteval auto operator""_usize(const unsigned long long value) noexcept -> igros_usize_t {
 		// Return value
 		return static_cast<igros_usize_t>(value);
 	}
@@ -252,7 +252,7 @@ namespace igros {
 	/// @see @c igros_ssize_t
 	///
 	[[nodiscard]]
-	constexpr auto operator""_ssize(const unsigned long long value) noexcept -> igros_ssize_t {
+	consteval auto operator""_ssize(const unsigned long long value) noexcept -> igros_ssize_t {
 		// Return value
 		return static_cast<igros_ssize_t>(value);
 	}
