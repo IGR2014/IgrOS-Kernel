@@ -9,14 +9,13 @@
 # the `language` matrix defined below to confirm you have the correct set of
 # supported CodeQL languages.
 #
-name: "CodeQL"
+name: 'CodeQL'
 
 on:
-  push:
-    branches: [ "master" ]
-  pull_request:
-    # The branches below must be a subset of the branches above
-    branches: [ "master" ]
+  workflow_run:
+    workflows: [ 'IgrOS-Kernel CI/CD' ]
+    types:
+      - completed
 
 jobs:
   analyze:
@@ -33,7 +32,6 @@ jobs:
       matrix:
         arch: [ 'i386', 'x86_64' ]
         compiler: [ 'clang++', 'g++' ]
-        language: [ 'cpp' ]
 
     # Environment variables
     env:
@@ -49,15 +47,15 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0
 
     # CodeQL initialize
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v2
+      uses: github/codeql-action/init@v3
       with:
-        languages: ${{ matrix.language }}
+        languages: c-cpp
 
    # Install dependencies
     - name: 'Install Dependencies'
@@ -115,7 +113,5 @@ jobs:
 
     # CodeQL Analysis
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v2
-      with:
-        category: "/language:${{ matrix.language }}"
+      uses: github/codeql-action/analyze@v3
 

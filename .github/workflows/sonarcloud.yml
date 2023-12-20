@@ -1,40 +1,20 @@
-# Name
-name: 'IgrOS-Kernel CI/CD'
+name: 'SonarCloud'
 
-# Triggered on push
 on:
-  push:
-    branches: [ 'master' ]
-  pull_request:
-    # The branches below must be a subset of the branches above
-    branches: [ 'master' ]
+  workflow_run:
+    workflows: [ 'IgrOS-Kernel CI/CD' ]
+    types:
+      - completed
 
-# Project jobs
 jobs:
-
-  # Build Kernel
-  BuildKernel:
-
-    # Name
-    name: 'Build with CMake'
-    # OS
+  analyze:
+    name: Analyze
     runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
 
-    # Environment variables
-    env:
-      IGROS_KERNEL_DIR_BUILD: "${{ github.workspace }}/build"
-      IGROS_KERNEL_DIR_INSTALL: "${{ github.workspace }}/install"
-      CCACHE_CONFIGPATH: "${{ github.workspace }}/.ccache"
-      CCACHE_BASEDIR: "${{ github.workspace }}/.ccache"
-      CCACHE_COMPRESS: "true"
-      CCACHE_COMPRESSLEVEL: "6"
-      CCACHE_DIR: "${{ github.workspace }}/.ccache/ccache"
-      CCACHE_LOGFILE: "${{ github.workspace }}/.ccache/ccache_log.txt"
-      CCACHE_MAXSIZE: "200M"
-      CLICOLOR_FORCE: "1"
-      NINJA_STATUS: "[%p::%e\t%f/%t]\t"
-
-    # Strategy with languages matrix
     strategy:
       fail-fast: false
       max-parallel: 4
@@ -42,16 +22,25 @@ jobs:
         arch: [ 'i386', 'x86_64' ]
         compiler: [ 'clang++', 'g++' ]
 
-    # Job steps
-    steps:
+    # Environment variables
+    env:
+      IGROS_KERNEL_DIR_BUILD: "${{ github.workspace }}/build"
+      IGROS_KERNEL_DIR_INSTALL: "${{ github.workspace }}/install"
+      CCACHE_BASEDIR: "${{ github.workspace }}/.ccache"
+      CCACHE_DIR: "${{ github.workspace }}/.ccache/ccache"
+      CCACHE_COMPRESS: "true"
+      CCACHE_COMPRESSLEVEL: "6"
+      CCACHE_MAXSIZE: "200M"
+      CLICOLOR_FORCE: "1"
+      NINJA_STATUS: "[%p::%e\t%f/%t]\t"
 
-    # Checkout
-    - name: 'Checkout repository'
+    steps:
+    - name: Checkout repository
       uses: actions/checkout@v4
       with:
         fetch-depth: 0
 
-    # Install dependencies
+   # Install dependencies
     - name: 'Install Dependencies'
       shell: bash
       run: |
@@ -67,6 +56,10 @@ jobs:
         sudo ./llvm.sh 16 all
         sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-16 160
         sudo update-alternatives --install /usr/bin/ld.lld ld.lld /usr/bin/ld.lld-16 160
+
+    # Init SonarCloud Wrapper
+    - name: 'SonarCloud Init'
+      uses: SonarSource/sonarcloud-github-c-cpp@v2
 
     # Restore Build Cache
     - name: 'Restore Build Cache'
@@ -105,27 +98,11 @@ jobs:
       run: |
         cmake --build --preset="build-linux-${{ matrix.compiler }}-${{ matrix.arch }}-debug" --target install
 
-    # Kernel Artifacts
-    - name: 'Kernel Artifacts'
-      uses: actions/upload-artifact@v4
-      with:
-        name: ${{ matrix.compiler }}-${{ matrix.arch }}-kernel
-        path: |
-          ${{ env.IGROS_KERNEL_DIR_INSTALL }}/Debug/${{ matrix.compiler }}-${{ matrix.arch }}/iso/boot/kernel.bin
-          ${{ env.IGROS_KERNEL_DIR_INSTALL }}/Debug/${{ matrix.compiler }}-${{ matrix.arch }}/kernel.iso
-        retention-days: 7
-
-    # CCache Statistics
-    - name: 'CCache Statistics'
-      shell: bash
+    # SonarCloud Wrapper analysis
+    - name: 'SonarCloud Analysis'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       run: |
-        ccache -sv
-
-    # CCache Log Artifacts
-    - name: 'CCache Log Artifacts'
-      uses: actions/upload-artifact@v4
-      with:
-        name: ${{ matrix.compiler }}-${{ matrix.arch }}-ccache-log
-        path: ${{ env.CCACHE_LOGFILE }}
-        retention-days: 3
+        sonar-scanner --define sonar.cfamily.compile-commands="${{ env.IGROS_KERNEL_DIR_BUILD }}/Debug/config-linux-${{ matrix.compiler }}-${{ matrix.arch }}-debug/compile_commands.json" -X -Dproject.settings=sonar-project.properties
 
