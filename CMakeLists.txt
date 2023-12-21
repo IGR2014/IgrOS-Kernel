@@ -51,11 +51,6 @@ set(
 	CMAKE_EXPORT_COMPILE_COMMANDS
 	ON
 )
-# Install prefix
-set(
-	CMAKE_INSTALL_PREFIX
-	"${CMAKE_SOURCE_DIR}/install/${CMAKE_BUILD_TYPE}/${CMAKE_SYSTEM_PROCESSOR}"
-)
 # CMake Module path
 set(
 	CMAKE_MODULE_PATH
@@ -265,13 +260,13 @@ get_filename_component(
 # Create directory
 install(
 	DIRECTORY
-	DESTINATION "${IGROS_COMPILER_NAME}-${CMAKE_SYSTEM_PROCESSOR}/iso/boot/grub"
+	DESTINATION "${CMAKE_INSTALL_PREFIX}/iso/boot/grub"
 )
 # Create GRUB directory structure
 install(
 	CODE
 "file(
-	WRITE \"${CMAKE_INSTALL_PREFIX}${IGROS_COMPILER_NAME}-${CMAKE_SYSTEM_PROCESSOR}/iso/boot/grub/grub.cfg\"
+	WRITE \"${CMAKE_INSTALL_PREFIX}/iso/boot/grub/grub.cfg\"
 \"menuentry \\\"IgrOS-Kernel\\\" {
 	multiboot /boot/${IGROS_KERNEL}
 }\"
@@ -280,13 +275,13 @@ install(
 # Install kernel
 install(
 	TARGETS ${IGROS_KERNEL}
-	DESTINATION "${IGROS_COMPILER_NAME}-${CMAKE_SYSTEM_PROCESSOR}/iso/boot"
+	DESTINATION "${CMAKE_INSTALL_PREFIX}/iso/boot"
 )
 # Create ISO
 install(
 	CODE
 "execute_process(
-	COMMAND grub-mkrescue -o \"${CMAKE_INSTALL_PREFIX}${IGROS_COMPILER_NAME}-${CMAKE_SYSTEM_PROCESSOR}/kernel.iso\" \"${CMAKE_INSTALL_PREFIX}${IGROS_COMPILER_NAME}-${CMAKE_SYSTEM_PROCESSOR}/iso\"
+	COMMAND grub-mkrescue -o \"${CMAKE_INSTALL_PREFIX}/kernel.iso\" \"${CMAKE_INSTALL_PREFIX}/iso\"
 	OUTPUT_QUIET
 	ERROR_QUIET
 )"
@@ -295,8 +290,8 @@ install(
 install(
 	CODE
 "execute_process(
-	COMMAND objdump --disassemble-all \"${CMAKE_INSTALL_PREFIX}${IGROS_COMPILER_NAME}-${CMAKE_SYSTEM_PROCESSOR}/iso/boot/kernel.bin\"
-	OUTPUT_FILE \"${CMAKE_INSTALL_PREFIX}${IGROS_COMPILER_NAME}-${CMAKE_SYSTEM_PROCESSOR}/kernel.disasm.txt\"
+	COMMAND objdump --disassemble-all \"${CMAKE_INSTALL_PREFIX}/iso/boot/kernel.bin\"
+	OUTPUT_FILE \"${CMAKE_INSTALL_PREFIX}/kernel.disasm.txt\"
 	OUTPUT_QUIET
 	ERROR_QUIET
 )"

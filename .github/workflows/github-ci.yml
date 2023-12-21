@@ -24,15 +24,8 @@ jobs:
     env:
       IGROS_KERNEL_DIR_BUILD: "${{ github.workspace }}/build"
       IGROS_KERNEL_DIR_INSTALL: "${{ github.workspace }}/install"
-      CCACHE_CONFIGPATH: "${{ github.workspace }}/.ccache"
-      CCACHE_BASEDIR: "${{ github.workspace }}/.ccache"
-      CCACHE_COMPRESS: "true"
-      CCACHE_COMPRESSLEVEL: "6"
-      CCACHE_DIR: "${{ github.workspace }}/.ccache/ccache"
-      CCACHE_LOGFILE: "${{ github.workspace }}/.ccache/ccache_log.txt"
-      CCACHE_MAXSIZE: "200M"
-      CLICOLOR_FORCE: "1"
-      NINJA_STATUS: "[%p::%e\t%f/%t]\t"
+      CCACHE_BASEDIR: "${{ github.workspace }}/.ccache/build-linux-${{ matrix.compiler }}-x86_64-debug"
+      CCACHE_DIR: "${{ github.workspace }}/.ccache/build-linux-${{ matrix.compiler }}-x86_64-debug/cache"
 
     # Strategy with languages matrix
     strategy:
@@ -111,8 +104,8 @@ jobs:
       with:
         name: ${{ matrix.compiler }}-${{ matrix.arch }}-kernel
         path: |
-          ${{ env.IGROS_KERNEL_DIR_INSTALL }}/Debug/${{ matrix.compiler }}-${{ matrix.arch }}/iso/boot/kernel.bin
-          ${{ env.IGROS_KERNEL_DIR_INSTALL }}/Debug/${{ matrix.compiler }}-${{ matrix.arch }}/kernel.iso
+          ${{ env.IGROS_KERNEL_DIR_INSTALL }}/Debug/config-linux-${{ matrix.compiler }}-${{ matrix.arch }}-debug/iso/boot/kernel.bin
+          ${{ env.IGROS_KERNEL_DIR_INSTALL }}/Debug/config-linux-${{ matrix.compiler }}-${{ matrix.arch }}-debug/kernel.iso
         retention-days: 7
 
     # CCache Statistics
@@ -120,12 +113,4 @@ jobs:
       shell: bash
       run: |
         ccache -sv
-
-    # CCache Log Artifacts
-    - name: 'CCache Log Artifacts'
-      uses: actions/upload-artifact@v4
-      with:
-        name: ${{ matrix.compiler }}-${{ matrix.arch }}-ccache-log
-        path: ${{ env.CCACHE_LOGFILE }}
-        retention-days: 3
 
