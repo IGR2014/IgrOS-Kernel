@@ -11,9 +11,9 @@
 *.cfg
 
 # Cache folder
-.ccache/
+**/.ccache/*
 # Build, docs, install folder
-build/
-docs/
-install/
+**/build/*
+**/docs/*
+**/install/*
 

@@ -20,7 +20,7 @@ jobs:
 
     # Compiler
     strategy:
-      maxParallel: 4
+      maxParallel: "4"
       matrix:
         clang++-i386:
           compiler: clang++
@@ -39,35 +39,23 @@ jobs:
     variables:
     - name: IGROS_DIR_BUILD
       value: "$(Build.SourcesDirectory)/build"
-      readonly: true
+      readonly: "true"
     - name: IGROS_DIR_INSTALL
       value: "$(Build.SourcesDirectory)/install"
-      readonly: true
-    - name: CCACHE_CONFIGPATH
-      value: "$(Build.SourcesDirectory)/.ccache"
+      readonly: "true"
     - name: CCACHE_BASEDIR
-      value: "$(Build.SourcesDirectory)/.ccache"
-    - name: CCACHE_COMPRESS
-      value: "true"
-    - name: CCACHE_COMPRESSLEVEL
-      value: "6"
+      value: "$(Build.SourcesDirectory)/.ccache/build-linux-$(compiler)-x86_64-debug"
     - name: CCACHE_DIR
-      value: "$(Build.SourcesDirectory)/.ccache/ccache"
-    - name: CCACHE_LOGFILE
-      value: "$(Build.SourcesDirectory)/.ccache/ccache_log.txt"
-    - name: "CLICOLOR_FORCE"
-      value: "1"
+      value: "$(Build.SourcesDirectory)/.ccache/build-linux-$(compiler)-x86_64-debug/cache"
     - name: DEBIAN_FRONTEND
       value: "noninteractive"
-    - name: NINJA_STATUS
-      value: "[%p::%e\t%f/%t]\t"
 
     # Job steps
     steps:
 
       # Checkout
       - checkout: self
-        fetchDepth: 0
+        fetchDepth: "0"
         displayName: 'Git Checkout'
 
       # Install dependencies
@@ -144,9 +132,4 @@ jobs:
           script: |
             ccache -sv
         displayName: 'CCache Statistics'
-
-      # CCache Log Artifacts
-      - publish: "$(CCACHE_LOGFILE)"
-        artifact: "$(compiler)-$(arch)-ccache-log"
-        displayName: "CCache Log Artifacts"
 

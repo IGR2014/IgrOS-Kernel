@@ -85,6 +85,10 @@
 				"CMAKE_BUILD_TYPE": {
 					"value": "Debug",
 					"type": "string"
+				},
+				"CMAKE_INSTALL_PREFIX": {
+					"value": "${sourceDir}/install/Debug/${presetName}",
+					"type": "path"
 				}
 			},
 			"description": "Default Debug config, used as common",
@@ -93,6 +97,7 @@
 				"CLICOLOR_FORCE": "1"
 			},
 			"hidden": true,
+			"installDir": "${sourceDir}/install/Debug/${presetName}",
 			"name": "config-debug-default"
 		},
 		{
@@ -101,6 +106,10 @@
 				"CMAKE_BUILD_TYPE": {
 					"value": "Release",
 					"type": "string"
+				},
+				"CMAKE_INSTALL_PREFIX": {
+					"value": "${sourceDir}/install/Release/${presetName}",
+					"type": "path"
 				}
 			},
 			"description": "Default Release config, used as common",
@@ -109,6 +118,7 @@
 				"CLICOLOR_FORCE": "1"
 			},
 			"hidden": true,
+			"installDir": "${sourceDir}/install/Release/${presetName}",
 			"name": "config-release-default"
 		},
 		{
@@ -125,12 +135,11 @@
 			},
 			"description": "Default Linux x86_64 build Config, used as common",
 			"environment": {
-				"CCACHE_CONFIGPATH": "${sourceDir}/.ccache",
-				"CCACHE_BASEDIR": "${sourceDir}/.ccache",
+				"CCACHE_CONFIGPATH": "${sourceDir}/.ccache/${presetName}",
+				"CCACHE_BASEDIR": "${sourceDir}/.ccache/${presetName}",
 				"CCACHE_COMPRESS": "true",
 				"CCACHE_COMPRESSLEVEL": "6",
-				"CCACHE_DIR": "${sourceDir}/.ccache/ccache",
-				"CCACHE_LOGFILE": "${sourceDir}/.ccache/ccache_log.txt",
+				"CCACHE_DIR": "${sourceDir}/.ccache/${presetName}/cache",
 				"CCACHE_MAXSIZE": "200M"
 			},
 			"generator": "Ninja",

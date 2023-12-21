@@ -1,0 +1,7 @@
+---
+# Compile flags
+CompileFlags:
+	Add: [-std=c++20]
+
+...
+
