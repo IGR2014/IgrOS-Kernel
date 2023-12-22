@@ -3,7 +3,7 @@
 //	Interrupts low-level operations
 //
 //	File:	isr.hpp
-//	Date:	14 Mar 2023
+//	Date:	22 Dec 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -33,24 +33,13 @@ namespace igros::x86_64 {
 	constexpr auto ISR_SIZE		{256_usize};
 
 	// Interrupt service routine handler type
-	using isr_t			= std::add_pointer_t<void (const register_t*)>;
-
-	// Interrupt handlers
-	static auto isrList		{std::array<isr_t, ISR_SIZE> {}};
+	using isr_t			= std::add_pointer_t<void (const register_t* const)>;
 
 	// Install interrupt service routine handler
-	template<igros_dword_t N, isr_t HANDLE>
-	constexpr void isrHandlerInstall() noexcept{
-		// Put interrupt service routine handler in ISRs list
-		isrList[N] = HANDLE;
-	}
+	void	isrHandlerInstall(const igros_usize_t number, const isr_t handle) noexcept;
 
 	// Uninstall interrupt service routine handler
-	template<igros_dword_t N>
-	constexpr void isrHandlerUninstall() noexcept {
-		// Remove interrupt service routine handler from ISRs list
-		isrList[N] = nullptr;
-	}
+	void	isrHandlerUninstall(const igros_usize_t number) noexcept;
 
 
 }	// namespace igros::x86_64

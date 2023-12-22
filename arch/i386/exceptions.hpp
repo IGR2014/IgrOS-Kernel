@@ -116,12 +116,12 @@ namespace igros::i386 {
 		// Copy c-tor
 		except(const except &other) = delete;
 		// Copy assignment
-		except& operator=(const except &other) = delete;
+		auto	operator=(const except &other) -> except& = delete;
 
 		// Move c-tor
 		except(except &&other) = delete;
 		// Move assignment
-		except& operator=(except &&other) = delete;
+		auto	operator=(except &&other) -> except& = delete;
 
 
 	public:
