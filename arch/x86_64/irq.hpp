@@ -3,7 +3,7 @@
 //	Interrupts low-level operations
 //
 //	File:	irq.hpp
-//	Date:	19 Dec 2023
+//	Date:	22 Dec 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -147,14 +147,14 @@ namespace igros::x86_64 {
 	template<irq_t N, isr_t HANDLE>
 	inline void irq::install() noexcept {
 		// Install ISR
-		isrHandlerInstall<static_cast<igros_dword_t>(N) + IRQ_OFFSET, HANDLE>();
+		isrHandlerInstall(static_cast<igros_usize_t>(N) + IRQ_OFFSET, HANDLE);
 	}
 
 	// Uninstall handler
 	template<irq_t N>
 	inline void irq::uninstall() noexcept {
 		// Uninstall ISR
-		isrHandlerUninstall<static_cast<igros_dword_t>(N) + IRQ_OFFSET>();
+		isrHandlerUninstall(static_cast<igros_usize_t>(N) + IRQ_OFFSET);
 	}
 
 

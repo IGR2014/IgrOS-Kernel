@@ -3,7 +3,7 @@
 //	Interrupt descriptor table low-level operations
 //
 //	File:	idt.hpp
-//	Date:	19 Dec 2023
+//	Date:	22 Dec 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -40,12 +40,12 @@ namespace igros::i386 {
 		// Copy c-tor
 		idt(const idt &other) = delete;
 		// Copy assignment
-		idt& operator=(const idt &other) = delete;
+		auto	operator=(const idt &other) -> idt& = delete;
 
 		// Move c-tor
 		idt(idt &&other) = delete;
 		// Move assignment
-		idt& operator=(idt &&other) = delete;
+		auto	operator=(idt &&other) -> idt& = delete;
 
 
 	public:

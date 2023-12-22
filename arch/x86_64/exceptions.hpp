@@ -3,7 +3,7 @@
 //	Exceptions low-level operations
 //
 //	File:	exceptions.hpp
-//	Date:	16 Mar 2023
+//	Date:	22 Dec 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -116,12 +116,12 @@ namespace igros::x86_64 {
 		// Copy c-tor
 		except(const except &other) = delete;
 		// Copy assignment
-		except& operator=(const except &other) = delete;
+		auto	operator=(const except &other) -> except& = delete;
 
 		// Move c-tor
 		except(except &&other) = delete;
 		// Move assignment
-		except& operator=(except &&other) = delete;
+		auto	operator=(except &&other) -> except& = delete;
 
 
 	public:
@@ -211,14 +211,14 @@ namespace igros::x86_64 {
 	template<except::NUMBER N, isr_t HANDLE>
 	constexpr void except::install() noexcept {
 		// Install ISR
-		isrHandlerInstall<static_cast<igros_dword_t>(N), HANDLE>();
+		isrHandlerInstall(static_cast<igros_dword_t>(N), HANDLE);
 	}
 
 	// Uninstall handler
 	template<except::NUMBER N>
 	constexpr void except::uninstall() noexcept {
 		// Uninstall ISR
-		isrHandlerUninstall<static_cast<igros_dword_t>(N)>();
+		isrHandlerUninstall(static_cast<igros_dword_t>(N));
 	}
 
 
