@@ -65,7 +65,7 @@ namespace igros::arch {
 	};
 
 	// VGA memory base address
-	static auto* const vmemBase	{std::bit_cast<vmemSymbol* const>(0x000B8000_usize)};
+	static auto* const vmemBase	{std::bit_cast<vmemSymbol* const>(0xC00B8000_usize)};
 
 	// VGA memory background symbol
 	static auto vmemBkgColor	{vmemColor::Green};

@@ -3,7 +3,7 @@
 //	Kernel text print functions
 //
 //	File:	kprint.cpp
-//	Date:	17 Mar 2023
+//	Date:	22 Dec 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -394,7 +394,7 @@ namespace igros::klib {
 	// Kernel printf function
 	void kprintf(const char* const format, ...) noexcept {
 		// Text buffer
-		auto buffer {std::array<char, 1024_usize> {}};
+		static auto buffer {std::array<char, 1024_usize> {}};
 		// Kernel variadic argument list
 		std::va_list list {};
 		// Initialize variadic arguments list
