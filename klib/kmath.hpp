@@ -51,11 +51,14 @@ namespace igros::klib {
 #if	defined(IGROS_ARCH_i386)
 
 
-	// Divide unsigned integer by unsigned integer (igros_quad_t / igros_dword_t overload)
-	// Returns unsigned quotient and unsigned reminder
+	// i386 has no 64-bit division instruction, so 64-bit "/" and "%" would require
+	// libgcc helpers (__udivdi3/__umoddi3) - use shift-subtract long division instead
+
+	// Divide unsigned integer by unsigned integer (igros_quad_t / igros_quad_t overload)
+	// Returns unsigned quotient and unsigned reminder (division by zero returns {0, dividend})
 	template<>
 	[[nodiscard]]
-	constexpr auto kdivmod(igros_quad_t dividend, igros_dword_t divisor) noexcept -> divmod_t<igros_quad_t> {
+	constexpr auto kdivmod(igros_quad_t dividend, igros_quad_t divisor) noexcept -> divmod_t<igros_quad_t> {
 
 		// Division result
 		auto res	{divmod_t<igros_quad_t> {0_u64, dividend}};
@@ -63,79 +66,69 @@ namespace igros::klib {
 		auto qbit	{1_u64};
 
 		// Division by zero
-		if (std::cmp_equal(0_u32, divisor)) [[unlikely]] {
+		if (0_u64 == divisor) [[unlikely]] {
 			return res;
 		}
 
-		while (std::cmp_less(0_i32, divisor)) {
-			divisor <<= 1_u64;
-			qbit	<<= 1_u64;
+		// Align divisor's highest bit with dividend's highest bit (without overflowing)
+		while ((divisor < res.reminder) && (0_u64 == (divisor & 0x8000000000000000_u64))) {
+			divisor <<= 1;
+			qbit	<<= 1;
 		}
 
-		while (qbit) {
-			if (std::cmp_greater_equal(res.reminder, divisor)) [[likely]] {
+		// Subtract shifted divisor from highest to lowest quotient bit
+		while (0_u64 != qbit) {
+			if (res.reminder >= divisor) {
 				res.reminder -= divisor;
-				res.quotient += qbit;
+				res.quotient |= qbit;
 			}
-			divisor	>>= 1_u64;
-			qbit	>>= 1_u64;
+			divisor	>>= 1;
+			qbit	>>= 1;
 		}
 
 		return res;
 
 	}
 
-	// Divide unsigned integer by unsigned integer (igros_quad_t / igros_quad_t overload)
+	// Divide unsigned integer by unsigned integer (igros_quad_t / igros_dword_t overload)
 	// Returns unsigned quotient and unsigned reminder
 	template<>
 	[[nodiscard]]
-	constexpr auto kdivmod(igros_quad_t dividend, igros_quad_t divisor) noexcept -> divmod_t<igros_quad_t> {
-		// Lazy trick
-		return kdivmod(dividend, static_cast<igros_dword_t>(divisor));
+	constexpr auto kdivmod(igros_quad_t dividend, igros_dword_t divisor) noexcept -> divmod_t<igros_quad_t> {
+		return kdivmod(dividend, static_cast<igros_quad_t>(divisor));
 	}
 
+
+	// Divide signed integer by signed integer (igros_squad_t / igros_squad_t overload)
+	// Returns signed quotient and signed reminder (truncation towards zero, like C++ "/" and "%")
+	template<>
+	[[nodiscard]]
+	constexpr auto kdivmod(igros_squad_t dividend, igros_squad_t divisor) noexcept -> divmod_t<igros_squad_t> {
+
+		// Absolute values (computed unsigned, so INT64_MIN doesn't overflow)
+		const auto absDividend	{(dividend < 0_i64) ? (0_u64 - static_cast<igros_quad_t>(dividend)) : static_cast<igros_quad_t>(dividend)};
+		const auto absDivisor	{(divisor < 0_i64) ? (0_u64 - static_cast<igros_quad_t>(divisor)) : static_cast<igros_quad_t>(divisor)};
+
+		// Unsigned division
+		const auto res		{kdivmod(absDividend, absDivisor)};
+
+		// Quotient is negative when signs differ, reminder takes dividend sign
+		const auto quotient	{((dividend < 0_i64) != (divisor < 0_i64)) ? (0_u64 - res.quotient) : res.quotient};
+		const auto reminder	{(dividend < 0_i64) ? (0_u64 - res.reminder) : res.reminder};
+
+		return divmod_t<igros_squad_t> {
+			static_cast<igros_squad_t>(quotient),
+			static_cast<igros_squad_t>(reminder)
+		};
+
+	}
 
 	// Divide signed integer by signed integer (igros_squad_t / igros_sdword_t overload)
 	// Returns signed quotient and signed reminder
 	template<>
 	[[nodiscard]]
 	constexpr auto kdivmod(igros_squad_t dividend, igros_sdword_t divisor) noexcept -> divmod_t<igros_squad_t> {
-
-		// Division result
-		auto res	{divmod_t<igros_squad_t> {0_i64, dividend}};
-		// Quotient bit
-		auto qbit	{1_i64};
-
-		// Division by zero
-		if (std::cmp_equal(0_i32, divisor)) [[unlikely]] {
-			return res;
-		}
-
-		while (std::cmp_less(0_i32, divisor)) {
-			divisor <<= 1_i64;
-			qbit	<<= 1_i64;
-		}
-
-		while (qbit) {
-			if (std::cmp_greater_equal(res.reminder, divisor)) [[likely]] {
-				res.reminder -= divisor;
-				res.quotient += qbit;
-			}
-			divisor	>>= 1_i64;
-			qbit	>>= 1_i64;
-		}
-
-		return res;
-
-	}
-
-	// Divide signed integer by signed integer (igros_squad_t / igros_squad_t overload)
-	// Returns signed quotient and signed reminder
-	template<>
-	[[nodiscard]]
-	constexpr auto kdivmod(igros_squad_t dividend, igros_squad_t divisor) noexcept -> divmod_t<igros_squad_t> {
-		// Lazy trick
-		return kdivmod(dividend, static_cast<igros_sdword_t>(divisor));
+		return kdivmod(dividend, static_cast<igros_squad_t>(divisor));
 	}
 
 

@@ -48,10 +48,15 @@ namespace igros::klib {
 		// Constant integer symbols values buffer
 		constexpr auto	KITOA_CONST_BUFFER	{std::array {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'}};
 
-		// Temporary buffer for value text representation
-		auto tempBuffer {std::array<char, std::numeric_limits<T>::digits + 1_usize> {}};
-		// Temporary unsigned copy of value
-		auto tempValue	{std::bit_cast<std::make_unsigned_t<T>>(value) & std::numeric_limits<T>::max()};
+		// Unsigned type of the same size
+		using U = std::make_unsigned_t<T>;
+
+		// Temporary buffer for value text representation (all bits + sign)
+		auto tempBuffer {std::array<char, std::numeric_limits<U>::digits + 1_usize> {}};
+		// Is value printed as negative decimal
+		const auto isNegative {std::cmp_less(value, static_cast<T>(0)) && (radix_t::DEC == radix)};
+		// Temporary unsigned copy of value (magnitude for negative decimals, bit pattern otherwise)
+		auto tempValue	{isNegative ? static_cast<U>(static_cast<U>(0) - static_cast<U>(value)) : static_cast<U>(value)};
 
 		// Setup counter to last - 1 position in temporary buffer
 		auto pos	{static_cast<igros_usize_t>(tempBuffer.size())};
@@ -61,22 +66,18 @@ namespace igros::klib {
 		// (this makes easier dealing with reverse routine by removing it)
 		do {
 			// Calculate divisio/modulo operation
-			const auto divResult	{kdivmod<T>(tempValue, static_cast<T>(radix))};
+			const auto divResult	{kdivmod<U>(tempValue, static_cast<U>(radix))};
 			// Save current digit to temporary buffer
 			tempBuffer[--pos]	= KITOA_CONST_BUFFER[divResult.reminder];
 			// Divide value by base to remove current digit
-			tempValue		= static_cast<T>(divResult.quotient);
+			tempValue		= divResult.quotient;
 		// The `do-while` instead of `while` here allows to process value fo zero
-		} while (std::cmp_greater(tempValue, static_cast<std::make_unsigned_t<T>>(0)));
+		} while (tempValue > static_cast<U>(0));
 
-		// Check if sign is negative
-		if (std::cmp_less(value, static_cast<T>(0))) [[unlikely]] {
-			// Check if value should be represented
-			// as decimal (binary, octal and hexidemical values have no sign)
-			if (radix_t::DEC == radix) [[likely]] {
-				// Write minus sign to buffer
-				tempBuffer[--pos] = '-';
-			}
+		// Binary, octal and hexidemical values have no sign
+		if (isNegative) [[unlikely]] {
+			// Write minus sign to buffer
+			tempBuffer[--pos] = '-';
 		}
 
 		// Resulting string length
