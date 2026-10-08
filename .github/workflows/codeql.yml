@@ -47,13 +47,13 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
       with:
         fetch-depth: 0
 
     # CodeQL initialize
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v3
+      uses: github/codeql-action/init@v4
       with:
         languages: c-cpp
 
@@ -74,7 +74,7 @@ jobs:
 
     # Restore Build Cache
     - name: 'Restore Build Cache'
-      uses: actions/cache@v3
+      uses: actions/cache@v6
       with:
         path: ${{ env.IGROS_KERNEL_DIR_BUILD }}
         key: build-${{ matrix.compiler }}-${{ matrix.arch }}-${{ github.sha }}
@@ -83,7 +83,7 @@ jobs:
 
     # Restore CCache Cache
     - name: 'Restore CCache Cache'
-      uses: actions/cache@v3
+      uses: actions/cache@v6
       with:
         path: ${{ env.CCACHE_BASEDIR }}
         key: ccache-${{ matrix.compiler }}-${{ matrix.arch }}-${{ github.sha }}
@@ -111,5 +111,5 @@ jobs:
 
     # CodeQL Analysis
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v3
+      uses: github/codeql-action/analyze@v4
 
