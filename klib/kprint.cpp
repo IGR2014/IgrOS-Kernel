@@ -42,16 +42,23 @@ namespace igros::klib {
 		auto fmtIterator	{0_usize};
 		// Resulting string iterator
 		auto strIterator	{buffer};
+		// Last usable position (reserved for null terminator)
+		const auto strEnd	{buffer + size - 1_usize};
 
 		// String pointer holder
-		auto str		{static_cast<char*>(nullptr)};
+		auto str		{static_cast<const char*>(nullptr)};
+
+		// Space left in resulting string
+		const auto spaceLeft = [strEnd](const char* const pos) noexcept -> igros_usize_t {
+			return static_cast<igros_usize_t>(strEnd - pos);
+		};
 
 		// Preceding char fill lambda
-		constexpr auto fillPreceding = [](auto &str, const auto len, const auto width, const auto fill) constexpr noexcept {
+		const auto fillPreceding = [&spaceLeft](auto &str, const auto len, const auto width, const auto fill) noexcept {
 			// Check if value should be extended with fillChar
 			if (std::cmp_less(len, width)) [[likely]] {
-				// Calc remaining length
-				auto sz {width - len};
+				// Calc remaining length (never past buffer end)
+				auto sz {std::min(static_cast<igros_usize_t>(width - len), spaceLeft(str))};
 				// Copy string
 				kmemset(str, sz, static_cast<igros_byte_t>(fill));
 				// Move iterator to string's end
@@ -70,7 +77,7 @@ namespace igros::klib {
 		};
 
 		// Integer print lambda
-		auto printInteger = [&list, &fillPreceding](auto &str, const auto radix, const auto type, const auto width, const auto fill, const auto sign) constexpr noexcept {
+		auto printInteger = [&list, &fillPreceding, &spaceLeft](auto &str, const auto radix, const auto type, const auto width, const auto fill, const auto sign) noexcept {
 			// Default temporary buffer for kitoa
 			constexpr auto KITOA_BUFF_LEN {65_usize};
 			// Number holder
@@ -191,6 +198,8 @@ namespace igros::klib {
 			}
 			// Fill with preceding symbols
 			fillPreceding(str, length, width, fill);
+			// Never copy past buffer end
+			length = std::min(length, spaceLeft(str));
 			// Copy string
 			kstrcpy(number.data(), str, length);
 			// Move iterator to string's end
@@ -199,7 +208,7 @@ namespace igros::klib {
 
 		// Iterate through format string
 		while (
-			(std::cmp_less(fmtIterator, size))	&&
+			(strIterator < strEnd)	&&
 			('\0' != format[fmtIterator])
 		) {
 
@@ -242,6 +251,11 @@ namespace igros::klib {
 						argType = argType_t::QUAD;
 						// Adjust format iterator
 						fmtIterator += 2_usize;
+					} else {
+						// Long argument (32 bits on i386, 64 bits on x86_64)
+						argType = (sizeof(long) == sizeof(igros_quad_t)) ? argType_t::QUAD : argType_t::DWORD;
+						// Adjust format iterator
+						++fmtIterator;
 					}
 				// Otherwise it could be word
 				} else if ('h' == format[fmtIterator + 1_usize]) {
@@ -260,6 +274,12 @@ namespace igros::klib {
 				// Otherwise it's double word
 				}
 
+				// Unterminated placeholder at format end
+				if ('\0' == format[fmtIterator + 1_usize]) [[unlikely]] {
+					// Done
+					break;
+				}
+
 				// Determine type
 				switch (format[++fmtIterator]) {
 
@@ -271,13 +291,17 @@ namespace igros::klib {
 						break;
 
 					// Character
-					case 'c':
+					case 'c': {
 						// Fill with preceding symbols
 						fillPreceding(strIterator, sizeof(igros_sbyte_t), fillWidth, fillChar);
+						// Get character from args
+						const auto chr {static_cast<char>(va_arg(list, igros_dword_t))};
 						// Copy character to resulting string
-						*(strIterator++) = static_cast<igros_sbyte_t>(va_arg(list, igros_dword_t));
-						// Done
-						break;
+						if (strIterator < strEnd) [[likely]] {
+							*(strIterator++) = chr;
+						}
+					// Done
+					} break;
 
 					// Binary integer
 					case 'b':
@@ -334,9 +358,9 @@ namespace igros::klib {
 					// String
 					case 's': {
 						// Get string from args
-						str = va_arg(list, char*);
-						// Get string length
-						const auto len {kstrlen(str)};
+						str = va_arg(list, const char*);
+						// Get string length (never past buffer end)
+						const auto len {std::min(kstrlen(str), spaceLeft(strIterator))};
 						// Copy string
 						kstrcpy(str, strIterator, len);
 						// Move iterator to string's end
@@ -361,7 +385,7 @@ namespace igros::klib {
 		}
 
 		// Insert null terminator
-		*(strIterator++) = '\0';
+		*strIterator = '\0';
 
 	}
 
