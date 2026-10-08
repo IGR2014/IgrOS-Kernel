@@ -13,11 +13,12 @@
 
 // C++
 #include <source_location>
+// IgrOS-Kernel arch x86
+#include <arch/x86/exceptions.hpp>
+#include <arch/x86/irq.hpp>
 // IgrOS-Kernel arch x86_64
-#include <arch/x86_64/exceptions.hpp>
 #include <arch/x86_64/gdt.hpp>
 #include <arch/x86_64/idt.hpp>
-#include <arch/x86_64/irq.hpp>
 #include <arch/x86_64/paging.hpp>
 // IgrOS-Kernel drivers
 #include <drivers/clock/pit.hpp>
@@ -42,14 +43,14 @@ namespace igros::x86_64 {
 		// Setup Interrupts Descriptor Table
 		x86_64::idt::init();
 		// Init exceptions
-		x86_64::except::init();
+		x86::except::init();
 		// Setup Global Descriptors Table
 		x86_64::gdt::init();
 
 		// Init interrupts
-		x86_64::irq::init();
+		x86::irq::init();
 		// Enable interrupts
-		x86_64::irq::enable();
+		x86::irq::enable();
 
 		// Setup paging (And identity map first 4MB where kernel physically is)
 		//x86_64::paging::init();

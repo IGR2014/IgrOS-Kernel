@@ -12,17 +12,16 @@
 
 
 // IgrOS-Kernel library
-#include <arch/i386/cpu.hpp>
-#include <arch/i386/io.hpp>
-#include <arch/i386/irq.hpp>
-#include <arch/i386/isr.hpp>
-#include <arch/i386/register.hpp>
+#include <arch/x86/io.hpp>
+#include <arch/x86/irq.hpp>
+#include <arch/x86/isr.hpp>
+#include <arch/x86/native.hpp>
 // IgrOS-Kernel library
 #include <klib/kprint.hpp>
 
 
-// i386 namespace
-namespace igros::i386 {
+// x86 namespace
+namespace igros::x86 {
 
 
 	// Interrupt handlers
@@ -42,7 +41,7 @@ namespace igros::i386 {
 	}
 
 
-}	// namespace igros::i386
+}	// namespace igros::x86
 
 
 #ifdef	__cplusplus
@@ -53,30 +52,30 @@ extern "C" {
 
 
 	// Interrupts handler function
-	void isrHandler(const igros::i386::register_t* regs) noexcept {
+	void isrHandler(const igros::x86::register_t* regs) noexcept {
 		// Interrupt vector
 		const auto vector {static_cast<igros::igros_usize_t>(regs->number)};
 		// Is it hardware interrupt
-		const auto isIrq {igros::i386::isIrqVector(vector)};
+		const auto isIrq {igros::x86::isIrqVector(vector)};
 		// Spurious IRQ has no handler and must not be acknowledged on PIC which raised it
-		if (isIrq && igros::i386::irq::isSpurious(igros::i386::irqFromVector(vector))) [[unlikely]] {
+		if (isIrq && igros::x86::irq::isSpurious(igros::x86::irqFromVector(vector))) [[unlikely]] {
 			// Master PIC still needs EOI for cascaded slave spurious IRQ
-			if (igros::i386::irq_t::ATA_SECONDARY == igros::i386::irqFromVector(vector)) {
-				igros::i386::irq::eoi(igros::i386::irq_t::CASCADE);
+			if (igros::x86::irq_t::ATA_SECONDARY == igros::x86::irqFromVector(vector)) {
+				igros::x86::irq::eoi(igros::x86::irq_t::CASCADE);
 			}
 			return;
 		}
 		// Check if irq/exception handler installed
-		if (const auto isr {igros::i386::isrList[vector]}; nullptr != isr) {
+		if (const auto isr {igros::x86::isrList[vector]}; nullptr != isr) {
 			// Handle ISR
 			isr(regs);
 			// Acknowledge hardware interrupt
 			if (isIrq) {
-				igros::i386::irq::eoi(igros::i386::irqFromVector(vector));
+				igros::x86::irq::eoi(igros::x86::irqFromVector(vector));
 			}
 		} else {
 			// Disable interrupts
-			igros::i386::irq::disable();
+			igros::x86::irq::disable();
 			// Debug
 			igros::klib::kprintf(
 R"unhandled(
@@ -84,12 +83,12 @@ R"unhandled(
 	UNHANDLED! CPU halted!
 )unhandled",
 				(isIrq ? "IRQ" : "EXCEPTION"),
-				static_cast<igros::igros_dword_t>(isIrq ? (vector - igros::i386::IRQ_OFFSET) : vector)
+				static_cast<igros::igros_dword_t>(isIrq ? (vector - igros::x86::IRQ_OFFSET) : vector)
 			);
 			// Dump registres
-			igros::i386::cpu::dumpRegisters(regs);
+			igros::x86::cpu::dumpRegisters(regs);
 			// Hang CPU
-			igros::i386::cpu::halt();
+			igros::x86::cpu::halt();
 		}
 	}
 

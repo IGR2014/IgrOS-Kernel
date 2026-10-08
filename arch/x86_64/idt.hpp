@@ -21,9 +21,9 @@
 #include <type_traits>
 // IgrOS-Kernel arch
 #include <arch/types.hpp>
-// IgrOS-Kernel arch x86_64
-#include <arch/x86_64/irq.hpp>
-#include <arch/x86_64/exceptions.hpp>
+// IgrOS-Kernel arch x86
+#include <arch/x86/exceptions.hpp>
+#include <arch/x86/irq.hpp>
 
 
 // x86_64 namespace

@@ -3,7 +3,7 @@
 //	Interrupts low-level operations
 //
 //	File:	isr.hpp
-//	Date:	22 Dec 2023
+//	Date:	19 Dec 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -19,12 +19,12 @@
 #include <type_traits>
 // IgrOS-Kernel arch
 #include <arch/types.hpp>
-// IgrOS-Kernel arch x86_64
-#include <arch/x86_64/register.hpp>
+// IgrOS-Kernel arch x86
+#include <arch/x86/native.hpp>
 
 
-// x86_64 namespace
-namespace igros::x86_64 {
+// x86 namespace
+namespace igros::x86 {
 
 
 	// IRQ offset in ISR list
@@ -42,5 +42,5 @@ namespace igros::x86_64 {
 	void	isrHandlerUninstall(const igros_usize_t number) noexcept;
 
 
-}	// namespace igros::x86_64
+}	// namespace igros::x86
 

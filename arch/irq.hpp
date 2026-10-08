@@ -16,10 +16,8 @@
 
 // IgrOS-Kernel arch
 #include <arch/register.hpp>
-// IgrOS-Kernel arch i386
-#include <arch/i386/irq.hpp>
-// IgrOS-Kernel arch x86_64
-#include <arch/x86_64/irq.hpp>
+// IgrOS-Kernel arch x86
+#include <arch/x86/irq.hpp>
 // IgrOS-Kernel library
 #include <klib/kSingleton.hpp>
 
@@ -147,15 +145,10 @@ namespace igros::arch {
 	}
 
 
-#if	defined (IGROS_ARCH_i386)
+#if	defined (IGROS_ARCH_i386) || defined (IGROS_ARCH_x86_64)
 
 	// IRQ type
-	using irq	= interrupts_t<i386::irq, i386::irq_t>;
-
-#elif	defined (IGROS_ARCH_x86_64)
-
-	// IRQ type
-	using irq	= interrupts_t<x86_64::irq, x86_64::irq_t>;
+	using irq	= interrupts_t<x86::irq, x86::irq_t>;
 
 #else
 

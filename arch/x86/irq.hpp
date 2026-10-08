@@ -3,7 +3,7 @@
 //	Interrupts low-level operations
 //
 //	File:	irq.hpp
-//	Date:	22 Dec 2023
+//	Date:	12 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -16,9 +16,9 @@
 
 // IgrOS-Kernel arch
 #include <arch/types.hpp>
-// IgrOS-Kernel arch x86_64
-#include <arch/x86_64/io.hpp>
-#include <arch/x86_64/isr.hpp>
+// IgrOS-Kernel arch x86
+#include <arch/x86/io.hpp>
+#include <arch/x86/isr.hpp>
 
 
 #ifdef	__cplusplus
@@ -75,8 +75,8 @@ extern "C" {
 #endif	// __cplusplus
 
 
-// x86_64 namespace
-namespace igros::x86_64 {
+// x86 namespace
+namespace igros::x86 {
 
 
 	// Master PIC ports
@@ -229,5 +229,5 @@ namespace igros::x86_64 {
 	}
 
 
-}	// namespace igros::x86_64
+}	// namespace igros::x86
 
