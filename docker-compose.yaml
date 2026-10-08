@@ -1,0 +1,55 @@
+x-common-variables: &common-variables
+  network_mode: host
+  volumes:
+    - /mnt/ramdisk:/mnt/ramdisk
+    - /dev:/dev
+    - /tmp/.X11-unix:/tmp/.X11-unix
+    - /etc/X11:/etc/X11
+    - ./build:/home/igros/kernel/build
+    - ./ccache:/home/igros/kernel/ccache
+    - ./install:/home/igros/kernel/install
+  environment:
+    - DISPLAY=${DISPLAY}
+    - TZ=Europe/Kyiv
+  privileged: true
+
+services:
+  kernel_i386_clang_build:
+    <<: *common-variables
+    image: igros/kernel_i386_clang:${GIT_COMMIT_HASH}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        IGROS_ARCH: i386
+        IGROS_COMPILER: clang++
+
+  kernel_x86_64_clang_build:
+    <<: *common-variables
+    image: igros/kernel_x86_64_clang:${GIT_COMMIT_HASH}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        IGROS_ARCH: x86_64
+        IGROS_COMPILER: clang++
+
+  kernel_i386_gcc_build:
+    <<: *common-variables
+    image: igros/kernel_i386_gcc:${GIT_COMMIT_HASH}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        IGROS_ARCH: i386
+        IGROS_COMPILER: g++
+
+  kernel_x86_64_gcc_build:
+    <<: *common-variables
+    image: igros/kernel_x86_64_gcc:${GIT_COMMIT_HASH}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        IGROS_ARCH: x86_64
+        IGROS_COMPILER: g++
