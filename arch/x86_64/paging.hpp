@@ -49,9 +49,6 @@ namespace igros::x86_64 {
 		constexpr static auto	PAGE_MASK			{PAGE_SIZE - 1_usize};
 
 
-#pragma push(pack, 1)
-
-
 		// Page
 		union alignas(4096_usize) page_t {
 			igros_pointer_t		next;					// Pointer to next page
@@ -84,9 +81,6 @@ namespace igros::x86_64 {
 		union alignas(4096_usize) pml4_t {
 			directory_pointer_t*	pointers[PAGE_DIRECTORY_SIZE];		// Page Map Level 4 entries
 		};
-
-
-#pragma pop(pack)
 
 
 	private:

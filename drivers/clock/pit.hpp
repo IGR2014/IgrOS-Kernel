@@ -22,38 +22,6 @@
 namespace igros::arch {
 
 
-#pragma pack(push, 1)
-
-	// Fixed-point pit value
-	union pitInterval_t {
-
-		igros_quad_t		fixed;
-
-		struct {
-
-			igros_dword_t	fraction;
-			igros_dword_t	integer;
-
-		};
-
-
-		pitInterval_t& operator+=(const pitInterval_t &interval) noexcept {
-			fixed += interval.fixed;
-			return *this;
-		}
-
-		pitInterval_t operator+(const pitInterval_t &interval) noexcept {
-			pitInterval_t newInterwal;
-			newInterwal.fixed = fixed;
-			newInterwal += interval;
-			return newInterwal;
-		}
-
-	};
-
-#pragma pack(pop)
-
-
 	// PIT frequency (1.193181(3) MHz)
 	constexpr auto PIT_MAIN_FREQUENCY	= 1193181_u32;
 	// Default pit frequency (100 Hz)
