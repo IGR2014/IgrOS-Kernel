@@ -9,7 +9,7 @@ on:
 jobs:
   analyze:
     name: Analyze
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       actions: read
       contents: read
@@ -45,21 +45,16 @@ jobs:
       shell: bash
       run: |
         sudo apt update
-        sudo apt install -y --no-install-recommends ccache cmake doxygen graphviz g++-multilib gcc-multilib mtools ninja-build xorriso
+        sudo apt install -y --no-install-recommends ccache cmake doxygen graphviz g++-multilib gcc-multilib grub-common grub-pc-bin mtools ninja-build xorriso
 
-    # Install Clang 16.0.0
-    - name: 'Install Clang 16.0.0'
+    # Install Clang (Ubuntu 24.04 packages, same toolchain as Docker image)
+    - name: 'Install Clang'
       shell: bash
       run: |
-        wget https://apt.llvm.org/llvm.sh
-        chmod +x llvm.sh
-        sudo ./llvm.sh 16 all
-        sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-16 160
-        sudo update-alternatives --install /usr/bin/ld.lld ld.lld /usr/bin/ld.lld-16 160
+        sudo apt install -y --no-install-recommends clang lld
+        clang++ --version
+        ld.lld --version
 
-    # Init SonarCloud Wrapper
-    - name: 'SonarCloud Init'
-      uses: SonarSource/sonarcloud-github-c-cpp@v2
 
     # Restore Build Cache
     - name: 'Restore Build Cache'
@@ -100,9 +95,12 @@ jobs:
 
     # SonarCloud Wrapper analysis
     - name: 'SonarCloud Analysis'
+      uses: SonarSource/sonarqube-scan-action@v8
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: |
-        sonar-scanner --define sonar.cfamily.compile-commands="${{ env.IGROS_KERNEL_DIR_BUILD }}/Debug/config-linux-${{ matrix.compiler }}-${{ matrix.arch }}-debug/compile_commands.json" -X -Dproject.settings=sonar-project.properties
+      with:
+        args: >
+          -Dsonar.cfamily.compile-commands=${{ env.IGROS_KERNEL_DIR_BUILD }}/Debug/config-linux-${{ matrix.compiler }}-${{ matrix.arch }}-debug/compile_commands.json
+          -Dproject.settings=sonar-project.properties
+          -X
 
