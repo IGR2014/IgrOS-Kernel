@@ -125,5 +125,21 @@ namespace igros::x86_64 {
 	}
 
 
+	// Check if IRQ is spurious (only lines 7 and 15 can be)
+	[[nodiscard]]
+	auto irq::isSpurious(const irq_t number) noexcept -> bool {
+		// Spurious IRQ is reported on the lowest priority line of PIC
+		if ((irq_t::LPT1 != number) && (irq_t::ATA_SECONDARY != number)) [[likely]] {
+			return false;
+		}
+		// Command port of PIC which raised IRQ
+		const auto control {(irq_t::LPT1 == number) ? PIC_MASTER_CONTROL : PIC_SLAVE_CONTROL};
+		// Select In-Service Register (OCW3)
+		::portWrite8(control, 0x0B_u8);
+		// Line 7 of the PIC is not in service - IRQ is spurious
+		return 0x00_u8 == (::portRead8(control) & 0x80_u8);
+	}
+
+
 }	// namespace igros::x86_64
 

@@ -54,16 +54,25 @@ extern "C" {
 
 	// Interrupts handler function
 	void isrHandler(const igros::i386::register_t* regs) noexcept {
+		// Interrupt vector
+		const auto vector {static_cast<igros::igros_usize_t>(regs->number)};
+		// Is it hardware interrupt
+		const auto isIrq {igros::i386::isIrqVector(vector)};
+		// Spurious IRQ has no handler and must not be acknowledged on PIC which raised it
+		if (isIrq && igros::i386::irq::isSpurious(igros::i386::irqFromVector(vector))) [[unlikely]] {
+			// Master PIC still needs EOI for cascaded slave spurious IRQ
+			if (igros::i386::irq_t::ATA_SECONDARY == igros::i386::irqFromVector(vector)) {
+				igros::i386::irq::eoi(igros::i386::irq_t::CASCADE);
+			}
+			return;
+		}
 		// Check if irq/exception handler installed
-		if (const auto isr {igros::i386::isrList[regs->number]}; nullptr != isr) {
+		if (const auto isr {igros::i386::isrList[vector]}; nullptr != isr) {
 			// Handle ISR
 			isr(regs);
 			// Acknowledge hardware interrupt
-			if (
-				(regs->number >= igros::i386::IRQ_OFFSET)	&&
-				(regs->number < igros::i386::IRQ_OFFSET + 16)
-			) {
-				igros::i386::irq::eoi(static_cast<igros::i386::irq_t>(regs->number - igros::i386::IRQ_OFFSET));
+			if (isIrq) {
+				igros::i386::irq::eoi(igros::i386::irqFromVector(vector));
 			}
 		} else {
 			// Disable interrupts
@@ -74,8 +83,8 @@ R"unhandled(
 %s -> [#%d]
 	UNHANDLED! CPU halted!
 )unhandled",
-				((regs->number >= igros::i386::IRQ_OFFSET) ? "IRQ" : "EXCEPTION"),
-				((regs->number >= igros::i386::IRQ_OFFSET) ? (regs->number - igros::i386::IRQ_OFFSET) : regs->number)
+				(isIrq ? "IRQ" : "EXCEPTION"),
+				static_cast<igros::igros_dword_t>(isIrq ? (vector - igros::i386::IRQ_OFFSET) : vector)
 			);
 			// Dump registres
 			igros::i386::cpu::dumpRegisters(regs);
