@@ -52,9 +52,6 @@ namespace igros::i386 {
 		constexpr static auto	PAGE_TABLE_SHIFT	{PAGE_SHIFT};
 
 
-#pragma push(pack, 1)
-
-
 		// Page
 		union alignas(PAGE_SIZE) page_t {
 			igros_pointer_t	next;					// Pointer to next page
@@ -73,9 +70,6 @@ namespace igros::i386 {
 		union alignas(PAGE_SIZE) directory_t {
 			table_t*	tables[PAGE_ENTRY_SIZE];		// Page directory entries
 		};
-
-
-#pragma pop(pack)
 
 
 	private:
