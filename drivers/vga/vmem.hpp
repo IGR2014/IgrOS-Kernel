@@ -64,20 +64,11 @@ namespace igros::arch {
 		igros_byte_t	color;				// Color of symbol and background
 	};
 
-	// VGA memory base address
-	static auto* const vmemBase	{std::bit_cast<vmemSymbol* const>(0xC00B8000_usize)};
-
-	// VGA memory background symbol
-	static auto vmemBkgColor	{vmemColor::Green};
-
 	// VGA memory cursor struct
 	struct vmemCursor {
 		igros_byte_t	x;				// Cursor X coordinate
 		igros_byte_t	y;				// Cursor Y coordinate
 	};
-
-	// Current cursor coordinates
-	static vmemCursor cursorPos;
 
 
 	// Set VGA memory cursor position
