@@ -40,7 +40,7 @@ namespace igros::arch {
 				"Key:\t%s\n"
 				"Code:\t0x%x\n",
 				irq::irq_t::KEYBOARD,
-				(keyCode > 0x80_u8) ? "RELEASED" : "PRESSED",
+				(0x00_u8 != (keyCode & 0x80_u8)) ? "RELEASED" : "PRESSED",
 				keyCode
 			);
 		}
