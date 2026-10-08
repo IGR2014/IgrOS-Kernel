@@ -1,0 +1,3 @@
+# Image contains toolchain only, sources are mounted at runtime
+*
+!Dockerfile
