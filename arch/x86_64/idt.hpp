@@ -79,10 +79,9 @@ namespace igros::x86_64 {
 		// Default c-tor
 		idt() noexcept = default;
 
-		// Set IDT entry
-		template<offset_t HANDLE, igros_word_t SELECTOR, igros_byte_t TYPE>
+		// Make IDT entry
 		[[nodiscard]]
-		constexpr static auto	setEntry() noexcept -> entry_t;
+		static auto	setEntry(const offset_t handle, const igros_word_t selector, const igros_byte_t type) noexcept -> entry_t;
 		// Calc IDT size
 		[[nodiscard]]
 		constexpr static auto	calcSize(const table_t &table) noexcept -> igros_word_t;
@@ -97,17 +96,18 @@ namespace igros::x86_64 {
 	};
 
 
-	// Set IDT entry
-	template<idt::offset_t HANDLE, igros_word_t SELECTOR, igros_byte_t TYPE>
+	// Make IDT entry
 	[[nodiscard]]
-	constexpr auto idt::setEntry() noexcept -> entry_t {
+	inline auto idt::setEntry(const offset_t handle, const igros_word_t selector, const igros_byte_t type) noexcept -> entry_t {
+		// Handler address
+		const auto address {std::bit_cast<igros_usize_t>(handle)};
 		return entry_t {
-			.offsetLow	= static_cast<igros_word_t>(std::bit_cast<igros_usize_t>(HANDLE) & 0xFFFF_u64),
-			.selector	= SELECTOR,
+			.offsetLow	= static_cast<igros_word_t>(address & 0xFFFF_u64),
+			.selector	= selector,
 			.ist		= 0_u8,
-			.type		= TYPE,
-			.offsetMiddle	= static_cast<igros_word_t>((std::bit_cast<igros_usize_t>(HANDLE) & 0xFFFF0000_u64) >> 16),
-			.offsetHigh	= static_cast<igros_dword_t>((std::bit_cast<igros_usize_t>(HANDLE) & 0xFFFFFFFF00000000_u64) >> 32),
+			.type		= type,
+			.offsetMiddle	= static_cast<igros_word_t>((address & 0xFFFF0000_u64) >> 16),
+			.offsetHigh	= static_cast<igros_dword_t>((address & 0xFFFFFFFF00000000_u64) >> 32),
 			.reserved2	= 0_u32
 		};
 	}

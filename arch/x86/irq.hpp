@@ -28,38 +28,8 @@ extern "C" {
 #endif	// __cplusplus
 
 
-	// Interrupt 0 handler
-	void	irqHandler0() noexcept;
-	// Interrupt 1 handler
-	void	irqHandler1() noexcept;
-	// Interrupt 2 handler
-	void	irqHandler2() noexcept;
-	// Interrupt 3 handler
-	void	irqHandler3() noexcept;
-	// Interrupt 4 handler
-	void	irqHandler4() noexcept;
-	// Interrupt 5 handler
-	void	irqHandler5() noexcept;
-	// Interrupt 6 handler
-	void	irqHandler6() noexcept;
-	// Interrupt 7 handler
-	void	irqHandler7() noexcept;
-	// Interrupt 8 handler
-	void	irqHandler8() noexcept;
-	// Interrupt 9 handler
-	void	irqHandler9() noexcept;
-	// Interrupt 10 handler
-	void	irqHandlerA() noexcept;
-	// Interrupt 11 handler
-	void	irqHandlerB() noexcept;
-	// Interrupt 12 handler
-	void	irqHandlerC() noexcept;
-	// Interrupt 13 handler
-	void	irqHandlerD() noexcept;
-	// Interrupt 14 handler
-	void	irqHandlerE() noexcept;
-	// Interrupt 15 handler
-	void	irqHandlerF() noexcept;
+	// IRQ handlers addresses, indexed by IRQ line (irq.s)
+	extern const std::add_pointer_t<void () noexcept>	irqHandlerTable[16];
 
 	// Save flags and disable interrupts
 	[[nodiscard]]
