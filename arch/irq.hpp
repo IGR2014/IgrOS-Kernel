@@ -49,6 +49,8 @@ namespace igros::arch {
 		using irq_t = T2;
 		// IRQ ISR type
 		using isr_t = std::add_pointer_t<void(const register_t*)>;
+		// Disable interrupts in scope (restores previous state on exit)
+		using guard = typename T::guard;
 
 		// Default c-tor
 		interrupts_t() noexcept = default;

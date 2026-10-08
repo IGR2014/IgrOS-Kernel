@@ -61,6 +61,12 @@ extern "C" {
 	// Interrupt 15 handler
 	void	irqHandlerF() noexcept;
 
+	// Save flags and disable interrupts
+	[[nodiscard]]
+	auto	irqSave() noexcept -> igros::igros_usize_t;
+	// Restore flags (interrupts state)
+	void	irqRestore(const igros::igros_usize_t flags) noexcept;
+
 
 #ifdef	__cplusplus
 
@@ -81,14 +87,47 @@ namespace igros::x86_64 {
 	constexpr auto PIC_SLAVE_DATA		{static_cast<port_t>(PIC_SLAVE_CONTROL + 1_u16)};
 
 
-	// Interrupts number enumeration
+	// Interrupts number enumeration (PIC lines)
 	enum class irq_t : igros_dword_t {
 		PIT		= 0_u32,
 		KEYBOARD	= 1_u32,
-		PIC		= 2_u32,
+		CASCADE		= 2_u32,		// Slave PIC
 		UART2		= 3_u32,
-		UART1		= 4_u32
+		UART1		= 4_u32,
+		LPT2		= 5_u32,
+		FLOPPY		= 6_u32,
+		LPT1		= 7_u32,		// Master PIC spurious
+		RTC		= 8_u32,
+		ACPI		= 9_u32,
+		FREE_10		= 10_u32,
+		FREE_11		= 11_u32,
+		MOUSE		= 12_u32,
+		FPU		= 13_u32,
+		ATA_PRIMARY	= 14_u32,
+		ATA_SECONDARY	= 15_u32		// Slave PIC spurious
 	};
+
+	// Number of PIC interrupt lines
+	constexpr auto IRQ_LINES	{16_usize};
+
+
+	// Interrupt vector of IRQ line
+	[[nodiscard]]
+	constexpr auto irqVector(const irq_t line) noexcept -> igros_usize_t {
+		return IRQ_OFFSET + static_cast<igros_usize_t>(line);
+	}
+
+	// Check if interrupt vector belongs to IRQ line
+	[[nodiscard]]
+	constexpr auto isIrqVector(const igros_usize_t vector) noexcept -> bool {
+		return (vector >= IRQ_OFFSET) && (vector < (IRQ_OFFSET + IRQ_LINES));
+	}
+
+	// IRQ line of interrupt vector (vector must be IRQ vector)
+	[[nodiscard]]
+	constexpr auto irqFromVector(const igros_usize_t vector) noexcept -> irq_t {
+		return static_cast<irq_t>(vector - IRQ_OFFSET);
+	}
 
 
 	// IRQ structure
@@ -139,6 +178,38 @@ namespace igros::x86_64 {
 		// Send EOI (IRQ done)
 		static void	eoi(const irq_t number) noexcept;
 
+		// Check if IRQ is spurious (only lines 7 and 15 can be)
+		[[nodiscard]]
+		static auto	isSpurious(const irq_t number) noexcept -> bool;
+
+		// Disable interrupts in scope (restores previous state on exit)
+		class guard;
+
+
+	};
+
+
+	// Disable interrupts in scope (restores previous state on exit)
+	class [[nodiscard]] irq::guard final {
+
+		// Saved flags
+		igros_usize_t	mFlags;
+
+		// Copy c-tor
+		guard(const guard &other) = delete;
+		// Copy assignment
+		auto	operator=(const guard &other) -> guard& = delete;
+
+
+	public:
+
+		// Save flags and disable interrupts
+		guard() noexcept : mFlags {::irqSave()} {}
+		// Restore flags
+		~guard() noexcept {
+			::irqRestore(mFlags);
+		}
+
 
 	};
 
@@ -147,14 +218,14 @@ namespace igros::x86_64 {
 	template<irq_t N, isr_t HANDLE>
 	inline void irq::install() noexcept {
 		// Install ISR
-		isrHandlerInstall(static_cast<igros_usize_t>(N) + IRQ_OFFSET, HANDLE);
+		isrHandlerInstall(irqVector(N), HANDLE);
 	}
 
 	// Uninstall handler
 	template<irq_t N>
 	inline void irq::uninstall() noexcept {
 		// Uninstall ISR
-		isrHandlerUninstall(static_cast<igros_usize_t>(N) + IRQ_OFFSET);
+		isrHandlerUninstall(irqVector(N));
 	}
 
 
