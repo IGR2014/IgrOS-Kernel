@@ -38,20 +38,20 @@ extern "C" {
 
 	// Read byte from port
 	[[nodiscard]]
-	auto	outPort8(const igros::x86_64::port_t addr) noexcept -> igros::igros_byte_t;
+	auto	portRead8(const igros::x86_64::port_t addr) noexcept -> igros::igros_byte_t;
 	// Read word from port
 	[[nodiscard]]
-	auto	outPort16(const igros::x86_64::port_t addr) noexcept -> igros::igros_word_t;
+	auto	portRead16(const igros::x86_64::port_t addr) noexcept -> igros::igros_word_t;
 	// Read long from port
 	[[nodiscard]]
-	auto	outPort32(const igros::x86_64::port_t addr) noexcept -> igros::igros_dword_t;
+	auto	portRead32(const igros::x86_64::port_t addr) noexcept -> igros::igros_dword_t;
 
 	// Write byte to port
-	void	inPort8(const igros::x86_64::port_t addr, const igros::igros_byte_t value) noexcept;
+	void	portWrite8(const igros::x86_64::port_t addr, const igros::igros_byte_t value) noexcept;
 	// Write word to port
-	void	inPort16(const igros::x86_64::port_t addr, const igros::igros_word_t value) noexcept;
+	void	portWrite16(const igros::x86_64::port_t addr, const igros::igros_word_t value) noexcept;
 	// Write long to port
-	void	inPort32(const igros::x86_64::port_t addr, const igros::igros_dword_t value) noexcept;
+	void	portWrite32(const igros::x86_64::port_t addr, const igros::igros_dword_t value) noexcept;
 
 
 #ifdef	__cplusplus
@@ -125,35 +125,35 @@ namespace igros::x86_64 {
 	// Read byte from port
 	[[nodiscard]]
 	inline auto io::readPort8(const port_t addr) noexcept -> igros_byte_t {
-		return ::outPort8(addr);
+		return ::portRead8(addr);
 	}
 
 	// Read word from port
 	[[nodiscard]]
 	inline auto io::readPort16(const port_t addr) noexcept -> igros_word_t {
-		return ::outPort16(addr);
+		return ::portRead16(addr);
 	}
 
 	// Read long from port
 	[[nodiscard]]
 	inline auto io::readPort32(const port_t addr) noexcept -> igros_dword_t {
-		return ::outPort32(addr);
+		return ::portRead32(addr);
 	}
 
 
 	// Write byte to port
 	inline void io::writePort8(const port_t addr, const igros_byte_t value) noexcept {
-		::inPort8(addr, value);
+		::portWrite8(addr, value);
 	}
 
 	// Write word to port
 	inline void io::writePort16(const port_t addr, const igros_word_t value) noexcept {
-		::inPort16(addr, value);
+		::portWrite16(addr, value);
 	}
 
 	// Write long to port
 	inline void io::writePort32(const port_t addr, const igros_dword_t value) noexcept {
-		::inPort32(addr, value);
+		::portWrite32(addr, value);
 	}
 
 
