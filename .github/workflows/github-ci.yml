@@ -1,13 +1,13 @@
 # Name
 name: 'IgrOS-Kernel CI/CD'
 
-# Triggered on push
+# Triggered on push to any branch, PR to master or manually
 on:
   push:
-    branches: [ 'master' ]
+    branches: [ '**' ]
   pull_request:
-    # The branches below must be a subset of the branches above
     branches: [ 'master' ]
+  workflow_dispatch:
 
 # Project jobs
 jobs:
