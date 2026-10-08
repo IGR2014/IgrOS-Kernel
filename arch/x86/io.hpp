@@ -2,7 +2,7 @@
 //
 //	IO low-level port operations
 //
-//	File:	port.hpp
+//	File:	io.hpp
 //	Date:	16 Dec 2022
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
@@ -18,15 +18,15 @@
 #include <arch/types.hpp>
 
 
-// i386 architecture namespace
-namespace igros::i386 {
+// x86 architecture namespace
+namespace igros::x86 {
 
 
 	// Define port data type which is 16bit word
 	using port_t	= igros_word_t;
 
 
-}	// namespace igros::i386
+}	// namespace igros::x86
 
 
 #ifdef	__cplusplus
@@ -38,20 +38,20 @@ extern "C" {
 
 	// Read byte from port
 	[[nodiscard]]
-	auto	portRead8(const igros::i386::port_t addr) noexcept -> igros::igros_byte_t;
+	auto	portRead8(const igros::x86::port_t addr) noexcept -> igros::igros_byte_t;
 	// Read word from port
 	[[nodiscard]]
-	auto	portRead16(const igros::i386::port_t addr) noexcept -> igros::igros_word_t;
+	auto	portRead16(const igros::x86::port_t addr) noexcept -> igros::igros_word_t;
 	// Read long from port
 	[[nodiscard]]
-	auto	portRead32(const igros::i386::port_t addr) noexcept -> igros::igros_dword_t;
+	auto	portRead32(const igros::x86::port_t addr) noexcept -> igros::igros_dword_t;
 
 	// Write byte to port
-	void	portWrite8(const igros::i386::port_t addr, const igros::igros_byte_t value) noexcept;
+	void	portWrite8(const igros::x86::port_t addr, const igros::igros_byte_t value) noexcept;
 	// Write word to port
-	void	portWrite16(const igros::i386::port_t addr, const igros::igros_word_t value) noexcept;
+	void	portWrite16(const igros::x86::port_t addr, const igros::igros_word_t value) noexcept;
 	// Write long to port
-	void	portWrite32(const igros::i386::port_t addr, const igros::igros_dword_t value) noexcept;
+	void	portWrite32(const igros::x86::port_t addr, const igros::igros_dword_t value) noexcept;
 
 
 #ifdef	__cplusplus
@@ -61,8 +61,8 @@ extern "C" {
 #endif	// __cplusplus
 
 
-// i386 architecture namespace
-namespace igros::i386 {
+// x86 architecture namespace
+namespace igros::x86 {
 
 
 	// I/O structure
@@ -192,5 +192,5 @@ namespace igros::i386 {
 	}
 
 
-}	// namespace igros::i386
+}	// namespace igros::x86
 

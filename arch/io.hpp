@@ -16,10 +16,8 @@
 
 // C++
 #include <cstdint>
-// IgrOS-Kernel arch i386
-#include <arch/i386/io.hpp>
-// IgrOS-Kernel arch x86_64
-#include <arch/x86_64/io.hpp>
+// IgrOS-Kernel arch x86
+#include <arch/x86/io.hpp>
 // IgrOS-Kernel library
 #include <klib/kSingleton.hpp>
 
@@ -335,15 +333,10 @@ namespace igros::arch {
 	}
 
 
-#if	defined (IGROS_ARCH_i386)
+#if	defined (IGROS_ARCH_i386) || defined (IGROS_ARCH_x86_64)
 
 	// I/O type
-	using io	= io_t<i386::io, i386::port_t>;
-
-#elif	defined (IGROS_ARCH_x86_64)
-
-	// I/O type
-	using io	= io_t<x86_64::io, x86_64::port_t>;
+	using io	= io_t<x86::io, x86::port_t>;
 
 #else
 

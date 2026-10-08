@@ -13,12 +13,13 @@
 
 // c++
 #include <source_location>
+// IgrOS-Kernel arch x86
+#include <arch/x86/exceptions.hpp>
+#include <arch/x86/irq.hpp>
 // IgrOS-Kernel arch i386
-#include <arch/i386/exceptions.hpp>
 #include <arch/i386/fpu.hpp>
 #include <arch/i386/gdt.hpp>
 #include <arch/i386/idt.hpp>
-#include <arch/i386/irq.hpp>
 #include <arch/i386/paging.hpp>
 // IgrOS-Kernel drivers
 #include <drivers/clock/pit.hpp>
@@ -43,14 +44,14 @@ namespace igros::i386 {
 		// Setup Interrupts Descriptor Table
 		i386::idt::init();
 		// Init exceptions
-		i386::except::init();
+		x86::except::init();
 		// Setup Global Descriptors Table
 		i386::gdt::init();
 
 		// Init interrupts
-		i386::irq::init();
+		x86::irq::init();
 		// Enable interrupts
-		i386::irq::enable();
+		x86::irq::enable();
 
 		// Setup paging (And identity map first 4MB where kernel physically is)
 		//i386::paging::init();

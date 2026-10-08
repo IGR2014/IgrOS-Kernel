@@ -11,10 +11,10 @@
 //
 
 
-// IgrOS-Kernel arch x86_64
-#include <arch/x86_64/io.hpp>
-#include <arch/x86_64/irq.hpp>
-#include <arch/x86_64/isr.hpp>
+// IgrOS-Kernel arch x86
+#include <arch/x86/io.hpp>
+#include <arch/x86/irq.hpp>
+#include <arch/x86/isr.hpp>
 // IgrOS-Kernel library
 #include <klib/kprint.hpp>
 
@@ -39,8 +39,8 @@ extern "C" {
 #endif	// __cplusplus
 
 
-// x86_64 platform
-namespace igros::x86_64 {
+// x86 namespace
+namespace igros::x86 {
 
 
 	// Init IRQ
@@ -141,5 +141,5 @@ namespace igros::x86_64 {
 	}
 
 
-}	// namespace igros::x86_64
+}	// namespace igros::x86
 

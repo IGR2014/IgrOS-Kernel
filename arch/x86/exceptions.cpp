@@ -3,7 +3,7 @@
 //	Exceptions low-level operations
 //
 //	File:	exceptions.cpp
-//	Date:	11 Mar 2023
+//	Date:	16 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -11,17 +11,16 @@
 //
 
 
-// IgrOS-Kernel arch x86_64
-#include <arch/x86_64/cpu.hpp>
-#include <arch/x86_64/exceptions.hpp>
-#include <arch/x86_64/irq.hpp>
-#include <arch/x86_64/register.hpp>
+// IgrOS-Kernel arch x86
+#include <arch/x86/exceptions.hpp>
+#include <arch/x86/irq.hpp>
+#include <arch/x86/native.hpp>
 // IgrOS-Kernel library
 #include <klib/kprint.hpp>
 
 
-// x86_64 platform
-namespace igros::x86_64 {
+// x86 namespace
+namespace igros::x86 {
 
 
 	// Init exceptions
@@ -68,5 +67,5 @@ namespace igros::x86_64 {
 	}
 
 
-}	// namespace igros::x86_64
+}	// namespace igros::x86
 
