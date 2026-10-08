@@ -29,6 +29,16 @@ namespace igros::arch {
 	constexpr auto VGA_CURSOR_DATA		{static_cast<io::port_t>(VGA_CURSOR_CONTROL + 1_u16)};
 
 
+	// VGA memory base address
+	static auto* const vmemBase	{std::bit_cast<vmemSymbol*>(0xC00B8000_usize)};
+
+	// VGA memory background symbol
+	static auto vmemBkgColor	{vmemColor::Green};
+
+	// Current cursor coordinates
+	static vmemCursor cursorPos;
+
+
 	// Set cursor position
 	void vmemCursorSet(const igros_byte_t x, const igros_byte_t y) noexcept {
 		// Calculate VGA console offset
