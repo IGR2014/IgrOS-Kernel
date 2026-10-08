@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////////
 //
-//	Platform description for x86
+//	Platform description for x86 family (i386 and x86_64)
 //
-//	File:	platform-i386.cpp
+//	File:	platform-x86.cpp
 //	Date:	22 Mar 2023
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
@@ -11,16 +11,29 @@
 //
 
 
-// c++
+// C++
 #include <source_location>
 // IgrOS-Kernel arch x86
 #include <arch/x86/exceptions.hpp>
 #include <arch/x86/irq.hpp>
+#include <arch/x86/native.hpp>
+
+#if	defined (IGROS_ARCH_i386)
+
 // IgrOS-Kernel arch i386
-#include <arch/i386/fpu.hpp>
 #include <arch/i386/gdt.hpp>
 #include <arch/i386/idt.hpp>
 #include <arch/i386/paging.hpp>
+
+#elif	defined (IGROS_ARCH_x86_64)
+
+// IgrOS-Kernel arch x86_64
+#include <arch/x86_64/gdt.hpp>
+#include <arch/x86_64/idt.hpp>
+#include <arch/x86_64/paging.hpp>
+
+#endif
+
 // IgrOS-Kernel drivers
 #include <drivers/clock/pit.hpp>
 #include <drivers/clock/rtc.hpp>
@@ -34,27 +47,27 @@
 #include <platform/platform.hpp>
 
 
-// i386 namespace
-namespace igros::i386 {
+// x86 namespace
+namespace igros::x86 {
 
 
-	// Initialize i386
+	// Initialize x86
 	static void platformInit() noexcept {
 
 		// Setup Interrupts Descriptor Table
-		i386::idt::init();
+		native::idt::init();
 		// Init exceptions
-		x86::except::init();
+		except::init();
 		// Setup Global Descriptors Table
-		i386::gdt::init();
+		native::gdt::init();
 
 		// Init interrupts
-		x86::irq::init();
+		irq::init();
 		// Enable interrupts
-		x86::irq::enable();
+		irq::enable();
 
 		// Setup paging (And identity map first 4MB where kernel physically is)
-		//i386::paging::init();
+		//native::paging::init();
 
 		// Setup VGA
 		arch::vmemInit();
@@ -75,7 +88,7 @@ namespace igros::i386 {
 
 	}
 
-	// Finalize i386
+	// Finalize x86
 	static void platformFinalize() noexcept {
 		// Debug print
 		klib::kprintf(
@@ -84,7 +97,7 @@ namespace igros::i386 {
 		);
 	}
 
-	// Shutdown i386
+	// Shutdown x86
 	static void platformShutdown() noexcept {
 		// Debug print
 		klib::kprintf(
@@ -93,7 +106,7 @@ namespace igros::i386 {
 		);
 	}
 
-	// Reboot i386
+	// Reboot x86
 	static void platformReboot() noexcept {
 		// Debug print
 		klib::kprintf(
@@ -102,7 +115,7 @@ namespace igros::i386 {
 		);
 	}
 
-	// Suspend i386
+	// Suspend x86
 	static void platformSuspend() noexcept {
 		// Debug print
 		klib::kprintf(
@@ -111,7 +124,7 @@ namespace igros::i386 {
 		);
 	}
 
-	// Wakeup i386
+	// Wakeup x86
 	static void platformWakeup() noexcept {
 		// Debug print
 		klib::kprintf(
@@ -121,7 +134,7 @@ namespace igros::i386 {
 	}
 
 
-}	// namespace igros::i386
+}	// namespace igros::x86
 
 
 // OS platform
@@ -131,15 +144,15 @@ namespace igros::platform {
 	// Get kernel current platform
 	[[nodiscard]]
 	auto Platform::current() noexcept -> const Platform& {
-		// Current i386 platform reference
+		// Current x86 platform reference
 		return klib::kSingleton<Platform>::get(
-			"i386",
-			i386::platformInit,
-			i386::platformFinalize,
-			i386::platformShutdown,
-			i386::platformReboot,
-			i386::platformSuspend,
-			i386::platformWakeup
+			x86::ARCH_NAME,
+			x86::platformInit,
+			x86::platformFinalize,
+			x86::platformShutdown,
+			x86::platformReboot,
+			x86::platformSuspend,
+			x86::platformWakeup
 		);
 	}
 
