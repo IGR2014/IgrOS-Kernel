@@ -39,6 +39,8 @@ namespace igros::arch {
 		igros_byte_t		year;
 		igros_byte_t		month;
 		igros_byte_t		day;
+		// Field-wise comparison
+		constexpr auto operator==(const rtcDate_t&) const noexcept -> bool = default;
 	};
 
 	// RTC time
@@ -46,6 +48,8 @@ namespace igros::arch {
 		igros_byte_t		hour;
 		igros_byte_t		minute;
 		igros_byte_t		second;
+		// Field-wise comparison
+		constexpr auto operator==(const rtcTime_t&) const noexcept -> bool = default;
 	};
 
 	// RTC date/time
@@ -53,6 +57,8 @@ namespace igros::arch {
 		rtcDate_t		date;
 		igros_byte_t		weekday;
 		rtcTime_t		time;
+		// Field-wise comparison
+		constexpr auto operator==(const rtcDateTime_t&) const noexcept -> bool = default;
 	};
 
 

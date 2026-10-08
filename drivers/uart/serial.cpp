@@ -145,16 +145,27 @@ namespace igros::arch {
 	}
 
 
-	// Is write ready?
+	// Is write ready? (LSR bit 5 - transmitter holding register empty)
 	[[nodiscard]]
 	auto serialReadyWrite() noexcept -> bool {
+		return 0x20_u8 == (io::get().readPort8(SERIAL_PORT_LSR(SERIAL_PORT_1)) & 0x20_u8);
+	}
+
+	// Is read ready? (LSR bit 0 - data ready)
+	[[nodiscard]]
+	auto serialReadyRead() noexcept -> bool {
 		return 0x01_u8 == (io::get().readPort8(SERIAL_PORT_LSR(SERIAL_PORT_1)) & 0x01_u8);
 	}
 
-	// Is read ready?
+	// Wait until write ready (bounded, so missing UART can't hang the kernel)
 	[[nodiscard]]
-	auto serialReadyRead() noexcept -> bool {
-		return 0x20_u8 == (io::get().readPort8(SERIAL_PORT_LSR(SERIAL_PORT_1)) & 0x20_u8);
+	static auto serialWaitWrite() noexcept -> bool {
+		for (auto spin {0_usize}; spin < 100000_usize; ++spin) {
+			if (serialReadyWrite()) [[likely]] {
+				return true;
+			}
+		}
+		return false;
 	}
 
 
@@ -164,11 +175,15 @@ namespace igros::arch {
 		// Writed size
 		auto i {0_usize};
 		// Write data
-		for (;(i < size) && serialReadyWrite(); ++i) {
+		for (;(i < size) && serialWaitWrite(); ++i) {
 			// Check if new line
 			if ('\n' == src[i]) [[unlikely]] {
 				// Add CR
 				io::get().writePort8(SERIAL_PORT_DR(SERIAL_PORT_1), '\r');
+				// Wait for CR to be sent
+				if (!serialWaitWrite()) [[unlikely]] {
+					break;
+				}
 			}
 			// One-by-one
 			io::get().writePort8(SERIAL_PORT_DR(SERIAL_PORT_1), src[i]);
