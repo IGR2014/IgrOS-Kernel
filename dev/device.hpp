@@ -41,7 +41,7 @@ namespace igros::sys {
 	using devFuncRead_t	= std::add_pointer_t<auto (const igros_pointer_t, void* const, const igros_usize_t) -> igros_usize_t>;
 
 	// Device IOCTL function pointer
-	using devFuncIOCTL_t	= std::add_pointer_t<auto (const igros_pointer_t, const igros_dword_t, ...) -> igros_usize_t>
+	using devFuncIOCTL_t	= std::add_pointer_t<auto (const igros_pointer_t, const igros_dword_t, ...) -> igros_usize_t>;
 
 
 	// Device description structure
@@ -64,10 +64,10 @@ namespace igros::sys {
 
 
 	// Register device
-	[[nodicard]]
+	[[nodiscard]]
 	auto	registerDevice(const device_t &dev) noexcept -> bool;
 	// Unregister device
-	[[nodicard]]
+	[[nodiscard]]
 	auto	unregisterDevice(const device_t &dev) noexcept -> bool;
 
 
