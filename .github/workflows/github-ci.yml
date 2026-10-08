@@ -18,7 +18,7 @@ jobs:
     # Name
     name: 'Build with CMake'
     # OS
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     # Environment variables
     env:
@@ -49,17 +49,15 @@ jobs:
       shell: bash
       run: |
         sudo apt update
-        sudo apt install -y --no-install-recommends ccache cmake doxygen graphviz g++-multilib gcc-multilib mtools ninja-build xorriso
+        sudo apt install -y --no-install-recommends ccache cmake doxygen graphviz g++-multilib gcc-multilib grub-common grub-pc-bin mtools ninja-build xorriso
 
-    # Install Clang 16.0.0
-    - name: 'Install Clang 16.0.0'
+    # Install Clang (Ubuntu 24.04 packages, same toolchain as Docker image)
+    - name: 'Install Clang'
       shell: bash
       run: |
-        wget https://apt.llvm.org/llvm.sh
-        chmod +x llvm.sh
-        sudo ./llvm.sh 16 all
-        sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-16 160
-        sudo update-alternatives --install /usr/bin/ld.lld ld.lld /usr/bin/ld.lld-16 160
+        sudo apt install -y --no-install-recommends clang lld
+        clang++ --version
+        ld.lld --version
 
     # Restore Build Cache
     - name: 'Restore Build Cache'
