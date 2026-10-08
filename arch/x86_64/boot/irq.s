@@ -37,6 +37,8 @@
 
 .global irqEnable			# Interrupts
 .global irqDisable			# No interrupts
+.global irqSave				# Save flags and disable interrupts
+.global irqRestore			# Restore flags
 
 
 # IRQ 0
@@ -252,4 +254,27 @@ irqDisable:
 	retq
 
 .size irqDisable, . - irqDisable
+
+
+# Save flags and disable interrupts
+.type irqSave, %function
+irqSave:
+
+	pushfq				# Save flags
+	popq	%rax			# Return them
+	cli				# Disable interrupts
+	retq
+
+.size irqSave, . - irqSave
+
+
+# Restore flags (interrupts state)
+.type irqRestore, %function
+irqRestore:
+
+	pushq	%rdi			# Saved flags
+	popfq				# Restore them
+	retq
+
+.size irqRestore, . - irqRestore
 

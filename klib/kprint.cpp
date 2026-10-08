@@ -14,6 +14,8 @@
 // C++
 #include <array>
 #include <cstdarg>
+// IgrOS-Kernel arch
+#include <arch/irq.hpp>
 // IgrOS-Kernel drivers
 #include <drivers/uart/serial.hpp>
 #include <drivers/vga/vmem.hpp>
@@ -417,6 +419,8 @@ namespace igros::klib {
 
 	// Kernel printf function
 	void kprintf(const char* const format, ...) noexcept {
+		// Shared buffer and output must not be interrupted by IRQ handler printing too
+		const arch::irq::guard noInterrupts {};
 		// Text buffer
 		static auto buffer {std::array<char, 1024_usize> {}};
 		// Kernel variadic argument list
