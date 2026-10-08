@@ -18,8 +18,8 @@
 #include <array>
 // IgrOS-Kernel arch
 #include <arch/types.hpp>
-// IgrOS-Kernel arch i386
-#include <arch/i386/isr.hpp>
+// IgrOS-Kernel arch x86
+#include <arch/x86/isr.hpp>
 
 
 #ifdef	__cplusplus
@@ -102,12 +102,8 @@ extern "C" {
 #endif	// __cplusplus
 
 
-// i386 namespace
-namespace igros::i386 {
-
-
-	// Task registers structure forward declaration
-	struct register_t;
+// x86 namespace
+namespace igros::x86 {
 
 
 	// Exceptions structure
@@ -222,5 +218,5 @@ namespace igros::i386 {
 	}
 
 
-}	// namespace igros::i386
+}	// namespace igros::x86
 

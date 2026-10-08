@@ -14,11 +14,12 @@
 // C++
 #include <array>
 #include <bit>
+// IgrOS-Kernel arch x86
+#include <arch/x86/cr.hpp>
+#include <arch/x86/exceptions.hpp>
+#include <arch/x86/irq.hpp>
 // IgrOS-Kernel arch i386
 #include <arch/i386/cpu.hpp>
-#include <arch/i386/cr.hpp>
-#include <arch/i386/exceptions.hpp>
-#include <arch/i386/irq.hpp>
 #include <arch/i386/paging.hpp>
 #include <arch/i386/register.hpp>
 // IgrOS-Kernel library
@@ -58,7 +59,7 @@ namespace igros::i386 {
 	void paging::init() noexcept {
 
 		// Install exception handler for page fault
-		except::install<except::NUMBER::PAGE_FAULT, paging::exHandler>();
+		x86::except::install<x86::except::NUMBER::PAGE_FAULT, paging::exHandler>();
 
 		// Get kernel end address
 		constexpr auto kernelEnd {const_cast<igros_byte_t*>(platform::Platform::kernelEnd())};
@@ -368,7 +369,7 @@ namespace igros::i386 {
 	[[noreturn]]
 	void paging::exHandler(const register_t* regs) noexcept {
 		// Disable IRQ
-		irq::disable();
+		x86::irq::disable();
 		// Write Multiboot magic error message message
 		klib::kprintf(
 R"exception(
@@ -381,7 +382,7 @@ Address:	0x%p
 Which is:	not %s
 )exception",
 			regs->number,
-			except::NAME[regs->number],
+			x86::except::NAME[regs->number],
 			((regs->param & 0x18_u32) == 0_u32) ? "ACCESS VIOLATION"	: "",
 			((regs->param & 0x10_u32) == 0_u32) ? ""			: "INSTRUCTION FETCH",
 			((regs->param & 0x08_u32) == 0_u32) ? ""			: "RESERVED BIT SET",

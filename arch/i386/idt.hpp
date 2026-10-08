@@ -22,9 +22,9 @@
 #include <type_traits>
 // IgrOS-Kernel arch
 #include <arch/types.hpp>
-// IgrOS-Kernel arch i386
-#include <arch/i386/exceptions.hpp>
-#include <arch/i386/irq.hpp>
+// IgrOS-Kernel arch x86
+#include <arch/x86/exceptions.hpp>
+#include <arch/x86/irq.hpp>
 
 
 // i386 namespace
