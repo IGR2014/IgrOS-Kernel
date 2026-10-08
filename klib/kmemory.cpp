@@ -174,8 +174,12 @@ namespace igros::klib {
 	[[maybe_unused]]
 	auto kmemcpy(const igros_pointer_t dst, const igros_pointer_t src, const igros_usize_t size) noexcept -> igros_pointer_t {
 		// Check arguments
-		if ((nullptr == dst) || (nullptr == src) || (dst == src) || (0_usize == size)) [[unlikely]] {
+		if ((nullptr == dst) || (nullptr == src)) [[unlikely]] {
 			return nullptr;
+		}
+		// Nothing to copy
+		if ((dst == src) || (0_usize == size)) [[unlikely]] {
+			return dst;
 		}
 		// Do actual memcpy
 		for (auto i {0_usize}; i < size; i++) {
@@ -187,11 +191,4 @@ namespace igros::klib {
 
 
 }	// namespace igros::klib
-
-
-// Memset to make GCC/Clang happy
-[[maybe_unused]]
-auto memset(igros::igros_pointer_t dst, const igros::igros_byte_t val, const igros::igros_usize_t size) noexcept -> igros::igros_pointer_t {
-	return igros::klib::kmemset(dst, size, val);
-}
 
