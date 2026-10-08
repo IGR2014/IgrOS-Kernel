@@ -41,11 +41,15 @@ namespace igros::x86 {
 
 	// Current architecture
 	namespace native = igros::i386;
+	// Current architecture name
+	constexpr auto ARCH_NAME {"i386"};
 
 #elif	defined (IGROS_ARCH_x86_64)
 
 	// Current architecture
 	namespace native = igros::x86_64;
+	// Current architecture name
+	constexpr auto ARCH_NAME {"x86_64"};
 
 #endif
 
