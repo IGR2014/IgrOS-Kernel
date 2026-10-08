@@ -214,31 +214,31 @@ namespace igros::arch {
 	}
 
 
-	// Serial IRQ handler
-	void serialInterruptHandler(const register_t* const regs) noexcept {
-		// Check IRQ #
-		if (regs->number == static_cast<igros_dword_t>(irq::irq_t::UART2)) {
-			// Serial #2 | #4
-			// Debug data
-			klib::kprintf(
-				"IRQ #%d\t[UART2]\n"
-				"Read:\tNOTHING!\n"
-			);
-		} else if (regs->number == static_cast<igros_dword_t>(irq::irq_t::UART1)) {
-			// Serial #1 | #3
-			std::array<char, 128_usize> data;
-			// Zero out
-			klib::kmemset(data.data(), data.size(), 0x00_u8);
-			// Read from UART1
-			const auto read {serialRead(data.data(), data.size())};
-			// Debug data
-			klib::kprintf(
-				"IRQ #%d\t[UART1]\n"
-				"Read:\t%05d bytes = %s\n",
-				read,
-				std::bit_cast<const igros_sbyte_t* const>(data.cbegin())
-			);
-		}
+	// Serial #1 | #3 IRQ handler
+	static void serialInterruptHandler1([[maybe_unused]] const register_t* const regs) noexcept {
+		std::array<char, 128_usize> data;
+		// Zero out
+		klib::kmemset(data.data(), data.size(), 0x00_u8);
+		// Read from UART1 (keep space for null terminator)
+		const auto read {serialRead(data.data(), data.size() - 1_usize)};
+		// Debug data
+		klib::kprintf(
+			"IRQ #%d\t[UART1]\n"
+			"Read:\t%05d bytes = %s\n",
+			irq::irq_t::UART1,
+			read,
+			data.data()
+		);
+	}
+
+	// Serial #2 | #4 IRQ handler
+	static void serialInterruptHandler2([[maybe_unused]] const register_t* const regs) noexcept {
+		// Debug data
+		klib::kprintf(
+			"IRQ #%d\t[UART2]\n"
+			"Read:\tNOTHING!\n",
+			irq::irq_t::UART2
+		);
 	}
 
 	// Setup serial port
@@ -251,14 +251,14 @@ namespace igros::arch {
 		}
 
 		// Install UART1 interrupt handler
-		irq::get().install<irq::irq_t::UART1, serialInterruptHandler>();
-		// Mask UART1 interrupts
-		irq::get().mask(irq::irq_t::UART1);
+		irq::get().install<irq::irq_t::UART1, serialInterruptHandler1>();
+		// Unmask UART1 interrupts
+		irq::get().unmask(irq::irq_t::UART1);
 
 		// Install UART2 interrupt handler
-		irq::get().install<irq::irq_t::UART2, serialInterruptHandler>();
-		// Mask UART2 interrupts
-		irq::get().mask(irq::irq_t::UART2);
+		irq::get().install<irq::irq_t::UART2, serialInterruptHandler2>();
+		// Unmask UART2 interrupts
+		irq::get().unmask(irq::irq_t::UART2);
 
 	}
 
