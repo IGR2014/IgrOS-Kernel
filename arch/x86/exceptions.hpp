@@ -29,70 +29,8 @@ extern "C" {
 #endif	// __cplusplus
 
 
-	// Exception 0 handler
-	void	exHandler00() noexcept;
-	// Exception 1 handler
-	void	exHandler01() noexcept;
-	// Exception 2 handler
-	void	exHandler02() noexcept;
-	// Exception 3 handler
-	void	exHandler03() noexcept;
-	// Exception 4 handler
-	void	exHandler04() noexcept;
-	// Exception 5 handler
-	void	exHandler05() noexcept;
-	// Exception 6 handler
-	void	exHandler06() noexcept;
-	// Exception 7 handler
-	void	exHandler07() noexcept;
-	// Exception 8 handler
-	void	exHandler08() noexcept;
-	// Exception 9 handler
-	void	exHandler09() noexcept;
-	// Exception 10 handler
-	void	exHandler0A() noexcept;
-	// Exception 11 handler
-	void	exHandler0B() noexcept;
-	// Exception 12 handler
-	void	exHandler0C() noexcept;
-	// Exception 13 handler
-	void	exHandler0D() noexcept;
-	// Exception 14 handler
-	void	exHandler0E() noexcept;
-	// Exception 15 handler
-	void	exHandler0F() noexcept;
-	// Exception 16 handler
-	void	exHandler10() noexcept;
-	// Exception 17 handler
-	void	exHandler11() noexcept;
-	// Exception 18 handler
-	void	exHandler12() noexcept;
-	// Exception 19 handler
-	void	exHandler13() noexcept;
-	// Exception 20 handler
-	void	exHandler14() noexcept;
-	// Exception 21 handler
-	void	exHandler15() noexcept;
-	// Exception 22 handler
-	void	exHandler16() noexcept;
-	// Exception 23 handler
-	void	exHandler17() noexcept;
-	// Exception 24 handler
-	void	exHandler18() noexcept;
-	// Exception 25 handler
-	void	exHandler19() noexcept;
-	// Exception 26 handler
-	void	exHandler1A() noexcept;
-	// Exception 27 handler
-	void	exHandler1B() noexcept;
-	// Exception 28 handler
-	void	exHandler1C() noexcept;
-	// Exception 29 handler
-	void	exHandler1D() noexcept;
-	// Exception 30 handler
-	void	exHandler1E() noexcept;
-	// Exception 31 handler
-	void	exHandler1F() noexcept;
+	// Exception handlers addresses, indexed by exception number (exceptions.s)
+	extern const std::add_pointer_t<void () noexcept>	exHandlerTable[32];
 
 
 #ifdef	__cplusplus
