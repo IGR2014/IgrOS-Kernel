@@ -17,3 +17,8 @@
 **/docs/*
 **/install/*
 
+# Local environment
+.env
+# JetBrains IDE settings
+.idea/
+
