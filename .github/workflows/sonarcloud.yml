@@ -1,10 +1,13 @@
 name: 'SonarCloud'
 
+# Triggered on push to any branch, PR to master or manually
+# (not workflow_run: it always uses workflow files and code of the default branch)
 on:
-  workflow_run:
-    workflows: [ 'IgrOS-Kernel CI/CD' ]
-    types:
-      - completed
+  push:
+    branches: [ '**' ]
+  pull_request:
+    branches: [ 'master' ]
+  workflow_dispatch:
 
 jobs:
   analyze:
