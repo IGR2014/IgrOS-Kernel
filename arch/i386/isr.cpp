@@ -58,6 +58,13 @@ extern "C" {
 		if (const auto isr {igros::i386::isrList[regs->number]}; nullptr != isr) {
 			// Handle ISR
 			isr(regs);
+			// Acknowledge hardware interrupt
+			if (
+				(regs->number >= igros::i386::IRQ_OFFSET)	&&
+				(regs->number < igros::i386::IRQ_OFFSET + 16)
+			) {
+				igros::i386::irq::eoi(static_cast<igros::i386::irq_t>(regs->number - igros::i386::IRQ_OFFSET));
+			}
 		} else {
 			// Disable interrupts
 			igros::i386::irq::disable();

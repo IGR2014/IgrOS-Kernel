@@ -109,8 +109,6 @@ namespace igros::arch {
 				milliseconds
 			);
 		}
-		// IRQ EOI
-		irq::get().eoi(static_cast<const irq::irq_t>(regs->number));
 	}
 
 
@@ -122,8 +120,8 @@ namespace igros::arch {
 
 		// Install PIT interrupt handler
 		irq::get().install<irq::irq_t::PIT, pitInterruptHandler>();
-		// Mask PIT interrupts
-		irq::get().mask(irq::irq_t::PIT);
+		// Unmask PIT interrupts
+		irq::get().unmask(irq::irq_t::PIT);
 
 	}
 

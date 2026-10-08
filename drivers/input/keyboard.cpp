@@ -30,7 +30,7 @@ namespace igros::arch {
 
 
 	// Keyboard interrupt (#1) handler
-	void keyboardInterruptHandler(const register_t* regs) {
+	static void keyboardInterruptHandler([[maybe_unused]] const register_t* regs) noexcept {
 		// Check keyboard data port
 		if (const auto status = io::get().readPort8(KEYBOARD_CONTROL); status & 0x01_u8) [[likely]] {
 			// Read keyboard data
@@ -44,8 +44,6 @@ namespace igros::arch {
 				keyCode
 			);
 		}
-		// IRQ EOI
-		irq::get().eoi(static_cast<irq::irq_t>(regs->number));
 	}
 
 
@@ -54,8 +52,8 @@ namespace igros::arch {
 
 		// Install keyboard interrupt handler
 		irq::get().install<irq::irq_t::KEYBOARD, keyboardInterruptHandler>();
-		// Mask Keyboard interrupts
-		irq::get().mask(irq::irq_t::KEYBOARD);
+		// Unmask Keyboard interrupts
+		irq::get().unmask(irq::irq_t::KEYBOARD);
 
 	}
 

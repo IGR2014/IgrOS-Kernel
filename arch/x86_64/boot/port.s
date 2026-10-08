@@ -16,53 +16,53 @@
 .section .text
 .balign 8
 
-.global	outPort8			# Read byte from port
-.global	outPort16			# Read word from port
-.global	outPort32			# Read long from port
-.global	inPort8				# Write byte to port
-.global	inPort16			# Write word to port
-.global	inPort32			# Write long to port
+.global	portRead8			# Read byte from port
+.global	portRead16			# Read word from port
+.global	portRead32			# Read long from port
+.global	portWrite8			# Write byte to port
+.global	portWrite16			# Write word to port
+.global	portWrite32			# Write long to port
 
 
 # Read byte from port function
-.type outPort8, %function
-outPort8:
+.type portRead8, %function
+portRead8:
 
 	cld				# Clear direction flag
 	movw	%di, %dx		# Port address
 	inb	%dx, %al		# Read data
 	retq				# Return
 
-.size outPort8, . - outPort8
+.size portRead8, . - portRead8
 
 
 # Read word from port function
-.type outPort16, %function
-outPort16:
+.type portRead16, %function
+portRead16:
 
 	cld				# Clear direction flag
 	movw	%di, %dx		# Port address
 	inw	%dx, %ax		# Read data
 	retq				# Return
 
-.size outPort16, . - outPort16
+.size portRead16, . - portRead16
 
 
 # Read long from port function
-.type outPort32, %function
-outPort32:
+.type portRead32, %function
+portRead32:
 
 	cld				# Clear direction flag
 	movw	%di, %dx		# Port address
 	inl	%dx, %eax		# Read data
 	retq				# Return
 
-.size outPort32, . - outPort32
+.size portRead32, . - portRead32
 
 
 # Write byte to port function
-.type inPort8, %function
-inPort8:
+.type portWrite8, %function
+portWrite8:
 
 	cld				# Clear direction flag
 	movw	%di, %dx		# Port address
@@ -70,12 +70,12 @@ inPort8:
 	outb	%al, %dx		# Write data
 	retq				# Return
 
-.size inPort8, . - inPort8
+.size portWrite8, . - portWrite8
 
 
 # Write word to port function
-.type inPort16, %function
-inPort16:
+.type portWrite16, %function
+portWrite16:
 
 	cld				# Clear direction flag
 	movw	%di, %dx		# Port address
@@ -83,12 +83,12 @@ inPort16:
 	outw	%ax, %dx		# Write data
 	retq				# Return
 
-.size inPort16, . - inPort16
+.size portWrite16, . - portWrite16
 
 
 # Write long to port function
-.type inPort32, %function
-inPort32:
+.type portWrite32, %function
+portWrite32:
 
 	cld				# Clear direction flag
 	movw	%di, %dx		# Port address
@@ -96,5 +96,5 @@ inPort32:
 	outl	%eax, %dx		# Write data
 	retq				# Return
 
-.size inPort32, . - inPort32
+.size portWrite32, . - portWrite32
 
