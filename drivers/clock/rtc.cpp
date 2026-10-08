@@ -129,10 +129,14 @@ namespace igros::arch {
 
 	// Get current date/time
 	clockDateTime_t clockGetCurrentDateTime() noexcept {
-		// Wait for update if any
-		while (0x00_u8 != (0x80_u8 & rtcRead(RTC_REGISTER_A)));
-		// Read CMOS date/time
-		auto rtcDateTime	{rtcReadDateTime()};
+		// Read CMOS date/time (once no update is in progress)
+		const auto readStable = []() noexcept {
+			while (0x00_u8 != (0x80_u8 & rtcRead(RTC_REGISTER_A)));
+			return rtcReadDateTime();
+		};
+		auto rtcDateTime	{readStable()};
+		// Re-read until two reads match (update could happen between registers reads)
+		for (auto last {rtcDateTime}; last != (rtcDateTime = readStable()); last = rtcDateTime);
 		// Get RTC flags
 		const auto flags	{rtcRead(RTC_REGISTER_B)};
 		// Get RTC century
@@ -150,13 +154,11 @@ namespace igros::arch {
 			// Convert century to BCD
 			century = rtcFromBCD(century);
 		}
-		// Check 24-hours format
-		if (
-			(0x00_u8 == (flags	& RTC_IS_TIME_24))	&&
-			(0x00_u8 != (0x80_u8	& rtcDateTime.time.hour))
-		) {
-			// Adjust hours value
-			rtcDateTime.time.hour = ((rtcDateTime.time.hour & 0x7F_u8) + 12_u8) % 24_u8;
+		// Check 12-hours format (1..12, bit 7 - PM)
+		if (0x00_u8 == (flags & RTC_IS_TIME_24)) {
+			const auto isPM {0x00_u8 != (0x80_u8 & rtcDateTime.time.hour)};
+			// 12 AM -> 0, 12 PM -> 12
+			rtcDateTime.time.hour = static_cast<igros_byte_t>(((rtcDateTime.time.hour & 0x7F_u8) % 12_u8) + (isPM ? 12_u8 : 0_u8));
 		}
 		// Convert RTC to clock
 		return clockFromRTC(rtcDateTime, ((0x00_u8 != century) ? (century * 100_u32) : 2000_u32));
