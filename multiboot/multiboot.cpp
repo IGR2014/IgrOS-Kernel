@@ -44,7 +44,7 @@ BAD MULTIBOOT MAGIC!!!
 				this
 			);
 			// Hang CPU
-			arch::cpu::get().halt();
+			arch::cpu::halt();
 		}
 	}
 

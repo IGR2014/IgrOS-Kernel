@@ -25,8 +25,8 @@ namespace igros::arch {
 
 
 	// VGA cursor control ports
-	constexpr auto VGA_CURSOR_CONTROL	{static_cast<io::port_t>(0x03D4_u16)};
-	constexpr auto VGA_CURSOR_DATA		{static_cast<io::port_t>(VGA_CURSOR_CONTROL + 1_u16)};
+	constexpr auto VGA_CURSOR_CONTROL	{static_cast<port_t>(0x03D4_u16)};
+	constexpr auto VGA_CURSOR_DATA		{static_cast<port_t>(VGA_CURSOR_CONTROL + 1_u16)};
 
 
 	// VGA memory base address
@@ -44,13 +44,13 @@ namespace igros::arch {
 		// Calculate VGA console offset
 		const auto position {(y * VIDEO_MEM_WIDTH) + x};
 		// Choose cursor location high register
-		io::get().writePort8(VGA_CURSOR_CONTROL,	0x0E_u8);
+		io::writePort8(VGA_CURSOR_CONTROL,	0x0E_u8);
 		// Write cursor position high byte
-		io::get().writePort8(VGA_CURSOR_DATA,		((position & 0xFF00_u16) >> 8));
+		io::writePort8(VGA_CURSOR_DATA,		((position & 0xFF00_u16) >> 8));
 		// Choose cursor location low register
-		io::get().writePort8(VGA_CURSOR_CONTROL,	0x0F_u8);
+		io::writePort8(VGA_CURSOR_CONTROL,	0x0F_u8);
 		// Write cursor position low byte
-		io::get().writePort8(VGA_CURSOR_DATA,		(position & 0x00FF_u16));
+		io::writePort8(VGA_CURSOR_DATA,		(position & 0x00FF_u16));
 		// Save cursor data
 		cursorPos.x = x;
 		cursorPos.y = y;
@@ -65,13 +65,13 @@ namespace igros::arch {
 	[[nodiscard]]
 	auto vmemCursorGet() noexcept -> vmemCursor {
 		// Choose cursor location high register
-		io::get().writePort8(VGA_CURSOR_CONTROL, 0x0E_u8);
+		io::writePort8(VGA_CURSOR_CONTROL, 0x0E_u8);
 		// Write cursor position high byte
-		auto position {static_cast<igros_word_t>(io::get().readPort8(VGA_CURSOR_DATA))};
+		auto position {static_cast<igros_word_t>(io::readPort8(VGA_CURSOR_DATA))};
 		// Choose cursor location low register
-		io::get().writePort8(VGA_CURSOR_CONTROL, 0x0F_u8);
+		io::writePort8(VGA_CURSOR_CONTROL, 0x0F_u8);
 		// Write cursor position low byte
-		(position <<= 8) |= io::get().readPort8(VGA_CURSOR_DATA);
+		(position <<= 8) |= io::readPort8(VGA_CURSOR_DATA);
 		// Return cursor data
 		return vmemCursor {
 			.x = static_cast<igros_byte_t>(position % VIDEO_MEM_WIDTH),
@@ -83,19 +83,19 @@ namespace igros::arch {
 	// Disable VGA memory cursor
 	void vmemCursorDisable() noexcept {
 		// Choose cursor start register
-		io::get().writePort8(VGA_CURSOR_CONTROL,	0x0A_u8);
+		io::writePort8(VGA_CURSOR_CONTROL,	0x0A_u8);
 		// Send control word to disable cursor
-		io::get().writePort8(VGA_CURSOR_DATA,		0x20_u8);
+		io::writePort8(VGA_CURSOR_DATA,		0x20_u8);
 	}
 
 	// Enable VGA memory cursor
 	void vmemCursorEnable() noexcept {
 		// Choose cursor start register
-		io::get().writePort8(VGA_CURSOR_CONTROL, 0x0A_u8);
+		io::writePort8(VGA_CURSOR_CONTROL, 0x0A_u8);
 		// Get current register value
-		const auto cursorStartReg {io::get().readPort8(VGA_CURSOR_DATA)};
+		const auto cursorStartReg {io::readPort8(VGA_CURSOR_DATA)};
 		// Send control word to disable cursor
-		io::get().writePort8(VGA_CURSOR_DATA, cursorStartReg & ~0x20_u8);
+		io::writePort8(VGA_CURSOR_DATA, cursorStartReg & ~0x20_u8);
 	}
 
 	// Set VGA memory color

@@ -31,56 +31,56 @@ namespace igros::arch {
 
 
 	// Serial ports
-	constexpr auto SERIAL_PORT_1	{static_cast<io::port_t>(0x03F8_u16)};
-	//constexpr auto SERIAL_PORT_2	{static_cast<io::port_t>(0x02F8_u16)};
-	//constexpr auto SERIAL_PORT_3	{static_cast<io::port_t>(0x03E8_u16)};
-	//constexpr auto SERIAL_PORT_4	{static_cast<io::port_t>(0x02E8_u16)};
+	constexpr auto SERIAL_PORT_1	{static_cast<port_t>(0x03F8_u16)};
+	//constexpr auto SERIAL_PORT_2	{static_cast<port_t>(0x02F8_u16)};
+	//constexpr auto SERIAL_PORT_3	{static_cast<port_t>(0x03E8_u16)};
+	//constexpr auto SERIAL_PORT_4	{static_cast<port_t>(0x02E8_u16)};
 
 	// Serial port data register
 	[[nodiscard]]
-	constexpr auto SERIAL_PORT_DR(const io::port_t port) noexcept {
+	constexpr auto SERIAL_PORT_DR(const port_t port) noexcept {
 		return port;
 	}
 
 	// Serial port interrupt enable register
 	[[nodiscard]]
-	constexpr auto SERIAL_PORT_IER(const io::port_t port) noexcept {
+	constexpr auto SERIAL_PORT_IER(const port_t port) noexcept {
 		return port + 1_u16;
 	}
 
 	// Serial port interrupt identification and FIFO register
 	[[nodiscard]]
-	constexpr auto SERIAL_PORT_IIR(const io::port_t port) noexcept {
+	constexpr auto SERIAL_PORT_IIR(const port_t port) noexcept {
 		return port + 2_u16;
 	}
 
 	// Serial port line control register
 	[[nodiscard]]
-	constexpr auto SERIAL_PORT_LCR(const io::port_t port) noexcept {
+	constexpr auto SERIAL_PORT_LCR(const port_t port) noexcept {
 		return port + 3_u16;
 	}
 
 	// Serial port modem control register
 	[[nodiscard]]
-	constexpr auto SERIAL_PORT_MCR(const io::port_t port) noexcept {
+	constexpr auto SERIAL_PORT_MCR(const port_t port) noexcept {
 		return port + 4_u16;
 	}
 
 	// Serial port line status control register
 	[[nodiscard]]
-	constexpr auto SERIAL_PORT_LSR(const io::port_t port) noexcept {
+	constexpr auto SERIAL_PORT_LSR(const port_t port) noexcept {
 		return port + 5_u16;
 	}
 
 	// Serial port modem status control register
 	[[nodiscard]]
-	constexpr auto SERIAL_PORT_MSR(const io::port_t port) noexcept {
+	constexpr auto SERIAL_PORT_MSR(const port_t port) noexcept {
 		return port + 6_u16;
 	}
 
 	// Serial port scratch register
 	[[nodiscard]]
-	constexpr auto SERIAL_PORT_SR(const io::port_t port) noexcept {
+	constexpr auto SERIAL_PORT_SR(const port_t port) noexcept {
 		return port + 7_u16;
 	}
 
@@ -99,26 +99,26 @@ namespace igros::arch {
 		)};
 
 		// Disable SERIAL interrupts
-		io::get().writePort8(SERIAL_PORT_IER(SERIAL_PORT_1),	0x00_u8);
+		io::writePort8(SERIAL_PORT_IER(SERIAL_PORT_1),	0x00_u8);
 		// Set BAUD rate
-		io::get().writePort8(SERIAL_PORT_LCR(SERIAL_PORT_1),	0x80_u8);
+		io::writePort8(SERIAL_PORT_LCR(SERIAL_PORT_1),	0x80_u8);
 		// Write BAUD rate low byte
-		io::get().writePort8(SERIAL_PORT_DR(SERIAL_PORT_1),	(rate & 0x00FF_u16));
+		io::writePort8(SERIAL_PORT_DR(SERIAL_PORT_1),	(rate & 0x00FF_u16));
 		// Write BAUD rate high byte
-		io::get().writePort8(SERIAL_PORT_IER(SERIAL_PORT_1),	(rate >> 8) & 0x00FF_u16);
+		io::writePort8(SERIAL_PORT_IER(SERIAL_PORT_1),	(rate >> 8) & 0x00FF_u16);
 		// Write LCR params
-		io::get().writePort8(SERIAL_PORT_LCR(SERIAL_PORT_1),	lcr);
+		io::writePort8(SERIAL_PORT_LCR(SERIAL_PORT_1),	lcr);
 		// Enable FIFO, clear them with 14-byte threshold
-		io::get().writePort8(SERIAL_PORT_IIR(SERIAL_PORT_1),	0xC7_u8);
+		io::writePort8(SERIAL_PORT_IIR(SERIAL_PORT_1),	0xC7_u8);
 		// IRQs enabled, RTS/DSR set
-		io::get().writePort8(SERIAL_PORT_MCR(SERIAL_PORT_1),	0x0B_u8);
+		io::writePort8(SERIAL_PORT_MCR(SERIAL_PORT_1),	0x0B_u8);
 		// Set loopback mode, test the serial chip
-		io::get().writePort8(SERIAL_PORT_MCR(SERIAL_PORT_1),	0x1E_u8);
+		io::writePort8(SERIAL_PORT_MCR(SERIAL_PORT_1),	0x1E_u8);
 		// Test port with 0xA5 byte
-		io::get().writePort8(SERIAL_PORT_DR(SERIAL_PORT_1),	0xA5_u8);
+		io::writePort8(SERIAL_PORT_DR(SERIAL_PORT_1),	0xA5_u8);
 
 		// Check loopback
-		if (0xA5_u8 != io::get().readPort8(SERIAL_PORT_DR(SERIAL_PORT_1))) {
+		if (0xA5_u8 != io::readPort8(SERIAL_PORT_DR(SERIAL_PORT_1))) {
 			// Debug
 			klib::kprintf(
 				"Serial Port #1:\t ERROR - not functional!\n"
@@ -128,7 +128,7 @@ namespace igros::arch {
 		}
 
 		// Set normal mode (not-loopback with IRQs enabled and OUT#1 and OUT#2 bits enabled)
-		io::get().writePort8(SERIAL_PORT_MCR(SERIAL_PORT_1),	0x0F_u8);
+		io::writePort8(SERIAL_PORT_MCR(SERIAL_PORT_1),	0x0F_u8);
 
 		// Debug
 		klib::kprintf(
@@ -148,13 +148,13 @@ namespace igros::arch {
 	// Is write ready? (LSR bit 5 - transmitter holding register empty)
 	[[nodiscard]]
 	auto serialReadyWrite() noexcept -> bool {
-		return 0x20_u8 == (io::get().readPort8(SERIAL_PORT_LSR(SERIAL_PORT_1)) & 0x20_u8);
+		return 0x20_u8 == (io::readPort8(SERIAL_PORT_LSR(SERIAL_PORT_1)) & 0x20_u8);
 	}
 
 	// Is read ready? (LSR bit 0 - data ready)
 	[[nodiscard]]
 	auto serialReadyRead() noexcept -> bool {
-		return 0x01_u8 == (io::get().readPort8(SERIAL_PORT_LSR(SERIAL_PORT_1)) & 0x01_u8);
+		return 0x01_u8 == (io::readPort8(SERIAL_PORT_LSR(SERIAL_PORT_1)) & 0x01_u8);
 	}
 
 	// Wait until write ready (bounded, so missing UART can't hang the kernel)
@@ -179,14 +179,14 @@ namespace igros::arch {
 			// Check if new line
 			if ('\n' == src[i]) [[unlikely]] {
 				// Add CR
-				io::get().writePort8(SERIAL_PORT_DR(SERIAL_PORT_1), '\r');
+				io::writePort8(SERIAL_PORT_DR(SERIAL_PORT_1), '\r');
 				// Wait for CR to be sent
 				if (!serialWaitWrite()) [[unlikely]] {
 					break;
 				}
 			}
 			// One-by-one
-			io::get().writePort8(SERIAL_PORT_DR(SERIAL_PORT_1), src[i]);
+			io::writePort8(SERIAL_PORT_DR(SERIAL_PORT_1), src[i]);
 		}
 		// Return written size
 		return i;
@@ -207,7 +207,7 @@ namespace igros::arch {
 		// Read data
 		for (;(i < size) && serialReadyRead(); ++i) {
 			// One-by-one
-			src[i] = io::get().readPort8(SERIAL_PORT_DR(SERIAL_PORT_1));
+			src[i] = io::readPort8(SERIAL_PORT_DR(SERIAL_PORT_1));
 		}
 		// Return readed size
 		return i;
@@ -225,7 +225,7 @@ namespace igros::arch {
 		klib::kprintf(
 			"IRQ #%d\t[UART1]\n"
 			"Read:\t%05d bytes = %s\n",
-			irq::irq_t::UART1,
+			irq_t::UART1,
 			read,
 			data.data()
 		);
@@ -237,7 +237,7 @@ namespace igros::arch {
 		klib::kprintf(
 			"IRQ #%d\t[UART2]\n"
 			"Read:\tNOTHING!\n",
-			irq::irq_t::UART2
+			irq_t::UART2
 		);
 	}
 
@@ -251,14 +251,14 @@ namespace igros::arch {
 		}
 
 		// Install UART1 interrupt handler
-		irq::get().install<irq::irq_t::UART1, serialInterruptHandler1>();
+		irq::install<irq_t::UART1, serialInterruptHandler1>();
 		// Unmask UART1 interrupts
-		irq::get().unmask(irq::irq_t::UART1);
+		irq::unmask(irq_t::UART1);
 
 		// Install UART2 interrupt handler
-		irq::get().install<irq::irq_t::UART2, serialInterruptHandler2>();
+		irq::install<irq_t::UART2, serialInterruptHandler2>();
 		// Unmask UART2 interrupts
-		irq::get().unmask(irq::irq_t::UART2);
+		irq::unmask(irq_t::UART2);
 
 	}
 

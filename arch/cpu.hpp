@@ -5,7 +5,7 @@
 //	File:	cpu.hpp
 //	Date:	21 Mar 2023
 //
-//	Copyright (c) 2017 - 2022, Igor Baklykov
+//	Copyright (c) 2017 - 2026, Igor Baklykov
 //	All rights reserved.
 //
 //
@@ -14,85 +14,44 @@
 #pragma once
 
 
-// IgrOS-Kernel arch i386
-#include <arch/i386/cpu.hpp>
-// IgrOS-Kernel arch x86_64
-#include <arch/x86_64/cpu.hpp>
-// IgrOS-Kernel library
-#include <klib/kSingleton.hpp>
+// IgrOS-Kernel arch
+#include <arch/register.hpp>
+
+#if	defined (IGROS_ARCH_i386) || defined (IGROS_ARCH_x86_64)
+
+// IgrOS-Kernel arch x86
+#include <arch/x86/native.hpp>
+
+#else
+
+#error "Unknown architecture!"
+
+#endif
 
 
 // Arch namespace
 namespace igros::arch {
 
 
-	// CPU description type
+	// CPU control every architecture must provide
 	template<class T>
-	class cpu_t final : public klib::kSingleton<cpu_t<T>> {
-
-		// No copy construction
-		cpu_t(const cpu_t &other) noexcept = delete;
-		// No copy assignment
-		cpu_t& operator=(const cpu_t &other) noexcept = delete;
-
-		// No move construction
-		cpu_t(cpu_t &&other) noexcept = delete;
-		// No move assignment
-		cpu_t& operator=(cpu_t &&other) noexcept = delete;
-
-
-	public:
-
-		// Default c-tor
-		cpu_t() noexcept = default;
-
-		// Halt CPU
-		[[noreturn]]
-		void	halt() const noexcept;
-
+	concept Cpu = requires(const register_t* const regs) {
+		// Halt CPU (never returns)
+		T::halt();
 		// Dump CPU registers
-		void	dumpRegisters(const register_t* const regs) const noexcept;
-
-
+		T::dumpRegisters(regs);
 	};
 
 
-	// Halt CPU
-	template<class T>
-	[[noreturn]]
-	inline void cpu_t<T>::halt() const noexcept {
-		T::halt();
-	}
-
-
-	// Dump CPU registers
-	template<class T>
-	inline void cpu_t<T>::dumpRegisters(const register_t* const regs) const noexcept {
-		T::dumpRegisters(regs);
-	}
-
-
-#if	defined (IGROS_ARCH_i386)
+#if	defined (IGROS_ARCH_i386) || defined (IGROS_ARCH_x86_64)
 
 	// CPU type
-	using cpu	= cpu_t<i386::cpu>;
-
-#elif	defined (IGROS_ARCH_x86_64)
-
-	// CPU type
-	using cpu	= cpu_t<x86_64::cpu>;
-
-#else
-
-	static_assert(
-		false,
-		"Unknown architecture!"
-	);
-
-	// CPU type
-	using cpu	= cpu_t<void>;
+	using cpu	= x86::cpu;
 
 #endif
+
+
+	static_assert(Cpu<cpu>, "Architecture CPU doesn't provide CPU interface!");
 
 
 }	// namespace igros::arch
