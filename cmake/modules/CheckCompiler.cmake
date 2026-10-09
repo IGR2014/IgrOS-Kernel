@@ -26,7 +26,7 @@ else()
 	)
 	# Error message
 	message(
-		FATAL_ERRROR
+		FATAL_ERROR
 		"Unknown/unsupported compiler ${CMAKE_CXX_COMPILER_ID}!"
 	)
 endif()
