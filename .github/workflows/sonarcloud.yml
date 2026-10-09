@@ -14,28 +14,12 @@ jobs:
     name: Analyze
     runs-on: ubuntu-24.04
     permissions:
-      actions: read
       contents: read
-      security-events: write
-
-    strategy:
-      fail-fast: false
-      max-parallel: 4
-      matrix:
-        arch: [ 'i386', 'x86_64' ]
-        compiler: [ 'clang++', 'g++' ]
+      pull-requests: read
 
     # Environment variables
     env:
       IGROS_KERNEL_DIR_BUILD: "${{ github.workspace }}/build"
-      IGROS_KERNEL_DIR_INSTALL: "${{ github.workspace }}/install"
-      CCACHE_BASEDIR: "${{ github.workspace }}/.ccache"
-      CCACHE_DIR: "${{ github.workspace }}/.ccache/ccache"
-      CCACHE_COMPRESS: "true"
-      CCACHE_COMPRESSLEVEL: "6"
-      CCACHE_MAXSIZE: "200M"
-      CLICOLOR_FORCE: "1"
-      NINJA_STATUS: "[%p::%e\t%f/%t]\t"
 
     steps:
     - name: Checkout repository
@@ -43,67 +27,38 @@ jobs:
       with:
         fetch-depth: 0
 
-   # Install dependencies
+    # Install dependencies (configure only: Sonar needs compile commands, not binaries)
     - name: 'Install Dependencies'
       shell: bash
       run: |
         sudo apt update
-        sudo apt install -y --no-install-recommends ccache cmake doxygen graphviz g++-multilib gcc-multilib grub-common grub-pc-bin mtools ninja-build xorriso
+        sudo apt install -y --no-install-recommends clang cmake jq lld ninja-build
 
-    # Install Clang (Ubuntu 24.04 packages, same toolchain as Docker image)
-    - name: 'Install Clang'
-      shell: bash
-      run: |
-        sudo apt install -y --no-install-recommends clang lld
-        clang++ --version
-        ld.lld --version
-
-
-    # Restore Build Cache
-    - name: 'Restore Build Cache'
-      uses: actions/cache@v6
-      with:
-        path: ${{ env.IGROS_KERNEL_DIR_BUILD }}
-        key: build-${{ matrix.compiler }}-${{ matrix.arch }}-${{ github.sha }}
-        restore-keys: |
-          build-${{ matrix.compiler }}-${{ matrix.arch }}-
-
-    # Restore CCache Cache
-    - name: 'Restore CCache Cache'
-      uses: actions/cache@v6
-      with:
-        path: ${{ env.CCACHE_BASEDIR }}
-        key: ccache-${{ matrix.compiler }}-${{ matrix.arch }}-${{ github.sha }}
-        restore-keys: |
-          ccache-${{ matrix.compiler }}-${{ matrix.arch }}-
-
-    # Configure
+    # Configure both architectures with Clang
+    # (one analysis per project/branch: Sonar keeps only the last one, and it
+    # can't analyze "g++ -m32 -march=i386" - "Provided compiler is not compatible")
     - name: 'CMake Configure'
       shell: bash
       run: |
-        mkdir -p ${{ env.CCACHE_BASEDIR }}
-        cmake --preset="config-linux-${{ matrix.compiler }}-${{ matrix.arch }}-debug"
+        cmake --preset="config-linux-clang++-i386-debug"
+        cmake --preset="config-linux-clang++-x86_64-debug"
 
-    # Build
-    - name: 'CMake Build'
+    # Merge compile commands of both architectures
+    - name: 'Merge Compile Commands'
       shell: bash
       run: |
-        cmake --build --preset="build-linux-${{ matrix.compiler }}-${{ matrix.arch }}-debug" --target all --parallel
+        jq -s 'add' \
+          "${{ env.IGROS_KERNEL_DIR_BUILD }}/Debug/config-linux-clang++-i386-debug/compile_commands.json" \
+          "${{ env.IGROS_KERNEL_DIR_BUILD }}/Debug/config-linux-clang++-x86_64-debug/compile_commands.json" \
+          > "${{ env.IGROS_KERNEL_DIR_BUILD }}/compile_commands.json"
+        jq 'length' "${{ env.IGROS_KERNEL_DIR_BUILD }}/compile_commands.json"
 
-    # Install
-    - name: 'CMake Install'
-      shell: bash
-      run: |
-        cmake --build --preset="build-linux-${{ matrix.compiler }}-${{ matrix.arch }}-debug" --target install
-
-    # SonarCloud Wrapper analysis
+    # SonarCloud analysis
     - name: 'SonarCloud Analysis'
       uses: SonarSource/sonarqube-scan-action@v8
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       with:
         args: >
-          -Dsonar.cfamily.compile-commands=${{ env.IGROS_KERNEL_DIR_BUILD }}/Debug/config-linux-${{ matrix.compiler }}-${{ matrix.arch }}-debug/compile_commands.json
+          -Dsonar.cfamily.compile-commands=${{ env.IGROS_KERNEL_DIR_BUILD }}/compile_commands.json
           -Dproject.settings=sonar-project.properties
-          -X
-
