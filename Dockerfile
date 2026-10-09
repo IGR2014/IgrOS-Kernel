@@ -24,6 +24,9 @@ RUN \
 	rm -rf /var/lib/apt/lists/* && \
 	git config --system --add safe.directory /home/igros/kernel
 
+# Run as unprivileged user by default (docker-compose overrides it with host UID/GID)
+USER ubuntu
+
 # Mounted sources
 WORKDIR /home/igros/kernel
 
