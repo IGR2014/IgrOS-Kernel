@@ -88,7 +88,6 @@
             <File name="arch\cpu.hpp" />
             <File name="arch\io.hpp" />
             <File name="arch\irq.hpp" />
-            <File name="arch\paging.hpp" />
             <File name="arch\register.hpp" />
             <File name="arch\types.hpp" />
         </Folder>
@@ -173,7 +172,6 @@
             <File name="klib\kmemory.hpp" />
             <File name="klib\kprint.cpp" />
             <File name="klib\kprint.hpp" />
-            <File name="klib\kSingleton.hpp" />
             <File name="klib\kstring.hpp" />
             <File name="klib\kstring_view.cpp" />
             <File name="klib\kstring_view.hpp" />

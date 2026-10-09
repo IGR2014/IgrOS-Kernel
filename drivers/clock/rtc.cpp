@@ -24,8 +24,8 @@ namespace igros::arch {
 
 
 	// CMOS ports
-	constexpr auto CMOS_COMMAND	{static_cast<io::port_t>(0x0070_u16)};
-	constexpr auto CMOS_DATA	{static_cast<io::port_t>(CMOS_COMMAND + 1_u16)};
+	constexpr auto CMOS_COMMAND	{static_cast<port_t>(0x0070_u16)};
+	constexpr auto CMOS_DATA	{static_cast<port_t>(CMOS_COMMAND + 1_u16)};
 
 
 	// Clock from RTC conversion
@@ -65,9 +65,9 @@ namespace igros::arch {
 	[[nodiscard]]
 	auto rtcRead(const igros_byte_t cmd) noexcept -> igros_byte_t {
 		// Write command
-		io::get().writePort8(CMOS_COMMAND, cmd);
+		io::writePort8(CMOS_COMMAND, cmd);
 		// Read data
-		return io::get().readPort8(CMOS_DATA);
+		return io::readPort8(CMOS_DATA);
 	}
 
 	// Read CMOS date
