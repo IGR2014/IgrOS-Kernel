@@ -36,13 +36,7 @@ namespace igros::arch {
 
 #else
 
-	static_assert(
-		false,
-		"Unknown architecture!"
-	);
-
-	// Register type
-	using	register_t	= void;
+#error "Unknown architecture!"
 
 #endif
 

@@ -51,7 +51,7 @@ namespace igros::klib {
 		// Check range
 		if (index >= mLength) [[unlikely]] {
 			// Hang cpu
-			arch::cpu::get().halt();
+			arch::cpu::halt();
 		}
 		// Return symbol
 		return mData[index];

@@ -25,21 +25,21 @@ namespace igros::arch {
 
 
 	// Keyboard ports
-	constexpr auto KEYBOARD_CONTROL	{static_cast<io::port_t>(0x0064_u16)};
-	constexpr auto KEYBOARD_DATA	{static_cast<io::port_t>(0x0060_u16)};
+	constexpr auto KEYBOARD_CONTROL	{static_cast<port_t>(0x0064_u16)};
+	constexpr auto KEYBOARD_DATA	{static_cast<port_t>(0x0060_u16)};
 
 
 	// Keyboard interrupt (#1) handler
 	static void keyboardInterruptHandler([[maybe_unused]] const register_t* regs) noexcept {
 		// Check keyboard data port
-		if (const auto status = io::get().readPort8(KEYBOARD_CONTROL); status & 0x01_u8) [[likely]] {
+		if (const auto status = io::readPort8(KEYBOARD_CONTROL); status & 0x01_u8) [[likely]] {
 			// Read keyboard data
-			const auto keyCode = io::get().readPort8(KEYBOARD_DATA);
+			const auto keyCode = io::readPort8(KEYBOARD_DATA);
 			klib::kprintf(
 				"IRQ #%d\t[Keyboard]\n"
 				"Key:\t%s\n"
 				"Code:\t0x%x\n",
-				irq::irq_t::KEYBOARD,
+				irq_t::KEYBOARD,
 				(0x00_u8 != (keyCode & 0x80_u8)) ? "RELEASED" : "PRESSED",
 				keyCode
 			);
@@ -51,9 +51,9 @@ namespace igros::arch {
 	void keyboardSetup() {
 
 		// Install keyboard interrupt handler
-		irq::get().install<irq::irq_t::KEYBOARD, keyboardInterruptHandler>();
+		irq::install<irq_t::KEYBOARD, keyboardInterruptHandler>();
 		// Unmask Keyboard interrupts
-		irq::get().unmask(irq::irq_t::KEYBOARD);
+		irq::unmask(irq_t::KEYBOARD);
 
 	}
 

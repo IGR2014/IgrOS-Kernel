@@ -28,10 +28,10 @@ namespace igros::arch {
 
 
 	// PIT ports
-	constexpr auto PIT_CONTROL	{static_cast<io::port_t>(0x0043_u16)};
-	constexpr auto PIT_CHANNEL_0	{static_cast<io::port_t>(0x0040_u16)};
-	//constexpr auto PIT_CHANNEL_1	{static_cast<io::port_t>(PIT_CHANNEL_0 + 1_u16)};
-	//constexpr auto PIT_CHANNEL_2	{static_cast<io::port_t>(PIT_CHANNEL_1 + 1_u16)};
+	constexpr auto PIT_CONTROL	{static_cast<port_t>(0x0043_u16)};
+	constexpr auto PIT_CHANNEL_0	{static_cast<port_t>(0x0040_u16)};
+	//constexpr auto PIT_CHANNEL_1	{static_cast<port_t>(PIT_CHANNEL_0 + 1_u16)};
+	//constexpr auto PIT_CHANNEL_2	{static_cast<port_t>(PIT_CHANNEL_1 + 1_u16)};
 
 
 	// Ticks count
@@ -56,10 +56,10 @@ namespace igros::arch {
 		PIT_FREQUENCY	= static_cast<igros_word_t>(PIT_MAIN_FREQUENCY / PIT_DIVISOR);
 
 		// Tell pit we want to change divisor for channel 0
-		io::get().writePort8(PIT_CONTROL,	0x36_u8);
+		io::writePort8(PIT_CONTROL,	0x36_u8);
 		// Set divisor (LOW first, then HIGH)
-		io::get().writePort8(PIT_CHANNEL_0,	static_cast<igros_byte_t>(PIT_DIVISOR & 0x00FF_u16));
-		io::get().writePort8(PIT_CHANNEL_0,	static_cast<igros_byte_t>((PIT_DIVISOR >> 8) & 0x00FF_u16));
+		io::writePort8(PIT_CHANNEL_0,	static_cast<igros_byte_t>(PIT_DIVISOR & 0x00FF_u16));
+		io::writePort8(PIT_CHANNEL_0,	static_cast<igros_byte_t>((PIT_DIVISOR >> 8) & 0x00FF_u16));
 
 		// Print
 		klib::kprintf(
@@ -74,10 +74,10 @@ namespace igros::arch {
 	[[nodiscard]]
 	auto pitGetTicks() noexcept -> igros_quad_t {
 		// Send latch command for channel 0;
-		io::get().writePort8(PIT_CONTROL, 0x00_u8);
+		io::writePort8(PIT_CONTROL, 0x00_u8);
 		// Get current counter value (counts down from divisor)
-		const auto loByte	{io::get().readPort8(PIT_CHANNEL_0)};
-		const auto hiByte	{io::get().readPort8(PIT_CHANNEL_0)};
+		const auto loByte	{io::readPort8(PIT_CHANNEL_0)};
+		const auto hiByte	{io::readPort8(PIT_CHANNEL_0)};
 		const auto counter	{static_cast<igros_word_t>((hiByte << 8) | loByte)};
 		// Total elapsed ticks value since IRQ
 		const auto elapsed	{static_cast<igros_word_t>(PIT_DIVISOR - counter)};
@@ -102,7 +102,7 @@ namespace igros::arch {
 			klib::kprintf(
 				"IRQ #%d\t[PIT]\n"
 				"Time:\t%02d:%02d:%02d.%03d (~1 sec.)\n",
-				irq::irq_t::PIT,
+				irq_t::PIT,
 				hours	% 24_u32,
 				minutes	% 60_u32,
 				seconds	% 60_u32,
@@ -119,9 +119,9 @@ namespace igros::arch {
 		pitSetupFrequency(PIT_DEFAULT_FREQUENCY);
 
 		// Install PIT interrupt handler
-		irq::get().install<irq::irq_t::PIT, pitInterruptHandler>();
+		irq::install<irq_t::PIT, pitInterruptHandler>();
 		// Unmask PIT interrupts
-		irq::get().unmask(irq::irq_t::PIT);
+		irq::unmask(irq_t::PIT);
 
 	}
 

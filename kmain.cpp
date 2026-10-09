@@ -53,7 +53,7 @@ extern "C" {
 		igros::klib::kprintf("Booted successfully");
 
 		// Halt CPU
-		igros::arch::cpu::get().halt();
+		igros::arch::cpu::halt();
 
 	}
 
