@@ -40,11 +40,8 @@ jobs:
     env:
       IGROS_KERNEL_DIR_BUILD: "${{ github.workspace }}/build"
       IGROS_KERNEL_DIR_INSTALL: "${{ github.workspace }}/install"
-      CCACHE_BASEDIR: "${{ github.workspace }}/.ccache"
-      CCACHE_DIR: "${{ github.workspace }}/.ccache/ccache"
-      CCACHE_COMPRESS: "true"
-      CCACHE_COMPRESSLEVEL: "6"
-      CCACHE_MAXSIZE: "200M"
+      # CodeQL must see every compiler invocation: no ccache, no restored build
+      CCACHE_DISABLE: "1"
       CLICOLOR_FORCE: "1"
       NINJA_STATUS: "[%p::%e\t%f/%t]\t"
 
@@ -76,29 +73,10 @@ jobs:
         clang++ --version
         ld.lld --version
 
-    # Restore Build Cache
-    - name: 'Restore Build Cache'
-      uses: actions/cache@v6
-      with:
-        path: ${{ env.IGROS_KERNEL_DIR_BUILD }}
-        key: build-${{ matrix.compiler }}-${{ matrix.arch }}-${{ github.sha }}
-        restore-keys: |
-          build-${{ matrix.compiler }}-${{ matrix.arch }}-
-
-    # Restore CCache Cache
-    - name: 'Restore CCache Cache'
-      uses: actions/cache@v6
-      with:
-        path: ${{ env.CCACHE_BASEDIR }}
-        key: ccache-${{ matrix.compiler }}-${{ matrix.arch }}-${{ github.sha }}
-        restore-keys: |
-          ccache-${{ matrix.compiler }}-${{ matrix.arch }}-
-
     # Configure
     - name: 'CMake Configure'
       shell: bash
       run: |
-        mkdir -p ${{ env.CCACHE_BASEDIR }}
         cmake --preset="config-linux-${{ matrix.compiler }}-${{ matrix.arch }}-debug"
 
     # Build
