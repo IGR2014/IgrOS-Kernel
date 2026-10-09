@@ -34,19 +34,10 @@
                 </Folder>
                 <File name="arch\i386\CMakeLists.txt" />
                 <File name="arch\i386\cpu.hpp" />
-                <File name="arch\i386\cr.hpp" />
-                <File name="arch\i386\exceptions.cpp" />
-                <File name="arch\i386\exceptions.hpp" />
                 <File name="arch\i386\fpu.hpp" />
                 <File name="arch\i386\gdt.cpp" />
                 <File name="arch\i386\gdt.hpp" />
-                <File name="arch\i386\idt.cpp" />
                 <File name="arch\i386\idt.hpp" />
-                <File name="arch\i386\io.hpp" />
-                <File name="arch\i386\irq.cpp" />
-                <File name="arch\i386\irq.hpp" />
-                <File name="arch\i386\isr.cpp" />
-                <File name="arch\i386\isr.hpp" />
                 <File name="arch\i386\paging.cpp" />
                 <File name="arch\i386\paging.hpp" />
                 <File name="arch\i386\register.hpp" />
@@ -71,23 +62,27 @@
                 <File name="arch\x86_64\CMakeLists.txt" />
                 <File name="arch\x86_64\cpu.hpp" />
                 <File name="arch\x86_64\cpuid.hpp" />
-                <File name="arch\x86_64\cr.hpp" />
-                <File name="arch\x86_64\exceptions.cpp" />
-                <File name="arch\x86_64\exceptions.hpp" />
                 <File name="arch\x86_64\gdt.cpp" />
                 <File name="arch\x86_64\gdt.hpp" />
-                <File name="arch\x86_64\idt.cpp" />
                 <File name="arch\x86_64\idt.hpp" />
-                <File name="arch\x86_64\io.hpp" />
-                <File name="arch\x86_64\irq.cpp" />
-                <File name="arch\x86_64\irq.hpp" />
-                <File name="arch\x86_64\isr.cpp" />
-                <File name="arch\x86_64\isr.hpp" />
                 <File name="arch\x86_64\longMode.hpp" />
                 <File name="arch\x86_64\msr.hpp" />
                 <File name="arch\x86_64\paging.cpp" />
                 <File name="arch\x86_64\paging.hpp" />
                 <File name="arch\x86_64\register.hpp" />
+            </Folder>
+            <Folder name="x86">
+                <File name="arch\x86\CMakeLists.txt" />
+                <File name="arch\x86\cr.hpp" />
+                <File name="arch\x86\exceptions.cpp" />
+                <File name="arch\x86\exceptions.hpp" />
+                <File name="arch\x86\idt.cpp" />
+                <File name="arch\x86\io.hpp" />
+                <File name="arch\x86\irq.cpp" />
+                <File name="arch\x86\irq.hpp" />
+                <File name="arch\x86\isr.cpp" />
+                <File name="arch\x86\isr.hpp" />
+                <File name="arch\x86\native.hpp" />
             </Folder>
             <File name="arch\CMakeLists.txt" />
             <File name="arch\cpu.hpp" />
@@ -172,6 +167,7 @@
             <File name="klib\kconsole.cpp" />
             <File name="klib\kconsole.hpp" />
             <File name="klib\kFlags.hpp" />
+            <File name="klib\libc.cpp" />
             <File name="klib\kmath.hpp" />
             <File name="klib\kmemory.cpp" />
             <File name="klib\kmemory.hpp" />
@@ -195,8 +191,7 @@
         </Folder>
         <Folder name="platform">
             <File name="platform\CMakeLists.txt" />
-            <File name="platform\platform-i386.cpp" />
-            <File name="platform\platform-x86_64.cpp" />
+            <File name="platform\platform-x86.cpp" />
             <File name="platform\platform.hpp" />
         </Folder>
         <Folder name="sys">
