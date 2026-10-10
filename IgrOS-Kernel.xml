@@ -163,8 +163,6 @@
         <Folder name="klib">
             <File name="klib\CMakeLists.txt" />
             <File name="klib\kAlign.hpp" />
-            <File name="klib\kconsole.cpp" />
-            <File name="klib\kconsole.hpp" />
             <File name="klib\kFlags.hpp" />
             <File name="klib\libc.cpp" />
             <File name="klib\kmath.hpp" />
@@ -196,7 +194,6 @@
             <File name="sys\CMakeLists.txt" />
             <File name="sys\elf.cpp" />
             <File name="sys\elf.hpp" />
-            <File name="sys\init.hpp" />
         </Folder>
         <File name=".gitattributes" />
         <File name=".gitignore" />
