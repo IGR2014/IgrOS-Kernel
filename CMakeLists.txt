@@ -274,6 +274,12 @@ set(
 	CMAKE_CXX_LINK_EXECUTABLE
 	"${CMAKE_LINKER} <LINK_FLAGS> <OBJECTS> -o <TARGET>"
 )
+# No linker-generated dependency file: CMake adds it in compiler driver
+# syntax (-Wl,... / -Xlinker ...), which the linker itself doesn't accept
+set(
+	CMAKE_LINK_DEPENDS_USE_LINKER
+	FALSE
+)
 
 # Get compiler name
 get_filename_component(
