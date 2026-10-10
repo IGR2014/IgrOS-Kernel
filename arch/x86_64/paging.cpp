@@ -184,7 +184,7 @@ namespace igros::x86_64 {
 		// Allocate page map level 4
 		const auto pml4 {static_cast<pml4_t*>(paging::allocate())};
 		// Zero enties of page map level 4
-		klib::kmemset(pml4, (sizeof(pml4_t) >> 3), klib::kFlags(FLAGS::CLEAR).value());
+		klib::kmemzero(pml4);
 		// Return page map level 4
 		return pml4;
 	}
@@ -195,7 +195,7 @@ namespace igros::x86_64 {
 		// Allocate page directory pointer
 		const auto dirPtr {static_cast<directory_pointer_t*>(paging::allocate())};
 		// Zero enties of page directory pointer
-		klib::kmemset(dirPtr, (sizeof(directory_pointer_t) >> 3), klib::kFlags(FLAGS::CLEAR).value());
+		klib::kmemzero(dirPtr);
 		// Return page directory pointer
 		return dirPtr;
 	}
@@ -206,7 +206,7 @@ namespace igros::x86_64 {
 		// Allocate page directory
 		const auto dir {static_cast<directory_t*>(paging::allocate())};
 		// Zero enties of page directory
-		klib::kmemset(dir, (sizeof(directory_t) >> 3), klib::kFlags(FLAGS::CLEAR).value());
+		klib::kmemzero(dir);
 		// Return page directory
 		return dir;
 	}
@@ -217,7 +217,7 @@ namespace igros::x86_64 {
 		// Allocate page table
 		const auto table {static_cast<table_t*>(paging::allocate())};
 		// Zero enties of page table
-		klib::kmemset(table, (sizeof(table_t) >> 3), klib::kFlags(FLAGS::CLEAR).value());
+		klib::kmemzero(table);
 		// Return page table
 		return table;
 	}

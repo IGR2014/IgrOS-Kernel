@@ -39,6 +39,16 @@ namespace igros::arch {
 	static vmemCursor cursorPos;
 
 
+	// Blank symbol (space with current background)
+	[[nodiscard]]
+	static auto vmemBlank() noexcept -> vmemSymbol {
+		return vmemSymbol {
+			.symbol	= ' ',
+			.color	= static_cast<igros_byte_t>(vmemBkgColor)
+		};
+	}
+
+
 	// Set cursor position
 	void vmemCursorSet(const igros_byte_t x, const igros_byte_t y) noexcept {
 		// Calculate VGA console offset
@@ -156,10 +166,8 @@ namespace igros::arch {
 			for (auto i = VIDEO_MEM_WIDTH; i < VIDEO_MEM_SIZE; ++i) {
 				vmemBase[i - VIDEO_MEM_WIDTH] = vmemBase[i];
 			}
-			// Calculate offset in VGA console
-			const auto pos {cursorPos.y * VIDEO_MEM_WIDTH + cursorPos.x};
 			// Clear bottom line
-			klib::kmemset(&vmemBase[pos], VIDEO_MEM_WIDTH, (' ' | (static_cast<igros_word_t>(vmemBkgColor) << 8)));
+			klib::kmemset(&vmemBase[cursorPos.y * VIDEO_MEM_WIDTH], VIDEO_MEM_WIDTH, vmemBlank());
 		}
 		// Set new cursor position
 		vmemCursorSet(cursorPos.x, cursorPos.y);
@@ -184,7 +192,7 @@ namespace igros::arch {
 	// Clear VGA memory
 	void vmemClear() noexcept {
 		// Set whole screen with whitespace with default background
-		klib::kmemset(vmemBase, VIDEO_MEM_SIZE, (' ' | (static_cast<igros_word_t>(vmemBkgColor) << 8)));
+		klib::kmemset(vmemBase, VIDEO_MEM_SIZE, vmemBlank());
 	}
 
 

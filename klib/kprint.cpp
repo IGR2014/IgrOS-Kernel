@@ -12,8 +12,10 @@
 
 
 // C++
+#include <algorithm>
 #include <array>
 #include <cstdarg>
+#include <utility>
 // IgrOS-Kernel arch
 #include <arch/irq.hpp>
 // IgrOS-Kernel drivers
