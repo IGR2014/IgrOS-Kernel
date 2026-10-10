@@ -44,6 +44,11 @@ extern "C" {
 			(*ctor)();
 		}
 
+		// Initialize physical memory allocator (needed by paging)
+		if (igros::multiboot::check(magic)) [[likely]] {
+			igros::mem::phys::init(*multiboot);
+		}
+
 		// Initialize platform
 		igros::platform::Platform::current().initialize();
 
@@ -63,8 +68,7 @@ extern "C" {
 		// Show memory map
 		multiboot->printMemMap();
 
-		// Initialize physical memory allocator
-		igros::mem::phys::init(*multiboot);
+		// Show free physical memory
 		igros::klib::kprintf("Physical memory:\t%zu KB free", igros::mem::phys::freePages() << 2);
 
 		// Write "Booted successfully" message

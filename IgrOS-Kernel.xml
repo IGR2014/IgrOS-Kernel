@@ -38,8 +38,6 @@
                 <File name="arch\i386\gdt.cpp" />
                 <File name="arch\i386\gdt.hpp" />
                 <File name="arch\i386\idt.hpp" />
-                <File name="arch\i386\paging.cpp" />
-                <File name="arch\i386\paging.hpp" />
                 <File name="arch\i386\register.hpp" />
             </Folder>
             <Folder name="x86_64">
@@ -67,8 +65,6 @@
                 <File name="arch\x86_64\idt.hpp" />
                 <File name="arch\x86_64\longMode.hpp" />
                 <File name="arch\x86_64\msr.hpp" />
-                <File name="arch\x86_64\paging.cpp" />
-                <File name="arch\x86_64\paging.hpp" />
                 <File name="arch\x86_64\register.hpp" />
             </Folder>
             <Folder name="x86">
@@ -83,6 +79,8 @@
                 <File name="arch\x86\isr.cpp" />
                 <File name="arch\x86\isr.hpp" />
                 <File name="arch\x86\native.hpp" />
+                <File name="arch\x86\paging.cpp" />
+                <File name="arch\x86\paging.hpp" />
             </Folder>
             <File name="arch\CMakeLists.txt" />
             <File name="arch\cpu.hpp" />

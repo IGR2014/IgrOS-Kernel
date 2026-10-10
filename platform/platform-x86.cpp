@@ -17,20 +17,19 @@
 #include <arch/x86/exceptions.hpp>
 #include <arch/x86/irq.hpp>
 #include <arch/x86/native.hpp>
+#include <arch/x86/paging.hpp>
 
 #if	defined (IGROS_ARCH_i386)
 
 // IgrOS-Kernel arch i386
 #include <arch/i386/gdt.hpp>
 #include <arch/i386/idt.hpp>
-#include <arch/i386/paging.hpp>
 
 #elif	defined (IGROS_ARCH_x86_64)
 
 // IgrOS-Kernel arch x86_64
 #include <arch/x86_64/gdt.hpp>
 #include <arch/x86_64/idt.hpp>
-#include <arch/x86_64/paging.hpp>
 
 #endif
 
@@ -65,9 +64,6 @@ namespace igros::x86 {
 		// Enable interrupts
 		irq::enable();
 
-		// Setup paging (And identity map first 4MB where kernel physically is)
-		//native::paging::init();
-
 		// Setup VGA
 		arch::vmemInit();
 		// Setup UART (#1, 115200 8N1)
@@ -78,6 +74,9 @@ namespace igros::x86 {
 		arch::rtcSetup();
 		// Setup PIT
 		//arch::pitSetup();
+
+		// Setup paging (kernel page tables, needs physical memory allocator)
+		paging::init();
 
 		// Debug print
 		klib::kprintf(
