@@ -112,9 +112,6 @@ namespace igros::klib {
 	// Kernel snprintf function
 	[[gnu::format(printf, 3, 4)]]
 	void	ksnprintf(char* const buffer, const igros_usize_t size, const char* const format, ...) noexcept;
-	// Kernel sprintf function
-	[[gnu::format(printf, 2, 3)]]
-	void	ksprintf(char* const buffer, const char* const format, ...) noexcept;
 
 	// Kernel printf function (arguments are checked against format at compile time)
 	[[gnu::format(printf, 1, 2)]]

@@ -29,13 +29,13 @@
 .section .boot
 .balign	4
 
+# CR read functions
+.extern	readCR0						# Extern read CR0 function
+.extern	readCR4						# Extern read CR4 function
 # CR write functions
-.extern	outCR0						# Extern write CR0 function
-.extern	outCR3						# Extern write CR3 function
-.extern	outCR4						# Extern write CR4 function
-# SR read functions
-.extern	inCR0						# Extern read CR0 function
-.extern	inCR4						# Extern read CR4 function
+.extern	writeCR0					# Extern write CR0 function
+.extern	writeCR3					# Extern write CR3 function
+.extern	writeCR4					# Extern write CR4 function
 # Main function
 .extern	kmain						# Extern kernel function
 
@@ -62,25 +62,25 @@ kernelStart:
 	# Set new page directory (phys address)
 	leal	bootPageDirectory - KERNEL_VMA, %eax	# Load temporary boot page directory phys address
 	pushl	%eax					# Call prepare: Stack push temporary boot page directory phys address
-	leal	inCR3 - KERNEL_VMA, %ebp		# Call prepare: inCR3 function address
+	leal	writeCR3 - KERNEL_VMA, %ebp		# Call prepare: writeCR3 function address
 	calll	*%ebp					# Call: set new CR3 value
 	addl	$4, %esp				# Stack cleanup
 
 	# Enable Page Size Extension (4 Mb pages)
-	leal	outCR4 - KERNEL_VMA, %ebp		# Call prepare: outCR4 function address
+	leal	readCR4 - KERNEL_VMA, %ebp		# Call prepare: readCR4 function address
 	calll	*%ebp					# Call: get CR4 value
 	orl	$PAGE_BIT_PSE, %eax			# Set PSE bit
 	pushl	%eax					# Call prepare: Stack push new CR4 value
-	leal	inCR4 - KERNEL_VMA, %ebp		# Call prepare: inCR4 function address
+	leal	writeCR4 - KERNEL_VMA, %ebp		# Call prepare: writeCR4 function address
 	calll	*%ebp					# Call: set new CR4 value
 	addl	$4, %esp				# Stack cleanup
 
 	# Enable paging
-	leal	outCR0 - KERNEL_VMA, %ebp		# Call prepare: outCR0 function address
+	leal	readCR0 - KERNEL_VMA, %ebp		# Call prepare: readCR0 function address
 	calll	*%ebp					# Call: get CR0 value
 	orl	$PAGE_BIT_PE, %eax			# Set PE bit
 	pushl	%eax					# Call prepare: Stack push new CR0 value
-	leal	inCR0 - KERNEL_VMA, %ebp		# Call prepare: inCR0 function address
+	leal	writeCR0 - KERNEL_VMA, %ebp		# Call prepare: writeCR0 function address
 	calll	*%ebp					# Call: set new CR0 value
 	addl	$4, %esp				# Stack cleanup
 
