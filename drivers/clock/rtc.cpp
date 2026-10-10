@@ -166,12 +166,13 @@ namespace igros::arch {
 
 
 	// Setup RTC function
-	void rtcSetup() noexcept {
+	[[nodiscard]]
+	auto rtcSetup() noexcept -> bool {
 		// Get current date/time
 		auto dateTime {clockGetCurrentDateTime()};
 		// Print result
 		klib::kprintf(
-			"RTC date/time:\t%02d.%02d.%04d %02d:%02d:%02d\n",
+			"RTC date/time:\t%02d.%02d.%04d %02d:%02d:%02d",
 			dateTime.day,
 			dateTime.month,
 			dateTime.year,
@@ -179,6 +180,8 @@ namespace igros::arch {
 			dateTime.minute,
 			dateTime.second
 		);
+		// Success
+		return true;
 	}
 
 

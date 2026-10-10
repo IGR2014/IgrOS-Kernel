@@ -97,7 +97,8 @@ namespace igros::arch {
 	void rtcDateTimeFromBCD(rtcDateTime_t &dateTime) noexcept;
 
 	// Setup RTC function
-	void rtcSetup() noexcept;
+	[[nodiscard]]
+	auto rtcSetup() noexcept -> bool;
 
 
 }	// namespace igros::arch

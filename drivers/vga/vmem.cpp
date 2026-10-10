@@ -205,13 +205,16 @@ namespace igros::arch {
 
 
 	// Init VGA memory
-	void vmemInit() noexcept {
+	[[nodiscard]]
+	auto vmemInit() noexcept -> bool {
 		// Clear screen
 		vmemClear();
 		// Place cursor at (0, 0)
 		vmemCursorSet(0_u8, 0_u8);
 		// Disable cursor
 		vmemCursorDisable();
+		// Success
+		return true;
 	}
 
 

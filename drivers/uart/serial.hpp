@@ -22,6 +22,14 @@
 namespace igros::arch {
 
 
+	// Serial ports (standard PC I/O bases)
+	enum class SERIAL_PORT : igros_word_t {
+		COM1		= 0x03F8_u16,
+		COM2		= 0x02F8_u16,
+		COM3		= 0x03E8_u16,
+		COM4		= 0x02E8_u16
+	};
+
 	// Baud rates
 	enum class BAUD_RATE : igros_dword_t {
 		BAUD_110	= 110_u32,
@@ -65,27 +73,32 @@ namespace igros::arch {
 
 	// Initialize serial port
 	[[nodiscard]]
-	auto	serialInit(const BAUD_RATE baudRate, const DATA_SIZE dataSize, const STOP_BITS stopBits, const PARITY parity) noexcept -> bool;
+	auto	serialInit(const SERIAL_PORT port, const BAUD_RATE baudRate, const DATA_SIZE dataSize, const STOP_BITS stopBits, const PARITY parity) noexcept -> bool;
 
 	// Is write ready?
 	[[nodiscard]]
-	auto	serialReadyWrite() noexcept -> bool;
+	auto	serialReadyWrite(const SERIAL_PORT port) noexcept -> bool;
 	// Is read ready?
 	[[nodiscard]]
-	auto	serialReadyRead() noexcept -> bool;
+	auto	serialReadyRead(const SERIAL_PORT port) noexcept -> bool;
 
 	// Serial write
 	[[maybe_unused]]
-	auto	serialWrite(const char* const src, const igros_usize_t size) noexcept -> igros_usize_t;
-	// Serial write
-	[[maybe_unused]]
-	auto	serialWrite(const char* const src) noexcept -> igros_usize_t;
+	auto	serialWrite(const SERIAL_PORT port, const char* const src, const igros_usize_t size) noexcept -> igros_usize_t;
 	// Serial read
 	[[maybe_unused]]
-	auto	serialRead(char* const src, const igros_usize_t size) noexcept -> igros_usize_t;
+	auto	serialRead(const SERIAL_PORT port, char* const src, const igros_usize_t size) noexcept -> igros_usize_t;
 
-	// Setup serial port
-	void	serialSetup(const BAUD_RATE baudRate = BAUD_RATE::BAUD_115200, const DATA_SIZE dataSize = DATA_SIZE::CHAR_8, const STOP_BITS stopBits = STOP_BITS::STOP_1, const PARITY parity = PARITY::NONE) noexcept;
+	// Serial write to COM1 (kernel console)
+	[[maybe_unused]]
+	auto	serialWrite(const char* const src, const igros_usize_t size) noexcept -> igros_usize_t;
+	// Serial write to COM1 (kernel console)
+	[[maybe_unused]]
+	auto	serialWrite(const char* const src) noexcept -> igros_usize_t;
+
+	// Setup COM1 (115200 8N1) with receive interrupt
+	[[nodiscard]]
+	auto	serialSetup() noexcept -> bool;
 
 
 }	// namespace igros::arch

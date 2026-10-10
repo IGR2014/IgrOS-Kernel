@@ -99,7 +99,8 @@ namespace igros::arch {
 	void	vmemClear() noexcept;
 
 	// Init VGA console
-	void	vmemInit() noexcept;
+	[[nodiscard]]
+	auto	vmemInit() noexcept -> bool;
 
 
 }	// namespace igros::arch

@@ -70,6 +70,10 @@ if grep -q "FAILED" "${SERIAL}"; then
 	echo "FAILED: kernel self-test failed"
 	RESULT=1
 fi
+if grep -qE "^Driver .*ERROR" "${SERIAL}"; then
+	echo "FAILED: driver init failed"
+	RESULT=1
+fi
 if grep -q "Triple fault" "${DEBUG}" 2>/dev/null; then
 	echo "FAILED: triple fault"
 	RESULT=1
