@@ -1,19 +1,47 @@
-image: gcc
+# Same checks as GitHub Actions: kernel builds (with QEMU boot test) and host unit tests
+image: ubuntu:24.04
 
 stages:
-    - build
+  - build
+  - test
 
-build i386:
-    tags:
-        - i386
-    stage: build
-    script:
-        - ./config/script/build-i386.sh
+variables:
+  DEBIAN_FRONTEND: noninteractive
+  # Full history: version is taken from git tags
+  GIT_DEPTH: "0"
 
-build x86_64:
-    tags:
-        - x86_64
-    stage: build
-    script:
-        - ./config/script/build-x86_64.sh
+# Build kernel ISO with CMake presets and boot it in QEMU
+build:
+  stage: build
+  parallel:
+    matrix:
+      - ARCH: [ 'i386', 'x86_64' ]
+        COMPILER: [ 'clang++', 'g++' ]
+  before_script:
+    - apt-get update
+    - apt-get install -y --no-install-recommends ca-certificates clang cmake g++-multilib gcc-multilib git grub-common grub-pc-bin lld mtools ninja-build qemu-system-x86 xorriso
+    - git config --global --add safe.directory "${CI_PROJECT_DIR}"
+  script:
+    - bash config/script/build.sh "${ARCH}" "${COMPILER}" debug
+    - bash tests/boot/qemu-boot.sh "${ARCH}" "install/Debug/config-linux-${COMPILER}-${ARCH}-debug/kernel.iso"
+  artifacts:
+    when: always
+    expire_in: 1 week
+    paths:
+      - install/Debug/config-linux-${COMPILER}-${ARCH}-debug/kernel.iso
 
+# Host unit tests (kernel library, physical memory allocator)
+unit-tests:
+  stage: test
+  needs: []
+  parallel:
+    matrix:
+      - ARCH: [ 'i386', 'x86_64' ]
+        COMPILER: [ 'clang++', 'g++' ]
+  before_script:
+    - apt-get update
+    - apt-get install -y --no-install-recommends clang cmake g++-multilib ninja-build
+  script:
+    - cmake -S tests -B build/tests -G Ninja -DCMAKE_CXX_COMPILER="${COMPILER}" -DIGROS_TEST_ARCH="${ARCH}"
+    - cmake --build build/tests --parallel
+    - ctest --test-dir build/tests --output-on-failure --no-tests=error
