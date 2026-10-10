@@ -280,8 +280,8 @@ Kernel info:
 	Command line:	"%s"
 )info",
 			platform::Platform::current().name(),
-			platform::Platform::kernelStart(),
-			platform::Platform::kernelEnd(),
+			static_cast<const void*>(platform::Platform::kernelStart()),
+			static_cast<const void*>(platform::Platform::kernelEnd()),
 			platform::Platform::kernelSize() >> 10,
 			__DATE__,
 			__TIME__,
