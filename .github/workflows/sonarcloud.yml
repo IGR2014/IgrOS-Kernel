@@ -32,7 +32,7 @@ jobs:
       shell: bash
       run: |
         sudo apt update
-        sudo apt install -y --no-install-recommends clang cmake jq lld ninja-build
+        sudo apt install -y --no-install-recommends clang cmake g++-multilib gcovr jq lld ninja-build
 
     # Configure both architectures with Clang
     # (one analysis per project/branch: Sonar keeps only the last one, and it
@@ -53,6 +53,18 @@ jobs:
           > "${{ env.IGROS_KERNEL_DIR_BUILD }}/compile_commands.json"
         jq 'length' "${{ env.IGROS_KERNEL_DIR_BUILD }}/compile_commands.json"
 
+    # Unit tests with coverage (both architectures' code paths)
+    - name: 'Unit Tests Coverage'
+      shell: bash
+      run: |
+        for arch in i386 x86_64; do
+          cmake -S tests -B "build/tests-${arch}" -G Ninja -DCMAKE_CXX_COMPILER=g++ -DIGROS_TEST_ARCH=${arch} -DIGROS_TESTS_COVERAGE=ON
+          cmake --build "build/tests-${arch}" --parallel
+          ctest --test-dir "build/tests-${arch}" --output-on-failure --no-tests=error
+        done
+        gcovr --root . --filter 'klib/' --filter 'mem/' --filter 'multiboot/' --sonarqube build/coverage.xml build/tests-i386 build/tests-x86_64
+        gcovr --root . --filter 'klib/' --filter 'mem/' --filter 'multiboot/' build/tests-i386 build/tests-x86_64
+
     # SonarCloud analysis
     - name: 'SonarCloud Analysis'
       # Third-party action gets SONAR_TOKEN: pinned to commit (v8.3.0)
@@ -63,3 +75,4 @@ jobs:
         args: >
           -Dsonar.cfamily.compile-commands=${{ env.IGROS_KERNEL_DIR_BUILD }}/compile_commands.json
           -Dproject.settings=sonar-project.properties
+          -Dsonar.coverageReportPaths=build/coverage.xml
