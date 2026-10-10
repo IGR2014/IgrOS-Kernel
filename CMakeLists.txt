@@ -159,19 +159,17 @@ message(
 file(
 	GLOB
 	KERNEL_HEADERS
+	CONFIGURE_DEPENDS
 	*.hpp
 )
 # Kernel C++ files
 file(
 	GLOB
 	KERNEL_SOURCES
+	CONFIGURE_DEPENDS
 	*.cpp
 )
 
-# Includes
-include_directories(
-	${CMAKE_SOURCE_DIR}
-)
 
 # Kernel executable
 add_executable(
@@ -180,8 +178,16 @@ add_executable(
 	${KERNEL_SOURCES}
 )
 
+# Kernel includes
+target_include_directories(
+	${IGROS_KERNEL}
+	PRIVATE
+	${CMAKE_SOURCE_DIR}
+)
 # Kernel definitions
-add_compile_definitions(
+target_compile_definitions(
+	${IGROS_KERNEL}
+	PRIVATE
 	IGROS_KERNEL
 	IGROS_ARCH_${CMAKE_SYSTEM_PROCESSOR}
 	IGROS_ARCH=${CMAKE_SYSTEM_PROCESSOR}
@@ -196,15 +202,17 @@ add_compile_definitions(
 # Clang compiler flags
 set(
 	IGROS_CLANG_COMPILER_FLAGS
-	"$<$<BOOL:IGROS_CXX_COLORED_OUTPUT>:-fcolor-diagnostics>"
+	"$<$<BOOL:${IGROS_CXX_COLORED_OUTPUT}>:-fcolor-diagnostics>"
 )
 # GNU compiler flags
 set(
 	IGROS_GNU_COMPILER_FLAGS
-	"$<$<BOOL:IGROS_CXX_COLORED_OUTPUT>:-fdiagnostics-color=always>"
+	"$<$<BOOL:${IGROS_CXX_COLORED_OUTPUT}>:-fdiagnostics-color=always>"
 )
 # Compile options
-add_compile_options(
+target_compile_options(
+	${IGROS_KERNEL}
+	PRIVATE
 	# Add compiler flags if Clang
 	"$<$<CXX_COMPILER_ID:Clang>:${IGROS_CLANG_COMPILER_FLAGS}>"
 	# Add compiler flags if GCC
@@ -244,10 +252,27 @@ add_subdirectory(
 	sys
 )
 
-# Link command
+# Kernel linker script
+set(
+	IGROS_LINKER_SCRIPT
+	"${CMAKE_SOURCE_DIR}/config/link/link-${CMAKE_SYSTEM_PROCESSOR}.ld"
+)
+# Link with linker script (relink when it changes)
+target_link_options(
+	${IGROS_KERNEL}
+	PRIVATE
+	${IGROS_TOOLCHAIN_LINKER_FLAGS}
+	-T "${IGROS_LINKER_SCRIPT}"
+)
+set_target_properties(
+	${IGROS_KERNEL}
+	PROPERTIES
+	LINK_DEPENDS "${IGROS_LINKER_SCRIPT}"
+)
+# Link command (kernel is linked by linker directly, not by compiler driver)
 set(
 	CMAKE_CXX_LINK_EXECUTABLE
-	"${CMAKE_LINKER} <OBJECTS> -o ${IGROS_KERNEL} ${CMAKE_LINKER_FLAGS}"
+	"${CMAKE_LINKER} <LINK_FLAGS> <OBJECTS> -o <TARGET>"
 )
 
 # Get compiler name
@@ -284,9 +309,13 @@ install(
 	CODE
 "execute_process(
 	COMMAND grub-mkrescue -o \"${CMAKE_INSTALL_PREFIX}/kernel.iso\" \"${CMAKE_INSTALL_PREFIX}/iso\"
-	OUTPUT_QUIET
-	ERROR_QUIET
-)"
+	RESULT_VARIABLE IGROS_ISO_RESULT
+	OUTPUT_VARIABLE IGROS_ISO_OUTPUT
+	ERROR_VARIABLE IGROS_ISO_OUTPUT
+)
+if(NOT IGROS_ISO_RESULT EQUAL 0)
+	message(FATAL_ERROR \"grub-mkrescue failed: \${IGROS_ISO_OUTPUT}\")
+endif()"
 )
 # Create ISO
 install(

@@ -8,12 +8,14 @@ message(
 file(
 	GLOB
 	DRIVERS_VGA_HDR
+	CONFIGURE_DEPENDS
 	*.hpp
 )
 # Kernel VGA drivers source files
 file(
 	GLOB
 	DRIVERS_VGA_SRC
+	CONFIGURE_DEPENDS
 	*.cpp
 )
 

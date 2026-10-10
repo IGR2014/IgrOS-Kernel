@@ -8,6 +8,7 @@ message(
 file(
 	GLOB
 	BOOT_i386_SRC
+	CONFIGURE_DEPENDS
 	*.s
 )
 

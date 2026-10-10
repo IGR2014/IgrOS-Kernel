@@ -8,12 +8,14 @@ message(
 file(
 	GLOB
 	DRIVERS_HDR
+	CONFIGURE_DEPENDS
 	*.hpp
 )
 # Kernel drivers source files
 file(
 	GLOB
 	DRIVERS_SRC
+	CONFIGURE_DEPENDS
 	*.cpp
 )
 
