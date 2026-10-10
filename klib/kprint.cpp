@@ -205,7 +205,7 @@ namespace igros::klib {
 			// Never copy past buffer end
 			length = std::min(length, spaceLeft(str));
 			// Copy string
-			kstrcpy(number.data(), str, length);
+			kstrcpy(str, number.data(), length);
 			// Move iterator to string's end
 			str += length;
 		};
@@ -366,7 +366,7 @@ namespace igros::klib {
 						// Get string length (never past buffer end)
 						const auto len {std::min(kstrlen(str), spaceLeft(strIterator))};
 						// Copy string
-						kstrcpy(str, strIterator, len);
+						kstrcpy(strIterator, str, len);
 						// Move iterator to string's end
 						strIterator += len;
 					// Done
