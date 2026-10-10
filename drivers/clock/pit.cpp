@@ -100,9 +100,9 @@ namespace igros::arch {
 			const auto hours	{minutes / 60_u32};
 			// Debug date/time
 			klib::kprintf(
-				"IRQ #%d\t[PIT]\n"
+				"IRQ #%u\t[PIT]\n"
 				"Time:\t%02d:%02d:%02d.%03d (~1 sec.)\n",
-				irq_t::PIT,
+				static_cast<igros_dword_t>(irq_t::PIT),
 				hours	% 24_u32,
 				minutes	% 60_u32,
 				seconds	% 60_u32,
