@@ -223,9 +223,9 @@ namespace igros::arch {
 		const auto read {serialRead(data.data(), data.size() - 1_usize)};
 		// Debug data
 		klib::kprintf(
-			"IRQ #%d\t[UART1]\n"
-			"Read:\t%05d bytes = %s\n",
-			irq_t::UART1,
+			"IRQ #%u\t[UART1]\n"
+			"Read:\t%05zu bytes = %s\n",
+			static_cast<igros_dword_t>(irq_t::UART1),
 			read,
 			data.data()
 		);
@@ -235,9 +235,9 @@ namespace igros::arch {
 	static void serialInterruptHandler2([[maybe_unused]] const register_t* const regs) noexcept {
 		// Debug data
 		klib::kprintf(
-			"IRQ #%d\t[UART2]\n"
+			"IRQ #%u\t[UART2]\n"
 			"Read:\tNOTHING!\n",
-			irq_t::UART2
+			static_cast<igros_dword_t>(irq_t::UART2)
 		);
 	}
 
