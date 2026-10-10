@@ -267,7 +267,9 @@ install(
 	CODE
 "file(
 	WRITE \"${CMAKE_INSTALL_PREFIX}/iso/boot/grub/grub.cfg\"
-\"menuentry \\\"IgrOS-Kernel\\\" {
+\"set timeout=0
+set default=0
+menuentry \\\"IgrOS-Kernel\\\" {
 	multiboot /boot/${IGROS_KERNEL}
 }\"
 )"
