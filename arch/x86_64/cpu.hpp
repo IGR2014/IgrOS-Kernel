@@ -83,49 +83,53 @@ namespace igros::x86_64 {
 
 	// Dump registers
 	inline void cpu::dumpRegisters(const register_t* const regs) noexcept {
+		// 64-bit register value as format "%llx" argument
+		constexpr auto r = [](const igros_quad_t value) constexpr noexcept {
+			return static_cast<unsigned long long>(value);
+		};
 		// Print regs
 		klib::kprintf(
 R"registers(
 Registers dump:
-RAX=[%p] RBX=[%p] RCX=[%p] RDX=[%p]
-R8 =[%p] R9 =[%p] R10=[%p] R11=[%p]
-R12=[%p] R13=[%p] R14=[%p] R15=[%p]
-RSI=[%p] RDI=[%p]
-RSP=[%p] RBP=[%p]
-RIP=[%p]
-RFLAGS=[%p]
+RAX=[%016llx] RBX=[%016llx] RCX=[%016llx] RDX=[%016llx]
+R8 =[%016llx] R9 =[%016llx] R10=[%016llx] R11=[%016llx]
+R12=[%016llx] R13=[%016llx] R14=[%016llx] R15=[%016llx]
+RSI=[%016llx] RDI=[%016llx]
+RSP=[%016llx] RBP=[%016llx]
+RIP=[%016llx]
+RFLAGS=[%016llx]
 Segments:
-CS=[%p]
-DS=[%p]
-SS=[%p]
-ES=[%p]
-FS=[%p]
-GS=[%p]
+CS=[%016llx]
+DS=[%016llx]
+SS=[%016llx]
+ES=[%016llx]
+FS=[%016llx]
+GS=[%016llx]
 )registers",
-			regs->rax,
-			regs->rbx,
-			regs->rcx,
-			regs->rdx,
-			regs->r8,
-			regs->r9,
-			regs->r10,
-			regs->r11,
-			regs->r12,
-			regs->r13,
-			regs->r14,
-			regs->r15,
-			regs->rsi,
-			regs->rdi,
-			regs->userRsp,
-			regs->rbp,
-			regs->rip,
-			regs->rflags,
-			regs->cs,
-			0_u64,		//regs->ds,
-			regs->ss,
-			0_u64,		//regs->es,
-			0_u64,		//regs->fs,
-			0_u64		//regs->gs
+			r(regs->rax),
+			r(regs->rbx),
+			r(regs->rcx),
+			r(regs->rdx),
+			r(regs->r8),
+			r(regs->r9),
+			r(regs->r10),
+			r(regs->r11),
+			r(regs->r12),
+			r(regs->r13),
+			r(regs->r14),
+			r(regs->r15),
+			r(regs->rsi),
+			r(regs->rdi),
+			r(regs->userRsp),
+			r(regs->rbp),
+			r(regs->rip),
+			r(regs->rflags),
+			r(regs->cs),
+			r(0_u64),		//r(regs->ds),
+			r(regs->ss),
+			r(0_u64),		//r(regs->es),
+			r(0_u64),		//r(regs->fs),
+			r(0_u64)		//r(regs->gs)
 		);
 	}
 

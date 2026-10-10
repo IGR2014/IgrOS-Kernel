@@ -381,7 +381,7 @@ When:		attempting to %s
 Address:	0x%p
 Which is:	not %s
 )exception",
-			regs->number,
+			static_cast<igros_dword_t>(regs->number),
 			x86::except::NAME[regs->number],
 			((regs->param & 0x18_u32) == 0_u32) ? "ACCESS VIOLATION"	: "",
 			((regs->param & 0x10_u32) == 0_u32) ? ""			: "INSTRUCTION FETCH",

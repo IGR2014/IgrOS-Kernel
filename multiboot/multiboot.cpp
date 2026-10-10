@@ -41,7 +41,7 @@ BAD MULTIBOOT MAGIC!!!
 	Address:	0x%p
 )multiboot",
 				magic,
-				this
+				static_cast<const void*>(this)
 			);
 			// Hang CPU
 			arch::cpu::halt();
@@ -115,8 +115,8 @@ MEMORY INFO:
 			klib::kprintf(
 R"multiboot(
 MEMORY MAP:
-	Size:	%d bytes
-	Addr:	0x%p
+	Size:	%u bytes
+	Addr:	0x%08x
 )multiboot",
 				mmapLength,
 				mmapAddr
@@ -126,10 +126,10 @@ MEMORY MAP:
 			// Loop through memory map
 			while (std::bit_cast<igros_usize_t>(memoryMap) < (mmapAddr + mmapLength)) {
 				klib::kprintf(
-R"multiboot(	[%d] 0x%p - 0x%p)multiboot",
-					memoryMap->type,
-					std::bit_cast<igros_pointer_t>(static_cast<igros_usize_t>(memoryMap->address)),
-					std::bit_cast<igros_pointer_t>(static_cast<igros_usize_t>(memoryMap->address + memoryMap->length))
+R"multiboot(	[%u] 0x%016llx - 0x%016llx)multiboot",
+					static_cast<igros_dword_t>(memoryMap->type),
+					static_cast<unsigned long long>(memoryMap->address),
+					static_cast<unsigned long long>(memoryMap->address + memoryMap->length)
 				);
 				// Move to next memory map entry
 				memoryMap = std::bit_cast<multiboot::memoryMapEntry*>(std::bit_cast<igros_usize_t>(memoryMap) + memoryMap->size + sizeof(memoryMap->size));
@@ -184,7 +184,7 @@ VBE:
 	Vendor name:	"%s"
 	Card name:	"%s"
 	Card rev.:	"%s"
-	Current mode:	#%d (%dx%d, %dbpp, 0x%p)
+	Current mode:	#%d (%dx%d, %dbpp, 0x%08x)
 	Video memory:	%d Kb.
 )multiboot",
 				config->signature[0],
@@ -240,16 +240,17 @@ VBE:
 R"multiboot(
 FrameBuffer:
 	Current mode:	(%dx%d, %dbpp, %d, %s)
-	Address:	0x%p
-	Size:		%z
+	Address:	0x%016llx
+	Size:		%u bytes
 )multiboot",
 				fbWidth,
 				fbHeight,
 				fbBpp,
 				fbPitch,
 				fbTypeName,
-				std::bit_cast<igros_pointer_t>(static_cast<igros_usize_t>(fbAddress)),
-				fbWidth * (fbBpp >> 3) * fbHeight * fbPitch
+				static_cast<unsigned long long>(fbAddress),
+				// Pitch is a line size in bytes
+				fbPitch * fbHeight
 			);
 		} else {
 			klib::kprintf(
@@ -271,7 +272,7 @@ Kernel info:
 	Arch:		%s
 	Start addr:	0x%p
 	End addr:	0x%p
-	Size:		%d Kb.
+	Size:		%zu Kb.
 	Build:		%s, %s
 	Version:	%s
 	Author:		Igor Baklykov (c) %d - %d

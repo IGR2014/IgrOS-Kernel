@@ -234,13 +234,13 @@ namespace igros::klib {
 					++fmtIterator;
 				}
 
-				// Check format fill width
-				if (
-					'1'	<= format[fmtIterator + 1_usize]	&&
+				// Check format fill width (any number of digits)
+				while (
+					'0'	<= format[fmtIterator + 1_usize]	&&
 					'9'	>= format[fmtIterator + 1_usize]
 				) {
-					// Set fill width to value
-					fillWidth = static_cast<igros_dword_t>(format[fmtIterator + 1_usize] - '0');
+					// Add next width digit
+					fillWidth = fillWidth * 10_usize + static_cast<igros_usize_t>(format[fmtIterator + 1_usize] - '0');
 					// Adjust format iterator
 					++fmtIterator;
 				}
@@ -275,6 +275,12 @@ namespace igros::klib {
 						// Adjust format iterator
 						++fmtIterator;
 					}
+				// Size or pointer difference argument
+				} else if (('z' == format[fmtIterator + 1_usize]) || ('t' == format[fmtIterator + 1_usize])) {
+					// Size argument
+					argType = argType_t::SIZE;
+					// Adjust format iterator
+					++fmtIterator;
 				// Otherwise it's double word
 				}
 
@@ -353,12 +359,6 @@ namespace igros::klib {
 						break;
 
 					// Size
-					case 'z':
-						// Print integer
-						printInteger(strIterator, radix_t::DEC, argType_t::SIZE, fillWidth, fillChar, false);
-						// Done
-						break;
-
 					// String
 					case 's': {
 						// Get string from args

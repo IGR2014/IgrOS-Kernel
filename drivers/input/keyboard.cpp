@@ -36,10 +36,10 @@ namespace igros::arch {
 			// Read keyboard data
 			const auto keyCode = io::readPort8(KEYBOARD_DATA);
 			klib::kprintf(
-				"IRQ #%d\t[Keyboard]\n"
+				"IRQ #%u\t[Keyboard]\n"
 				"Key:\t%s\n"
 				"Code:\t0x%x\n",
-				irq_t::KEYBOARD,
+				static_cast<igros_dword_t>(irq_t::KEYBOARD),
 				(0x00_u8 != (keyCode & 0x80_u8)) ? "RELEASED" : "PRESSED",
 				keyCode
 			);
