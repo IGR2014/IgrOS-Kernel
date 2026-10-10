@@ -63,6 +63,10 @@ namespace igros::i386 {
 		const auto flags	{klib::make_kflags<FLAGS>(FLAGS::WRITABLE, FLAGS::PRESENT)};
 		// Create page directory
 		const auto dir		{paging::makeDirectory()};
+		// Out of memory for paging structures
+		if (nullptr == dir) [[unlikely]] {
+			return;
+		}
 		// Map memory
 		for (const auto &m : PAGE_MAP) {
 			// Map page tables
@@ -213,6 +217,10 @@ namespace igros::i386 {
 		if (!paging::checkFlags(table, klib::make_kflags<FLAGS>(FLAGS::PRESENT))) {
 			// Create page table
 			table = paging::makeTable();
+			// Out of memory for paging structures
+			if (nullptr == table) [[unlikely]] {
+				return;
+			}
 		}
 
 		// Get page pointer and map physical page
@@ -262,6 +270,10 @@ namespace igros::i386 {
 		if (!paging::checkFlags(table, klib::make_kflags<FLAGS>(FLAGS::PRESENT))) {
 			// Create page table
 			table = paging::makeTable();
+			// Out of memory for paging structures
+			if (nullptr == table) [[unlikely]] {
+				return;
+			}
 		}
 
 		// Get page

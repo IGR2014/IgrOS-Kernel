@@ -69,6 +69,10 @@ namespace igros::x86_64 {
 		constexpr auto flags	{klib::make_kflags<FLAGS>(FLAGS::WRITABLE, FLAGS::PRESENT)};
 		// Create page map level 4
 		const auto pml4		{paging::makePML4()};
+		// Out of memory for paging structures
+		if (nullptr == pml4) [[unlikely]] {
+			return;
+		}
 		// Map memory
 		for (const auto &m : PAGE_MAP) {
 			// Map page tables
@@ -281,6 +285,10 @@ namespace igros::x86_64 {
 		if (!paging::checkFlags(dirPtr, klib::make_kflags<FLAGS>(FLAGS::PRESENT))) {
 			// Allocate page directory pointer
 			dirPtr = paging::makeDirectoryPointer();
+			// Out of memory for paging structures
+			if (nullptr == dirPtr) [[unlikely]] {
+				return;
+			}
 		}
 
 		// Get page pointer and map physical page
@@ -330,6 +338,10 @@ namespace igros::x86_64 {
 		if (!paging::checkFlags(dirPtr, klib::make_kflags<FLAGS>(FLAGS::PRESENT))) {
 			// Allocate page directory pointer
 			dirPtr = paging::makeDirectoryPointer();
+			// Out of memory for paging structures
+			if (nullptr == dirPtr) [[unlikely]] {
+				return;
+			}
 		}
 
 		// Get page directory
@@ -338,6 +350,10 @@ namespace igros::x86_64 {
 		if (!paging::checkFlags(dir, klib::make_kflags<FLAGS>(FLAGS::PRESENT))) {
 			// Allocate page table
 			dir = paging::makeDirectory();
+			// Out of memory for paging structures
+			if (nullptr == dir) [[unlikely]] {
+				return;
+			}
 		}
 
 		// Get page pointer and map physical page
@@ -393,6 +409,10 @@ namespace igros::x86_64 {
 		if (!paging::checkFlags(dirPtr, klib::make_kflags<FLAGS>(FLAGS::PRESENT))) {
 			// Allocate page directory pointer
 			dirPtr = paging::makeDirectoryPointer();
+			// Out of memory for paging structures
+			if (nullptr == dirPtr) [[unlikely]] {
+				return;
+			}
 		}
 
 		// Get page directory
@@ -401,6 +421,10 @@ namespace igros::x86_64 {
 		if (!paging::checkFlags(dir, klib::make_kflags<FLAGS>(FLAGS::PRESENT))) {
 			// Allocate page directory
 			dir = paging::makeDirectory();
+			// Out of memory for paging structures
+			if (nullptr == dir) [[unlikely]] {
+				return;
+			}
 		}
 
 		// Get page table
@@ -409,6 +433,10 @@ namespace igros::x86_64 {
 		if (!paging::checkFlags(table, klib::make_kflags<FLAGS>(FLAGS::PRESENT))) {
 			// Allocate page table
 			table = paging::makeTable();
+			// Out of memory for paging structures
+			if (nullptr == table) [[unlikely]] {
+				return;
+			}
 		}
 
 		// Get page pointer and map physical page
@@ -470,6 +498,10 @@ namespace igros::x86_64 {
 		if (!paging::checkFlags(dirPtr, klib::make_kflags<FLAGS>(FLAGS::PRESENT))) {
 			// Allocate page directory pointer
 			dirPtr = paging::makeDirectoryPointer();
+			// Out of memory for paging structures
+			if (nullptr == dirPtr) [[unlikely]] {
+				return;
+			}
 		}
 
 		// Get page directory
@@ -478,6 +510,10 @@ namespace igros::x86_64 {
 		if (!paging::checkFlags(dir, klib::make_kflags<FLAGS>(FLAGS::PRESENT))) {
 			// Allocate page directory
 			dir = paging::makeDirectory();
+			// Out of memory for paging structures
+			if (nullptr == dir) [[unlikely]] {
+				return;
+			}
 		}
 
 		// Get page table
@@ -486,6 +522,10 @@ namespace igros::x86_64 {
 		if (!paging::checkFlags(table, klib::make_kflags<FLAGS>(FLAGS::PRESENT))) {
 			// Allocate page table
 			table = paging::makeTable();
+			// Out of memory for paging structures
+			if (nullptr == table) [[unlikely]] {
+				return;
+			}
 		}
 
 		// Get page
