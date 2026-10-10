@@ -25,8 +25,9 @@ namespace igros::arch {
 	// Set keyboard LEDs
 	//void	keyboardSetLED();
 
-	// Setip keyboard function
-	void	keyboardSetup() noexcept;
+	// Setup keyboard function
+	[[nodiscard]]
+	auto	keyboardSetup() noexcept -> bool;
 
 
 }	// namespace igros::arch

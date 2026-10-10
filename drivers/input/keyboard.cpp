@@ -16,6 +16,8 @@
 #include <arch/irq.hpp>
 #include <arch/register.hpp>
 #include <arch/types.hpp>
+// IgrOS-Kernel drivers
+#include <drivers/input/keyboard.hpp>
 // IgrOS-Kernel library
 #include <klib/kprint.hpp>
 
@@ -47,13 +49,17 @@ namespace igros::arch {
 	}
 
 
-	// Setip keyboard function
-	void keyboardSetup() {
+	// Setup keyboard function
+	[[nodiscard]]
+	auto keyboardSetup() noexcept -> bool {
 
 		// Install keyboard interrupt handler
 		irq::install<irq_t::KEYBOARD, keyboardInterruptHandler>();
 		// Unmask Keyboard interrupts
 		irq::unmask(irq_t::KEYBOARD);
+
+		// Success
+		return true;
 
 	}
 
