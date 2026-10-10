@@ -86,6 +86,9 @@ namespace igros::multiboot {
 	};
 
 
+	// Multiboot 1 memory map view (defined below)
+	class memoryMap_t;
+
 	// Multiboot 1 information from bootloader
 	struct info_t final {
 
@@ -180,6 +183,9 @@ namespace igros::multiboot {
 		// Get multiboot bootloader name
 		[[nodiscard]]
 		auto	loaderName() const noexcept -> const char*;
+		// Get multiboot memory map (empty if not provided)
+		[[nodiscard]]
+		auto	memoryMap() const noexcept -> memoryMap_t;
 
 		// Print multiboot flags
 		void	printFlags() const noexcept;
@@ -309,6 +315,14 @@ namespace igros::multiboot {
 		MEMORY_MAP_TYPE		type;				// Memory entry type
 	};
 
+	// Multiboot 1 module entry
+	struct moduleEntry final {
+		igros_dword_t		start;				// Module start address
+		igros_dword_t		end;				// Module end address
+		igros_dword_t		name;				// Module name string
+		igros_dword_t		reserved;			// Reserved
+	};
+
 
 	// VBE config
 	struct vbeConfig final {
@@ -363,6 +377,88 @@ namespace igros::multiboot {
 	};
 
 #pragma pack(pop)
+
+
+	// Multiboot 1 memory map view (entries have variable size)
+	class memoryMap_t final {
+
+		const igros_byte_t*	mBegin	{nullptr};			// First entry
+		const igros_byte_t*	mEnd	{nullptr};			// Memory map end
+
+
+	public:
+
+		// Memory map end marker
+		struct sentinel_t final {
+			const igros_byte_t*	end;				// Memory map end
+		};
+
+		// Memory map entries iterator
+		class iterator_t final {
+
+			const igros_byte_t*	mEntry;				// Current entry
+
+		public:
+
+			// C-tor
+			constexpr explicit iterator_t(const igros_byte_t* const entry) noexcept : mEntry {entry} {}
+
+			// Get current entry
+			[[nodiscard]]
+			auto	operator*() const noexcept -> const memoryMapEntry& {
+				return *std::bit_cast<const memoryMapEntry*>(mEntry);
+			}
+
+			// Move to next entry ("size" field doesn't count itself)
+			auto	operator++() noexcept -> iterator_t& {
+				const auto size {std::bit_cast<const memoryMapEntry*>(mEntry)->size};
+				// Zero size would never advance - assume standard entry size
+				mEntry += sizeof(memoryMapEntry::size) + ((0_u32 != size) ? size : (sizeof(memoryMapEntry) - sizeof(memoryMapEntry::size)));
+				return *this;
+			}
+
+			// Check if whole entry no longer fits into memory map
+			[[nodiscard]]
+			auto	operator==(const sentinel_t &sentinel) const noexcept -> bool {
+				return (mEntry + sizeof(memoryMapEntry)) > sentinel.end;
+			}
+
+		};
+
+		// Empty memory map
+		constexpr memoryMap_t() noexcept = default;
+		// Memory map of given length
+		constexpr memoryMap_t(const igros_byte_t* const begin, const igros_usize_t length) noexcept :
+			mBegin	{begin},
+			mEnd	{begin + length} {}
+
+		// First entry
+		[[nodiscard]]
+		constexpr auto	begin() const noexcept -> iterator_t {
+			return iterator_t {mBegin};
+		}
+		// Memory map end
+		[[nodiscard]]
+		constexpr auto	end() const noexcept -> sentinel_t {
+			return sentinel_t {mEnd};
+		}
+
+	};
+
+
+	// Get multiboot memory map (empty if not provided)
+	[[nodiscard]]
+	inline auto info_t::memoryMap() const noexcept -> memoryMap_t {
+		// Check if memory map provided
+		if (!hasInfoMemoryMap()) [[unlikely]] {
+			return memoryMap_t {};
+		}
+		// Memory map at physical address (identity mapped by boot code)
+		return memoryMap_t {
+			std::bit_cast<const igros_byte_t*>(static_cast<igros_usize_t>(mmapAddr)),
+			mmapLength
+		};
+	}
 
 
 }	// namespace igros::multiboot
