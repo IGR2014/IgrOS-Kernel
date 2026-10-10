@@ -83,6 +83,9 @@ SECTIONS {
 		*(EXCLUDE_FILE(*/boot.o)	.bss.*)
 		*(.text)
 		*(.text.*)
+		/* Large code model (x86_64) */
+		*(.ltext)
+		*(.ltext.*)
 	_SECTION_TEXT_END_ = .;
 	} : HDR_TEXT
 
@@ -91,6 +94,12 @@ SECTIONS {
 	_SECTION_RODATA_START_ = .;
 		*(.rodata)
 		*(.rodata.*)
+		/* Large code model (x86_64) */
+		*(.lrodata)
+		*(.lrodata.*)
+		/* Unwind tables */
+		*(.eh_frame)
+		*(.eh_frame_hdr)
 	_SECTION_RODATA_END_ = .;
 	} : HDR_RODATA
 
@@ -99,6 +108,13 @@ SECTIONS {
 	_SECTION_DATA_START_ = .;
 		*(.data)
 		*(.data.*)
+		/* Large code model (x86_64) */
+		*(.ldata)
+		*(.ldata.*)
+		/* Global offset tables (position independent code) */
+		*(.got)
+		*(.got.plt)
+		*(.igot.plt)
 	_SECTION_DATA_END_ = .;
 	} : HDR_DATA
 
@@ -108,6 +124,10 @@ SECTIONS {
 		*(COMMON)
 		*(.bss)
 		*(.bss.*)
+		/* Large code model (x86_64) */
+		*(.lbss)
+		*(.lbss.*)
+		*(LARGE_COMMON)
 	_SECTION_BSS_END_ = .;
 	} : HDR_DATA
 
