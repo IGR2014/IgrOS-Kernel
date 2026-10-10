@@ -209,21 +209,20 @@ set(
 	IGROS_GNU_COMPILER_FLAGS
 	"$<$<BOOL:${IGROS_CXX_COLORED_OUTPUT}>:-fdiagnostics-color=always>"
 )
-# Compile options
+# Compile options (C++ only: assembler gets toolchain assembler flags)
 target_compile_options(
 	${IGROS_KERNEL}
 	PRIVATE
 	# Freestanding kernel, architecture and compiler flags (from toolchain)
-	${IGROS_TOOLCHAIN_CXX_FLAGS}
+	"$<$<COMPILE_LANGUAGE:CXX>:${IGROS_TOOLCHAIN_CXX_FLAGS}>"
 	# Optimization by build type (not left to cached CMAKE_CXX_FLAGS_<CONFIG>)
-	$<$<CONFIG:Debug>:-Og -g>
-	$<$<CONFIG:Release>:-O3>
-	$<$<CONFIG:RelWithDebInfo>:-O2 -g>
-	$<$<CONFIG:MinSizeRel>:-Os>
-	# Add compiler flags if Clang
-	"$<$<CXX_COMPILER_ID:Clang>:${IGROS_CLANG_COMPILER_FLAGS}>"
-	# Add compiler flags if GCC
-	"$<$<CXX_COMPILER_ID:GNU>:${IGROS_GNU_COMPILER_FLAGS}>"
+	"$<$<COMPILE_LANGUAGE:CXX>:$<$<CONFIG:Debug>:-Og;-g>>"
+	"$<$<COMPILE_LANGUAGE:CXX>:$<$<CONFIG:Release>:-O3>>"
+	"$<$<COMPILE_LANGUAGE:CXX>:$<$<CONFIG:RelWithDebInfo>:-O2;-g>>"
+	"$<$<COMPILE_LANGUAGE:CXX>:$<$<CONFIG:MinSizeRel>:-Os>>"
+	# Colored diagnostics
+	"$<$<COMPILE_LANG_AND_ID:CXX,Clang>:${IGROS_CLANG_COMPILER_FLAGS}>"
+	"$<$<COMPILE_LANG_AND_ID:CXX,GNU>:${IGROS_GNU_COMPILER_FLAGS}>"
 )
 
 # Add arch subdirectory
