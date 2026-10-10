@@ -205,6 +205,10 @@ namespace igros::x86 {
 		}
 		// Low memory alias of scratch page
 		const auto alias {std::bit_cast<volatile igros_byte_t*>(paging::table(phys))};
+		if (nullptr == alias) [[unlikely]] {
+			mem::phys::free(phys);
+			return false;
+		}
 		auto passed {
 			(INVALID == paging::translate(virt))						&&
 			(INVALID == paging::translate(nullptr))					&&
