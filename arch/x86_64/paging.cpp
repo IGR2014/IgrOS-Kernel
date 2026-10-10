@@ -28,16 +28,14 @@
 #include <klib/kFlags.hpp>
 #include <klib/kmemory.hpp>
 #include <klib/kprint.hpp>
+// IgrOS-Kernel memory
+#include <mem/phys.hpp>
 // IgrOS-Kernel platform
 #include <platform/platform.hpp>
 
 
 // x86_64 namespace
 namespace igros::x86_64 {
-
-
-	// Free pages list
-	paging::table_t* paging::mFreePages	{std::bit_cast<table_t*>(&paging::mFreePages)};
 
 
 	// Kernel memory map structure
@@ -66,11 +64,6 @@ namespace igros::x86_64 {
 
 		// Install exception handler for page fault
 		x86::except::install<x86::except::NUMBER::PAGE_FAULT, paging::exHandler>();
-
-		// Get kernel end address
-		constexpr auto kernelEnd {const_cast<igros_byte_t*>(platform::Platform::kernelEnd())};
-		// Initialize pages for page tables
-		paging::heap(kernelEnd, PAGE_SIZE << 6);
 
 		// Create flags
 		constexpr auto flags	{klib::make_kflags<FLAGS>(FLAGS::WRITABLE, FLAGS::PRESENT)};
@@ -121,49 +114,18 @@ namespace igros::x86_64 {
 	}
 
 
-	// Initialize paging heap
-	void paging::heap(const igros_pointer_t phys, const igros_usize_t size) noexcept {
-
-		// Temporary data
-		const auto tempPhys	{klib::kAlign::up(phys, PAGE_SHIFT)};
-		const auto tempSize	{size - (std::bit_cast<igros_usize_t>(tempPhys) - std::bit_cast<igros_usize_t>(phys))};
-
-		// Get number of pages
-		const auto numOfPages	{tempSize >> PAGE_SHIFT};
-		// Check input
-		if (0_usize == numOfPages) {
-			return;
-		}
-
-		// Convert to page pointer
-		const auto page		{static_cast<table_t*>(tempPhys)};
-		// Link first page to free pages list
-		page[0_usize].next	= paging::mFreePages;
-		// Create linked list of free pages
-		for (auto i {1_usize}; i < numOfPages; i++) {
-			// Link each next page to previous
-			page[i].next = &page[i - 1_usize];
-		}
-		// Make last page new list head
-		paging::mFreePages = &page[numOfPages - 2_usize];
-
-	}
-
-
-	// Allocate page
+	// Allocate page for paging structures
+	// (from low memory mapped by boot code at kernel offset, so it is accessible)
 	[[nodiscard]]
 	igros_pointer_t paging::allocate() noexcept {
-		// Check if pages exist
-		if (paging::mFreePages->next != paging::mFreePages) {
-			// Get free page
-			const auto addr		{paging::mFreePages};
-			// Update free pages list
-			paging::mFreePages	= static_cast<table_t*>(addr->next);
-			// Return pointer to free page
-			return std::bit_cast<page_t*>(addr);
+		// Get physical page
+		const auto page {mem::phys::alloc(mem::LOW_MEMORY_LIMIT)};
+		// Out of low memory
+		if (0_u64 == page) [[unlikely]] {
+			return nullptr;
 		}
-		// Nothing to return
-		return nullptr;
+		// Virtual address of physical page
+		return std::bit_cast<igros_pointer_t>(static_cast<igros_usize_t>(page) + platform::Platform::kernelOffset());
 	}
 
 	// Deallocate page
@@ -172,9 +134,8 @@ namespace igros::x86_64 {
 		if (!klib::kAlign::check(page, PAGE_SHIFT)) {
 			return;
 		}
-		// Deallocate page back to heap free list
-		static_cast<table_t*>(page)->next = paging::mFreePages;
-		paging::mFreePages = static_cast<table_t*>(page);
+		// Return physical page
+		mem::phys::free(static_cast<mem::phys_t>(std::bit_cast<igros_usize_t>(page) - platform::Platform::kernelOffset()));
 	}
 
 
