@@ -101,6 +101,12 @@ SECTIONS {
 		/* Unwind tables */
 		*(.eh_frame)
 		*(.eh_frame_hdr)
+		/* Global constructors (called by kmain) */
+		. = ALIGN(8);
+		_SECTION_INIT_ARRAY_START_ = .;
+		KEEP(*(SORT_BY_INIT_PRIORITY(.init_array.*)))
+		KEEP(*(.init_array))
+		_SECTION_INIT_ARRAY_END_ = .;
 	_SECTION_RODATA_END_ = .;
 	} : HDR_RODATA
 
