@@ -11,6 +11,8 @@
 //
 
 
+// C++
+#include <type_traits>
 // IgrOS-Kernel arch
 #include <arch/cpu.hpp>
 // IgrOS-Kernel memory
@@ -28,9 +30,19 @@ extern "C" {
 #endif	// __cplusplus
 
 
+	// Global constructors (from linker script)
+	extern const std::add_pointer_t<void ()>	_SECTION_INIT_ARRAY_START_[];
+	extern const std::add_pointer_t<void ()>	_SECTION_INIT_ARRAY_END_[];
+
+
 	// Kernel main function
 	[[noreturn]]
 	void kmain(const igros::multiboot::info_t* const multiboot, const igros::igros_dword_t magic) noexcept {
+
+		// Run global constructors (dynamic initialization of global objects)
+		for (auto ctor {_SECTION_INIT_ARRAY_START_}; ctor != _SECTION_INIT_ARRAY_END_; ++ctor) {
+			(*ctor)();
+		}
 
 		// Initialize platform
 		igros::platform::Platform::current().initialize();
