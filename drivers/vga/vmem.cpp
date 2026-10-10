@@ -18,6 +18,8 @@
 // IgrOS-Kernel library
 #include <klib/kmemory.hpp>
 #include <klib/kstring.hpp>
+// IgrOS-Kernel platform
+#include <platform/platform.hpp>
 
 
 // Arch-dependent code zone
@@ -29,8 +31,14 @@ namespace igros::arch {
 	constexpr auto VGA_CURSOR_DATA		{static_cast<port_t>(VGA_CURSOR_CONTROL + 1_u16)};
 
 
-	// VGA memory base address
-	static auto* const vmemBase	{std::bit_cast<vmemSymbol*>(0xC00B8000_usize)};
+	// VGA text buffer physical address
+	constexpr auto VIDEO_MEM_PHYS	{0x000B8000_usize};
+
+	// VGA text buffer (low memory is mapped at kernel virtual offset)
+	[[nodiscard]]
+	static auto vmemBase() noexcept -> vmemSymbol* {
+		return std::bit_cast<vmemSymbol*>(VIDEO_MEM_PHYS + platform::Platform::kernelOffset());
+	}
 
 	// VGA memory background symbol
 	static auto vmemBkgColor	{vmemColor::Green};
@@ -146,8 +154,8 @@ namespace igros::arch {
 			// Calculate offset in VGA console
 			const auto pos {cursorPos.y * VIDEO_MEM_WIDTH + cursorPos.x};
 			// Write symbol to VGA console
-			vmemBase[pos].symbol	= symbol;
-			vmemBase[pos].color	= static_cast<igros_byte_t>(vmemBkgColor);
+			vmemBase()[pos].symbol	= symbol;
+			vmemBase()[pos].color	= static_cast<igros_byte_t>(vmemBkgColor);
 			// Move cursor 1 symbol right
 			++cursorPos.x;
 		}
@@ -164,10 +172,10 @@ namespace igros::arch {
 			cursorPos.y = VIDEO_MEM_HEIGHT - 1_u16;
 			// Move screen 1 line up
 			for (auto i = VIDEO_MEM_WIDTH; i < VIDEO_MEM_SIZE; ++i) {
-				vmemBase[i - VIDEO_MEM_WIDTH] = vmemBase[i];
+				vmemBase()[i - VIDEO_MEM_WIDTH] = vmemBase()[i];
 			}
 			// Clear bottom line
-			klib::kmemset(&vmemBase[cursorPos.y * VIDEO_MEM_WIDTH], VIDEO_MEM_WIDTH, vmemBlank());
+			klib::kmemset(&vmemBase()[cursorPos.y * VIDEO_MEM_WIDTH], VIDEO_MEM_WIDTH, vmemBlank());
 		}
 		// Set new cursor position
 		vmemCursorSet(cursorPos.x, cursorPos.y);
@@ -192,7 +200,7 @@ namespace igros::arch {
 	// Clear VGA memory
 	void vmemClear() noexcept {
 		// Set whole screen with whitespace with default background
-		klib::kmemset(vmemBase, VIDEO_MEM_SIZE, vmemBlank());
+		klib::kmemset(vmemBase(), VIDEO_MEM_SIZE, vmemBlank());
 	}
 
 
