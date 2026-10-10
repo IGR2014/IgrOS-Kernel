@@ -8,12 +8,14 @@ message(
 file(
 	GLOB
 	ARCH_HEADERS
+	CONFIGURE_DEPENDS
 	*.hpp
 )
 # Kernel arch C++ files
 file(
 	GLOB
 	ARCH_SOURCES
+	CONFIGURE_DEPENDS
 	*.cpp
 )
 

@@ -8,12 +8,14 @@ message(
 file(
 	GLOB
 	MULTIBOOT_HDR
+	CONFIGURE_DEPENDS
 	*.hpp
 )
 # Kernel multiboot src files
 file(
 	GLOB
 	MULTIBOOT_SRC
+	CONFIGURE_DEPENDS
 	*.cpp
 )
 

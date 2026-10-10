@@ -20,12 +20,14 @@ endif()
 file(
 	GLOB
 	PLATFORM_HEADERS
+	CONFIGURE_DEPENDS
 	platform-${IGROS_PLATFORM}.hpp
 )
 # Kernel platform source files
 file(
 	GLOB
 	PLATFORM_SOURCES
+	CONFIGURE_DEPENDS
 	platform-${IGROS_PLATFORM}.cpp
 )
 

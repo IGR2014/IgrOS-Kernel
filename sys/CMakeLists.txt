@@ -8,12 +8,14 @@ message(
 file(
 	GLOB
 	SYS_HDR
+	CONFIGURE_DEPENDS
 	*.hpp
 )
 # Kernel sys source files
 file(
 	GLOB
 	SYS_SRC
+	CONFIGURE_DEPENDS
 	*.cpp
 )
 

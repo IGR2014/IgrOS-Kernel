@@ -8,12 +8,14 @@ message(
 file(
 	GLOB
 	DRIVERS_INPUT_HDR
+	CONFIGURE_DEPENDS
 	*.hpp
 )
 # Kernel input drivers source files
 file(
 	GLOB
 	DRIVERS_INPUT_SRC
+	CONFIGURE_DEPENDS
 	*.cpp
 )
 

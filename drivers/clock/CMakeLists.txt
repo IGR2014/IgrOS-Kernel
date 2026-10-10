@@ -8,12 +8,14 @@ message(
 file(
 	GLOB
 	DRIVERS_CLOCK_HDR
+	CONFIGURE_DEPENDS
 	*.hpp
 )
 # Kernel clock drivers source files
 file(
 	GLOB
 	DRIVERS_CLOCK_SRC
+	CONFIGURE_DEPENDS
 	*.cpp
 )
 

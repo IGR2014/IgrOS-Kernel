@@ -8,12 +8,14 @@ message(
 file(
 	GLOB
 	DRIVERS_UART_HDR
+	CONFIGURE_DEPENDS
 	*.hpp
 )
 # Kernel UART drivers source files
 file(
 	GLOB
 	DRIVERS_UART_SRC
+	CONFIGURE_DEPENDS
 	*.cpp
 )
 

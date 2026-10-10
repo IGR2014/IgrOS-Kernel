@@ -8,12 +8,14 @@ message(
 file(
 	GLOB
 	KLIB_HDR
+	CONFIGURE_DEPENDS
 	*.hpp
 )
 # Kernel klib source files
 file(
 	GLOB
 	KLIB_SRC
+	CONFIGURE_DEPENDS
 	*.cpp
 )
 
