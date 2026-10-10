@@ -1,11 +1,11 @@
 ////////////////////////////////////////////////////////////////
 //
-//	Kernel-space memset for x86
+//	Kernel memory functions
 //
-//	File:	kmemset.hpp
+//	File:	kmemory.hpp
 //	Date:	21 Mar 2023
 //
-//	Copyright (c) 2017 - 2022, Igor Baklykov
+//	Copyright (c) 2017 - 2026, Igor Baklykov
 //	All rights reserved.
 //
 //
@@ -15,10 +15,6 @@
 
 
 // C++
-#include <algorithm>
-#include <array>
-#include <bit>
-#include <cstdint>
 #include <type_traits>
 // IgrOS-Kernel arch
 #include <arch/types.hpp>
@@ -28,90 +24,39 @@
 namespace igros::klib {
 
 
-	// Set required memory with specified byte
+	// Fill count elements of dst with value
+	// (value is converted to element type, so "int" expressions can't select wider/narrower fill)
+	template<class T>
 	[[maybe_unused]]
-	auto	kmemset8(igros_byte_t* const dst, const igros_usize_t size, const igros_byte_t val) noexcept -> igros_pointer_t;
-
-	// Set required memory with specified word
-	[[maybe_unused]]
-	auto	kmemset16(igros_word_t* const dst, const igros_usize_t size, const igros_word_t val) noexcept -> igros_pointer_t;
-
-	// Set required memory with specified double word
-	[[maybe_unused]]
-	auto	kmemset32(igros_dword_t* const dst, const igros_usize_t size, const igros_dword_t val) noexcept -> igros_pointer_t;
-
-	// Set required memory with specified quad word
-	[[maybe_unused]]
-	auto	kmemset64(igros_quad_t* const dst, const igros_usize_t size, const igros_quad_t val) noexcept -> igros_pointer_t;
-
-
-	// Set required memory with specified byte
-	[[maybe_unused]]
-	inline auto kmemset(const igros_pointer_t dst, const igros_usize_t size, const char val) noexcept -> igros_pointer_t {
-		return kmemset8(std::bit_cast<igros_byte_t*>(dst), size, val);
-	}
-
-	// Set required memory with specified byte
-	[[maybe_unused]]
-	inline auto kmemset(const igros_pointer_t dst, const igros_usize_t size, const igros_byte_t val) noexcept -> igros_pointer_t {
-		return kmemset8(static_cast<igros_byte_t*>(dst), size, val);
-	}
-
-	// Set required memory with specified word
-	[[maybe_unused]]
-	inline auto kmemset(const igros_pointer_t dst, const igros_usize_t size, const igros_word_t val) noexcept -> igros_pointer_t {
-		return kmemset16(static_cast<igros_word_t*>(dst), size, val);
-	}
-
-	// Set required memory with specified double word
-	[[maybe_unused]]
-	inline auto kmemset(const igros_pointer_t dst, const igros_usize_t size, const igros_dword_t val) noexcept -> igros_pointer_t {
-		return kmemset32(static_cast<igros_dword_t*>(dst), size, val);
-	}
-
-	// Set required memory with specified quad word
-	[[maybe_unused]]
-	inline auto kmemset(const igros_pointer_t dst, const igros_usize_t size, const igros_quad_t val) noexcept -> igros_pointer_t {
-		return kmemset64(static_cast<igros_quad_t*>(dst), size, val);
+	constexpr auto kmemset(T* const dst, const igros_usize_t count, const std::type_identity_t<T> value) noexcept -> T* {
+		// Fill elements one by one
+		for (auto i {0_usize}; i < count; ++i) {
+			dst[i] = value;
+		}
+		// Return pointer to dst
+		return dst;
 	}
 
 
-	// Set required memory with specified signed byte
+	// Zero count objects (all bytes)
+	template<class T>
+	requires std::is_trivially_copyable_v<T>
 	[[maybe_unused]]
-	inline auto kmemset(const igros_pointer_t dst, const igros_usize_t size, const igros_sbyte_t val) noexcept -> igros_pointer_t {
-		return kmemset8(static_cast<igros_byte_t*>(dst), size, static_cast<igros_byte_t>(val));
-	}
-
-	// Set required memory with specified signed word
-	[[maybe_unused]]
-	inline auto kmemset(const igros_pointer_t dst, const igros_usize_t size, const igros_sword_t val) noexcept -> igros_pointer_t {
-		return kmemset16(static_cast<igros_word_t*>(dst), size, static_cast<igros_word_t>(val));
-	}
-
-	// Set required memory with specified signed double word
-	[[maybe_unused]]
-	inline auto kmemset(const igros_pointer_t dst, const igros_usize_t size, const igros_sdword_t val) noexcept -> igros_pointer_t {
-		return kmemset32(static_cast<igros_dword_t*>(dst), size, static_cast<igros_dword_t>(val));
-	}
-
-	// Set required memory with specified signed quad word
-	[[maybe_unused]]
-	inline auto kmemset(const igros_pointer_t dst, const igros_usize_t size, const igros_squad_t val) noexcept -> igros_pointer_t {
-		return kmemset64(static_cast<igros_quad_t*>(dst), size, static_cast<igros_quad_t>(val));
-	}
-
-
-	// Set required memory with specified data
-	template<igros_usize_t S, class T>
-	[[maybe_unused]]
-	inline auto kmemset(T (&arr)[S], const T val) noexcept -> igros_pointer_t {
-		return kmemset(arr, S, val);
+	inline auto kmemzero(T* const dst, const igros_usize_t count = 1_usize) noexcept -> T* {
+		// Check arguments
+		if (nullptr == dst) [[unlikely]] {
+			return nullptr;
+		}
+		// Zero object bytes
+		kmemset(static_cast<igros_byte_t*>(static_cast<igros_pointer_t>(dst)), sizeof(T) * count, 0_u8);
+		// Return pointer to dst
+		return dst;
 	}
 
 
 	// Copy memory
 	[[maybe_unused]]
-	auto	kmemcpy(igros_pointer_t dst, const igros_pointer_t src, const igros_usize_t size) noexcept -> igros_pointer_t;
+	auto	kmemcpy(const igros_pointer_t dst, const void* const src, const igros_usize_t size) noexcept -> igros_pointer_t;
 
 
 }	// namespace igros::klib
