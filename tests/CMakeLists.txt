@@ -148,5 +148,6 @@ igros_test(kprint	klib/test_kprint.cpp	klib/kprint.cpp klib/kmemory.cpp)
 igros_test(kstring	klib/test_kstring.cpp)
 igros_test(kmemory	klib/test_kmemory.cpp	klib/kmemory.cpp)
 igros_test(kmath	klib/test_kmath.cpp)
+igros_test(kflags	klib/test_kflags.cpp)
 igros_test(phys		mem/test_phys.cpp	mem/phys.cpp)
 

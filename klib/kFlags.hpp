@@ -493,7 +493,9 @@ namespace igros::klib {
 	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
 	[[nodiscard]]
 	constexpr auto kFlags<T, U>::isSet(const T value) const noexcept -> bool {
-		return std::has_single_bit(static_cast<std::make_unsigned_t<U>>(mValue & static_cast<U>(value)));
+		// All bits of (non-empty) flag are set
+		const auto flag {static_cast<U>(value)};
+		return (static_cast<U>(0) != flag) && (flag == (mValue & flag));
 	}
 
 
@@ -507,7 +509,7 @@ namespace igros::klib {
 	requires (std::is_enum_v<T> && std::is_same_v<U, std::underlying_type_t<T>>)
 	[[nodiscard]]
 	constexpr auto kFlags<T, U>::test(const igros_usize_t bit) const noexcept -> bool {
-		return std::has_single_bit(static_cast<std::make_unsigned_t<U>>(mValue & static_cast<U>(1_usize) << bit));
+		return static_cast<U>(0) != (mValue & (static_cast<U>(1) << bit));
 	}
 
 
