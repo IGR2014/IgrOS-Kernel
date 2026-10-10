@@ -103,26 +103,19 @@
                 <File name="config\cmake\clang++-x86_64.cmake" />
                 <File name="config\cmake\g++-i386.cmake" />
                 <File name="config\cmake\g++-x86_64.cmake" />
+                <File name="config\cmake\toolchain-common.cmake" />
             </Folder>
             <Folder name="link">
                 <File name="config\link\link-i386.ld" />
                 <File name="config\link\link-x86_64.ld" />
             </Folder>
             <Folder name="script">
-                <File name="config\script\build-all.sh" />
-                <File name="config\script\build-i386.sh" />
-                <File name="config\script\build-x86_64.sh" />
-                <File name="config\script\clean-all.sh" />
-                <File name="config\script\deploy-all.sh" />
-                <File name="config\script\deploy-i386.sh" />
-                <File name="config\script\deploy-x86_64.sh" />
-                <File name="config\script\distclean-all.sh" />
                 <File name="config\script\run-bochs-i386.sh" />
                 <File name="config\script\run-bochs-x86_64.sh" />
-                <File name="config\script\run-qemu-i386.sh" />
-                <File name="config\script\run-qemu-x86_64.sh" />
-                <File name="config\script\test-i386.sh" />
-                <File name="config\script\test-x86_64.sh" />
+                <File name="config\script\build.sh" />
+                <File name="config\script\clean.sh" />
+                <File name="config\script\run-qemu.sh" />
+                <File name="config\script\test.sh" />
             </Folder>
             <Folder name="test">
                 <File name="config\test\bochs-i386" />
@@ -175,8 +168,6 @@
         </Folder>
         <Folder name="mem">
             <File name="mem\CMakeLists.txt" />
-            <File name="mem\mmap.cpp" />
-            <File name="mem\mmap.hpp" />
         </Folder>
         <Folder name="multiboot">
             <File name="multiboot\CMakeLists.txt" />
@@ -207,7 +198,6 @@
         </Folder>
         <Folder name="sys">
             <File name="sys\CMakeLists.txt" />
-            <File name="sys\elf.cpp" />
             <File name="sys\elf.hpp" />
         </Folder>
         <File name=".gitattributes" />

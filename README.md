@@ -32,6 +32,23 @@ IgrOS-Kernel is a simple **OS kernel**.
 
 ---
 
+## Build, run and test:
+
+Requirements (Linux): CMake 3.21+, Ninja, Clang + LLD or GCC with multilib, binutils, GRUB tools (`grub-mkrescue`, `xorriso`, `mtools`), QEMU.
+
+```sh
+# Build bootable ISO: <i386|x86_64> [clang++|g++] [debug|release]
+config/script/build.sh x86_64 clang++ debug
+# Run in QEMU (serial output in terminal)
+config/script/run-qemu.sh x86_64 clang++ debug
+# Host unit tests + QEMU boot test
+config/script/test.sh x86_64 clang++ debug
+```
+
+Or in Docker (toolchain only image, sources are mounted): `docker compose up kernel_x86_64_clang_build`.
+
+---
+
 ## Implemented features:
 
 | Feature                    |       Status       |
