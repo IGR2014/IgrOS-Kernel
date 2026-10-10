@@ -184,6 +184,7 @@
                 <File name="tests\boot\qemu-boot.sh" />
             </Folder>
             <Folder name="klib">
+                <File name="tests\klib\test_kflags.cpp" />
                 <File name="tests\klib\test_kmath.cpp" />
                 <File name="tests\klib\test_kmemory.cpp" />
                 <File name="tests\klib\test_kprint.cpp" />
