@@ -74,7 +74,6 @@ namespace igros::i386 {
 
 	private:
 
-		static page_t*	mFreePages;				// Free pages list
 
 		// Copy c-tor
 		paging(const paging &other) = delete;
@@ -127,8 +126,6 @@ namespace igros::i386 {
 		// Disable Page Size Extension
 		static void	disablePSE() noexcept;
 
-		// Initialize paging memory
-		static void	heap(const igros_pointer_t phys, const igros_usize_t size) noexcept;
 
 		// Allocate page
 		[[nodiscard]]

@@ -85,7 +85,6 @@ namespace igros::x86_64 {
 
 	private:
 
-		static table_t*		mFreePages;				// Free pages list
 
 		// Copy c-tor
 		paging(const paging &other) = delete;
@@ -134,8 +133,6 @@ namespace igros::x86_64 {
 		// Disable Physical Address Extension
 		static void	disablePAE() noexcept;
 
-		// Initialize paging heap
-		static void	heap(const igros_pointer_t phys, const igros_usize_t size) noexcept;
 
 		// Allocate page
 		[[nodiscard]]

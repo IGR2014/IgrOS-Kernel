@@ -13,6 +13,8 @@
 
 // IgrOS-Kernel arch
 #include <arch/cpu.hpp>
+// IgrOS-Kernel memory
+#include <mem/phys.hpp>
 // IgrOS-Kernel multiboot
 #include <multiboot/multiboot.hpp>
 // IgrOS-Kernel platform
@@ -48,6 +50,10 @@ extern "C" {
 		multiboot->printFBInfo();
 		// Show memory map
 		multiboot->printMemMap();
+
+		// Initialize physical memory allocator
+		igros::mem::phys::init(*multiboot);
+		igros::klib::kprintf("Physical memory:\t%zu KB free", igros::mem::phys::freePages() << 2);
 
 		// Write "Booted successfully" message
 		igros::klib::kprintf("Booted successfully");
