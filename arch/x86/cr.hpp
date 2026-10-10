@@ -45,6 +45,9 @@ extern "C" {
 	// Write CR4 register
 	void	inCR4(const igros::igros_usize_t value) noexcept;
 
+	// Invalidate TLB entry of page
+	void	pageInvalidate(const void* const page) noexcept;
+
 
 #ifdef	__cplusplus
 
