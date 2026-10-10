@@ -1,43 +1,21 @@
-# Setup cross-compilation
+################################################################
+#
+#	clang++ x86_64 kernel toolchain
+#
+################################################################
+
+
+# Toolchain parameters
 set(
-	CMAKE_SYSTEM_NAME
-	Linux
-)
-set(
-	CMAKE_SYSTEM_PROCESSOR
+	IGROS_TOOLCHAIN_ARCH
 	x86_64
 )
-
-# Compiler
 set(
-	CMAKE_CXX_COMPILER
+	IGROS_TOOLCHAIN_COMPILER
 	clang++
 )
-# Compiler flags
-set(
-	CMAKE_CXX_FLAGS
-	"-Wall -Wextra -pedantic -Werror -fno-builtin -ffreestanding -fno-exceptions -fno-rtti -fno-threadsafe-statics -fno-pic -fno-pie -nostdlib -O3 -mno-3dnow -mno-sse -mno-sse2 -mno-sse3 -mno-ssse3 -mno-sse4 -mno-sse4.1 -mno-sse4.2 -mno-sse4a -mno-mmx -mno-avx -mno-fma4 -m64 -march=x86-64 -mno-red-zone -mcmodel=large -target x86_64-linux-elf"
-)
 
-# Assembler
-set(
-	CMAKE_ASM_COMPILER
-	as
+# Common toolchain setup
+include(
+	${CMAKE_CURRENT_LIST_DIR}/toolchain-common.cmake
 )
-# Assembler flags
-set(
-	CMAKE_ASM-ATT_FLAGS
-	"--64"
-)
-
-# Linker
-set(
-	CMAKE_LINKER
-	ld.lld
-)
-# Linker flags
-set(
-	CMAKE_LINKER_FLAGS
-	"-T ${CMAKE_SOURCE_DIR}/config/link/link-x86_64.ld -n -m elf_x86_64 -z max-page-size=0x1000 -z noexecstack"
-)
-
