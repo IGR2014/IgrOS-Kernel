@@ -190,6 +190,23 @@
             <File name="platform\platform-x86.cpp" />
             <File name="platform\platform.hpp" />
         </Folder>
+        <Folder name="tests">
+            <Folder name="boot">
+                <File name="tests\boot\qemu-boot.sh" />
+            </Folder>
+            <Folder name="klib">
+                <File name="tests\klib\test_kmath.cpp" />
+                <File name="tests\klib\test_kmemory.cpp" />
+                <File name="tests\klib\test_kprint.cpp" />
+                <File name="tests\klib\test_kstring.cpp" />
+            </Folder>
+            <Folder name="mem">
+                <File name="tests\mem\test_phys.cpp" />
+            </Folder>
+            <File name="tests\CMakeLists.txt" />
+            <File name="tests\stubs.cpp" />
+            <File name="tests\test.hpp" />
+        </Folder>
         <Folder name="sys">
             <File name="sys\CMakeLists.txt" />
             <File name="sys\elf.cpp" />
