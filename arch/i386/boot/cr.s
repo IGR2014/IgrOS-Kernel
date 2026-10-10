@@ -16,88 +16,88 @@
 .section .text
 .balign 4
 
-.global outCR0			# Read CR0 register
-.global outCR2			# Read CR2 register
-.global outCR3			# Read CR3 register
-.global outCR4			# Read CR4 register
-.global inCR0			# Write CR0 register
-.global inCR3			# Write CR3 register
-.global inCR4			# Write CR4 register
+.global readCR0			# Read CR0 register
+.global readCR2			# Read CR2 register
+.global readCR3			# Read CR3 register
+.global readCR4			# Read CR4 register
+.global writeCR0		# Write CR0 register
+.global writeCR3		# Write CR3 register
+.global writeCR4		# Write CR4 register
 .global pageInvalidate		# Invalidate TLB entry of page
 
 
 # Read CR0 register
-.type outCR0, %function
-outCR0:
+.type readCR0, %function
+readCR0:
 
 	movl	%cr0, %eax
 	retl
 
-.size outCR0, . - outCR0
+.size readCR0, . - readCR0
 
 
 # Read CR2 register
-.type outCR2, %function
-outCR2:
+.type readCR2, %function
+readCR2:
 
 	movl	%cr2, %eax
 	retl
 
-.size outCR2, . - outCR2
+.size readCR2, . - readCR2
 
 
 # Read CR3 register
-.type outCR3, %function
-outCR3:
+.type readCR3, %function
+readCR3:
 
 	movl	%cr3, %eax
 	retl
 
-.size outCR3, . - outCR3
+.size readCR3, . - readCR3
 
 
 # Read CR4 register
-.type outCR4, %function
-outCR4:
+.type readCR4, %function
+readCR4:
 
 	movl	%cr4, %eax
 	retl
 
-.size outCR4, . - outCR4
+.size readCR4, . - readCR4
 
 
 
 # Write CR0 register
-.type inCR0, %function
-inCR0:
+.type writeCR0, %function
+writeCR0:
 
 	movl	4(%esp), %eax
 	movl	%eax, %cr0
 	retl
 
-.size inCR0, . - inCR0
+.size writeCR0, . - writeCR0
 
 
 # Write CR3 register
-.type inCR3, %function
-inCR3:
+.type writeCR3, %function
+writeCR3:
 
 	movl	4(%esp), %eax
 	movl	%eax, %cr3
 	retl
 
-.size inCR3, . - inCR3
+.size writeCR3, . - writeCR3
 
 
 # Write CR4 register
-.type inCR4, %function
-inCR4:
+.type writeCR4, %function
+writeCR4:
 
 	movl	4(%esp), %eax
 	movl	%eax, %cr4
 	retl
 
-.size inCR4, . - inCR4
+.size writeCR4, . - writeCR4
 
 
 # Invalidate TLB entry of page
