@@ -8,12 +8,14 @@ message(
 file(
 	GLOB
 	x86_64_HDR
+	CONFIGURE_DEPENDS
 	*.hpp
 )
 # Kernel x86_64 arch source files
 file(
 	GLOB
 	x86_64_SRC
+	CONFIGURE_DEPENDS
 	*.cpp
 )
 

@@ -8,12 +8,14 @@ message(
 file(
 	GLOB
 	I386_HDR
+	CONFIGURE_DEPENDS
 	*.hpp
 )
 # Kernel i386 arch source files
 file(
 	GLOB
 	I386_SRC
+	CONFIGURE_DEPENDS
 	*.cpp
 )
 

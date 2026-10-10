@@ -8,12 +8,14 @@ message(
 file(
 	GLOB
 	MEM_HDR
+	CONFIGURE_DEPENDS
 	*.hpp
 )
 # Kernel mem source files
 file(
 	GLOB
 	MEM_SRC
+	CONFIGURE_DEPENDS
 	*.cpp
 )
 

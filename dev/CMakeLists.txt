@@ -8,12 +8,14 @@ message(
 file(
 	GLOB
 	DEV_HDR
+	CONFIGURE_DEPENDS
 	*.hpp
 )
 # Kernel dev source files
 file(
 	GLOB
 	DEV_SRC
+	CONFIGURE_DEPENDS
 	*.cpp
 )
 
