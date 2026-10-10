@@ -39,7 +39,7 @@ set(
 # PIC
 set(
 	CMAKE_POSITION_INDEPENDENT_CODE
-	ON
+	OFF
 )
 # Hidden inlines
 set(
