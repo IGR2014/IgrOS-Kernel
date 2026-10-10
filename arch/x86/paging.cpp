@@ -145,7 +145,7 @@ namespace igros::x86 {
 	// Current top level table physical address
 	[[nodiscard]]
 	auto paging::root() noexcept -> mem::phys_t {
-		return static_cast<mem::phys_t>(::outCR3() & ADDRESS_MASK);
+		return static_cast<mem::phys_t>(::readCR3() & ADDRESS_MASK);
 	}
 
 
@@ -181,7 +181,7 @@ namespace igros::x86 {
 		}
 
 		// Switch to new tables
-		::inCR3(static_cast<igros_usize_t>(top));
+		::writeCR3(static_cast<igros_usize_t>(top));
 
 		// Check mapping
 		klib::kprintf(
@@ -245,7 +245,7 @@ Reason:		%s page, %s access, %s mode%s%s
 )exception",
 			static_cast<igros_dword_t>(regs->number),
 			except::NAME[regs->number],
-			static_cast<unsigned long long>(::outCR2()),
+			static_cast<unsigned long long>(::readCR2()),
 			(0_usize != (error & 0x01_usize)) ? "protected"	: "missing",
 			(0_usize != (error & 0x02_usize)) ? "write"	: "read",
 			(0_usize != (error & 0x04_usize)) ? "user"	: "kernel",

@@ -406,18 +406,6 @@ namespace igros::klib {
 		va_end(list);
 	}
 
-	// Kernel sprintf function
-	void ksprintf(char* const buffer, const char* const format, ...) noexcept {
-		// Kernel variadic argument list
-		std::va_list list {};
-		// Initialize variadic arguments list
-		va_start(list, format);
-		// Format string
-		kvsnprintf(buffer, 1024_usize, format, list);
-		// End variadic arguments list
-		va_end(list);
-	}
-
 
 	// Kernel printf function
 	void kprintf(const char* const format, ...) noexcept {
