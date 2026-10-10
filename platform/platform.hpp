@@ -14,6 +14,7 @@
 #pragma once
 
 // C++
+#include <bit>
 #include <type_traits>
 #include <string_view>
 // IgrOS-Kernel arch
@@ -24,6 +25,8 @@
 extern const igros::igros_byte_t _SECTION_KERNEL_START_;
 // Kernel end
 extern const igros::igros_byte_t _SECTION_KERNEL_END_;
+// Kernel virtual memory offset (absolute symbol, its address is the offset value)
+extern const igros::igros_byte_t KERNEL_OFFSET_VIRT;
 
 
 // OS platform namespace
@@ -133,6 +136,9 @@ namespace igros::platform {
 		// Get kernel size
 		[[nodiscard]]
 		constexpr static auto	kernelSize() noexcept -> igros_usize_t;
+		// Get kernel virtual memory offset (kernel virtual address = physical address + offset)
+		[[nodiscard]]
+		static auto		kernelOffset() noexcept -> igros_usize_t;
 
 		// Check if i386
 		[[nodiscard]]
@@ -271,6 +277,13 @@ namespace igros::platform {
 	constexpr auto Platform::kernelSize() noexcept -> igros_usize_t {
 		// Kernel size (end - start)
 		return Platform::kernelEnd() - Platform::kernelStart();
+	}
+
+	// Get kernel virtual memory offset
+	[[nodiscard]]
+	inline auto Platform::kernelOffset() noexcept -> igros_usize_t {
+		// Offset from linker script
+		return std::bit_cast<igros_usize_t>(&KERNEL_OFFSET_VIRT);
 	}
 
 
