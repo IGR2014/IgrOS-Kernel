@@ -5,7 +5,7 @@
 //	File:	kstring.hpp
 //	Date:	16 Dec 2022
 //
-//	Copyright (c) 2017 - 2022, Igor Baklykov
+//	Copyright (c) 2017 - 2026, Igor Baklykov
 //	All rights reserved.
 //
 //
@@ -15,7 +15,8 @@
 
 
 // C++
-#include <cstdint>
+#include <concepts>
+#include <type_traits>
 // IgrOS-Kernel arch
 #include <arch/types.hpp>
 
@@ -24,177 +25,139 @@
 namespace igros::klib {
 
 
+	// Character type (optionally const, so const-ness of result follows argument)
+	template<class C>
+	concept kchar = std::same_as<std::remove_const_t<C>, char>;
+
+
 	// Find string end
+	template<kchar C>
 	[[nodiscard]]
-	constexpr auto kstrend(char* src) noexcept -> char* {
+	constexpr auto kstrend(C* src) noexcept -> C* {
 		// Check src pointer
 		if (nullptr == src) [[unlikely]] {
 			return nullptr;
 		}
-                // Find string end pointer
-                for (;*src != '\0'; ++src);
-		// Return string end
-                return src;
+		// Find null terminator
+		for (; '\0' != *src; ++src);
+		// Return pointer to null terminator
+		return src;
 	}
 
-	// Find string end
+	// Get string length
 	[[nodiscard]]
-	constexpr auto kstrend(const char* src) noexcept -> const char* {
-		// Check src pointer
-		if (nullptr == src) [[unlikely]] {
-			return nullptr;
-		}
-		// Copy string start pointer
-                auto iter {src};
-                // Find string end pointer
-                for (;*iter != '\0'; ++iter);
-		// Return string end
-                return iter;
-	}
-
-
-	// Calculate string length
-	[[nodiscard]]
-	constexpr auto kstrlen(const char* src) noexcept -> igros_usize_t {
+	constexpr auto kstrlen(const char* const src) noexcept -> igros_usize_t {
 		// Check src pointer
 		if (nullptr == src) [[unlikely]] {
 			return 0_usize;
 		}
-                // Return string length
-                return kstrend(src) - src;
-        }
-
-
-	// Copy string from one to other
-	[[maybe_unused]]
-	constexpr auto kstrcpy(char* src, char* dst, igros_usize_t size) noexcept -> char* {
-		// Check src, dst pointers and size
-		if ((nullptr == src) || (nullptr == dst) || (0_usize == size)) [[unlikely]] {
-			// Pointer to empty dst
-			// Fill with null terminator for sanity
-			return dst;
-		}
-		// Save destination pointer
-		const auto tempDst {dst};
-		// Copy first symbol
-		*dst = *src;
-		// Copy string
-		do {
-			// Copy string byte by byte
-			*++dst = *++src;
-		// Stop on size overflow or null terminator
-		} while ((--size > 0_usize) && (*src != '\0'));
-		// Return pointer to dst tring
-		return tempDst;
-	}
-
-	// Copy string from one to other
-	[[maybe_unused]]
-	constexpr auto kstrcpy(const char* src, char* dst, igros_usize_t size) noexcept -> const char* {
-		// Check src, dst pointers and size
-		if ((nullptr == src) || (nullptr == dst) || (0_usize == size)) [[unlikely]] {
-			// Pointer to empty dst
-			// Fill with null terminator for sanity
-			return dst;
-		}
-		// Save destination pointer
-		const auto tempDst {dst};
-		// Copy first symbol
-		*dst = *src;
-		// Copy string
-		do {
-			// Copy string byte by byte
-			*++dst = *++src;
-		// Stop on size overflow or null terminator
-		} while ((--size > 0_usize) && (*src != '\0'));
-		// Return pointer to dst tring
-		return tempDst;
+		// Distance to string end
+		return static_cast<igros_usize_t>(kstrend(src) - src);
 	}
 
 
-	// Concatenate string
+	// Copy at most size characters of src to dst and null-terminate it
+	// (dst must have space for size + 1 characters)
 	[[maybe_unused]]
-	constexpr auto kstrcat(const char* src, char* dst, igros_usize_t size) noexcept -> char* {
-		// Check src, dst pointers and size
-		if ((nullptr == src) || (nullptr == dst) || (0_usize == size)) [[unlikely]] {
-			// Return nothing
+	constexpr auto kstrcpy(char* const dst, const char* const src, const igros_usize_t size) noexcept -> char* {
+		// Check pointers
+		if ((nullptr == dst) || (nullptr == src)) [[unlikely]] {
+			return dst;
+		}
+		// Copy characters
+		auto i {0_usize};
+		for (; (i < size) && ('\0' != src[i]); ++i) {
+			dst[i] = src[i];
+		}
+		// Terminate copied string
+		dst[i] = '\0';
+		// Return destination
+		return dst;
+	}
+
+	// Append src to null-terminated dst, which buffer holds size characters
+	// (result is truncated to fit and always null-terminated)
+	[[maybe_unused]]
+	constexpr auto kstrcat(char* const dst, const char* const src, const igros_usize_t size) noexcept -> char* {
+		// Check pointers
+		if ((nullptr == dst) || (nullptr == src)) [[unlikely]] {
+			return dst;
+		}
+		// Find dst end inside buffer
+		auto end {0_usize};
+		for (; (end < size) && ('\0' != dst[end]); ++end);
+		// No null terminator (or no space) - nothing could be appended
+		if (end >= size) [[unlikely]] {
+			return dst;
+		}
+		// Append what fits (keeping space for terminator)
+		kstrcpy(dst + end, src, size - end - 1_usize);
+		// Return destination
+		return dst;
+	}
+
+
+	// Compare at most size characters of two strings
+	// (null pointer is less than any string)
+	[[nodiscard]]
+	constexpr auto kstrcmp(const char* src1, const char* src2, igros_usize_t size) noexcept -> igros_sdword_t {
+		// Null pointers ordering
+		if ((nullptr == src1) || (nullptr == src2)) [[unlikely]] {
+			return (src1 == src2) ? 0_i32 : ((nullptr == src1) ? -1_i32 : 1_i32);
+		}
+		// Find first difference
+		for (; size > 0_usize; --size, ++src1, ++src2) {
+			if ((*src1 != *src2) || ('\0' == *src1)) {
+				return static_cast<igros_sdword_t>(static_cast<igros_byte_t>(*src1)) - static_cast<igros_sdword_t>(static_cast<igros_byte_t>(*src2));
+			}
+		}
+		// Equal within size
+		return 0_i32;
+	}
+
+
+	// Find first occurrence of chr within size characters of string
+	template<kchar C>
+	[[nodiscard]]
+	constexpr auto kstrchr(C* src, const char chr, igros_usize_t size) noexcept -> C* {
+		// Check src pointer
+		if (nullptr == src) [[unlikely]] {
 			return nullptr;
 		}
-		// Return nothing
+		// Find symbol inside string
+		for (; size > 0_usize; --size, ++src) {
+			if (chr == *src) {
+				return src;
+			}
+			if ('\0' == *src) {
+				break;
+			}
+		}
+		// Not found
 		return nullptr;
 	}
 
 
-	// Compare strings
-	[[nodiscard]]
-	constexpr auto kstrcmp(const char* src1, const char* src2, igros_usize_t size) noexcept -> igros_sdword_t {
-		// Check src1 and src2 pointers
-		if ((nullptr == src1) || (nullptr == src2) || (0_usize == size)) [[unlikely]] {
-			// Handle wrong input
-			if (src1 == nullptr) {
-				return (src2 == nullptr) ? 0_i32 : -1_i32;
-			} else {
-				return 1_i32;
-			}
-		}
-		// Compare string symbol by symbol
-		for (;(--size > 0_usize) && (*src1 != '\0') && (*src1 == *src2); ++src1, ++src2);
-		// Return string difference
-		return static_cast<igros_byte_t>(*src1) - static_cast<igros_byte_t>(*src2);
-	}
-
-
-	// Find char occurrence in string
-	[[nodiscard]]
-	constexpr auto kstrchr(char* src, char chr, igros_usize_t size) noexcept -> char* {
-		// Check src pointer and size
-		if ((nullptr == src) || (0_usize == size)) [[unlikely]] {
-			return nullptr;
-		}
-		// Find symbol inside string
-		for (;(--size > 0_usize) && (*src != '\0') && (*src != chr); ++src);
-		// Return address of first occurrence or null pointer
-		return (*src == chr) ? src : nullptr;
-	}
-
-	// Find char occurrence in string
-	[[nodiscard]]
-	constexpr auto kstrchr(const char* src, char chr, igros_usize_t size) noexcept -> const char* {
-		// Check src pointer and size
-		if ((nullptr == src) || (0_usize == size)) [[unlikely]] {
-			return nullptr;
-		}
-		// Find symbol inside string
-		for (;(--size > 0_usize) && (*src != '\0') && (*src != chr); ++src);
-		// Return address of first occurrence or null pointer
-		return (*src == chr) ? src : nullptr;
-	}
-
-
-	// Invert string
+	// Reverse at most size first characters of string
 	[[maybe_unused]]
-	constexpr auto kstrinv(char* src, igros_usize_t size) noexcept -> char* {
-		// Check src pointer and size
+	constexpr auto kstrinv(char* const src, const igros_usize_t size) noexcept -> char* {
+		// Check src pointer
 		if (nullptr == src) [[unlikely]] {
 			return nullptr;
 		}
-		// Copy pointer to string start
-		auto iter		{src};
-		// Get string length
-		const auto strLen	{kstrlen(src) - 1_usize};
-		// Get required reverting string length
-		const auto len		{(strLen < size) ? strLen : (size - 1_usize)};
-		// Calculate half length of the reverting string
-		const auto halfLen	{len >> 1};
-		// Loop through image
-		for (auto i {len}; i != halfLen; i--, iter++) {
-			// Swap symbols
-			std::swap(*iter, src[i]);
+		// Length of the reversed part
+		const auto strLen	{kstrlen(src)};
+		const auto len		{(strLen < size) ? strLen : size};
+		// Swap symbols from both ends
+		for (auto i {0_usize}; i < (len >> 1); ++i) {
+			const auto symbol	{src[i]};
+			src[i]			= src[len - 1_usize - i];
+			src[len - 1_usize - i]	= symbol;
 		}
 		// Return string address
 		return src;
 	}
 
 
-}	// namespace igros::arch
+}	// namespace igros::klib
 
