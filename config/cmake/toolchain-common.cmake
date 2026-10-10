@@ -83,14 +83,12 @@ else()
 	)
 endif()
 
-# Compiler flags (optimization comes from build type)
-set(
-	CMAKE_CXX_FLAGS_INIT
+# Compiler flags as list: added to kernel target (see CMakeLists.txt), not to
+# CMAKE_CXX_FLAGS - an existing build directory keeps its cached value
+separate_arguments(
+	IGROS_TOOLCHAIN_CXX_FLAGS
+	UNIX_COMMAND
 	"${IGROS_TOOLCHAIN_CXX_FLAGS}"
-)
-set(
-	CMAKE_CXX_FLAGS_DEBUG_INIT
-	"-Og"
 )
 
 # Assembler (GNU as, AT&T syntax)

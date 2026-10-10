@@ -213,6 +213,13 @@ set(
 target_compile_options(
 	${IGROS_KERNEL}
 	PRIVATE
+	# Freestanding kernel, architecture and compiler flags (from toolchain)
+	${IGROS_TOOLCHAIN_CXX_FLAGS}
+	# Optimization by build type (not left to cached CMAKE_CXX_FLAGS_<CONFIG>)
+	$<$<CONFIG:Debug>:-Og -g>
+	$<$<CONFIG:Release>:-O3>
+	$<$<CONFIG:RelWithDebInfo>:-O2 -g>
+	$<$<CONFIG:MinSizeRel>:-Os>
 	# Add compiler flags if Clang
 	"$<$<CXX_COMPILER_ID:Clang>:${IGROS_CLANG_COMPILER_FLAGS}>"
 	# Add compiler flags if GCC
