@@ -36,6 +36,7 @@
 // IgrOS-Kernel drivers
 #include <drivers/clock/pit.hpp>
 #include <drivers/clock/rtc.hpp>
+#include <drivers/driver.hpp>
 #include <drivers/input/keyboard.hpp>
 #include <drivers/uart/serial.hpp>
 #include <drivers/vga/vmem.hpp>
@@ -64,16 +65,17 @@ namespace igros::x86 {
 		// Enable interrupts
 		irq::enable();
 
-		// Setup VGA
-		arch::vmemInit();
-		// Setup UART (#1, 115200 8N1)
-		arch::serialSetup();
-		// Setup keyboard
-		arch::keyboardSetup();
-		// Setup RTC
-		arch::rtcSetup();
-		// Setup PIT
-		//arch::pitSetup();
+		// Platform drivers (in init order)
+		constexpr drivers::driver_t DRIVERS[] {
+			{"VGA",		arch::vmemInit},
+			{"UART",	arch::serialSetup},
+			{"Keyboard",	arch::keyboardSetup},
+			{"RTC",		arch::rtcSetup},
+			// PIT prints time every second, enable when needed
+			//{"PIT",		arch::pitSetup},
+		};
+		// Setup drivers
+		drivers::init(DRIVERS);
 
 		// Setup paging (kernel page tables, needs physical memory allocator)
 		paging::init();

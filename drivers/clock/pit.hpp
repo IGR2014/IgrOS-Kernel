@@ -36,7 +36,8 @@ namespace igros::arch {
 	auto	pitGetTicks() noexcept -> igros_quad_t;
 
 	// Setup programmable interrupt timer
-	void	pitSetup() noexcept;
+	[[nodiscard]]
+	auto	pitSetup() noexcept -> bool;
 
 
 }	// namespace igros::arch
