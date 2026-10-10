@@ -23,6 +23,7 @@
 .global inCR0			# Write CR0 register
 .global inCR3			# Write CR3 register
 .global inCR4			# Write CR4 register
+.global pageInvalidate		# Invalidate TLB entry of page
 
 
 # Read CR0 register
@@ -101,4 +102,14 @@ inCR4:
 	retq
 
 .size inCR4, . - inCR4
+
+
+# Invalidate TLB entry of page
+.type pageInvalidate, %function
+pageInvalidate:
+
+	invlpg	(%rdi)			# Invalidate TLB entry
+	retq
+
+.size pageInvalidate, . - pageInvalidate
 
