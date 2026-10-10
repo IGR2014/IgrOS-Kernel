@@ -191,7 +191,7 @@ namespace igros::i386 {
 		// Allocate page directory
 		const auto dir {static_cast<directory_t*>(paging::allocate())};
 		// Zero enties of page directory
-		klib::kmemset(dir, (sizeof(directory_t) >> 2), klib::kFlags(FLAGS::CLEAR).value());
+		klib::kmemzero(dir);
 		// Return page directory
 		return dir;
 	}
@@ -202,7 +202,7 @@ namespace igros::i386 {
 		// Allocate page table
 		const auto table {static_cast<table_t*>(paging::allocate())};
 		// Zero enties of page table
-		klib::kmemset(table, (sizeof(table_t) >> 2), klib::kFlags(FLAGS::CLEAR).value());
+		klib::kmemzero(table);
 		// Return page table
 		return table;
 	}
