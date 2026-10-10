@@ -5,7 +5,7 @@
 #
 #	Passes when kernel reaches the end of kmain ("Booted successfully")
 #	and handles a keyboard interrupt (IDT, PIC, EOI). Fails on triple
-#	fault, kernel exception message or timeout.
+#	fault, kernel exception or self-test failure message or timeout.
 #
 #	Usage: qemu-boot.sh <i386|x86_64> <kernel.iso> [timeout seconds]
 #	QEMU binary can be overridden with QEMU environment variable.
@@ -64,6 +64,10 @@ wait "${PID}" 2>/dev/null
 
 if grep -qE "EXCEPTION|Exception:|UNHANDLED" "${SERIAL}"; then
 	echo "FAILED: kernel reported exception"
+	RESULT=1
+fi
+if grep -q "FAILED" "${SERIAL}"; then
+	echo "FAILED: kernel self-test failed"
 	RESULT=1
 fi
 if grep -q "Triple fault" "${DEBUG}" 2>/dev/null; then
