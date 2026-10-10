@@ -121,18 +121,14 @@ MEMORY MAP:
 				mmapLength,
 				mmapAddr
 			);
-			// Get pointer to memory map
-			auto memoryMap {std::bit_cast<multiboot::memoryMapEntry*>(static_cast<igros_usize_t>(mmapAddr))};
 			// Loop through memory map
-			while (std::bit_cast<igros_usize_t>(memoryMap) < (mmapAddr + mmapLength)) {
+			for (const auto &entry : info_t::memoryMap()) {
 				klib::kprintf(
 R"multiboot(	[%u] 0x%016llx - 0x%016llx)multiboot",
-					static_cast<igros_dword_t>(memoryMap->type),
-					static_cast<unsigned long long>(memoryMap->address),
-					static_cast<unsigned long long>(memoryMap->address + memoryMap->length)
+					static_cast<igros_dword_t>(entry.type),
+					static_cast<unsigned long long>(entry.address),
+					static_cast<unsigned long long>(entry.address + entry.length)
 				);
-				// Move to next memory map entry
-				memoryMap = std::bit_cast<multiboot::memoryMapEntry*>(std::bit_cast<igros_usize_t>(memoryMap) + memoryMap->size + sizeof(memoryMap->size));
 			}
 			klib::kprintf("\n");
 		} else {
