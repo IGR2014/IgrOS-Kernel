@@ -63,7 +63,7 @@ jobs:
         inputs:
           script: |
             sudo apt-get update
-            sudo apt install -y --no-install-recommends ccache cmake doxygen graphviz g++-multilib gcc-multilib grub-common grub-pc-bin mtools ninja-build xorriso
+            sudo apt install -y --no-install-recommends ccache cmake doxygen graphviz g++-multilib gcc-multilib grub-common grub-pc-bin mtools ninja-build qemu-system-x86 xorriso
         displayName: 'Install Dependencies'
 
       # Install Clang (Ubuntu 24.04 packages, same toolchain as Docker image)
@@ -123,6 +123,13 @@ jobs:
           script: |
             cmake --build --preset="build-linux-$(compiler)-$(arch)-debug" --target install
         displayName: 'CMake Install'
+
+      # Boot kernel in QEMU (reaches end of kmain, handles keyboard IRQ)
+      - task: CmdLine@2
+        inputs:
+          script: |
+            bash tests/boot/qemu-boot.sh $(arch) "$(IGROS_DIR_INSTALL)/Debug/config-linux-$(compiler)-$(arch)-debug/kernel.iso"
+        displayName: 'QEMU Boot Test'
 
       # CCache Statistics
       - task: CmdLine@2
