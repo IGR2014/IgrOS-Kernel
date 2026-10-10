@@ -2,58 +2,45 @@
 **
 **	x86_64 kernel linker script
 **
-**	File:	link.ld
+**	File:	link-x86_64.ld
 **	Date:	13 Dec 2022
 **
-**	Copyright (c) 2017 - 2022, Igor Baklykov
+**	Copyright (c) 2017 - 2026, Igor Baklykov
 **	All rights reserved.
 **
 */
 
-/* Create i386 kernel. Then just jump to x86_64 in code */
+
+/* Output format */
 OUTPUT_FORMAT(elf64-x86-64)
 OUTPUT_ARCH(i386:x86-64)
 
-/* Kernel entry function. Bootloader will jump here to run kernel */
+/* Kernel entry function (bootloader converts it to physical address) */
 ENTRY(kernelStart)
 
-/* Kernel virtual offset = MAX-2Gb from the end of address space */
+/* Kernel virtual offset = -2 GB (top of address space) */
 KERNEL_OFFSET_VIRT	= 0xFFFFFFFF80000000;
-/* Kernel physical address = 1Mb */
+/* Kernel physical address = 1 MB */
 KERNEL_ADDRESS_PHYS	= 0x0000000000100000;
-/* Kernel virtual address = 1Mb + MAX-2Gb */
+/* Kernel virtual address = 1 MB + offset */
 KERNEL_ADDRESS_VIRT	= KERNEL_ADDRESS_PHYS + KERNEL_OFFSET_VIRT;
 
-/* Kernel headers */
+/* Kernel segments */
 PHDRS {
-	/* empty */
-	HDR_EMPTY	PT_NULL		FLAGS(0x00);
-	/* execute + read */
-	HDR_BOOT	PT_LOAD		FLAGS(0x05);
-	/* execute + read */
+	/* read + execute */
 	HDR_TEXT	PT_LOAD		FLAGS(0x05);
 	/* read */
 	HDR_RODATA	PT_LOAD		FLAGS(0x04);
-	/* write + read */
+	/* read + write */
 	HDR_DATA	PT_LOAD		FLAGS(0x06);
 }
 
-/* Kernel sections */
+/* Kernel sections: linked at virtual (higher half) addresses, loaded at physical ones.
+   Boot code runs before paging is enabled and adjusts its addresses itself. */
 SECTIONS {
 
-	/* Place bootstrap at predefined physical address */
-	. = KERNEL_ADDRESS_PHYS;
-
-	/* Kernel bootstrap section */
-	.bootstrap ALIGN(4K) : AT(ADDR(.bootstrap)) {
-	_SECTION_BOOTSTRAP_START_ = .;
-		*/multiboot.o
-		*/boot.o
-	_SECTION_BOOTSTRAP_END_ = .;
-	} : HDR_BOOT
-
-	/* Place kernel at precalculated virtual address */
-	. += KERNEL_ADDRESS_VIRT;
+	/* Kernel virtual address */
+	. = KERNEL_ADDRESS_VIRT;
 
 	/* Start of the kernel */
 	_SECTION_KERNEL_START_ = .;
@@ -61,26 +48,10 @@ SECTIONS {
 	/* Kernel code section */
 	.text ALIGN(4K) : AT(ADDR(.text) - KERNEL_OFFSET_VIRT) {
 	_SECTION_TEXT_START_ = .;
-		*(EXCLUDE_FILE(*/multiboot.o)	.multiboot)
-		*(EXCLUDE_FILE(*/multiboot.o)	.multiboot.*)
-		*(EXCLUDE_FILE(*/multiboot.o)	.text)
-		*(EXCLUDE_FILE(*/multiboot.o)	.text.*)
-		*(EXCLUDE_FILE(*/multiboot.o)	.rodata)
-		*(EXCLUDE_FILE(*/multiboot.o)	.rodata.*)
-		*(EXCLUDE_FILE(*/multiboot.o)	.data)
-		*(EXCLUDE_FILE(*/multiboot.o)	.data.*)
-		*(EXCLUDE_FILE(*/multiboot.o)	.bss)
-		*(EXCLUDE_FILE(*/multiboot.o)	.bss.*)
-		*(EXCLUDE_FILE(*/boot.o)	.boot)
-		*(EXCLUDE_FILE(*/boot.o)	.boot.*)
-		*(EXCLUDE_FILE(*/boot.o)	.text)
-		*(EXCLUDE_FILE(*/boot.o)	.text.*)
-		*(EXCLUDE_FILE(*/boot.o)	.rodata)
-		*(EXCLUDE_FILE(*/boot.o)	.rodata.*)
-		*(EXCLUDE_FILE(*/boot.o)	.data)
-		*(EXCLUDE_FILE(*/boot.o)	.data.*)
-		*(EXCLUDE_FILE(*/boot.o)	.bss)
-		*(EXCLUDE_FILE(*/boot.o)	.bss.*)
+		/* Multiboot header must be within first 8 KB of kernel file */
+		KEEP(*(.multiboot))
+		/* Boot code (runs at physical addresses) */
+		*(.boot)
 		*(.text)
 		*(.text.*)
 		/* Large code model (x86_64) */
@@ -117,14 +88,14 @@ SECTIONS {
 		/* Large code model (x86_64) */
 		*(.ldata)
 		*(.ldata.*)
-		/* Global offset tables (position independent code) */
+		/* Global offset tables (if any position independent code) */
 		*(.got)
 		*(.got.plt)
 		*(.igot.plt)
 	_SECTION_DATA_END_ = .;
 	} : HDR_DATA
 
-	/* Kernel stack section */
+	/* Kernel zero-initialized section (not stored in file) */
 	.bss ALIGN(4K) : AT(ADDR(.bss) - KERNEL_OFFSET_VIRT) {
 	_SECTION_BSS_START_ = .;
 		*(COMMON)
@@ -140,11 +111,12 @@ SECTIONS {
 	/* End of the kernel */
 	_SECTION_KERNEL_END_ = .;
 
-	/* Discard comments */
+	/* Discard comments and notes */
 	/DISCARD/ : {
 		*(.comment)
 		*(.comment.*)
+		*(.note.GNU-stack)
+		*(.note.gnu.property)
 	}
 
 }
-
