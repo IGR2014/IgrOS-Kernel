@@ -82,7 +82,7 @@ fi
 echo "----- serial output (${ARCH})"
 tr -d '\r' < "${SERIAL}"
 echo "-----"
-[ "${RESULT}" -eq 0 ] && echo "BOOT TEST PASSED (${ARCH})" || echo "BOOT TEST FAILED (${ARCH})"
+[[ "${RESULT}" -eq 0 ]] && echo "BOOT TEST PASSED (${ARCH})" || echo "BOOT TEST FAILED (${ARCH})"
 
 rm -rf "${WORK}"
 exit "${RESULT}"
