@@ -23,6 +23,6 @@ esac
 cd "$(dirname "$0")/../.."
 
 ISO="install/${TYPE_DIR}/config-linux-${COMPILER}-${ARCH}-${TYPE}/kernel.iso"
-[ -f "${ISO}" ] || { echo "No ${ISO}: run config/script/build.sh ${ARCH} ${COMPILER} ${TYPE} first" >&2; exit 1; }
+[[ -f "${ISO}" ]] || { echo "No ${ISO}: run config/script/build.sh ${ARCH} ${COMPILER} ${TYPE} first" >&2; exit 1; }
 
 exec "${QEMU:-qemu-system-${ARCH}}" -m 128M -cdrom "${ISO}" -boot d -serial stdio "$@"
