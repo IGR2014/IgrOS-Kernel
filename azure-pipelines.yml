@@ -16,7 +16,7 @@ jobs:
 
     # OS
     pool:
-      vmImage: 'ubuntu-24.04'
+      vmImage: 'ubuntu-26.04'
 
     # Compiler
     strategy:
