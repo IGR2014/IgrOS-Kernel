@@ -5,7 +5,7 @@
 			"name": "Debug Clang++ i386 Kernel",
 			"type": "cppdbg",
 			"request": "launch",
-			"program": "${workspaceRoot}/install/Debug/clang++-i386/iso/boot/kernel.bin",
+			"program": "${workspaceRoot}/install/Debug/config-linux-clang++-i386-debug/iso/boot/kernel.bin",
 			"cwd": "${workspaceRoot}",
 			"args": [],
 			"sourceFileMap": {
@@ -22,7 +22,7 @@
 					"description": "Connect to QEMU remote debugger"
 				},
 				{
-					"text": "symbol-file ${workspaceRoot}/install/Debug/clang++-i386/iso/boot/kernel.bin",
+					"text": "symbol-file ${workspaceRoot}/install/Debug/config-linux-clang++-i386-debug/iso/boot/kernel.bin",
 					"description": "Load symbol file"
 				},
 				{
@@ -43,7 +43,7 @@
 			"name": "Debug Clang++ x86_64 Kernel",
 			"type": "cppdbg",
 			"request": "launch",
-			"program": "${workspaceRoot}/install/Debug/clang++-x86_64/iso/boot/kernel.bin",
+			"program": "${workspaceRoot}/install/Debug/config-linux-clang++-x86_64-debug/iso/boot/kernel.bin",
 			"cwd": "${workspaceRoot}",
 			"args": [],
 			"sourceFileMap": {
@@ -60,7 +60,7 @@
 					"description": "Connect to QEMU remote debugger"
 				},
 				{
-					"text": "symbol-file ${workspaceRoot}/install/Debug/clang++-x86_64/iso/boot/kernel.bin",
+					"text": "symbol-file ${workspaceRoot}/install/Debug/config-linux-clang++-x86_64-debug/iso/boot/kernel.bin",
 					"description": "Load symbol file"
 				},
 				{
