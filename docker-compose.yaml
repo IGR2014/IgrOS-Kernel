@@ -2,6 +2,7 @@ x-kernel-build: &kernel-build
   build:
     context: .
     dockerfile: Dockerfile
+    target: toolchain
   image: igros/kernel-toolchain:latest
   # Run as host user, so build/install/.ccache aren't owned by root
   user: "${UID:-1000}:${GID:-1000}"
