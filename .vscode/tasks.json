@@ -1,7 +1,6 @@
 {
 	"version": "2.0.0",
 	"tasks": [
-		// Clean i386
 		{
 			"label": "Clean i386",
 			"type": "shell",
@@ -22,7 +21,6 @@
 			},
 			"problemMatcher": []
 		},
-		// Clean x86_64
 		{
 			"label": "Clean x86_64",
 			"type": "shell",
@@ -43,7 +41,6 @@
 			},
 			"problemMatcher": []
 		},
-		// Clean all
 		{
 			"label": "Clean all",
 			"dependsOn": [
@@ -53,7 +50,6 @@
 			"dependsOrder": "parallel",
 			"problemMatcher": []
 		},
-		// Configure i386
 		{
 			"label": "Configure i386 Release",
 			"type": "shell",
@@ -71,7 +67,6 @@
 			},
 			"problemMatcher": []
 		},
-		// Configure x86_64
 		{
 			"label": "Configure x86_64 Release",
 			"type": "shell",
@@ -89,7 +84,6 @@
 			},
 			"problemMatcher": []
 		},
-		// Build i386
 		{
 			"label": "Build i386",
 			"dependsOn": [
@@ -114,7 +108,6 @@
 			},
 			"problemMatcher": ["$gcc"]
 		},
-		// Build x86_64
 		{
 			"label": "Build x86_64",
 			"dependsOn": [
@@ -139,7 +132,6 @@
 			},
 			"problemMatcher": ["$gcc"]
 		},
-		// Build all
 		{
 			"label": "Build all",
 			"dependsOn": [
@@ -150,7 +142,6 @@
 			"dependsOrder": "parallel",
 			"problemMatcher": []
 		},
-		// Rebuild i386
 		{
 			"label": "Rebuild i386",
 			"dependsOn": [
@@ -162,7 +153,6 @@
 			"dependsOrder": "sequence",
 			"problemMatcher": []
 		},
-		// Rebuild x86_64
 		{
 			"label": "Rebuild x86_64",
 			"dependsOn": [
@@ -174,7 +164,6 @@
 			"dependsOrder": "sequence",
 			"problemMatcher": []
 		},
-		// Rebuild all
 		{
 			"label": "Rebuild all",
 			"dependsOn": [
@@ -188,7 +177,6 @@
 				"isDefault": true
 			}
 		},
-		// Install i386
 		{
 			"label": "Install i386",
 			"dependsOn": [
@@ -213,7 +201,6 @@
 			},
 			"problemMatcher": []
 		},
-		// Install x86_64
 		{
 			"label": "Install x86_64",
 			"dependsOn": [
@@ -238,7 +225,6 @@
 			},
 			"problemMatcher": []
 		},
-		// Install all
 		{
 			"label": "Install all",
 			"dependsOn": [
@@ -248,7 +234,6 @@
 			"dependsOrder": "parallel",
 			"problemMatcher": []
 		},
-		// Debug QEMU i386
 		{
 			"label": "Debug QEMU i386",
 			"dependsOn": [
@@ -284,13 +269,13 @@
 			"linux": {
 				"command": "qemu-system-i386",
 				"args": [
+					"$IGROS_QEMU_OPTS",
 					"-s",
 					"-S",
 					"./install/Debug/clang++-i386/kernel.iso"
 				]
 			}
 		},
-		// Debug QEMU x86_64
 		{
 			"label": "Debug QEMU x86_64",
 			"dependsOn": [
@@ -326,13 +311,13 @@
 			"linux": {
 				"command": "qemu-system-x86_64",
 				"args": [
+					"$IGROS_QEMU_OPTS",
 					"-s",
 					"-S",
 					"./install/Debug/clang++-x86_64/kernel.iso"
 				]
 			}
 		},
-		// Debug BOCHS i386
 		{
 			"label": "Debug BOCHS i386",
 			"dependsOn": [
@@ -348,7 +333,6 @@
 				]
 			}
 		},
-		// Debug BOCHS x86_64
 		{
 			"label": "Debug BOCHS x86_64",
 			"dependsOn": [
