@@ -1,5 +1,5 @@
 # Ubuntu 26.04
-FROM ubuntu:26.04 as toolchain
+FROM ubuntu:26.04 AS toolchain
 
 # Run as root
 USER root
