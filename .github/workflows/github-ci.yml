@@ -18,7 +18,7 @@ jobs:
     # Name
     name: 'Build with CMake'
     # OS
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
 
     # Environment variables
     env:
@@ -126,7 +126,7 @@ jobs:
     # Name
     name: 'Unit Tests'
     # OS
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
 
     # Strategy with languages matrix
     strategy:
