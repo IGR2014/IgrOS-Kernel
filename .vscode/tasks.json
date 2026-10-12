@@ -272,7 +272,7 @@
 					"$IGROS_QEMU_OPTS",
 					"-s",
 					"-S",
-					"./install/Debug/clang++-i386/kernel.iso"
+					"./install/Debug/config-linux-clang++-i386-debug/kernel.iso"
 				]
 			}
 		},
@@ -314,7 +314,7 @@
 					"$IGROS_QEMU_OPTS",
 					"-s",
 					"-S",
-					"./install/Debug/clang++-x86_64/kernel.iso"
+					"./install/Debug/config-linux-clang++-x86_64-debug/kernel.iso"
 				]
 			}
 		},
