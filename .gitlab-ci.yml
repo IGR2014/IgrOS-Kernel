@@ -1,5 +1,5 @@
 # Same checks as GitHub Actions: kernel builds (with QEMU boot test) and host unit tests
-image: ubuntu:24.04
+image: ubuntu:26.04
 
 stages:
   - build
