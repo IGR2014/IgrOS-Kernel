@@ -1,0 +1,28 @@
+// VS Code Dev Container: open the project with "Dev Containers: Reopen in Container"
+{
+	"name": "IgrOS-Kernel",
+	"build": {
+		"context": "..",
+		"dockerfile": "../Dockerfile",
+		"target": "dev"
+	},
+	// Same path as in docker-compose.yaml, so build directories are shared
+	"workspaceMount": "source=${localWorkspaceFolder},target=/home/igros/kernel,type=bind",
+	"workspaceFolder": "/home/igros/kernel",
+	// Image ENTRYPOINT builds kernel and exits - keep container running instead
+	"overrideCommand": true,
+	"remoteUser": "ubuntu",
+	"containerEnv": {
+		"TZ": "Europe/Kyiv",
+		// No display inside container: QEMU runs headless, debug via gdb stub
+		"IGROS_QEMU_OPTS": "-display none"
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-vscode.cmake-tools",
+				"ms-vscode.cpptools"
+			]
+		}
+	}
+}
