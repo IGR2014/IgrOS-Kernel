@@ -9,14 +9,14 @@ USER root
 RUN \
 	apt-get update && \
 	apt-get install -y --no-install-recommends \
-		git \
 		ccache \
 		clang \
 		cmake \
 		doxygen \
-		graphviz \
 		g++-multilib \
 		gcc-multilib \
+		git \
+		graphviz \
 		grub-common \
 		grub-pc-bin \
 		lld \
@@ -52,8 +52,12 @@ USER root
 RUN \
 	apt-get update && \
 	apt-get install -y --no-install-recommends \
+		bochs \
+		bochs-x \
+		bochsbios \
 		gdb \
-		qemu-system-x86 && \
+		qemu-system-x86 \
+		vgabios && \
 	apt-get clean && \
 	rm -rf /var/lib/apt/lists/*
 
