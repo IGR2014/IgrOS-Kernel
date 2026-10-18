@@ -12,6 +12,7 @@
 
 
 // C++
+#include <algorithm>
 #include <iterator>
 // IgrOS-Kernel arch x86
 #include <arch/x86/exceptions.hpp>
@@ -75,16 +76,16 @@ namespace igros {
 		static_assert(std::size(::exHandlerTable) <= x86::IRQ_OFFSET);
 
 		// Exceptions and IRQ descriptors table (IDT)
-		static idt::table_t table {};
+		constinit static idt::table_t table {};
 
-		// Exceptions setup
-		for (auto i {0_usize}; i < std::size(::exHandlerTable); ++i) {
-			table[i] = idt::setEntry(::exHandlerTable[i], KERNEL_CODE, INTERRUPT_GATE);
-		}
-		// IRQs setup
-		for (auto i {0_usize}; i < std::size(::irqHandlerTable); ++i) {
-			table[x86::irqVector(static_cast<x86::irq_t>(i))] = idt::setEntry(::irqHandlerTable[i], KERNEL_CODE, INTERRUPT_GATE);
-		}
+		// Kernel interrupt gate for handler
+		const auto gate = [](const auto handler) noexcept {
+			return idt::setEntry(handler, KERNEL_CODE, INTERRUPT_GATE);
+		};
+		// Exceptions setup (vectors from 0)
+		std::ranges::transform(::exHandlerTable, table.begin(), gate);
+		// IRQs setup (vectors from IRQ offset)
+		std::ranges::transform(::irqHandlerTable, table.begin() + x86::irqVector(x86::irq_t::PIT), gate);
 
 		// Pointer to IDT
 		constinit static idt::pointer_t pointer {

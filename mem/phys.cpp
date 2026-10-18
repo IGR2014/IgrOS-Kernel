@@ -17,7 +17,9 @@
 #include <bit>
 #include <initializer_list>
 #include <limits>
+#include <span>
 // IgrOS-Kernel library
+#include <klib/kAlign.hpp>
 #include <klib/kstring.hpp>
 // IgrOS-Kernel memory
 #include <mem/phys.hpp>
@@ -122,11 +124,11 @@ namespace igros::mem {
 		if (info.hasInfoModules()) {
 			const auto* const modules {std::bit_cast<const multiboot::moduleEntry*>(static_cast<igros_usize_t>(info.modulesAddr))};
 			phys::markUsed(info.modulesAddr, static_cast<phys_t>(info.modulesAddr) + info.modulesCount * sizeof(multiboot::moduleEntry));
-			for (auto i {0_usize}; i < info.modulesCount; ++i) {
-				phys::markUsed(modules[i].start, modules[i].end);
-				if (0_u32 != modules[i].name) {
-					const auto* const name {std::bit_cast<const char*>(static_cast<igros_usize_t>(modules[i].name))};
-					phys::markUsed(modules[i].name, static_cast<phys_t>(modules[i].name) + klib::kstrlen(name) + 1_u64);
+			for (const auto &module : std::span {modules, info.modulesCount}) {
+				phys::markUsed(module.start, module.end);
+				if (0_u32 != module.name) {
+					const auto* const name {std::bit_cast<const char*>(static_cast<igros_usize_t>(module.name))};
+					phys::markUsed(module.name, static_cast<phys_t>(module.name) + klib::kstrlen(name) + 1_u64);
 				}
 			}
 		}
@@ -161,7 +163,7 @@ namespace igros::mem {
 	// Free physical page
 	void phys::free(const phys_t page) noexcept {
 		// Ignore null, unaligned and untracked pages
-		if ((0_u64 == page) || (0_u64 != (page & (PAGE_SIZE - 1_u64))) || (page >= MEMORY_LIMIT)) [[unlikely]] {
+		if ((0_u64 == page) || !klib::kAlign::check<PAGE_SIZE>(page) || (page >= MEMORY_LIMIT)) [[unlikely]] {
 			return;
 		}
 		// Ignore double free
@@ -187,7 +189,7 @@ namespace igros::mem {
 		const auto from	{std::min(start, MEMORY_LIMIT)};
 		const auto to	{std::min(end, MEMORY_LIMIT)};
 		// Whole pages inside range
-		const auto first	{static_cast<igros_usize_t>((from + PAGE_SIZE - 1_u64) >> PAGE_SHIFT)};
+		const auto first	{static_cast<igros_usize_t>(klib::kAlign::up<PAGE_SIZE>(from) >> PAGE_SHIFT)};
 		const auto last		{static_cast<igros_usize_t>(to >> PAGE_SHIFT)};
 		for (auto page {first}; page < last; ++page) {
 			if (!isFree(page)) {
@@ -203,7 +205,7 @@ namespace igros::mem {
 		const auto to	{std::min(end, MEMORY_LIMIT)};
 		// Every page touched by range
 		const auto first	{static_cast<igros_usize_t>(from >> PAGE_SHIFT)};
-		const auto last		{static_cast<igros_usize_t>((to + PAGE_SIZE - 1_u64) >> PAGE_SHIFT)};
+		const auto last		{static_cast<igros_usize_t>(klib::kAlign::up<PAGE_SIZE>(to) >> PAGE_SHIFT)};
 		for (auto page {first}; page < last; ++page) {
 			if (isFree(page)) {
 				setUsed(page);

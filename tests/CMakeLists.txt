@@ -173,6 +173,7 @@ igros_test(kstring	klib/test_kstring.cpp)
 igros_test(kmemory	klib/test_kmemory.cpp	klib/kmemory.cpp)
 igros_test(kmath	klib/test_kmath.cpp)
 igros_test(kflags	klib/test_kflags.cpp)
+igros_test(kalign	klib/test_kalign.cpp)
 igros_test(libc		klib/test_libc.cpp	klib/libc.cpp)
 # Calls to C library functions must reach kernel implementations
 target_compile_options(

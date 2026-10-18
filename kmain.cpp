@@ -12,6 +12,7 @@
 
 
 // C++
+#include <span>
 #include <type_traits>
 // IgrOS-Kernel arch
 #include <arch/cpu.hpp>
@@ -40,8 +41,8 @@ extern "C" {
 	void kmain(const igros::multiboot::info_t* const multiboot, const igros::igros_dword_t magic) noexcept {
 
 		// Run global constructors (dynamic initialization of global objects)
-		for (auto ctor {_SECTION_INIT_ARRAY_START_}; ctor != _SECTION_INIT_ARRAY_END_; ++ctor) {
-			(*ctor)();
+		for (const auto ctor : std::span {_SECTION_INIT_ARRAY_START_, _SECTION_INIT_ARRAY_END_}) {
+			ctor();
 		}
 
 		// Initialize physical memory allocator (needed by paging)

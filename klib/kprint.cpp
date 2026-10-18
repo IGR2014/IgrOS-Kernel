@@ -15,6 +15,7 @@
 #include <algorithm>
 #include <array>
 #include <cstdarg>
+#include <span>
 #include <utility>
 // IgrOS-Kernel arch
 #include <arch/irq.hpp>
@@ -40,7 +41,7 @@ namespace igros::klib {
 		}
 
 		// Zero-initialize
-		kmemset(buffer, size, '\0');
+		kmemset(std::span {buffer, size}, '\0');
 
 		// Foramt string iterator
 		auto fmtIterator	{0_usize};
@@ -64,7 +65,7 @@ namespace igros::klib {
 				// Calc remaining length (never past buffer end)
 				auto sz {std::min(static_cast<igros_usize_t>(width - len), spaceLeft(str))};
 				// Copy string
-				kmemset(str, sz, static_cast<igros_byte_t>(fill));
+				kmemset(std::span {str, sz}, static_cast<char>(fill));
 				// Move iterator to string's end
 				str += sz;
 			}
@@ -95,8 +96,7 @@ namespace igros::klib {
 					// Print signed or unsigned 64-bit value and get length of resulting string
 					length = kstrlen(
 						kptoa(
-							number.data(),
-							number.size(),
+							number,
 							va_arg(list, igros_pointer_t)
 						)
 					);
@@ -108,14 +108,12 @@ namespace igros::klib {
 					length = kstrlen(
 						sign ?
 						kitoa(
-							number.data(),
-							number.size(),
+							number,
 							va_arg(list, igros_ssize_t),
 							radix
 						) :
 						kitoa(
-							number.data(),
-							number.size(),
+							number,
 							va_arg(list, igros_usize_t),
 							radix
 						)
@@ -128,14 +126,12 @@ namespace igros::klib {
 					length = kstrlen(
 						sign ?
 						kitoa(
-							number.data(),
-							number.size(),
+							number,
 							va_arg(list, igros_squad_t),
 							radix
 						) :
 						kitoa(
-							number.data(),
-							number.size(),
+							number,
 							va_arg(list, igros_quad_t),
 							radix
 						)
@@ -148,14 +144,12 @@ namespace igros::klib {
 					length = kstrlen(
 						sign ?
 						kitoa(
-							number.data(),
-							number.size(),
+							number,
 							va_arg(list, igros_sdword_t),
 							radix
 						) :
 						kitoa(
-							number.data(),
-							number.size(),
+							number,
 							va_arg(list, igros_dword_t),
 							radix
 						)
@@ -168,14 +162,12 @@ namespace igros::klib {
 					length = kstrlen(
 						sign ?
 						kitoa(
-							number.data(),
-							number.size(),
+							number,
 							static_cast<igros_sword_t>(va_arg(list, igros_sdword_t)),
 							radix
 						) :
 						kitoa(
-							number.data(),
-							number.size(),
+							number,
 							static_cast<igros_word_t>(va_arg(list, igros_dword_t)),
 							radix
 						)
@@ -188,14 +180,12 @@ namespace igros::klib {
 					length = kstrlen(
 						sign ?
 						kitoa(
-							number.data(),
-							number.size(),
+							number,
 							static_cast<igros_sbyte_t>(va_arg(list, igros_sdword_t)),
 							radix
 						) :
 						kitoa(
-							number.data(),
-							number.size(),
+							number,
 							static_cast<igros_byte_t>(va_arg(list, igros_dword_t)),
 							radix
 						)
@@ -419,7 +409,7 @@ namespace igros::klib {
 		// Shared buffer and output must not be interrupted by IRQ handler printing too
 		const arch::irq::guard noInterrupts {};
 		// Text buffer
-		static auto buffer {std::array<char, 1024_usize> {}};
+		constinit static auto buffer {std::array<char, 1024_usize> {}};
 		// Kernel variadic argument list
 		std::va_list list {};
 		// Initialize variadic arguments list

@@ -19,7 +19,6 @@
 // IgrOS-Kernel drivers
 #include <drivers/uart/serial.hpp>
 // IgrOS-Kernel library
-#include <klib/kmemory.hpp>
 #include <klib/kprint.hpp>
 #include <klib/kstring.hpp>
 
@@ -149,13 +148,17 @@ namespace igros::arch {
 
 	// Serial write
 	[[maybe_unused]]
-	auto serialWrite(const SERIAL_PORT port, const char* const src, const igros_usize_t size) noexcept -> igros_usize_t {
+	auto serialWrite(const SERIAL_PORT port, const std::string_view text) noexcept -> igros_usize_t {
 		// Written size
-		auto i {0_usize};
+		auto written {0_usize};
 		// Write data
-		for (;(i < size) && serialWaitWrite(port); ++i) {
+		for (const auto symbol : text) {
+			// Wait for transmitter
+			if (!serialWaitWrite(port)) [[unlikely]] {
+				break;
+			}
 			// Check if new line
-			if ('\n' == src[i]) [[unlikely]] {
+			if ('\n' == symbol) [[unlikely]] {
 				// Add CR
 				serialRegWrite(port, SERIAL_REG::DATA, '\r');
 				// Wait for CR to be sent
@@ -164,47 +167,51 @@ namespace igros::arch {
 				}
 			}
 			// One-by-one
-			serialRegWrite(port, SERIAL_REG::DATA, static_cast<igros_byte_t>(src[i]));
+			serialRegWrite(port, SERIAL_REG::DATA, static_cast<igros_byte_t>(symbol));
+			++written;
 		}
 		// Return written size
-		return i;
+		return written;
 	}
 
 	// Serial read
 	[[maybe_unused]]
-	auto serialRead(const SERIAL_PORT port, char* const src, const igros_usize_t size) noexcept -> igros_usize_t {
+	auto serialRead(const SERIAL_PORT port, const std::span<char> buffer) noexcept -> igros_usize_t {
 		// Read size
-		auto i {0_usize};
-		// Read data
-		for (;(i < size) && serialReadyRead(port); ++i) {
+		auto read {0_usize};
+		// Read available data
+		for (auto &symbol : buffer) {
+			if (!serialReadyRead(port)) {
+				break;
+			}
 			// One-by-one
-			src[i] = static_cast<char>(serialRegRead(port, SERIAL_REG::DATA));
+			symbol = static_cast<char>(serialRegRead(port, SERIAL_REG::DATA));
+			++read;
 		}
 		// Return read size
-		return i;
+		return read;
 	}
 
 
 	// Serial write to COM1 (kernel console)
 	[[maybe_unused]]
-	auto serialWrite(const char* const src, const igros_usize_t size) noexcept -> igros_usize_t {
-		return serialWrite(SERIAL_PORT::COM1, src, size);
+	auto serialWrite(const std::string_view text) noexcept -> igros_usize_t {
+		return serialWrite(SERIAL_PORT::COM1, text);
 	}
 
 	// Serial write to COM1 (kernel console)
 	[[maybe_unused]]
 	auto serialWrite(const char* const src) noexcept -> igros_usize_t {
-		return serialWrite(SERIAL_PORT::COM1, src, klib::kstrlen(src));
+		return serialWrite(SERIAL_PORT::COM1, std::string_view {src, klib::kstrlen(src)});
 	}
 
 
 	// Serial #1 | #3 IRQ handler
 	static void serialInterruptHandler1([[maybe_unused]] const register_t* const regs) noexcept {
-		std::array<char, 128_usize> data;
-		// Zero out
-		klib::kmemset(data.data(), data.size(), 0x00_u8);
+		// Zero-initialized
+		auto data {std::array<char, 128_usize> {}};
 		// Read from COM1 (keep space for null terminator, reading also acknowledges interrupt)
-		const auto read {serialRead(SERIAL_PORT::COM1, data.data(), data.size() - 1_usize)};
+		const auto read {serialRead(SERIAL_PORT::COM1, std::span {data}.first(data.size() - 1_usize))};
 		// Debug data
 		klib::kprintf(
 			"IRQ #%u\t[UART1]\n"

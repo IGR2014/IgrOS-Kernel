@@ -25,7 +25,7 @@ namespace igros::x86 {
 
 
 	// Interrupt handlers
-	static auto isrList {std::array<isr_t, ISR_SIZE> {}};
+	constinit static auto isrList {std::array<isr_t, ISR_SIZE> {}};
 
 
 	// Install interrupt service routine handler

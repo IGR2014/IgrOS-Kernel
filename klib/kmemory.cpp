@@ -11,6 +11,8 @@
 //
 
 
+// C++
+#include <algorithm>
 // IgrOS-Kernel library
 #include <klib/kmemory.hpp>
 
@@ -31,9 +33,7 @@ namespace igros::klib {
 			return dst;
 		}
 		// Do actual memcpy
-		for (auto i {0_usize}; i < size; i++) {
-			static_cast<igros_byte_t*>(dst)[i] = static_cast<const igros_byte_t*>(src)[i];
-		}
+		std::copy_n(static_cast<const igros_byte_t*>(src), size, static_cast<igros_byte_t*>(dst));
 		// Return pointer to dst
 		return dst;
 	}

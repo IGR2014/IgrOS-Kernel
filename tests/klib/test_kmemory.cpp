@@ -12,7 +12,9 @@
 
 
 // C++
+#include <array>
 #include <cstdint>
+#include <span>
 // IgrOS-Kernel library
 #include <klib/kmemory.hpp>
 // Tests
@@ -33,7 +35,7 @@ int main() {
 
 	// Fill typed elements, nothing past count
 	cell screen[8] {};
-	kmemset(screen, 4, cell {' ', 0x2A});
+	kmemset(std::span {screen}.first(4), cell {' ', 0x2A});
 	for (auto i {0}; i < 8; ++i) {
 		if (i < 4) {
 			IGROS_CHECK((' ' == screen[i].symbol) && (0x2A == screen[i].color));
@@ -44,8 +46,15 @@ int main() {
 
 	// Value is converted to element type
 	char text[6] {"abcde"};
-	kmemset(text, 3, static_cast<unsigned char>('x'));
+	kmemset(std::span {text, 3}, static_cast<unsigned char>('x'));
 	IGROS_CHECK(('x' == text[0]) && ('x' == text[2]) && ('d' == text[3]));
+
+	// Whole arrays
+	std::array<int, 3> numbers {};
+	kmemset(numbers, 7);
+	IGROS_CHECK((7 == numbers[0]) && (7 == numbers[2]));
+	kmemset(screen, cell {'#', 1});
+	IGROS_CHECK(('#' == screen[7].symbol) && (1 == screen[7].color));
 
 	// Zero objects bytewise
 	std::uint32_t words[4] {1, 2, 3, 4};

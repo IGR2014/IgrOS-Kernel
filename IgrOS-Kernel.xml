@@ -162,8 +162,6 @@
             <File name="klib\kprint.cpp" />
             <File name="klib\kprint.hpp" />
             <File name="klib\kstring.hpp" />
-            <File name="klib\kstring_view.cpp" />
-            <File name="klib\kstring_view.hpp" />
             <File name="klib\kVersion.hpp" />
         </Folder>
         <Folder name="mem">

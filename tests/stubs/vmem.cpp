@@ -28,8 +28,8 @@ namespace igros::arch {
 		test::hw::console += message;
 	}
 
-	void vmemWrite(const char* const message, const igros_usize_t size) noexcept {
-		test::hw::console.append(message, size);
+	void vmemWrite(const std::string_view message) noexcept {
+		test::hw::console += message;
 	}
 
 

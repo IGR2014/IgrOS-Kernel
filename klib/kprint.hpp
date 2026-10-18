@@ -15,12 +15,14 @@
 
 
 // C++
+#include <algorithm>
 #include <array>
 #include <bit>
 #include <concepts>
 #include <cstdarg>
 #include <cstdint>
 #include <limits>
+#include <span>
 #include <utility>
 // IgrOS-Kernel arch
 #include <arch/types.hpp>
@@ -43,7 +45,7 @@ namespace igros::klib {
 	// Kernel large unsigned integer to string function
 	template<std::integral T>
 	[[maybe_unused]]
-	constexpr auto kitoa(char* const buffer, const igros_usize_t size, const T value, const radix_t radix = radix_t::DEC) noexcept -> char* {
+	constexpr auto kitoa(const std::span<char> buffer, const T value, const radix_t radix = radix_t::DEC) noexcept -> char* {
 
 		// Constant integer symbols values buffer
 		constexpr auto	KITOA_CONST_BUFFER	{std::array {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'}};
@@ -80,28 +82,24 @@ namespace igros::klib {
 			tempBuffer[--pos] = '-';
 		}
 
-		// Resulting string length
-		auto strLength {tempBuffer.size() - pos};
-		// Check size fit
-		if (std::cmp_less_equal(strLength, size)) [[unlikely]] {
-			// For values in tempBuffer
-			for (auto i {0_usize}; i < std::min(strLength, size); i++) {
-				// Revert temporary buffer we created from value to src buffer
-				buffer[i] = tempBuffer[i + pos];
-			}
+		// Resulting string
+		const auto text {std::span {tempBuffer}.subspan(pos)};
+		// Copy only if it fits whole
+		if (text.size() <= buffer.size()) [[likely]] {
+			std::ranges::copy(text, buffer.begin());
 		}
 
 		// Return pointer to buffer
-		return buffer;
+		return buffer.data();
 
 	}
 
 
 	// Kernel pointer to string function
 	[[maybe_unused]]
-	constexpr auto kptoa(char* const buffer, const igros_usize_t size, const igros_pointer_t value) noexcept -> char* {
+	constexpr auto kptoa(const std::span<char> buffer, const igros_pointer_t value) noexcept -> char* {
 		// Cast pointer value to size type
-		return kitoa(buffer, size, std::bit_cast<igros_usize_t>(value), radix_t::HEX);
+		return kitoa(buffer, std::bit_cast<igros_usize_t>(value), radix_t::HEX);
 	}
 
 

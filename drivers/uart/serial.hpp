@@ -15,6 +15,10 @@
 
 
 // IgrOS-Kernel arch
+// C++
+#include <span>
+#include <string_view>
+// IgrOS-Kernel arch
 #include <arch/types.hpp>
 
 
@@ -84,14 +88,14 @@ namespace igros::arch {
 
 	// Serial write
 	[[maybe_unused]]
-	auto	serialWrite(const SERIAL_PORT port, const char* const src, const igros_usize_t size) noexcept -> igros_usize_t;
+	auto	serialWrite(const SERIAL_PORT port, const std::string_view text) noexcept -> igros_usize_t;
 	// Serial read
 	[[maybe_unused]]
-	auto	serialRead(const SERIAL_PORT port, char* const src, const igros_usize_t size) noexcept -> igros_usize_t;
+	auto	serialRead(const SERIAL_PORT port, const std::span<char> buffer) noexcept -> igros_usize_t;
 
 	// Serial write to COM1 (kernel console)
 	[[maybe_unused]]
-	auto	serialWrite(const char* const src, const igros_usize_t size) noexcept -> igros_usize_t;
+	auto	serialWrite(const std::string_view text) noexcept -> igros_usize_t;
 	// Serial write to COM1 (kernel console)
 	[[maybe_unused]]
 	auto	serialWrite(const char* const src) noexcept -> igros_usize_t;

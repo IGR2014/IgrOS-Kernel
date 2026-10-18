@@ -15,6 +15,7 @@
 
 
 // C++
+#include <algorithm>
 #include <concepts>
 #include <type_traits>
 // IgrOS-Kernel arch
@@ -148,12 +149,8 @@ namespace igros::klib {
 		// Length of the reversed part
 		const auto strLen	{kstrlen(src)};
 		const auto len		{(strLen < size) ? strLen : size};
-		// Swap symbols from both ends
-		for (auto i {0_usize}; i < (len >> 1); ++i) {
-			const auto symbol	{src[i]};
-			src[i]			= src[len - 1_usize - i];
-			src[len - 1_usize - i]	= symbol;
-		}
+		// Reverse in place
+		std::ranges::reverse(src, src + len);
 		// Return string address
 		return src;
 	}

@@ -15,6 +15,9 @@
 
 
 // C++
+#include <algorithm>
+#include <ranges>
+#include <span>
 #include <type_traits>
 // IgrOS-Kernel arch
 #include <arch/types.hpp>
@@ -24,17 +27,13 @@
 namespace igros::klib {
 
 
-	// Fill count elements of dst with value
+	// Fill all elements of dst (array, std::array, std::span...) with value
 	// (value is converted to element type, so "int" expressions can't select wider/narrower fill)
-	template<class T>
+	template<std::ranges::contiguous_range R>
+	requires std::ranges::output_range<R, std::ranges::range_value_t<R>>
 	[[maybe_unused]]
-	constexpr auto kmemset(T* const dst, const igros_usize_t count, const std::type_identity_t<T> value) noexcept -> T* {
-		// Fill elements one by one
-		for (auto i {0_usize}; i < count; ++i) {
-			dst[i] = value;
-		}
-		// Return pointer to dst
-		return dst;
+	constexpr void kmemset(R &&dst, const std::ranges::range_value_t<R> &value) noexcept {
+		std::ranges::fill(dst, value);
 	}
 
 
@@ -48,7 +47,7 @@ namespace igros::klib {
 			return nullptr;
 		}
 		// Zero object bytes
-		kmemset(static_cast<igros_byte_t*>(static_cast<igros_pointer_t>(dst)), sizeof(T) * count, 0_u8);
+		std::ranges::fill(std::as_writable_bytes(std::span {dst, count}), std::byte {0});
 		// Return pointer to dst
 		return dst;
 	}

@@ -18,8 +18,8 @@
 namespace igros::arch {
 
 
-	auto serialWrite([[maybe_unused]] const char* const src, const igros_usize_t size) noexcept -> igros_usize_t {
-		return size;
+	auto serialWrite(const std::string_view text) noexcept -> igros_usize_t {
+		return text.size();
 	}
 
 	auto serialWrite([[maybe_unused]] const char* const src) noexcept -> igros_usize_t {

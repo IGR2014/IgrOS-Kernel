@@ -5,7 +5,7 @@
 ///	@file		kAlign.hpp
 ///	@date		21 Mar 2023
 ///
-///	@copyright	Copyright (c) 2017 - 2022,
+///	@copyright	Copyright (c) 2017 - 2026,
 ///			All rights reserved.
 ///	@author		Igor Baklykov
 ///
@@ -17,7 +17,8 @@
 
 // C++
 #include <bit>
-#include <cstdint>
+#include <concepts>
+#include <type_traits>
 // IgrOS-Kernel arch
 #include <arch/types.hpp>
 
@@ -26,70 +27,129 @@
 namespace igros::klib {
 
 
-	// Kernel pointer alignment handling
+	// Alignable value: unsigned integer (address) or pointer
+	template<class T>
+	concept kalignable = std::unsigned_integral<T> || std::is_pointer_v<T>;
+
+	// Integer type for alignment arithmetic (pointers as addresses, integers as is: 64-bit on i386 too)
+	template<kalignable T>
+	using kalign_int_t = std::conditional_t<std::is_pointer_v<T>, igros_usize_t, T>;
+
+
+	// Kernel alignment handling (ALIGN in bytes, power of two; 0 - natural alignment of pointed type)
 	class kAlign final {
 
-		// Align mask
+		// Alignment in bytes
+		template<igros_usize_t ALIGN, kalignable T>
 		[[nodiscard]]
-		constexpr static auto	mask(const igros_usize_t offset) noexcept -> igros_usize_t;
+		consteval static auto	alignment() noexcept -> igros_usize_t;
+
+		// Alignment mask
+		template<igros_usize_t ALIGN, kalignable T>
+		[[nodiscard]]
+		consteval static auto	mask() noexcept -> kalign_int_t<T>;
+
+		// Value as integer
+		template<kalignable T>
+		[[nodiscard]]
+		constexpr static auto	integer(const T value) noexcept -> kalign_int_t<T>;
+
+		// Integer as value
+		template<kalignable T>
+		[[nodiscard]]
+		constexpr static auto	from(const kalign_int_t<T> value) noexcept -> T;
 
 
 	public:
 
-		// Check pointer alignment
-		template<class T>
+		// Check alignment
+		template<igros_usize_t ALIGN = 0_usize, kalignable T>
+		requires (std::has_single_bit(ALIGN) || (0_usize == ALIGN))
 		[[nodiscard]]
-		constexpr static auto	check(const T* const ptr, const igros_usize_t offset = alignof(T)) noexcept -> bool;
+		constexpr static auto	check(const T value) noexcept -> bool;
 
-		// Align pointer up
-		template<class T>
+		// Align up
+		template<igros_usize_t ALIGN = 0_usize, kalignable T>
+		requires (std::has_single_bit(ALIGN) || (0_usize == ALIGN))
 		[[nodiscard]]
-		constexpr static auto	up(const T* const ptr, const igros_usize_t offset = alignof(T)) noexcept -> T*;
-		// Align pointer down
-		template<class T>
+		constexpr static auto	up(const T value) noexcept -> T;
+		// Align down
+		template<igros_usize_t ALIGN = 0_usize, kalignable T>
+		requires (std::has_single_bit(ALIGN) || (0_usize == ALIGN))
 		[[nodiscard]]
-		constexpr static auto	down(const T* const ptr, const igros_usize_t offset = alignof(T)) noexcept -> T*;
+		constexpr static auto	down(const T value) noexcept -> T;
 
 
 	};
 
 
-	// Align mask
+	// Alignment in bytes
+	template<igros_usize_t ALIGN, kalignable T>
 	[[nodiscard]]
-	constexpr auto kAlign::mask(const igros_usize_t offset) noexcept -> igros_usize_t {
-		// Calculate align mask
-		return (1_usize << offset) - 1_usize;
+	consteval auto kAlign::alignment() noexcept -> igros_usize_t {
+		if constexpr (0_usize != ALIGN) {
+			return ALIGN;
+		} else if constexpr (std::is_pointer_v<T> && !std::is_void_v<std::remove_pointer_t<T>>) {
+			return alignof(std::remove_pointer_t<T>);
+		} else {
+			return 1_usize;
+		}
+	}
+
+	// Alignment mask
+	template<igros_usize_t ALIGN, kalignable T>
+	[[nodiscard]]
+	consteval auto kAlign::mask() noexcept -> kalign_int_t<T> {
+		return static_cast<kalign_int_t<T>>(kAlign::alignment<ALIGN, T>() - 1_usize);
+	}
+
+	// Value as integer
+	template<kalignable T>
+	[[nodiscard]]
+	constexpr auto kAlign::integer(const T value) noexcept -> kalign_int_t<T> {
+		if constexpr (std::is_pointer_v<T>) {
+			return std::bit_cast<igros_usize_t>(value);
+		} else {
+			return value;
+		}
+	}
+
+	// Integer as value
+	template<kalignable T>
+	[[nodiscard]]
+	constexpr auto kAlign::from(const kalign_int_t<T> value) noexcept -> T {
+		if constexpr (std::is_pointer_v<T>) {
+			return std::bit_cast<T>(value);
+		} else {
+			return value;
+		}
 	}
 
 
-	// Check pointer alignment
-	template<class T>
+	// Check alignment
+	template<igros_usize_t ALIGN, kalignable T>
+	requires (std::has_single_bit(ALIGN) || (0_usize == ALIGN))
 	[[nodiscard]]
-	constexpr auto kAlign::check(const T* const ptr, const igros_usize_t offset) noexcept -> bool {
-		// Address mask
-		const auto mask {kAlign::mask(offset)};
-		// Do check
-		return 0_usize == (std::bit_cast<igros_usize_t>(ptr) & mask);
+	constexpr auto kAlign::check(const T value) noexcept -> bool {
+		return 0 == (kAlign::integer(value) & kAlign::mask<ALIGN, T>());
 	}
 
-	// Align pointer up
-	template<class T>
+	// Align up
+	template<igros_usize_t ALIGN, kalignable T>
+	requires (std::has_single_bit(ALIGN) || (0_usize == ALIGN))
 	[[nodiscard]]
-	constexpr auto kAlign::up(const T* const ptr, const igros_usize_t offset) noexcept -> T* {
-		// Address mask
-		const auto mask {kAlign::mask(offset)};
-		// Do alignment
-		return std::bit_cast<T*>((std::bit_cast<igros_usize_t>(ptr) + mask) & ~mask);
+	constexpr auto kAlign::up(const T value) noexcept -> T {
+		constexpr auto MASK {kAlign::mask<ALIGN, T>()};
+		return kAlign::from<T>(static_cast<kalign_int_t<T>>((kAlign::integer(value) + MASK) & ~MASK));
 	}
 
-	// Align pointer down
-	template<class T>
+	// Align down
+	template<igros_usize_t ALIGN, kalignable T>
+	requires (std::has_single_bit(ALIGN) || (0_usize == ALIGN))
 	[[nodiscard]]
-	constexpr auto kAlign::down(const T* const ptr, const igros_usize_t offset) noexcept -> T* {
-		// Address mask
-		const auto mask {kAlign::mask(offset)};
-		// Do alignment
-		return std::bit_cast<T*>((std::bit_cast<igros_usize_t>(ptr) - mask) & ~mask);
+	constexpr auto kAlign::down(const T value) noexcept -> T {
+		constexpr auto MASK {kAlign::mask<ALIGN, T>()};
+		return kAlign::from<T>(static_cast<kalign_int_t<T>>(kAlign::integer(value) & ~MASK));
 	}
 
 

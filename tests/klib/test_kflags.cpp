@@ -54,6 +54,15 @@ int main() {
 	IGROS_CHECK(flags.test(2));
 	IGROS_CHECK(!flags.test(31));
 
+	// Comparison with enum (!= rewritten from ==) and assignment from enum
+	auto mutableFlags {make_kflags<flags_t>(flags_t::A)};
+	IGROS_CHECK(mutableFlags == flags_t::A);
+	IGROS_CHECK(mutableFlags != flags_t::B);
+	mutableFlags = flags_t::C;
+	IGROS_CHECK(0x04 == mutableFlags.value());
+	IGROS_CHECK((~mutableFlags).isSet(flags_t::AB));
+	IGROS_CHECK((mutableFlags ^ flags_t::C).isEmpty());
+
 	// Compile time
 	static_assert(make_kflags<flags_t>(flags_t::B).isSet(flags_t::B));
 	static_assert(!make_kflags<flags_t>(flags_t::B).isSet(flags_t::AB));

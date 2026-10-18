@@ -14,6 +14,7 @@
 // C++
 #include <cstring>
 #include <deque>
+#include <span>
 #include <string>
 #include <vector>
 // IgrOS-Kernel arch
@@ -120,7 +121,7 @@ static void testWrite() {
 	IGROS_CHECK(6 == serialWrite("ab\ncd\n"));
 	IGROS_CHECK("ab\r\ncd\r\n" == transmitted());
 	resetUART();
-	IGROS_CHECK(3 == serialWrite("xyz", 3));
+	IGROS_CHECK(3 == serialWrite(std::string_view {"xyz"}));
 	IGROS_CHECK("xyz" == transmitted());
 	// Transmitter busy
 	resetUART();
@@ -136,12 +137,12 @@ static void testRead() {
 	resetUART();
 	IGROS_CHECK(!serialReadyRead(SERIAL_PORT::COM1));
 	char buffer[8] {};
-	IGROS_CHECK(0 == serialRead(SERIAL_PORT::COM1, buffer, sizeof(buffer)));
+	IGROS_CHECK(0 == serialRead(SERIAL_PORT::COM1, buffer));
 	rxQueue = {'h', 'e', 'l', 'l', 'o'};
 	IGROS_CHECK(serialReadyRead(SERIAL_PORT::COM1));
-	IGROS_CHECK(3 == serialRead(SERIAL_PORT::COM1, buffer, 3));
+	IGROS_CHECK(3 == serialRead(SERIAL_PORT::COM1, std::span {buffer}.first(3)));
 	IGROS_CHECK(0 == std::memcmp(buffer, "hel", 3));
-	IGROS_CHECK(2 == serialRead(SERIAL_PORT::COM1, buffer, sizeof(buffer)));
+	IGROS_CHECK(2 == serialRead(SERIAL_PORT::COM1, buffer));
 	IGROS_CHECK(0 == std::memcmp(buffer, "lo", 2));
 }
 

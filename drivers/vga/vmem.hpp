@@ -16,6 +16,7 @@
 
 // C++
 #include <bit>
+#include <string_view>
 // IgrOS-Kernel arch
 #include <arch/types.hpp>
 
@@ -93,7 +94,7 @@ namespace igros::arch {
 	// Write string to VGA memory
 	void	vmemWrite(const char* const message) noexcept;
 	// Write fixed-width string to VGA memory
-	void	vmemWrite(const char* const message, const igros_usize_t size) noexcept;
+	void	vmemWrite(const std::string_view message) noexcept;
 
 	// Clear VGA console
 	void	vmemClear() noexcept;

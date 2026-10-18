@@ -13,6 +13,7 @@
 
 // C++
 #include <bit>
+#include <span>
 // IgrOS-Kernel arch x86
 #include <arch/x86/cr.hpp>
 #include <arch/x86/exceptions.hpp>
@@ -20,6 +21,7 @@
 #include <arch/x86/native.hpp>
 #include <arch/x86/paging.hpp>
 // IgrOS-Kernel library
+#include <klib/kAlign.hpp>
 #include <klib/kmemory.hpp>
 #include <klib/kprint.hpp>
 // IgrOS-Kernel platform
@@ -70,7 +72,7 @@ namespace igros::x86 {
 				if (0_u64 == page) [[unlikely]] {
 					return nullptr;
 				}
-				klib::kmemset(paging::table(page), ENTRIES, entry_t {0});
+				klib::kmemset(std::span {paging::table(page), ENTRIES}, entry_t {0});
 				// Access rights are checked on every level: keep upper levels permissive
 				next = static_cast<entry_t>(page) | flag(FLAGS::PRESENT) | flag(FLAGS::WRITABLE) | (user ? flag(FLAGS::USER) : 0_usize);
 			} else if (0_usize != (next & flag(FLAGS::HUGE))) {
@@ -89,7 +91,7 @@ namespace igros::x86 {
 	[[nodiscard]]
 	auto paging::map(const mem::phys_t top, const mem::phys_t phys, const void* const virt, const klib::kFlags<FLAGS> flags) noexcept -> bool {
 		// Page aligned addresses only
-		if ((0_u64 != (phys & (PAGE_SIZE - 1_usize))) || (0_usize != (std::bit_cast<igros_usize_t>(virt) & (PAGE_SIZE - 1_usize)))) [[unlikely]] {
+		if (!klib::kAlign::check<PAGE_SIZE>(phys) || !klib::kAlign::check<PAGE_SIZE>(virt)) [[unlikely]] {
 			return false;
 		}
 		// Physical address must fit into entry
@@ -161,7 +163,7 @@ namespace igros::x86 {
 			klib::kprintf("Paging:\t\tFAILED (no memory for page tables)");
 			return;
 		}
-		klib::kmemset(paging::table(top), ENTRIES, entry_t {0});
+		klib::kmemset(std::span {paging::table(top), ENTRIES}, entry_t {0});
 
 		// Low memory: at kernel offset (kernel, page tables, VGA) and identity (boot data);
 		// identity null page stays unmapped to catch null pointer dereference

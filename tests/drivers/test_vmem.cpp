@@ -112,7 +112,7 @@ static void testWrite() {
 	IGROS_CHECK(row(0, "Zi      y"));
 	IGROS_CHECK(VIDEO_MEM_WIDTH == cursorWritten());
 	// Non-printable characters are ignored
-	vmemWrite("\x01", 1);
+	vmemWrite(std::string_view {"\x01", 1});
 	IGROS_CHECK(VIDEO_MEM_WIDTH == cursorWritten());
 	// Backspace at line start goes to previous line end
 	vmemWrite('\b');
