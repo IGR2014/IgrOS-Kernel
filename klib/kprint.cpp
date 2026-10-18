@@ -104,8 +104,15 @@ namespace igros::klib {
 					break;
 				// Convert size to string
 				case argType_t::SIZE:
-					// Print signed or unsigned 64-bit value and get length of resulting string
+					// Print signed (ptrdiff_t) or unsigned (size_t) value and get length of resulting string
 					length = kstrlen(
+						sign ?
+						kitoa(
+							number.data(),
+							number.size(),
+							va_arg(list, igros_ssize_t),
+							radix
+						) :
 						kitoa(
 							number.data(),
 							number.size(),
