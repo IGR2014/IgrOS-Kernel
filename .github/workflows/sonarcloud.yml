@@ -62,8 +62,16 @@ jobs:
           cmake --build "build/tests-${arch}" --parallel
           ctest --test-dir "build/tests-${arch}" --output-on-failure --no-tests=error
         done
-        gcovr --root . --filter 'klib/' --filter 'mem/' --filter 'multiboot/' --sonarqube build/coverage.xml build/tests-i386 build/tests-x86_64
+        gcovr --root . --filter 'klib/' --filter 'mem/' --filter 'multiboot/' --sonarqube build/coverage.xml --cobertura build/cobertura.xml build/tests-i386 build/tests-x86_64
         gcovr --root . --filter 'klib/' --filter 'mem/' --filter 'multiboot/' build/tests-i386 build/tests-x86_64
+
+    # Codacy coverage upload
+    - name: 'Codacy Coverage'
+      # Third-party action gets CODACY_PROJECT_TOKEN: pinned to commit (v1.3.0)
+      uses: codacy/codacy-coverage-reporter-action@89d6c85cfafaec52c72b6c5e8b2878d33104c699
+      with:
+        project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+        coverage-reports: build/cobertura.xml
 
     # SonarCloud analysis
     - name: 'SonarCloud Analysis'
