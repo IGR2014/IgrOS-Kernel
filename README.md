@@ -92,7 +92,7 @@ docker compose up kernel_x86_64_clang_build   # also: kernel_i386_clang_build, k
 
 ## Testing
 
-- **Unit tests** – host-compiled tests of kernel libraries (`klib`, `mem`) for both architectures' code paths, in [`tests/`](./tests):
+- **Unit tests** – host-compiled tests of kernel library, memory, interrupts, paging, drivers and multiboot code for both architectures' code paths, in [`tests/`](./tests). Assembly functions (port I/O, control registers, CPU halt) are replaced with fake hardware ([`tests/hw.hpp`](./tests/hw.hpp)):
   ```sh
   cmake -S tests -B build/tests -G Ninja -DIGROS_TEST_ARCH=x86_64 [-DIGROS_TESTS_COVERAGE=ON]
   cmake --build build/tests

@@ -62,8 +62,8 @@ jobs:
           cmake --build "build/tests-${arch}" --parallel
           ctest --test-dir "build/tests-${arch}" --output-on-failure --no-tests=error
         done
-        gcovr --root . --filter 'klib/' --filter 'mem/' --filter 'multiboot/' --sonarqube build/coverage.xml --cobertura build/cobertura.xml build/tests-i386 build/tests-x86_64
-        gcovr --root . --filter 'klib/' --filter 'mem/' --filter 'multiboot/' build/tests-i386 build/tests-x86_64
+        gcovr --root . --exclude 'tests/' --sonarqube build/coverage.xml --cobertura build/cobertura.xml build/tests-i386 build/tests-x86_64
+        gcovr --root . --exclude 'tests/' build/tests-i386 build/tests-x86_64
 
     # Codacy coverage upload
     - name: 'Codacy Coverage'

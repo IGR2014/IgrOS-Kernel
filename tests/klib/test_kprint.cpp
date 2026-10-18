@@ -17,7 +17,7 @@
 // IgrOS-Kernel library
 #include <klib/kprint.hpp>
 // Tests
-#include <tests/test.hpp>
+#include <tests/hw.hpp>
 
 
 // Format into buffer of given size, check result and that nothing was written past it
@@ -74,6 +74,35 @@ int main() {
 
 	// Unterminated placeholder at format end
 	checkFormat(64, "tail", "tail%");
+
+	// Short and byte sizes (arguments promoted to int)
+	checkFormat(64, "-1|65535|abcd", "%hd|%hu|%hx", -1, 0xFFFF, 0x1234ABCD);
+	checkFormat(64, "-128|44|cd", "%hhd|%hhu|%hhx", 0x80, 300, 0x1234ABCD);
+
+	// Other conversions
+	checkFormat(64, "10|-5|4294967295", "%o|%i|%u", 8, -5, 0xFFFFFFFFu);
+	checkFormat(64, "d=-3 l=7", "d=%td l=%lu", static_cast<std::ptrdiff_t>(-3), 7UL);
+	checkFormat(64, "-42|42", "%zd|%zu", static_cast<std::ptrdiff_t>(-42), static_cast<std::size_t>(42));
+	checkFormat(64, "a?b", "a%qb");
+
+	// Pointer: zero-padded hex of pointer width
+	char pointer[32];
+	std::snprintf(pointer, sizeof(pointer), "%0*zx", static_cast<int>(sizeof(void*) * 2), static_cast<std::size_t>(0x1234));
+	checkFormat(64, pointer, "%p", reinterpret_cast<void*>(0x1234));
+
+	// Invalid arguments: nothing written
+	char untouched[4] {'X', 'X', 'X', 'X'};
+	igros::klib::ksnprintf(nullptr, 4, "%d", 1);
+	igros::klib::ksnprintf(untouched, 0, "%d", 1);
+	igros::klib::ksnprintf(untouched, sizeof(untouched), nullptr);
+	IGROS_CHECK(0 == std::memcmp(untouched, "XXXX", 4));
+
+	// Kernel printf: line to console, interrupts state restored
+	igros::test::hw::reset();
+	igros::test::hw::irqEnabled = true;
+	igros::klib::kprintf("x=%d", 5);
+	IGROS_CHECK("x=5\n" == igros::test::hw::console);
+	IGROS_CHECK(igros::test::hw::irqEnabled);
 
 	return igros::test::result();
 
