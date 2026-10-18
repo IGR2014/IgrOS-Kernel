@@ -75,12 +75,12 @@ jobs:
             ld.lld --version
         displayName: 'Install Clang'
 
-      # Restore Build Cache
+      # Restore Build Cache (CMakeCache.txt holds absolute paths: key on sources directory)
       - task: Cache@2
         inputs:
-          key: '"build" | "$(compiler)" | "$(arch)" | $(Build.SourceVersion)'
+          key: '"build" | "$(compiler)" | "$(arch)" | "$(Build.SourcesDirectory)" | $(Build.SourceVersion)'
           restoreKeys: |
-            "build" | "$(compiler)" | "$(arch)"
+            "build" | "$(compiler)" | "$(arch)" | "$(Build.SourcesDirectory)"
           path: $(IGROS_DIR_BUILD)
         displayName: 'Restore Build Cache'
 
