@@ -19,7 +19,7 @@
 // IgrOS-Kernel arch platform
 #include <platform/platform.hpp>
 // IgrOS-Kernel klib
-#include <klib/kprint.hpp>
+#include <klib/kPrint.hpp>
 #include <klib/kVersion.hpp>
 // IgrOS-Kernel multiboot
 #include <multiboot/multiboot.hpp>

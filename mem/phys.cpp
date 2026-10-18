@@ -20,7 +20,7 @@
 #include <span>
 // IgrOS-Kernel library
 #include <klib/kAlign.hpp>
-#include <klib/kstring.hpp>
+#include <klib/kString.hpp>
 // IgrOS-Kernel memory
 #include <mem/phys.hpp>
 // IgrOS-Kernel platform

@@ -14,7 +14,7 @@
 // C++
 #include <cstring>
 // IgrOS-Kernel library
-#include <klib/kstring.hpp>
+#include <klib/kString.hpp>
 // Tests
 #include <tests/test.hpp>
 

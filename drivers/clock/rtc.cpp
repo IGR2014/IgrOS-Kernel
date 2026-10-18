@@ -16,7 +16,7 @@
 // IgrOS-Kernel drivers
 #include <drivers/clock/rtc.hpp>
 // IgrOS-Kernel library
-#include <klib/kprint.hpp>
+#include <klib/kPrint.hpp>
 
 
 // Arch-dependent code zone

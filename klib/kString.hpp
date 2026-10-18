@@ -2,7 +2,7 @@
 //
 //	Kernel string functions
 //
-//	File:	kstring.hpp
+//	File:	kString.hpp
 //	Date:	16 Dec 2022
 //
 //	Copyright (c) 2017 - 2026, Igor Baklykov

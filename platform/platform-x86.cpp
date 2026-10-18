@@ -41,7 +41,7 @@
 #include <drivers/uart/serial.hpp>
 #include <drivers/vga/vmem.hpp>
 // IgrOS-Kernel library
-#include <klib/kprint.hpp>
+#include <klib/kPrint.hpp>
 // IgrOS-Kernel platform
 #include <platform/platform.hpp>
 

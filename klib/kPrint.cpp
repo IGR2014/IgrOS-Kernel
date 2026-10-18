@@ -2,7 +2,7 @@
 //
 //	Kernel text print functions
 //
-//	File:	kprint.cpp
+//	File:	kPrint.cpp
 //	Date:	22 Dec 2023
 //
 //	Copyright (c) 2017 - 2026, Igor Baklykov
@@ -26,8 +26,8 @@
 #include <drivers/uart/serial.hpp>
 #include <drivers/vga/vmem.hpp>
 // IgrOS-Kernel library
-#include <klib/kprint.hpp>
-#include <klib/kstring.hpp>
+#include <klib/kPrint.hpp>
+#include <klib/kString.hpp>
 
 
 // Kernel library code zone

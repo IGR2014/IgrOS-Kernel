@@ -2,7 +2,7 @@
 //
 //	Kernel memory functions
 //
-//	File:	kmemory.hpp
+//	File:	kMemory.hpp
 //	Date:	21 Mar 2023
 //
 //	Copyright (c) 2017 - 2026, Igor Baklykov

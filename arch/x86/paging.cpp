@@ -22,8 +22,8 @@
 #include <arch/x86/paging.hpp>
 // IgrOS-Kernel library
 #include <klib/kAlign.hpp>
-#include <klib/kmemory.hpp>
-#include <klib/kprint.hpp>
+#include <klib/kMemory.hpp>
+#include <klib/kPrint.hpp>
 // IgrOS-Kernel platform
 #include <platform/platform.hpp>
 

@@ -16,7 +16,7 @@
 #include <cstring>
 #include <span>
 // IgrOS-Kernel library
-#include <klib/kprint.hpp>
+#include <klib/kPrint.hpp>
 // Tests
 #include <tests/hw.hpp>
 

@@ -19,7 +19,7 @@
 // IgrOS-Kernel drivers
 #include <drivers/input/keyboard.hpp>
 // IgrOS-Kernel library
-#include <klib/kprint.hpp>
+#include <klib/kPrint.hpp>
 
 
 // Arch-dependent code zone

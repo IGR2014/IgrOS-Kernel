@@ -168,9 +168,9 @@ function(igros_test NAME SOURCE)
 endfunction()
 
 # Kernel library
-igros_test(kprint	klib/test_kprint.cpp	klib/kprint.cpp klib/kmemory.cpp)
+igros_test(kprint	klib/test_kprint.cpp	klib/kPrint.cpp klib/kMemory.cpp)
 igros_test(kstring	klib/test_kstring.cpp)
-igros_test(kmemory	klib/test_kmemory.cpp	klib/kmemory.cpp)
+igros_test(kmemory	klib/test_kmemory.cpp	klib/kMemory.cpp)
 igros_test(kmath	klib/test_kmath.cpp)
 igros_test(kflags	klib/test_kflags.cpp)
 igros_test(kalign	klib/test_kalign.cpp)
@@ -187,20 +187,20 @@ igros_test(phys		mem/test_phys.cpp	mem/phys.cpp)
 
 # Architecture
 igros_test(irq		arch/test_irq.cpp	arch/x86/irq.cpp)
-igros_test(isr		arch/test_isr.cpp	arch/x86/isr.cpp arch/x86/irq.cpp arch/x86/exceptions.cpp klib/kprint.cpp klib/kmemory.cpp)
+igros_test(isr		arch/test_isr.cpp	arch/x86/isr.cpp arch/x86/irq.cpp arch/x86/exceptions.cpp klib/kPrint.cpp klib/kMemory.cpp)
 # Paging test emulates MMU with Linux shared memory and signals
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	igros_test(paging	arch/test_paging.cpp	arch/x86/paging.cpp mem/phys.cpp arch/x86/isr.cpp arch/x86/irq.cpp klib/kprint.cpp klib/kmemory.cpp)
+	igros_test(paging	arch/test_paging.cpp	arch/x86/paging.cpp mem/phys.cpp arch/x86/isr.cpp arch/x86/irq.cpp klib/kPrint.cpp klib/kMemory.cpp)
 endif()
 
 # Drivers
-igros_test(driver	drivers/test_driver.cpp	klib/kprint.cpp klib/kmemory.cpp)
-igros_test(vmem		drivers/test_vmem.cpp	drivers/vga/vmem.cpp klib/kmemory.cpp)
-igros_test(serial	drivers/test_serial.cpp	drivers/uart/serial.cpp arch/x86/isr.cpp arch/x86/irq.cpp klib/kprint.cpp klib/kmemory.cpp)
-igros_test(keyboard	drivers/test_keyboard.cpp	drivers/input/keyboard.cpp arch/x86/isr.cpp arch/x86/irq.cpp klib/kprint.cpp klib/kmemory.cpp)
-igros_test(pit		drivers/test_pit.cpp	drivers/clock/pit.cpp arch/x86/isr.cpp arch/x86/irq.cpp klib/kprint.cpp klib/kmemory.cpp)
-igros_test(rtc		drivers/test_rtc.cpp	drivers/clock/rtc.cpp klib/kprint.cpp klib/kmemory.cpp)
+igros_test(driver	drivers/test_driver.cpp	klib/kPrint.cpp klib/kMemory.cpp)
+igros_test(vmem		drivers/test_vmem.cpp	drivers/vga/vmem.cpp klib/kMemory.cpp)
+igros_test(serial	drivers/test_serial.cpp	drivers/uart/serial.cpp arch/x86/isr.cpp arch/x86/irq.cpp klib/kPrint.cpp klib/kMemory.cpp)
+igros_test(keyboard	drivers/test_keyboard.cpp	drivers/input/keyboard.cpp arch/x86/isr.cpp arch/x86/irq.cpp klib/kPrint.cpp klib/kMemory.cpp)
+igros_test(pit		drivers/test_pit.cpp	drivers/clock/pit.cpp arch/x86/isr.cpp arch/x86/irq.cpp klib/kPrint.cpp klib/kMemory.cpp)
+igros_test(rtc		drivers/test_rtc.cpp	drivers/clock/rtc.cpp klib/kPrint.cpp klib/kMemory.cpp)
 
 # Multiboot and platform
-igros_test(multiboot	multiboot/test_multiboot.cpp	multiboot/multiboot.cpp klib/kprint.cpp klib/kmemory.cpp)
+igros_test(multiboot	multiboot/test_multiboot.cpp	multiboot/multiboot.cpp klib/kPrint.cpp klib/kMemory.cpp)
 igros_test(platform	platform/test_platform.cpp)

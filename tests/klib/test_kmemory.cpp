@@ -16,7 +16,7 @@
 #include <cstdint>
 #include <span>
 // IgrOS-Kernel library
-#include <klib/kmemory.hpp>
+#include <klib/kMemory.hpp>
 // Tests
 #include <tests/test.hpp>
 

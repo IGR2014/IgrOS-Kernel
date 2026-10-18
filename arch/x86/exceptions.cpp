@@ -16,7 +16,7 @@
 #include <arch/x86/irq.hpp>
 #include <arch/x86/native.hpp>
 // IgrOS-Kernel library
-#include <klib/kprint.hpp>
+#include <klib/kPrint.hpp>
 
 
 // x86 namespace

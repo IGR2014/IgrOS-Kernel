@@ -21,8 +21,8 @@
 // IgrOS-Kernel drivers
 #include <drivers/vga/vmem.hpp>
 // IgrOS-Kernel library
-#include <klib/kmemory.hpp>
-#include <klib/kstring.hpp>
+#include <klib/kMemory.hpp>
+#include <klib/kString.hpp>
 // IgrOS-Kernel platform
 #include <platform/platform.hpp>
 

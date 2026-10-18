@@ -19,8 +19,8 @@
 // IgrOS-Kernel drivers
 #include <drivers/clock/pit.hpp>
 // IgrOS-Kernel library
-#include <klib/kmath.hpp>
-#include <klib/kprint.hpp>
+#include <klib/kMath.hpp>
+#include <klib/kPrint.hpp>
 
 
 // Arch-dependent code zone
@@ -97,7 +97,7 @@ namespace igros::arch {
 			const auto elapsed	{pitGetTicks()};
 			const auto res		{klib::kdivmod(elapsed, PIT_MAIN_FREQUENCY)};
 			// Remainder is in PIT ticks (< PIT_MAIN_FREQUENCY, so * 1000 fits 32 bits)
-			const auto milliseconds	{static_cast<igros_dword_t>(res.reminder) * 1000_u32 / PIT_MAIN_FREQUENCY};
+			const auto milliseconds	{static_cast<igros_dword_t>(res.remainder) * 1000_u32 / PIT_MAIN_FREQUENCY};
 			const auto seconds	{static_cast<igros_dword_t>(res.quotient)};
 			const auto minutes	{seconds / 60_u32};
 			const auto hours	{minutes / 60_u32};

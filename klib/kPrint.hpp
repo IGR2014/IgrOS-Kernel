@@ -2,7 +2,7 @@
 //
 //	Kernel text print functions
 //
-//	File:	kprint.hpp
+//	File:	kPrint.hpp
 //	Date:	17 Mar 2023
 //
 //	Copyright (c) 2017 - 2026, Igor Baklykov
@@ -29,7 +29,7 @@
 // IgrOS-Kernel arch
 #include <arch/types.hpp>
 // IgrOS-Kernel library
-#include <klib/kmath.hpp>
+#include <klib/kMath.hpp>
 
 
 // Kernel library code zone
@@ -77,7 +77,7 @@ namespace igros::klib {
 			constexpr auto CHUNK_DIGITS	{9};
 			while (value > std::numeric_limits<igros_usize_t>::max()) {
 				const auto res	{kdivmod(value, CHUNK)};
-				auto chunk	{static_cast<igros_usize_t>(res.reminder)};
+				auto chunk	{static_cast<igros_usize_t>(res.remainder)};
 				for (auto i {0}; i < CHUNK_DIGITS; ++i) {
 					*--pos	= digits[chunk % 10U];
 					chunk	/= 10U;

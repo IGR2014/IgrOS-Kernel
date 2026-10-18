@@ -18,7 +18,7 @@
 #include <arch/register.hpp>
 #include <arch/types.hpp>
 // IgrOS-Kernel library
-#include <klib/kprint.hpp>
+#include <klib/kPrint.hpp>
 
 
 #ifdef	__cplusplus

@@ -19,8 +19,8 @@
 // IgrOS-Kernel drivers
 #include <drivers/uart/serial.hpp>
 // IgrOS-Kernel library
-#include <klib/kprint.hpp>
-#include <klib/kstring.hpp>
+#include <klib/kPrint.hpp>
+#include <klib/kString.hpp>
 
 
 // Arch-dependent code zone
