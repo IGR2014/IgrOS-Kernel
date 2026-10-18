@@ -139,8 +139,8 @@ The repository is mirrored on [GitHub][Link-Repo-GitHub], [GitLab][Link-Repo-Git
 [Badge-Arch-i386]: https://img.shields.io/static/v1?label=Arch&message=i386&color=lime&style=for-the-badge
 [Badge-Arch-x86_64]: https://img.shields.io/static/v1?label=Arch&message=x86_64&color=lime&style=for-the-badge
 [Badge-Azure-DevOps]: https://img.shields.io/azure-devops/build/prigoryan/1dea483f-6c7a-4efb-8631-5309fd3370ec/3/master?label=Azure%20Pipelines&style=for-the-badge&logo=data:image/svg%2Bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iI2ZmZiIgZD0iTTAgOC44NzdMMi4yNDcgNS45MWw4LjQwNS0zLjQxNlYuMDIybDcuMzcgNS4zOTNMMi45NjYgOC4zMzh2OC4yMjVMMCAxNS43MDd6bTI0LTQuNDV2MTQuNjUxbC01Ljc1MyA0LjktOS4zMDMtMy4wNTd2My4wNTZsLTUuOTc4LTcuNDE2IDE1LjA1NyAxLjc5OFY1LjQxNXoiLz48L3N2Zz4K
-[Badge-Codacy-Coverage]: https://img.shields.io/codacy/coverage/1a4425daf2a946448a3d9c915c25da71/master?label=Coverage&style=for-the-badge&logo=Codacy
-[Badge-Codacy-Quality]: https://img.shields.io/codacy/grade/1a4425daf2a946448a3d9c915c25da71/master?label=Code%20Quality&style=for-the-badge&logo=Codacy
+[Badge-Codacy-Coverage]: https://img.shields.io/codacy/coverage/42842492126743259fdcb9501dfd0eee/master?label=Coverage&style=for-the-badge&logo=Codacy
+[Badge-Codacy-Quality]: https://img.shields.io/codacy/grade/42842492126743259fdcb9501dfd0eee/master?label=Code%20Quality&style=for-the-badge&logo=Codacy
 [Badge-CPP]: https://img.shields.io/static/v1?label=Standard&message=C%2B%2B20&color=blue&style=for-the-badge&logo=C%2B%2B
 [Badge-GitHub]: https://img.shields.io/github/actions/workflow/status/IGR2014/IgrOS-Kernel/github-ci.yml?branch=master&label=GitHub%20Actions&style=for-the-badge&logo=GitHub
 [Badge-GitLab]: https://img.shields.io/gitlab/pipeline-status/IGR2014/IgrOS-Kernel?branch=master&label=GitLab%20CI&style=for-the-badge&logo=GitLab
