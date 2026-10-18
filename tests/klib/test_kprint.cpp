@@ -14,6 +14,7 @@
 // C++
 #include <cstdint>
 #include <cstring>
+#include <span>
 // IgrOS-Kernel library
 #include <klib/kprint.hpp>
 // Tests
@@ -89,6 +90,38 @@ int main() {
 	char pointer[32];
 	std::snprintf(pointer, sizeof(pointer), "%0*zx", static_cast<int>(sizeof(void*) * 2), static_cast<std::size_t>(0x1234));
 	checkFormat(64, pointer, "%p", reinterpret_cast<void*>(0x1234));
+
+	// Sign before zero padding, left-justify, uppercase hex
+	checkFormat(64, "-0042|42   |-7   |ff|FF", "%05d|%-5d|%-05d|%x|%X", -42, 42, -7, 255u, 255u);
+	// Width for strings and characters
+	checkFormat(64, "[   ab|ab   |  Z]", "[%5s|%-5s|%3c]", "ab", "ab", 'Z');
+	checkFormat(64, "[    ]", "[%4s]", static_cast<const char*>(nullptr));
+
+	// 64-bit decimals (split into 9-digit chunks on 32-bit CPU)
+	checkFormat(64, "4294967295|4294967296", "%llu|%llu", 4294967295ull, 4294967296ull);
+	checkFormat(64, "1000000000|10000000000000000000", "%llu|%llu", 1000000000ull, 10000000000000000000ull);
+	checkFormat(64, "123456789012345678|-1000000000000", "%llu|%lld", 123456789012345678ull, -1000000000000ll);
+	checkFormat(80, "1000000000000000000000000000000000000000000000000000000000000000", "%llb", 0x8000000000000000ull);
+	checkFormat(64, "1777777777777777777777", "%llo", 0xFFFFFFFFFFFFFFFFull);
+
+	// Written length returned (without terminator, clipped to buffer)
+	char lengthBuffer[8];
+	IGROS_CHECK(5 == igros::klib::ksnprintf(lengthBuffer, sizeof(lengthBuffer), "%d-%s", 42, "ab"));
+	IGROS_CHECK(7 == igros::klib::ksnprintf(lengthBuffer, sizeof(lengthBuffer), "%s", "1234567890"));
+	IGROS_CHECK(0 == igros::klib::ksnprintf(lengthBuffer, 0, "%d", 1));
+
+	// Integer to text: sign for decimal only, written only if it fits, no terminator
+	char number[8] {'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'};
+	igros::klib::kitoa(number, -123);
+	IGROS_CHECK(0 == std::memcmp(number, "-123XXXX", 8));
+	igros::klib::kitoa(number, static_cast<std::int8_t>(-1), igros::klib::radix_t::HEX);
+	IGROS_CHECK(0 == std::memcmp(number, "ff23XXXX", 8));
+	igros::klib::kitoa(std::span {number}.first(3), 12345);
+	IGROS_CHECK(0 == std::memcmp(number, "ff23XXXX", 8));
+	static_assert([] {
+		std::array<char, 8> digits {};
+		return igros::klib::kdigits(digits, 0xBEEFu, igros::klib::radix_t::HEX, true) == "BEEF";
+	}());
 
 	// Invalid arguments: nothing written
 	char untouched[4] {'X', 'X', 'X', 'X'};

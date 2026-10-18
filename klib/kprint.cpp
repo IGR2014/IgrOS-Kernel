@@ -5,7 +5,7 @@
 //	File:	kprint.cpp
 //	Date:	22 Dec 2023
 //
-//	Copyright (c) 2017 - 2022, Igor Baklykov
+//	Copyright (c) 2017 - 2026, Igor Baklykov
 //	All rights reserved.
 //
 //
@@ -14,8 +14,11 @@
 // C++
 #include <algorithm>
 #include <array>
+#include <bit>
 #include <cstdarg>
-#include <span>
+#include <limits>
+#include <string_view>
+#include <type_traits>
 #include <utility>
 // IgrOS-Kernel arch
 #include <arch/irq.hpp>
@@ -25,387 +28,295 @@
 // IgrOS-Kernel library
 #include <klib/kprint.hpp>
 #include <klib/kstring.hpp>
-#include <klib/kmemory.hpp>
 
 
 // Kernel library code zone
 namespace igros::klib {
 
 
+	// Format implementation details
+	namespace {
+
+
+		// Argument size (length modifier)
+		enum class argSize_t : igros_byte_t {
+			BYTE,		// hh
+			WORD,		// h
+			DWORD,		// (none)
+			QUAD,		// ll (l on 64-bit)
+			SIZE		// z, t
+		};
+
+		// Conversion specification
+		struct spec_t {
+			igros_usize_t	width	{0_usize};		// Minimal field width
+			argSize_t	size	{argSize_t::DWORD};	// Argument size
+			bool		zero	{false};		// Pad numbers with '0' (after sign)
+			bool		left	{false};		// Left-justify (pad with spaces after text)
+		};
+
+
+		// Output buffer writer: never writes past last position (reserved for terminator)
+		class writer_t final {
+
+			char*		mPos;		// Current position
+			char* const	mEnd;		// Terminator position
+
+		public:
+
+			// Writer for buffer of given size (at least 1)
+			writer_t(char* const buffer, const igros_usize_t size) noexcept :
+				mPos	{buffer},
+				mEnd	{buffer + size - 1_usize} {}
+
+			// No space left
+			[[nodiscard]]
+			auto	isFull() const noexcept -> bool {
+				return mPos >= mEnd;
+			}
+
+			// Character
+			void	put(const char symbol) noexcept {
+				if (!isFull()) [[likely]] {
+					*mPos++ = symbol;
+				}
+			}
+
+			// Text (clipped; no substr: it may throw)
+			void	put(const std::string_view text) noexcept {
+				mPos = std::ranges::copy_n(text.data(), static_cast<std::ptrdiff_t>(std::min(text.size(), space())), mPos).out;
+			}
+
+			// Repeated character (clipped)
+			void	fill(const char symbol, const igros_usize_t count) noexcept {
+				mPos = std::ranges::fill_n(mPos, static_cast<std::ptrdiff_t>(std::min(count, space())), symbol);
+			}
+
+			// Prefix (sign) and text padded to field width
+			void	padded(const std::string_view prefix, const std::string_view text, const spec_t &spec) noexcept {
+				const auto length	{prefix.size() + text.size()};
+				const auto padding	{(spec.width > length) ? (spec.width - length) : 0_usize};
+				if (spec.left) {
+					put(prefix);
+					put(text);
+					fill(' ', padding);
+				} else if (spec.zero) {
+					put(prefix);
+					fill('0', padding);
+					put(text);
+				} else {
+					fill(' ', padding);
+					put(prefix);
+					put(text);
+				}
+			}
+
+			// Terminate, return written length
+			auto	finish(const char* const buffer) noexcept -> igros_usize_t {
+				*mPos = '\0';
+				return static_cast<igros_usize_t>(mPos - buffer);
+			}
+
+		private:
+
+			// Space left
+			[[nodiscard]]
+			auto	space() const noexcept -> igros_usize_t {
+				return static_cast<igros_usize_t>(mEnd - mPos);
+			}
+
+		};
+
+
+		// Integer with sign (signed types, decimal only) and padding
+		template<std::integral T>
+		void putInteger(writer_t &out, const T value, const radix_t radix, const spec_t &spec, const bool upper = false) noexcept {
+			using U = std::make_unsigned_t<T>;
+			// Sign (compile time views: no strlen at run time)
+			constexpr auto MINUS	{std::string_view {"-"}};
+			constexpr auto NONE	{std::string_view {}};
+			const auto isNegative	{std::cmp_less(value, static_cast<T>(0))};
+			const auto magnitude	{isNegative ? static_cast<U>(static_cast<U>(0) - static_cast<U>(value)) : static_cast<U>(value)};
+			auto digits		{std::array<char, std::numeric_limits<U>::digits> {}};
+			out.padded(isNegative ? MINUS : NONE, kdigits(digits, magnitude, radix, upper), spec);
+		}
+
+		// Integer argument of given size: signed or unsigned
+		void putArgument(writer_t &out, std::va_list &list, const radix_t radix, const spec_t &spec, const bool isSigned, const bool upper) noexcept {
+			// Smaller than int arguments are promoted to int
+			switch (spec.size) {
+				case argSize_t::BYTE:
+					isSigned ?
+						putInteger(out, static_cast<igros_sbyte_t>(va_arg(list, igros_sdword_t)), radix, spec, upper) :
+						putInteger(out, static_cast<igros_byte_t>(va_arg(list, igros_dword_t)), radix, spec, upper);
+					break;
+				case argSize_t::WORD:
+					isSigned ?
+						putInteger(out, static_cast<igros_sword_t>(va_arg(list, igros_sdword_t)), radix, spec, upper) :
+						putInteger(out, static_cast<igros_word_t>(va_arg(list, igros_dword_t)), radix, spec, upper);
+					break;
+				case argSize_t::DWORD:
+					isSigned ?
+						putInteger(out, va_arg(list, igros_sdword_t), radix, spec, upper) :
+						putInteger(out, va_arg(list, igros_dword_t), radix, spec, upper);
+					break;
+				case argSize_t::QUAD:
+					isSigned ?
+						putInteger(out, va_arg(list, igros_squad_t), radix, spec, upper) :
+						putInteger(out, va_arg(list, igros_quad_t), radix, spec, upper);
+					break;
+				case argSize_t::SIZE:
+					isSigned ?
+						putInteger(out, va_arg(list, igros_ssize_t), radix, spec, upper) :
+						putInteger(out, va_arg(list, igros_usize_t), radix, spec, upper);
+					break;
+			}
+		}
+
+
+	}	// namespace
+
+
 	// Kernel vsnprintf function
-	void kvsnprintf(char* const buffer, const igros_usize_t size, const char* const format, std::va_list list) noexcept {
+	auto kvsnprintf(char* const buffer, const igros_usize_t size, const char* const format, std::va_list list) noexcept -> igros_usize_t {
 
 		// Error checks
 		if ((nullptr == buffer) || (0_usize == size) || (nullptr == format)) [[unlikely]] {
-			return;
+			return 0_usize;
 		}
 
-		// Zero-initialize
-		kmemset(std::span {buffer, size}, '\0');
+		// Output
+		auto out {writer_t {buffer, size}};
+		// Local copy of arguments (parameter may be decayed array, it can't be passed by reference)
+		std::va_list args;
+		va_copy(args, list);
 
-		// Foramt string iterator
-		auto fmtIterator	{0_usize};
-		// Resulting string iterator
-		auto strIterator	{buffer};
-		// Last usable position (reserved for null terminator)
-		const auto strEnd	{buffer + size - 1_usize};
+		// Format string position (stops when output is full: remaining arguments are not needed)
+		for (auto fmt {format}; ('\0' != *fmt) && !out.isFull(); ++fmt) {
 
-		// String pointer holder
-		auto str		{static_cast<const char*>(nullptr)};
-
-		// Space left in resulting string
-		const auto spaceLeft = [strEnd](const char* const pos) noexcept -> igros_usize_t {
-			return static_cast<igros_usize_t>(strEnd - pos);
-		};
-
-		// Preceding char fill lambda
-		const auto fillPreceding = [&spaceLeft](auto &str, const auto len, const auto width, const auto fill) noexcept {
-			// Check if value should be extended with fillChar
-			if (std::cmp_less(len, width)) [[likely]] {
-				// Calc remaining length (never past buffer end)
-				auto sz {std::min(static_cast<igros_usize_t>(width - len), spaceLeft(str))};
-				// Copy string
-				kmemset(std::span {str, sz}, static_cast<char>(fill));
-				// Move iterator to string's end
-				str += sz;
+			// Plain character
+			if ('%' != *fmt) [[likely]] {
+				out.put(*fmt);
+				continue;
 			}
-		};
 
-		// Argument type enumeration
-		enum class argType_t : igros_byte_t {
-			BYTE	= 0x01_u8,
-			WORD	= 0x02_u8,
-			DWORD	= 0x04_u8,
-			QUAD	= 0x08_u8,
-			SIZE	= 0x10_u8,
-			PNTR	= 0x80_u8
-		};
+			// Flags
+			auto spec {spec_t {}};
+			for (;; ++fmt) {
+				if ('0' == fmt[1]) {
+					spec.zero = true;
+				} else if ('-' == fmt[1]) {
+					spec.left = true;
+				} else {
+					break;
+				}
+			}
 
-		// Integer print lambda
-		auto printInteger = [&list, &fillPreceding, &spaceLeft](auto &str, const auto radix, const auto type, const auto width, const auto fill, const auto sign) noexcept {
-			// Default temporary buffer for kitoa
-			constexpr auto KITOA_BUFF_LEN {65_usize};
-			// Number holder
-			auto number {std::array<char, KITOA_BUFF_LEN> {}};
-			// Output length
-			auto length {0_usize};
-			// Check argument size specifier
-			switch (type) {
-				// Convert size to string
-				case argType_t::PNTR:
-					// Print signed or unsigned 64-bit value and get length of resulting string
-					length = kstrlen(
-						kptoa(
-							number,
-							va_arg(list, igros_pointer_t)
-						)
-					);
-					// Done
+			// Field width (any number of digits)
+			for (; ('0' <= fmt[1]) && ('9' >= fmt[1]); ++fmt) {
+				spec.width = spec.width * 10_usize + static_cast<igros_usize_t>(fmt[1] - '0');
+			}
+
+			// Length modifier
+			switch (fmt[1]) {
+				case 'h':
+					spec.size = ('h' == fmt[2]) ? argSize_t::BYTE : argSize_t::WORD;
+					fmt += (argSize_t::BYTE == spec.size) ? 2 : 1;
 					break;
-				// Convert size to string
-				case argType_t::SIZE:
-					// Print signed (ptrdiff_t) or unsigned (size_t) value and get length of resulting string
-					length = kstrlen(
-						sign ?
-						kitoa(
-							number,
-							va_arg(list, igros_ssize_t),
-							radix
-						) :
-						kitoa(
-							number,
-							va_arg(list, igros_usize_t),
-							radix
-						)
-					);
-					// Done
+				case 'l':
+					// Long is 32 bits on i386, 64 bits on x86_64
+					spec.size = (('l' == fmt[2]) || (sizeof(long) == sizeof(igros_quad_t))) ? argSize_t::QUAD : argSize_t::DWORD;
+					fmt += ('l' == fmt[2]) ? 2 : 1;
 					break;
-				// Convert quad word to string
-				case argType_t::QUAD:
-					// Print signed or unsigned 64-bit value and get length of resulting string
-					length = kstrlen(
-						sign ?
-						kitoa(
-							number,
-							va_arg(list, igros_squad_t),
-							radix
-						) :
-						kitoa(
-							number,
-							va_arg(list, igros_quad_t),
-							radix
-						)
-					);
-					// Done
+				case 'z':
+				case 't':
+					spec.size = argSize_t::SIZE;
+					++fmt;
 					break;
-				// Convert double word to string
-				case argType_t::DWORD:
-					// Print signed or unsigned 32-bit value and get length of resulting string
-					length = kstrlen(
-						sign ?
-						kitoa(
-							number,
-							va_arg(list, igros_sdword_t),
-							radix
-						) :
-						kitoa(
-							number,
-							va_arg(list, igros_dword_t),
-							radix
-						)
-					);
-					// Done
-					break;
-				// Convert word to string
-				case argType_t::WORD:
-					// Print signed or unsigned 16-bit value and get length of resulting string
-					length = kstrlen(
-						sign ?
-						kitoa(
-							number,
-							static_cast<igros_sword_t>(va_arg(list, igros_sdword_t)),
-							radix
-						) :
-						kitoa(
-							number,
-							static_cast<igros_word_t>(va_arg(list, igros_dword_t)),
-							radix
-						)
-					);
-					// Done
-					break;
-				// Convert byte to string
-				case argType_t::BYTE:
-					// Print signed or unsigned 8-bit value and get length of resulting string
-					length = kstrlen(
-						sign ?
-						kitoa(
-							number,
-							static_cast<igros_sbyte_t>(va_arg(list, igros_sdword_t)),
-							radix
-						) :
-						kitoa(
-							number,
-							static_cast<igros_byte_t>(va_arg(list, igros_dword_t)),
-							radix
-						)
-					);
-					// Done
-					break;
-				// Unknown
 				default:
-					// Done
 					break;
 			}
-			// Fill with preceding symbols
-			fillPreceding(str, length, width, fill);
-			// Never copy past buffer end
-			length = std::min(length, spaceLeft(str));
-			// Copy string
-			kstrcpy(str, number.data(), length);
-			// Move iterator to string's end
-			str += length;
-		};
 
-		// Iterate through format string
-		while (
-			(strIterator < strEnd)	&&
-			('\0' != format[fmtIterator])
-		) {
+			// Unterminated placeholder at format end
+			if ('\0' == fmt[1]) [[unlikely]] {
+				break;
+			}
 
-			// If symbol is not placeholder symbol '%'
-			if ('%' != format[fmtIterator]) {
-				// Copy string till the next placeholder symbol '%'
-				*(strIterator++) = format[fmtIterator++];
-			// Placeholder symbol '%' received
-			} else {
-
-				// Fill character
-				auto fillChar	{' '};
-				auto fillWidth	{0_usize};
-				// Check format fill char
-				if ('0' == format[fmtIterator + 1_usize]) {
-					// Set fillchar to '0'
-					fillChar = '0';
-					// Adjust format iterator
-					++fmtIterator;
-				}
-
-				// Check format fill width (any number of digits)
-				while (
-					'0'	<= format[fmtIterator + 1_usize]	&&
-					'9'	>= format[fmtIterator + 1_usize]
-				) {
-					// Add next width digit
-					fillWidth = fillWidth * 10_usize + static_cast<igros_usize_t>(format[fmtIterator + 1_usize] - '0');
-					// Adjust format iterator
-					++fmtIterator;
-				}
-
-				// Argument type (dword by default)
-				auto argType {argType_t::DWORD};
-				// Check if quad specifier
-				if ('l' == format[fmtIterator + 1_usize]) {
-					// Check if quad specifier
-					if ('l' == format[fmtIterator + 2_usize]) {
-						// Quad argument
-						argType = argType_t::QUAD;
-						// Adjust format iterator
-						fmtIterator += 2_usize;
-					} else {
-						// Long argument (32 bits on i386, 64 bits on x86_64)
-						argType = (sizeof(long) == sizeof(igros_quad_t)) ? argType_t::QUAD : argType_t::DWORD;
-						// Adjust format iterator
-						++fmtIterator;
-					}
-				// Otherwise it could be word
-				} else if ('h' == format[fmtIterator + 1_usize]) {
-					// Or even byte
-					if ('h' == format[fmtIterator + 2_usize]) {
-						// Byte argument
-						argType = argType_t::BYTE;
-						// Adjust format iterator
-						fmtIterator += 2_usize;
-					} else {
-						// Word argument
-						argType = argType_t::WORD;
-						// Adjust format iterator
-						++fmtIterator;
-					}
-				// Size or pointer difference argument
-				} else if (('z' == format[fmtIterator + 1_usize]) || ('t' == format[fmtIterator + 1_usize])) {
-					// Size argument
-					argType = argType_t::SIZE;
-					// Adjust format iterator
-					++fmtIterator;
-				// Otherwise it's double word
-				}
-
-				// Unterminated placeholder at format end
-				if ('\0' == format[fmtIterator + 1_usize]) [[unlikely]] {
-					// Done
+			// Conversion
+			switch (*++fmt) {
+				// Placeholder symbol itself
+				case '%':
+					out.put('%');
 					break;
-				}
-
-				// Determine type
-				switch (format[++fmtIterator]) {
-
-					// '%' character
-					case '%':
-						// Copy placeholder symbol '%'
-						*(strIterator++) = format[fmtIterator];
-						// Done
-						break;
-
-					// Character
-					case 'c': {
-						// Fill with preceding symbols
-						fillPreceding(strIterator, sizeof(igros_sbyte_t), fillWidth, fillChar);
-						// Get character from args
-						const auto chr {static_cast<char>(va_arg(list, igros_dword_t))};
-						// Copy character to resulting string
-						if (strIterator < strEnd) [[likely]] {
-							*(strIterator++) = chr;
-						}
-					// Done
-					} break;
-
-					// Binary integer
-					case 'b':
-						// Print integer
-						printInteger(strIterator, radix_t::BIN, argType, fillWidth, fillChar, false);
-						// Done
-						break;
-
-					// Octal integer
-					case 'o':
-						// Print integer
-						printInteger(strIterator, radix_t::OCT, argType, fillWidth, fillChar, false);
-						// Done
-						break;
-
-					// Integer
-					case 'd':
-					[[fallthrough]];
-					// Integer too
-					case 'i':
-						// Print integer
-						printInteger(strIterator, radix_t::DEC, argType, fillWidth, fillChar, true);
-						// Done
-						break;
-
-					// Unsigned integer
-					case 'u':
-						// Print integer
-						printInteger(strIterator, radix_t::DEC, argType, fillWidth, fillChar, false);
-						// Done
-						break;
-
-					// Hexidemical integer
-					case 'x':
-						// Print integer
-						printInteger(strIterator, radix_t::HEX, argType, fillWidth, fillChar, false);
-						// Done
-						break;
-
-					// Address
-					case 'p':
-						// Print integer
-						printInteger(strIterator, radix_t::HEX, argType_t::PNTR, (sizeof(igros_pointer_t) << 1), '0', false);
-						// Done
-						break;
-
-					// Size
-					// String
-					case 's': {
-						// Get string from args
-						str = va_arg(list, const char*);
-						// Get string length (never past buffer end)
-						const auto len {std::min(kstrlen(str), spaceLeft(strIterator))};
-						// Copy string
-						kstrcpy(strIterator, str, len);
-						// Move iterator to string's end
-						strIterator += len;
-					// Done
-					} break;
-
-					// Default action
-					default:
-						// Copy character to resulting string
-						*(strIterator++) = '?';
-						// Done
-						break;
-
-				}
-
-				// Incremet format iterator
-				++fmtIterator;
-
+				// Character (promoted to int)
+				case 'c': {
+					const auto symbol {static_cast<char>(va_arg(args, igros_sdword_t))};
+					out.padded({}, std::string_view {&symbol, 1_usize}, spec);
+				} break;
+				// String (null prints nothing)
+				case 's': {
+					const auto* const str {va_arg(args, const char*)};
+					out.padded({}, std::string_view {str, kstrlen(str)}, spec);
+				} break;
+				// Signed decimal
+				case 'd':
+				case 'i':
+					putArgument(out, args, radix_t::DEC, spec, true, false);
+					break;
+				// Unsigned integers
+				case 'u':
+					putArgument(out, args, radix_t::DEC, spec, false, false);
+					break;
+				case 'b':
+					putArgument(out, args, radix_t::BIN, spec, false, false);
+					break;
+				case 'o':
+					putArgument(out, args, radix_t::OCT, spec, false, false);
+					break;
+				case 'x':
+					putArgument(out, args, radix_t::HEX, spec, false, false);
+					break;
+				case 'X':
+					putArgument(out, args, radix_t::HEX, spec, false, true);
+					break;
+				// Pointer: all hex digits
+				case 'p':
+					putInteger(out, std::bit_cast<igros_usize_t>(va_arg(args, igros_pointer_t)), radix_t::HEX, spec_t {.width = sizeof(igros_pointer_t) << 1, .zero = true});
+					break;
+				// Unknown conversion
+				default:
+					out.put('?');
+					break;
 			}
 
 		}
 
+		// Done with arguments
+		va_end(args);
 		// Insert null terminator
-		*strIterator = '\0';
+		return out.finish(buffer);
 
 	}
 
 
 	// Kernel snprintf function
-	void ksnprintf(char* const buffer, const igros_usize_t size, const char* const format, ...) noexcept {
+	auto ksnprintf(char* const buffer, const igros_usize_t size, const char* const format, ...) noexcept -> igros_usize_t {
 		// Kernel variadic argument list
 		std::va_list list {};
 		// Initialize variadic arguments list
 		va_start(list, format);
 		// Format string
-		kvsnprintf(buffer, size, format, list);
+		const auto length {kvsnprintf(buffer, size, format, list)};
 		// End variadic arguments list
 		va_end(list);
+		return length;
 	}
 
 
 	// Kernel printf function
 	void kprintf(const char* const format, ...) noexcept {
+		// Line end (compile time: no strlen at run time)
+		constexpr auto NEWLINE {std::string_view {"\n"}};
 		// Shared buffer and output must not be interrupted by IRQ handler printing too
 		const arch::irq::guard noInterrupts {};
 		// Text buffer
@@ -415,15 +326,14 @@ namespace igros::klib {
 		// Initialize variadic arguments list
 		va_start(list, format);
 		// Format string
-		kvsnprintf(buffer.data(), buffer.size(), format, list);
+		const auto text {std::string_view {buffer.data(), kvsnprintf(buffer.data(), buffer.size(), format, list)}};
 		// End variadic arguments list
 		va_end(list);
-		// Output buffer
-		arch::vmemWrite(buffer.data());
-		arch::vmemWrite("\n");
-		// Output to serial
-		arch::serialWrite(buffer.data());
-		arch::serialWrite("\n");
+		// Output to screen and serial
+		arch::vmemWrite(text);
+		arch::vmemWrite(NEWLINE);
+		arch::serialWrite(text);
+		arch::serialWrite(NEWLINE);
 	}
 
 
