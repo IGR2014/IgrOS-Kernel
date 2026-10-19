@@ -9,28 +9,80 @@ on:
     branches: [ 'master' ]
   workflow_dispatch:
 
+# A newer push to the same branch/PR cancels the run still in progress
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Least privilege by default; jobs that need more ask for it
+permissions:
+  contents: read
+
 # Project jobs
 jobs:
+
+  # Free artifact storage first: drop kernel artifacts of previous runs on this branch/PR
+  Cleanup:
+
+    # Name
+    name: 'Delete old artifacts'
+    # OS
+    runs-on: ubuntu-26.04
+
+    # Deleting artifacts
+    permissions:
+      actions: write
+
+    # Job steps
+    steps:
+
+    - name: 'Delete artifacts of previous runs on this branch'
+      # A cleanup problem must never block the build
+      continue-on-error: true
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+        # PR -> source branch, push -> branch name
+        BRANCH: ${{ github.head_ref || github.ref_name }}
+      run: |
+        gh api --paginate "repos/${GITHUB_REPOSITORY}/actions/artifacts?per_page=100" \
+          --jq ".artifacts[]
+                | select(.expired | not)
+                | select(.workflow_run.head_branch == env.BRANCH)
+                | select(.workflow_run.id != ${GITHUB_RUN_ID})
+                | select(.name | test(\"^(clang|g)\\\\+\\\\+-(i386|x86_64)-kernel$\"))
+                | \"\(.id) \(.name)\"" |
+        while read -r id name; do
+          echo "Deleting $name (id $id)"
+          gh api -X DELETE "repos/${GITHUB_REPOSITORY}/actions/artifacts/$id"
+        done
+
 
   # Build Kernel
   BuildKernel:
 
     # Name
     name: 'Build with CMake'
+    # Uploads happen only after old artifacts are gone
+    needs: Cleanup
     # OS
     runs-on: ubuntu-26.04
+    # A hung build or boot test must not burn runner minutes for hours
+    timeout-minutes: 30
 
     # Environment variables
     env:
       IGROS_KERNEL_DIR_BUILD: "${{ github.workspace }}/build"
       IGROS_KERNEL_DIR_INSTALL: "${{ github.workspace }}/install"
-      CCACHE_BASEDIR: "${{ github.workspace }}/.ccache/build-linux-${{ matrix.compiler }}-x86_64-debug"
-      CCACHE_DIR: "${{ github.workspace }}/.ccache/build-linux-${{ matrix.compiler }}-x86_64-debug/cache"
+      CCACHE_BASEDIR: "${{ github.workspace }}/.ccache/build-linux-${{ matrix.compiler }}-${{ matrix.arch }}-debug"
+      CCACHE_DIR: "${{ github.workspace }}/.ccache/build-linux-${{ matrix.compiler }}-${{ matrix.arch }}-debug/cache"
+      # Keeps each cache entry (and the repo's 10 GB cache quota) under control
+      CCACHE_MAXSIZE: "500M"
+      PRESET: "linux-${{ matrix.compiler }}-${{ matrix.arch }}-debug"
 
     # Strategy with languages matrix
     strategy:
       fail-fast: false
-      max-parallel: 4
       matrix:
         arch: [ 'i386', 'x86_64' ]
         compiler: [ 'clang++', 'g++' ]
@@ -44,31 +96,20 @@ jobs:
       with:
         fetch-depth: 0
 
-    # Install dependencies
+    # Install dependencies (toolchain included)
     - name: 'Install Dependencies'
       shell: bash
       run: |
-        sudo apt update
-        sudo apt install -y --no-install-recommends ccache cmake doxygen graphviz g++-multilib gcc-multilib grub-common grub-pc-bin mtools ninja-build qemu-system-x86 xorriso
-
-    # Install Clang (Ubuntu 24.04 packages, same toolchain as Docker image)
-    - name: 'Install Clang'
-      shell: bash
-      run: |
-        sudo apt install -y --no-install-recommends clang lld
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends \
+          ccache clang cmake doxygen g++-multilib gcc-multilib graphviz grub-common grub-pc-bin \
+          lld mtools ninja-build qemu-system-x86 xorriso
         clang++ --version
         ld.lld --version
 
-    # Restore Build Cache
-    - name: 'Restore Build Cache'
-      uses: actions/cache@v6
-      with:
-        path: ${{ env.IGROS_KERNEL_DIR_BUILD }}
-        key: build-${{ matrix.compiler }}-${{ matrix.arch }}-${{ github.sha }}
-        restore-keys: |
-          build-${{ matrix.compiler }}-${{ matrix.arch }}-
-
     # Restore CCache Cache
+    # (the build directory itself is not cached: a fresh checkout makes every source newer
+    # than the cached objects, so Ninja rebuilds everything anyway - ccache is what saves time)
     - name: 'Restore CCache Cache'
       uses: actions/cache@v6
       with:
@@ -81,40 +122,47 @@ jobs:
     - name: 'CMake Configure'
       shell: bash
       run: |
-        mkdir -p ${{ env.CCACHE_BASEDIR }}
-        cmake --preset="config-linux-${{ matrix.compiler }}-${{ matrix.arch }}-debug"
+        mkdir -p "${CCACHE_BASEDIR}"
+        # Statistics below then show this build only
+        ccache -z
+        cmake --preset="config-${PRESET}"
 
     # Build
     - name: 'CMake Build'
       shell: bash
       run: |
-        cmake --build --preset="build-linux-${{ matrix.compiler }}-${{ matrix.arch }}-debug" --target all --parallel
+        cmake --build --preset="build-${PRESET}" --target all --parallel
 
     # Install
     - name: 'CMake Install'
       shell: bash
       run: |
-        cmake --build --preset="build-linux-${{ matrix.compiler }}-${{ matrix.arch }}-debug" --target install
+        cmake --build --preset="build-${PRESET}" --target install
 
     # Boot kernel in QEMU (reaches end of kmain, handles keyboard IRQ)
     - name: 'QEMU Boot Test'
       shell: bash
+      timeout-minutes: 5
       run: |
-        bash tests/boot/qemu-boot.sh ${{ matrix.arch }} "${{ env.IGROS_KERNEL_DIR_INSTALL }}/Debug/config-linux-${{ matrix.compiler }}-${{ matrix.arch }}-debug/kernel.iso"
+        bash tests/boot/qemu-boot.sh ${{ matrix.arch }} "${IGROS_KERNEL_DIR_INSTALL}/Debug/config-${PRESET}/kernel.iso"
 
-    # Kernel Artifacts (also for failed boot test investigation)
+    # Kernel Artifacts (also for failed boot test investigation; skipped on cancel)
     - name: 'Kernel Artifacts'
-      if: always()
+      if: success() || failure()
+      # A full artifact quota must not fail CI
+      continue-on-error: true
       uses: actions/upload-artifact@v7
       with:
         name: ${{ matrix.compiler }}-${{ matrix.arch }}-kernel
         path: |
-          ${{ env.IGROS_KERNEL_DIR_INSTALL }}/Debug/config-linux-${{ matrix.compiler }}-${{ matrix.arch }}-debug/iso/boot/kernel.bin
-          ${{ env.IGROS_KERNEL_DIR_INSTALL }}/Debug/config-linux-${{ matrix.compiler }}-${{ matrix.arch }}-debug/kernel.iso
-        retention-days: 7
+          ${{ env.IGROS_KERNEL_DIR_INSTALL }}/Debug/config-${{ env.PRESET }}/iso/boot/kernel.bin
+          ${{ env.IGROS_KERNEL_DIR_INSTALL }}/Debug/config-${{ env.PRESET }}/kernel.iso
+        if-no-files-found: ignore
+        retention-days: 3
 
     # CCache Statistics
     - name: 'CCache Statistics'
+      if: always()
       shell: bash
       run: |
         ccache -sv
@@ -127,6 +175,7 @@ jobs:
     name: 'Unit Tests'
     # OS
     runs-on: ubuntu-26.04
+    timeout-minutes: 15
 
     # Strategy with languages matrix
     strategy:
@@ -146,8 +195,8 @@ jobs:
     - name: 'Install Dependencies'
       shell: bash
       run: |
-        sudo apt update
-        sudo apt install -y --no-install-recommends clang cmake g++-multilib ninja-build
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends clang cmake g++-multilib ninja-build
 
     # Configure
     - name: 'CMake Configure'
