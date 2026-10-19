@@ -63,8 +63,9 @@ jobs:
 
     # Name
     name: 'Build with CMake'
-    # Uploads happen only after old artifacts are gone
-    needs: Cleanup
+    # Only after all unit tests passed (no runner minutes on broken commits)
+    # and old artifacts are gone (room for the uploads)
+    needs: [ Cleanup, UnitTests ]
     # OS
     runs-on: ubuntu-26.04
     # A hung build or boot test must not burn runner minutes for hours
