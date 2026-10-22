@@ -28,7 +28,7 @@ set(
 # Freestanding kernel code: no runtime, no exceptions/RTTI, no FPU/SIMD, no PIC
 set(
 	IGROS_TOOLCHAIN_CXX_FLAGS
-	"-Wall -Wextra -pedantic -Werror -ffreestanding -fno-builtin -fno-exceptions -fno-rtti -fno-threadsafe-statics -fno-pic -fno-pie -mno-mmx -mno-3dnow -mno-sse -mno-sse2 -mno-sse3 -mno-ssse3 -mno-sse4 -mno-sse4.1 -mno-sse4.2 -mno-sse4a -mno-avx -mno-fma4"
+	"-Wall -Wextra -pedantic -Werror -ffreestanding -fno-builtin -fno-exceptions -fno-rtti -fno-threadsafe-statics -fno-pic -fno-pie -fno-stack-protector -fcf-protection=none -mno-mmx -mno-3dnow -mno-sse -mno-sse2 -mno-sse3 -mno-ssse3 -mno-sse4 -mno-sse4.1 -mno-sse4.2 -mno-sse4a -mno-avx -mno-fma4"
 )
 
 # Architecture specifics
@@ -46,10 +46,10 @@ if(IGROS_TOOLCHAIN_ARCH STREQUAL "i386")
 		elf_i386
 	)
 elseif(IGROS_TOOLCHAIN_ARCH STREQUAL "x86_64")
-	# Kernel is linked at -2 GB: large code model; no red zone in interrupt context
+	# Kernel is linked at -2 GB: kernel code model (sign-extended 32-bit addresses); no red zone in interrupt context
 	string(
 		APPEND IGROS_TOOLCHAIN_CXX_FLAGS
-		" -m64 -march=x86-64 -mno-red-zone -mcmodel=large"
+		" -m64 -march=x86-64 -mno-red-zone -mcmodel=kernel"
 	)
 	set(
 		IGROS_TOOLCHAIN_ASM_FLAGS
