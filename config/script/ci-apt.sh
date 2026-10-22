@@ -37,14 +37,40 @@ APT=(
 	-o Dpkg::Use-Pty=0
 )
 
+LOG="$(mktemp)"
+
+# Run apt phase with time limit, output to job log and LOG
+# (on failure its tail goes to a warning annotation: readable in run summary and API)
+run() {
+	local limit="$1" name="$2"
+	shift 2
+	timeout --kill-after=10 "${limit}" "$@" 2>&1 | tee "${LOG}"
+	local status="${PIPESTATUS[0]}"
+	if [[ "${status}" -ne 0 ]]; then
+		local reason="exit ${status}"
+		[[ "${status}" -eq 124 ]] && reason="timed out after ${limit} s"
+		echo "::warning title=ci-apt attempt ${attempt} ${name} ${reason}::$(tail -n 15 "${LOG}" | sed -e 's/%/%25/g' | sed -e ':a;N;$!ba;s/\n/%0A/g')"
+	fi
+	return "${status}"
+}
+
+# Use main Ubuntu archive instead of runner's (Azure) mirror
+switchMirror() {
+	phase "switching to archive.ubuntu.com"
+	sudo sed -i -e 's#https\?://azure\.archive\.ubuntu\.com#http://archive.ubuntu.com#g' \
+		/etc/apt/sources.list /etc/apt/sources.list.d/*.list /etc/apt/sources.list.d/*.sources 2>/dev/null || true
+}
+
 # Don't rebuild man page index after install (slow on runner images)
 sudo rm -f /var/lib/man-db/auto-update
 
 for ((attempt = 1; attempt <= ATTEMPTS; attempt++)); do
+	# Runner mirror failed once: try main archive
+	[[ "${attempt}" -eq 2 ]] && switchMirror
 	phase "attempt ${attempt}/${ATTEMPTS}: update"
-	if timeout --kill-after=10 "${UPDATE_TIMEOUT}" "${APT[@]}" update; then
+	if run "${UPDATE_TIMEOUT}" update "${APT[@]}" update; then
 		phase "attempt ${attempt}/${ATTEMPTS}: install $*"
-		if timeout --kill-after=10 "${INSTALL_TIMEOUT}" "${APT[@]}" install -y --no-install-recommends "$@"; then
+		if run "${INSTALL_TIMEOUT}" install "${APT[@]}" install -y --no-install-recommends "$@"; then
 			phase "done"
 			exit 0
 		fi
