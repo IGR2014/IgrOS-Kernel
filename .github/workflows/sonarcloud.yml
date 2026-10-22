@@ -29,8 +29,11 @@ jobs:
 
     # Install dependencies (configure only: Sonar needs compile commands, not binaries)
     - name: 'Install Dependencies'
+      # Mirror stalls and dpkg lock (unattended upgrades) must fail fast and retry, not hang the job
+      timeout-minutes: 10
       shell: bash
       run: |
+        echo 'Acquire::Retries "5"; Acquire::http::Timeout "30"; Acquire::https::Timeout "30"; DPkg::Lock::Timeout "300";' | sudo tee /etc/apt/apt.conf.d/80-ci > /dev/null
         sudo apt update
         sudo apt install -y --no-install-recommends clang cmake g++-multilib gcovr jq lld ninja-build
 

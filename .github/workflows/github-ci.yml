@@ -99,8 +99,11 @@ jobs:
 
     # Install dependencies (toolchain included)
     - name: 'Install Dependencies'
+      # Mirror stalls and dpkg lock (unattended upgrades) must fail fast and retry, not hang the job
+      timeout-minutes: 10
       shell: bash
       run: |
+        echo 'Acquire::Retries "5"; Acquire::http::Timeout "30"; Acquire::https::Timeout "30"; DPkg::Lock::Timeout "300";' | sudo tee /etc/apt/apt.conf.d/80-ci > /dev/null
         sudo apt-get update
         sudo apt-get install -y --no-install-recommends \
           ccache clang cmake doxygen g++-multilib gcc-multilib graphviz grub-common grub-pc-bin \
@@ -194,8 +197,11 @@ jobs:
 
     # Install dependencies (multilib for 32-bit i386 code paths)
     - name: 'Install Dependencies'
+      # Mirror stalls and dpkg lock (unattended upgrades) must fail fast and retry, not hang the job
+      timeout-minutes: 10
       shell: bash
       run: |
+        echo 'Acquire::Retries "5"; Acquire::http::Timeout "30"; Acquire::https::Timeout "30"; DPkg::Lock::Timeout "300";' | sudo tee /etc/apt/apt.conf.d/80-ci > /dev/null
         sudo apt-get update
         sudo apt-get install -y --no-install-recommends clang cmake g++-multilib ninja-build
 
