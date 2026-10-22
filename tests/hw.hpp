@@ -53,8 +53,11 @@ namespace igros::test::hw {
 	// Interrupts flag
 	inline bool			irqEnabled	{false};
 	// Control registers
+	inline std::uintptr_t		cr0		{0};
 	inline std::uintptr_t		cr2		{0};
 	inline std::uintptr_t		cr3		{0};
+	// CPU supports no-execute pages (cpuEnableNoExecute result)
+	inline bool			noExecute	{false};
 	// Invalidated TLB entries
 	inline std::vector<const void*>	invalidated;
 
@@ -72,8 +75,10 @@ namespace igros::test::hw {
 		portValue.clear();
 		portReadHook	= nullptr;
 		irqEnabled	= false;
+		cr0		= 0;
 		cr2		= 0;
 		cr3		= 0;
+		noExecute	= false;
 		invalidated.clear();
 		console.clear();
 	}

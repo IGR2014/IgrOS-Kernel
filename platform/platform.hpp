@@ -25,6 +25,10 @@
 extern const igros::igros_byte_t _SECTION_KERNEL_START_;
 // Kernel end
 extern const igros::igros_byte_t _SECTION_KERNEL_END_;
+// Kernel sections start (from linker script, page aligned)
+extern const igros::igros_byte_t _SECTION_TEXT_START_;
+extern const igros::igros_byte_t _SECTION_RODATA_START_;
+extern const igros::igros_byte_t _SECTION_DATA_START_;
 // Kernel virtual memory offset (absolute symbol, its address is the offset value)
 extern const igros::igros_byte_t KERNEL_OFFSET_VIRT;
 
@@ -136,6 +140,15 @@ namespace igros::platform {
 		// Get kernel size
 		[[nodiscard]]
 		constexpr static auto	kernelSize() noexcept -> igros_usize_t;
+		// Get kernel code start (code: [textStart, rodataStart))
+		[[nodiscard]]
+		constexpr static auto	textStart() noexcept -> const igros_byte_t*;
+		// Get kernel read-only data start (read-only data: [rodataStart, dataStart))
+		[[nodiscard]]
+		constexpr static auto	rodataStart() noexcept -> const igros_byte_t*;
+		// Get kernel writable data start (data and bss: [dataStart, kernelEnd))
+		[[nodiscard]]
+		constexpr static auto	dataStart() noexcept -> const igros_byte_t*;
 		// Get kernel virtual memory offset (kernel virtual address = physical address + offset)
 		[[nodiscard]]
 		static auto		kernelOffset() noexcept -> igros_usize_t;
@@ -277,6 +290,24 @@ namespace igros::platform {
 	constexpr auto Platform::kernelSize() noexcept -> igros_usize_t {
 		// Kernel size (end - start)
 		return Platform::kernelEnd() - Platform::kernelStart();
+	}
+
+	// Get kernel code start
+	[[nodiscard]]
+	constexpr auto Platform::textStart() noexcept -> const igros_byte_t* {
+		return &_SECTION_TEXT_START_;
+	}
+
+	// Get kernel read-only data start
+	[[nodiscard]]
+	constexpr auto Platform::rodataStart() noexcept -> const igros_byte_t* {
+		return &_SECTION_RODATA_START_;
+	}
+
+	// Get kernel writable data start
+	[[nodiscard]]
+	constexpr auto Platform::dataStart() noexcept -> const igros_byte_t* {
+		return &_SECTION_DATA_START_;
 	}
 
 	// Get kernel virtual memory offset

@@ -64,9 +64,13 @@ static auto address32(const T* const object) noexcept -> std::uint32_t {
 static void testRanges() {
 	phys::markFree(0x1000, 0x5000);
 	IGROS_CHECK(4 == phys::freePages());
+	IGROS_CHECK(0x5000 == phys::top());
 	// No new whole page inside range
 	phys::markFree(0x1800, 0x2800);
 	IGROS_CHECK(4 == phys::freePages());
+	// Top counts whole pages only
+	phys::markFree(0x7000, 0x7FFF);
+	IGROS_CHECK(0x5000 == phys::top());
 	// Every touched page becomes used
 	phys::markUsed(0x2800, 0x3001);
 	IGROS_CHECK(2 == phys::freePages());
@@ -122,6 +126,9 @@ static auto testInit() -> bool {
 	IGROS_CHECK(0x100000000ull == last);
 
 	phys::init(info);
+
+	// Top of usable memory: end of highest available entry below 4 GB
+	IGROS_CHECK(0x7FE0000 == phys::top());
 
 	// Available 1 MB .. 0x7FE0000 minus pages holding test multiboot data
 	const auto available	{std::size_t {0x7EE0000 >> 12}};

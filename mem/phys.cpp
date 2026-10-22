@@ -50,6 +50,8 @@ namespace igros::mem {
 		constinit igros_usize_t				freeCount	{0_usize};
 		// No free pages in words below this one
 		constinit igros_usize_t				searchHint	{0_usize};
+		// End of highest memory marked free
+		constinit phys_t				memoryTop	{0_u64};
 
 
 		// Check if page is free
@@ -88,6 +90,7 @@ namespace igros::mem {
 		freeMap.fill(0_u32);
 		freeCount	= 0_usize;
 		searchHint	= freeMap.size();
+		memoryTop	= 0_u64;
 
 		// Available memory from bootloader memory map
 		auto hasAvailable {false};
@@ -183,6 +186,13 @@ namespace igros::mem {
 	}
 
 
+	// End of highest memory ever marked free
+	[[nodiscard]]
+	auto phys::top() noexcept -> phys_t {
+		return memoryTop;
+	}
+
+
 	// Mark physical memory range [start, end) as free (only whole pages)
 	void phys::markFree(const phys_t start, const phys_t end) noexcept {
 		// Clamp to tracked memory
@@ -191,6 +201,10 @@ namespace igros::mem {
 		// Whole pages inside range
 		const auto first	{static_cast<igros_usize_t>(klib::kAlign::up<PAGE_SIZE>(from) >> PAGE_SHIFT)};
 		const auto last		{static_cast<igros_usize_t>(to >> PAGE_SHIFT)};
+		// Top of usable memory (whole pages only)
+		if (first < last) {
+			memoryTop = std::max(memoryTop, static_cast<phys_t>(last) << PAGE_SHIFT);
+		}
 		for (auto page {first}; page < last; ++page) {
 			if (!isFree(page)) {
 				setFree(page);

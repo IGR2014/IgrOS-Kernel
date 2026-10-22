@@ -65,6 +65,9 @@ namespace igros::mem {
 		// Number of free pages
 		[[nodiscard]]
 		static auto	freePages() noexcept -> igros_usize_t;
+		// End of highest memory ever marked free (top of usable RAM, clamped to MEMORY_LIMIT)
+		[[nodiscard]]
+		static auto	top() noexcept -> phys_t;
 
 		// Mark physical memory range [start, end) as free (only whole pages)
 		static void	markFree(const phys_t start, const phys_t end) noexcept;

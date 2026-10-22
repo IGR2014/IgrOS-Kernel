@@ -3,7 +3,7 @@
 //	Paging (i386 2-level and x86_64 4-level page tables)
 //
 //	File:	paging.cpp
-//	Date:	11 Oct 2026
+//	Date:	22 Oct 2026
 //
 //	Copyright (c) 2017 - 2026, Igor Baklykov
 //	All rights reserved.
@@ -12,11 +12,13 @@
 
 
 // C++
+#include <algorithm>
 #include <bit>
 #include <span>
 // IgrOS-Kernel arch x86
 #include <arch/x86/cr.hpp>
 #include <arch/x86/exceptions.hpp>
+#include <arch/x86/features.hpp>
 #include <arch/x86/irq.hpp>
 #include <arch/x86/native.hpp>
 #include <arch/x86/paging.hpp>
@@ -32,6 +34,22 @@
 namespace igros::x86 {
 
 
+	// Paging state
+	namespace {
+
+
+		// CR0 write protection bit (kernel can't write to read-only pages)
+		constexpr auto CR0_WP	{igros_usize_t {0x00010000}};
+
+		// End of physical memory mapped at kernel offset (boot code maps low memory)
+		constinit mem::phys_t	directEnd	{mem::LOW_MEMORY_LIMIT};
+		// NX bit value if no-execute is enabled (else 0: NX can't be used)
+		constinit paging::entry_t	noExecute	{0};
+
+
+	}	// namespace
+
+
 	// Entry flag value
 	[[nodiscard]]
 	constexpr static auto flag(const paging::FLAGS value) noexcept -> paging::entry_t {
@@ -39,14 +57,24 @@ namespace igros::x86 {
 	}
 
 
-	// Table at physical address (in low memory)
+	// Table at physical address (through direct map)
 	[[nodiscard]]
 	auto paging::table(const mem::phys_t phys) noexcept -> entry_t* {
-		// Only low memory is reachable through kernel offset
-		if (phys >= mem::LOW_MEMORY_LIMIT) [[unlikely]] {
+		// Only directly mapped memory is reachable through kernel offset
+		if (phys >= directEnd) [[unlikely]] {
 			return nullptr;
 		}
 		return std::bit_cast<entry_t*>(static_cast<igros_usize_t>(phys) + platform::Platform::kernelOffset());
+	}
+
+	// Allocate empty table (reachable through direct map, 0 if no memory)
+	[[nodiscard]]
+	auto paging::allocTable() noexcept -> mem::phys_t {
+		const auto page {mem::phys::alloc(directEnd)};
+		if (0_u64 != page) [[likely]] {
+			klib::kmemset(std::span {paging::table(page), ENTRIES}, entry_t {0});
+		}
+		return page;
 	}
 
 	// Index of virtual address in table of given level (0 - page table)
@@ -56,23 +84,22 @@ namespace igros::x86 {
 	}
 
 
-	// Page table entry of virtual address in given hierarchy (create - allocate missing tables)
+	// Entry of virtual address at given level of given hierarchy (create - allocate missing tables)
 	[[nodiscard]]
-	auto paging::entry(const mem::phys_t top, const void* const virt, const bool create, const bool user) noexcept -> entry_t* {
+	auto paging::entry(const mem::phys_t top, const void* const virt, const bool create, const bool user, const igros_usize_t level) noexcept -> entry_t* {
 		auto entries {paging::table(top)};
-		// Walk down to page table
-		for (auto level {LEVELS - 1_usize}; (nullptr != entries) && (level > 0_usize); --level) {
-			auto &next {entries[paging::index(virt, level)]};
+		// Walk down to table of requested level
+		for (auto current {LEVELS - 1_usize}; (nullptr != entries) && (current > level); --current) {
+			auto &next {entries[paging::index(virt, current)]};
 			if (0_usize == (next & flag(FLAGS::PRESENT))) {
 				// Missing table
 				if (!create) {
 					return nullptr;
 				}
-				const auto page {mem::phys::alloc(mem::LOW_MEMORY_LIMIT)};
+				const auto page {paging::allocTable()};
 				if (0_u64 == page) [[unlikely]] {
 					return nullptr;
 				}
-				klib::kmemset(std::span {paging::table(page), ENTRIES}, entry_t {0});
 				// Access rights are checked on every level: keep upper levels permissive
 				next = static_cast<entry_t>(page) | flag(FLAGS::PRESENT) | flag(FLAGS::WRITABLE) | (user ? flag(FLAGS::USER) : 0_usize);
 			} else if (0_usize != (next & flag(FLAGS::HUGE))) {
@@ -83,8 +110,15 @@ namespace igros::x86 {
 			}
 			entries = paging::table(next & ADDRESS_MASK);
 		}
-		// Page table entry
-		return (nullptr != entries) ? &entries[paging::index(virt, 0_usize)] : nullptr;
+		// Entry of requested level
+		return (nullptr != entries) ? &entries[paging::index(virt, level)] : nullptr;
+	}
+
+	// Entry value for physical address with flags (drops NX if not enabled)
+	[[nodiscard]]
+	auto paging::makeEntry(const mem::phys_t phys, const klib::kFlags<FLAGS> flags) noexcept -> entry_t {
+		const auto rights {flags.value() & ~ADDRESS_MASK & ~flag(FLAGS::HUGE) & ~(flag(FLAGS::NO_EXECUTE) & ~noExecute)};
+		return static_cast<entry_t>(phys) | rights | flag(FLAGS::PRESENT);
 	}
 
 	// Map 4 KB page in given hierarchy
@@ -102,7 +136,25 @@ namespace igros::x86 {
 		if (nullptr == page) [[unlikely]] {
 			return false;
 		}
-		*page = static_cast<entry_t>(phys) | (flags.value() & ~ADDRESS_MASK & ~flag(FLAGS::HUGE)) | flag(FLAGS::PRESENT);
+		*page = paging::makeEntry(phys, flags);
+		::pageInvalidate(virt);
+		return true;
+	}
+
+	// Map large page in given hierarchy (fresh directory entry only)
+	[[nodiscard]]
+	auto paging::mapLarge(const mem::phys_t top, const mem::phys_t phys, const void* const virt, const klib::kFlags<FLAGS> flags) noexcept -> bool {
+		// Large page aligned addresses only, physical address must fit into entry
+		if (!klib::kAlign::check<LARGE_PAGE_SIZE>(phys) || !klib::kAlign::check<LARGE_PAGE_SIZE>(virt) ||
+			(0_u64 != (phys & ~static_cast<mem::phys_t>(ADDRESS_MASK)))) [[unlikely]] {
+			return false;
+		}
+		const auto large {paging::entry(top, virt, true, flags.isSet(FLAGS::USER), 1_usize)};
+		// Don't replace page table (its pages would leak)
+		if ((nullptr == large) || (0_usize != (*large & flag(FLAGS::PRESENT)) && (0_usize == (*large & flag(FLAGS::HUGE))))) [[unlikely]] {
+			return false;
+		}
+		*large = paging::makeEntry(phys, flags) | flag(FLAGS::HUGE);
 		::pageInvalidate(virt);
 		return true;
 	}
@@ -151,46 +203,90 @@ namespace igros::x86 {
 	}
 
 
+	// End of physical memory reachable through direct map
+	[[nodiscard]]
+	auto paging::directMapEnd() noexcept -> mem::phys_t {
+		return directEnd;
+	}
+
+	// Start of kernel dynamic mappings (right above direct map)
+	[[nodiscard]]
+	auto paging::dynamicStart() noexcept -> igros_byte_t* {
+		return std::bit_cast<igros_byte_t*>(platform::Platform::kernelOffset() + static_cast<igros_usize_t>(DIRECT_MAP_LIMIT));
+	}
+
+
+	// Rights of kernel offset mapping of low memory physical page (kernel sections)
+	[[nodiscard]]
+	auto paging::kernelFlags(const mem::phys_t phys) noexcept -> klib::kFlags<FLAGS> {
+		using platform::Platform;
+		const auto virt {std::bit_cast<const igros_byte_t*>(static_cast<igros_usize_t>(phys) + Platform::kernelOffset())};
+		// Code: read + execute
+		if ((virt >= Platform::textStart()) && (virt < Platform::rodataStart())) {
+			return klib::make_kflags<FLAGS>(FLAGS::PRESENT);
+		}
+		// Read-only data: read
+		if ((virt >= Platform::rodataStart()) && (virt < Platform::dataStart())) {
+			return klib::make_kflags<FLAGS>(FLAGS::PRESENT, FLAGS::NO_EXECUTE);
+		}
+		// Data, bss, page tables, low memory, video memory: read + write
+		return klib::make_kflags<FLAGS>(FLAGS::PRESENT, FLAGS::WRITABLE, FLAGS::NO_EXECUTE);
+	}
+
+
 	// Build kernel page tables and switch to them
 	void paging::init() noexcept {
 
 		// Page fault handler
 		except::install<except::NUMBER::PAGE_FAULT, paging::exHandler>();
 
-		// Top level table
-		const auto top {mem::phys::alloc(mem::LOW_MEMORY_LIMIT)};
+		// No-execute protection (before any NX bit is written: it's reserved until enabled)
+		noExecute = ::cpuEnableNoExecute() ? flag(FLAGS::NO_EXECUTE) : 0_usize;
+
+		// Top level table (tables come from memory mapped by current page tables)
+		const auto top {paging::allocTable()};
 		if (0_u64 == top) [[unlikely]] {
 			klib::kprintf("Paging:\t\tFAILED (no memory for page tables)");
 			return;
 		}
-		klib::kmemset(std::span {paging::table(top), ENTRIES}, entry_t {0});
 
-		// Low memory: at kernel offset (kernel, page tables, VGA) and identity (boot data);
+		// Low memory: at kernel offset with kernel section rights and identity (boot data);
 		// identity null page stays unmapped to catch null pointer dereference
-		const auto flags	{klib::make_kflags<FLAGS>(FLAGS::PRESENT, FLAGS::WRITABLE)};
+		const auto data		{klib::make_kflags<FLAGS>(FLAGS::PRESENT, FLAGS::WRITABLE, FLAGS::NO_EXECUTE)};
 		const auto offset	{platform::Platform::kernelOffset()};
 		auto mapped		{true};
 		for (auto phys {0_u64}; phys < mem::LOW_MEMORY_LIMIT; phys += PAGE_SIZE) {
 			const auto page {static_cast<igros_usize_t>(phys)};
-			mapped = mapped && paging::map(top, phys, std::bit_cast<const void*>(page + offset), flags);
+			mapped = mapped && paging::map(top, phys, std::bit_cast<const void*>(page + offset), paging::kernelFlags(phys));
 			if (0_u64 != phys) {
-				mapped = mapped && paging::map(top, phys, std::bit_cast<const void*>(page), flags);
+				mapped = mapped && paging::map(top, phys, std::bit_cast<const void*>(page), data);
 			}
+		}
+
+		// Rest of RAM at kernel offset (direct map) with large pages
+		const auto end {std::max(mem::LOW_MEMORY_LIMIT, std::min(klib::kAlign::up<LARGE_PAGE_SIZE>(mem::phys::top()), DIRECT_MAP_LIMIT))};
+		for (auto phys {mem::LOW_MEMORY_LIMIT}; phys < end; phys += LARGE_PAGE_SIZE) {
+			mapped = mapped && paging::mapLarge(top, phys, std::bit_cast<const void*>(static_cast<igros_usize_t>(phys) + offset), data);
 		}
 		if (!mapped) [[unlikely]] {
 			klib::kprintf("Paging:\t\tFAILED (can't build kernel mapping)");
 			return;
 		}
 
-		// Switch to new tables
+		// Switch to new tables: whole direct map is reachable from now on
 		::writeCR3(static_cast<igros_usize_t>(top));
+		directEnd = end;
+		// Kernel can't write to read-only pages (code and read-only data)
+		::writeCR0(::readCR0() | CR0_WP);
 
 		// Check mapping
 		klib::kprintf(
-			"Paging:\t\t%s (%zu levels, root at 0x%08llx)",
+			"Paging:\t\t%s (%zu levels, root at 0x%08llx, direct map %llu MB%s)",
 			paging::selfTest() ? "OK" : "SELF-TEST FAILED",
 			LEVELS,
-			static_cast<unsigned long long>(top)
+			static_cast<unsigned long long>(top),
+			static_cast<unsigned long long>(end >> 20),
+			(0_usize != noExecute) ? ", NX" : ""
 		);
 
 	}
@@ -199,13 +295,13 @@ namespace igros::x86 {
 	// Check mapping on a scratch page
 	[[nodiscard]]
 	auto paging::selfTest() noexcept -> bool {
-		// Scratch page above kernel low memory mapping
-		const auto virt	{std::bit_cast<igros_byte_t*>(platform::Platform::kernelOffset() + 0x10000000_usize)};
-		const auto phys	{mem::phys::alloc(mem::LOW_MEMORY_LIMIT)};
+		// Scratch page in dynamic mappings area (right above direct map)
+		const auto virt	{paging::dynamicStart()};
+		const auto phys	{mem::phys::alloc(directEnd)};
 		if (0_u64 == phys) [[unlikely]] {
 			return false;
 		}
-		// Low memory alias of scratch page
+		// Direct map alias of scratch page
 		const auto alias {std::bit_cast<volatile igros_byte_t*>(paging::table(phys))};
 		if (nullptr == alias) [[unlikely]] {
 			mem::phys::free(phys);
@@ -214,11 +310,11 @@ namespace igros::x86 {
 		auto passed {
 			(INVALID == paging::translate(virt))						&&
 			(INVALID == paging::translate(nullptr))					&&
-			paging::map(phys, virt, klib::make_kflags<FLAGS>(FLAGS::PRESENT, FLAGS::WRITABLE))	&&
+			paging::map(phys, virt, klib::make_kflags<FLAGS>(FLAGS::PRESENT, FLAGS::WRITABLE, FLAGS::NO_EXECUTE))	&&
 			(phys + 0x123_u64 == paging::translate(virt + 0x123))
 		};
 		if (passed) {
-			// Write through new mapping, read through low memory alias
+			// Write through new mapping, read through direct map alias
 			static_cast<volatile igros_byte_t*>(virt)[0x123] = 0x5A_u8;
 			passed = (0x5A_u8 == alias[0x123]);
 			alias[0x456] = 0xA5_u8;

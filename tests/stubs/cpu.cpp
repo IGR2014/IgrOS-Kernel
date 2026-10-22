@@ -16,6 +16,7 @@
 // IgrOS-Kernel arch
 #include <arch/cpu.hpp>
 #include <arch/x86/cr.hpp>
+#include <arch/x86/features.hpp>
 #include <arch/x86/io.hpp>
 #include <arch/x86/irq.hpp>
 // Tests
@@ -90,6 +91,12 @@ extern "C" {
 
 
 	// Control registers
+	auto readCR0() noexcept -> igros::igros_usize_t {
+		return static_cast<igros::igros_usize_t>(hw::cr0);
+	}
+	void writeCR0(const igros::igros_usize_t value) noexcept {
+		hw::cr0 = value;
+	}
 	auto readCR2() noexcept -> igros::igros_usize_t {
 		return static_cast<igros::igros_usize_t>(hw::cr2);
 	}
@@ -107,6 +114,10 @@ extern "C" {
 	}
 
 
+	// CPU features
+	auto cpuEnableNoExecute() noexcept -> bool {
+		return hw::noExecute;
+	}
 	// Halt returns to IGROS_CHECK_HALTS (unexpected halt fails the test)
 	[[noreturn]]
 	void cpuHalt() noexcept {

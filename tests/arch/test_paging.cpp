@@ -39,10 +39,29 @@ asm(
 	".globl " IGROS_TEST_SYMBOL(KERNEL_OFFSET_VIRT) "; "
 	".set " IGROS_TEST_SYMBOL(KERNEL_OFFSET_VIRT) ", " IGROS_TEST_STR(IGROS_TEST_KERNEL_OFFSET) "; "
 	".globl " IGROS_TEST_SYMBOL(_SECTION_KERNEL_START_) "; "
-	".set " IGROS_TEST_SYMBOL(_SECTION_KERNEL_START_) ", " IGROS_TEST_STR(IGROS_TEST_KERNEL_OFFSET) "; "
+	".set " IGROS_TEST_SYMBOL(_SECTION_KERNEL_START_) ", " IGROS_TEST_STR(IGROS_TEST_KERNEL_OFFSET) " + 0x100000; "
+	".globl " IGROS_TEST_SYMBOL(_SECTION_TEXT_START_) "; "
+	".set " IGROS_TEST_SYMBOL(_SECTION_TEXT_START_) ", " IGROS_TEST_STR(IGROS_TEST_KERNEL_OFFSET) " + 0x100000; "
+	".globl " IGROS_TEST_SYMBOL(_SECTION_RODATA_START_) "; "
+	".set " IGROS_TEST_SYMBOL(_SECTION_RODATA_START_) ", " IGROS_TEST_STR(IGROS_TEST_KERNEL_OFFSET) " + 0x103000; "
+	".globl " IGROS_TEST_SYMBOL(_SECTION_DATA_START_) "; "
+	".set " IGROS_TEST_SYMBOL(_SECTION_DATA_START_) ", " IGROS_TEST_STR(IGROS_TEST_KERNEL_OFFSET) " + 0x105000; "
 	".globl " IGROS_TEST_SYMBOL(_SECTION_KERNEL_END_) "; "
-	".set " IGROS_TEST_SYMBOL(_SECTION_KERNEL_END_) ", " IGROS_TEST_STR(IGROS_TEST_KERNEL_OFFSET)
+	".set " IGROS_TEST_SYMBOL(_SECTION_KERNEL_END_) ", " IGROS_TEST_STR(IGROS_TEST_KERNEL_OFFSET) " + 0x108000"
 );
+
+// Fake kernel image layout (physical): code, read-only data, data + bss
+constexpr auto KERNEL_TEXT	{std::uintptr_t {0x100000}};
+constexpr auto KERNEL_RODATA	{std::uintptr_t {0x103000}};
+constexpr auto KERNEL_DATA	{std::uintptr_t {0x105000}};
+constexpr auto KERNEL_END	{std::uintptr_t {0x108000}};
+
+// Entry bits
+constexpr auto WRITABLE		{static_cast<paging::entry_t>(paging::FLAGS::WRITABLE)};
+constexpr auto HUGE		{static_cast<paging::entry_t>(paging::FLAGS::HUGE)};
+constexpr auto NO_EXECUTE	{static_cast<paging::entry_t>(paging::FLAGS::NO_EXECUTE)};
+// CR0 write protection
+constexpr auto CR0_WP		{std::uintptr_t {0x00010000}};
 
 
 // Physical memory file
@@ -117,10 +136,17 @@ static auto translate(const std::uintptr_t virt) -> igros::mem::phys_t {
 }
 
 
+// Build kernel page tables (forget host mapping of self-test scratch page:
+// software MMU keeps it after kernel unmaps it, repeated self-test would see stale page)
+static void initPaging() {
+	::munmap(paging::dynamicStart(), paging::PAGE_SIZE);
+	paging::init();
+}
+
 // No physical memory for page tables
 static void testInitNoMemory() {
 	hw::reset();
-	paging::init();
+	initPaging();
 	IGROS_CHECK(hw::printed("Paging:\t\tFAILED (no memory for page tables)"));
 	IGROS_CHECK(0 == hw::cr3);
 }
@@ -129,7 +155,8 @@ static void testInitNoMemory() {
 // Kernel mapping: low memory at kernel offset and identity, verified by self-test
 static void testInit() {
 	hw::reset();
-	paging::init();
+	hw::noExecute = true;
+	initPaging();
 	IGROS_CHECK(hw::printed("Paging:\t\tOK ("));
 	IGROS_CHECK(0 != paging::root());
 	IGROS_CHECK(0x1000 == translate(KERNEL_OFFSET + 0x1000));
@@ -137,6 +164,62 @@ static void testInit() {
 	IGROS_CHECK(0x2345 == translate(0x2345));
 	IGROS_CHECK(paging::INVALID == translate(0));
 	IGROS_CHECK(paging::INVALID == translate(KERNEL_OFFSET + LOW_MEMORY));
+	// No RAM above low memory: direct map is low memory only
+	IGROS_CHECK(igros::mem::LOW_MEMORY_LIMIT == paging::directMapEnd());
+	// Kernel write protection on
+	IGROS_CHECK(0 != (hw::cr0 & CR0_WP));
+	// Code: read + execute
+	for (auto page {KERNEL_TEXT}; page < KERNEL_RODATA; page += paging::PAGE_SIZE) {
+		const auto entry {entryAt(KERNEL_OFFSET + page, 0)};
+		IGROS_CHECK((0 == (entry & WRITABLE)) && (0 == (entry & NO_EXECUTE)));
+	}
+	// Read-only data: read
+	for (auto page {KERNEL_RODATA}; page < KERNEL_DATA; page += paging::PAGE_SIZE) {
+		const auto entry {entryAt(KERNEL_OFFSET + page, 0)};
+		IGROS_CHECK((0 == (entry & WRITABLE)) && (NO_EXECUTE == (entry & NO_EXECUTE)));
+	}
+	// Data, low memory around kernel and identity mapping: read + write, no execute
+	for (const auto virt : {KERNEL_OFFSET + KERNEL_DATA, KERNEL_OFFSET + KERNEL_END - paging::PAGE_SIZE, KERNEL_OFFSET + KERNEL_END,
+				KERNEL_OFFSET + 0xB8000, KERNEL_OFFSET + KERNEL_TEXT - paging::PAGE_SIZE, KERNEL_TEXT, std::uintptr_t {0x1000}}) {
+		const auto entry {entryAt(virt, 0)};
+		IGROS_CHECK((WRITABLE == (entry & WRITABLE)) && (NO_EXECUTE == (entry & NO_EXECUTE)));
+	}
+}
+
+// No NX support: no NX bits (reserved bits would fault)
+static void testInitNoExecuteUnsupported() {
+	hw::reset();
+	initPaging();
+	IGROS_CHECK(hw::printed("Paging:\t\tOK ("));
+	IGROS_CHECK(!hw::printed(", NX)"));
+	IGROS_CHECK(0 == (entryAt(KERNEL_OFFSET + KERNEL_DATA, 0) & NO_EXECUTE));
+	IGROS_CHECK(0 == (entryAt(KERNEL_OFFSET + KERNEL_RODATA, 0) & NO_EXECUTE));
+	// Explicit NX flag is dropped too
+	hw::cr3 = static_cast<std::uintptr_t>(newTable());
+	IGROS_CHECK(map(0x7000, 0x00C00000, paging::FLAGS::NO_EXECUTE));
+	IGROS_CHECK(0 == (entryAt(0x00C00000, 0) & NO_EXECUTE));
+}
+
+// RAM above low memory: mapped at kernel offset with large pages, page tables reachable there
+static void testInitDirectMap() {
+	hw::reset();
+	hw::noExecute = true;
+	// RAM up to 16 MB (only first 4 MB are backed by test memory: page tables come from there)
+	phys::markFree(igros::mem::LOW_MEMORY_LIMIT, 0x01000000);
+	initPaging();
+	IGROS_CHECK(hw::printed("Paging:\t\tOK ("));
+	IGROS_CHECK(hw::printed("direct map 16 MB"));
+	IGROS_CHECK(0x01000000 == paging::directMapEnd());
+	IGROS_CHECK(0x00A01234 == translate(KERNEL_OFFSET + 0x00A01234));
+	IGROS_CHECK(0x00FFFFFF == translate(KERNEL_OFFSET + 0x00FFFFFF));
+	IGROS_CHECK(paging::INVALID == translate(KERNEL_OFFSET + 0x01000000));
+	// Large pages: read + write, no execute
+	const auto large {entryAt(KERNEL_OFFSET + 0x00800000, 1)};
+	IGROS_CHECK((HUGE == (large & HUGE)) && (WRITABLE == (large & WRITABLE)) && (NO_EXECUTE == (large & NO_EXECUTE)));
+	// Identity mapping covers low memory only
+	IGROS_CHECK(paging::INVALID == translate(0x00800000));
+	// Dynamic mappings start right above direct map limit
+	IGROS_CHECK(KERNEL_OFFSET + paging::DIRECT_MAP_LIMIT == std::bit_cast<std::uintptr_t>(paging::dynamicStart()));
 }
 
 
@@ -255,13 +338,16 @@ int main() {
 	}
 	testInitNoMemory();
 	phys::markFree(paging::PAGE_SIZE, igros::mem::LOW_MEMORY_LIMIT);
+	phys::markUsed(KERNEL_TEXT, KERNEL_END);
 	testInit();
+	testInitNoExecuteUnsupported();
 	testMap();
 	testMapInvalid();
 	testUser();
 	testHuge();
 	testNoMemory();
 	testFaultHandler();
+	testInitDirectMap();
 	return igros::test::result();
 }
 
