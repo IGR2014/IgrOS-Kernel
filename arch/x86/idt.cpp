@@ -22,12 +22,15 @@
 #if	defined (IGROS_ARCH_i386)
 
 // IgrOS-Kernel arch i386
+#include <arch/i386/gdt.hpp>
 #include <arch/i386/idt.hpp>
 
 #elif	defined (IGROS_ARCH_x86_64)
 
 // IgrOS-Kernel arch x86_64
+#include <arch/x86_64/gdt.hpp>
 #include <arch/x86_64/idt.hpp>
+#include <arch/x86_64/tss.hpp>
 
 #endif
 
@@ -66,8 +69,8 @@ namespace igros {
 	// Init IDT table
 	void x86::native::idt::init() noexcept {
 
-		// Kernel code segment selector (GDT entry #1)
-		constexpr auto KERNEL_CODE	{0x0008_u16};
+		// Kernel code segment selector
+		constexpr auto KERNEL_CODE	{x86::native::gdt::KERNEL_CODE};
 		// Present, ring 0, interrupt gate
 		constexpr auto INTERRUPT_GATE	{0x8E_u8};
 
@@ -86,6 +89,27 @@ namespace igros {
 		std::ranges::transform(::exHandlerTable, table.begin(), gate);
 		// IRQs setup (vectors from IRQ offset)
 		std::ranges::transform(::irqHandlerTable, table.begin() + x86::irqVector(x86::irq_t::PIT), gate);
+
+		// Exceptions that can't trust current stack
+		using enum x86::except::NUMBER;
+		const auto vector = [](const x86::except::NUMBER number) noexcept {
+			return static_cast<igros_usize_t>(number);
+		};
+
+#if	defined (IGROS_ARCH_i386)
+
+		// Double fault: task gate to double fault task (own stack and page directory)
+		constexpr auto TASK_GATE	{0x85_u8};
+		table[vector(DOUBLE_FAULT)]	= idt::setEntry(nullptr, x86::native::gdt::TSS_DOUBLE_FAULT, TASK_GATE);
+
+#elif	defined (IGROS_ARCH_x86_64)
+
+		// Double fault, NMI and machine check: own interrupt stacks (TSS IST)
+		table[vector(DOUBLE_FAULT)].ist		= static_cast<igros_byte_t>(x86::native::tss::IST::DOUBLE_FAULT);
+		table[vector(NON_MASKABLE_IRQ)].ist	= static_cast<igros_byte_t>(x86::native::tss::IST::NMI);
+		table[vector(MACHINE_CHECK)].ist	= static_cast<igros_byte_t>(x86::native::tss::IST::MACHINE_CHECK);
+
+#endif
 
 		// Pointer to IDT
 		constinit static idt::pointer_t pointer {

@@ -23,6 +23,7 @@
 .global	gdtResetSegments			# Reset segments
 .global	gdtLoad					# Load GDT
 .global	gdtStore				# Store GDT
+.global	tssLoad					# Load task register
 
 
 # Reset segments (reload CS with far return, data segments directly)
@@ -64,4 +65,14 @@ gdtStore:
 	retq
 
 .size gdtStore, . - gdtStore
+
+
+# Load task register (DI - TSS selector)
+.type tssLoad, %function
+tssLoad:
+
+	ltr	%di				# Load task register
+	retq
+
+.size tssLoad, . - tssLoad
 

@@ -23,6 +23,7 @@
 .global	gdtResetSegments			# Reset segments
 .global	gdtLoad					# Load GDT
 .global	gdtStore				# Store GDT
+.global	tssLoad					# Load task register
 
 
 # Reset segments
@@ -63,4 +64,16 @@ gdtStore:
 	retl
 
 .size gdtStore, . - gdtStore
+
+
+
+# Load task register (stack argument - TSS selector)
+.type tssLoad, %function
+tssLoad:
+
+	movl	4(%esp), %eax			# Get selector from stack
+	ltr	%ax				# Load task register
+	retl
+
+.size tssLoad, . - tssLoad
 

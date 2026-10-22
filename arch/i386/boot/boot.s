@@ -182,7 +182,13 @@ bootPageDirectory:
 
 # Stack section
 .section .bss
-.balign 16
+.balign	4096
+
+# Stack guard page: left unmapped by paging::init, stack overflow faults
+# (double fault then runs on its own stack) instead of corrupting .bss
+.global	_KERNEL_STACK_GUARD_
+_KERNEL_STACK_GUARD_:
+	.skip	0x1000
 
 # Stack data
 # Stack grows from stackTop to stackBottom

@@ -46,6 +46,8 @@ asm(
 	".set " IGROS_TEST_SYMBOL(_SECTION_RODATA_START_) ", " IGROS_TEST_STR(IGROS_TEST_KERNEL_OFFSET) " + 0x103000; "
 	".globl " IGROS_TEST_SYMBOL(_SECTION_DATA_START_) "; "
 	".set " IGROS_TEST_SYMBOL(_SECTION_DATA_START_) ", " IGROS_TEST_STR(IGROS_TEST_KERNEL_OFFSET) " + 0x105000; "
+	".globl " IGROS_TEST_SYMBOL(_KERNEL_STACK_GUARD_) "; "
+	".set " IGROS_TEST_SYMBOL(_KERNEL_STACK_GUARD_) ", " IGROS_TEST_STR(IGROS_TEST_KERNEL_OFFSET) " + 0x106000; "
 	".globl " IGROS_TEST_SYMBOL(_SECTION_KERNEL_END_) "; "
 	".set " IGROS_TEST_SYMBOL(_SECTION_KERNEL_END_) ", " IGROS_TEST_STR(IGROS_TEST_KERNEL_OFFSET) " + 0x108000"
 );
@@ -55,6 +57,8 @@ constexpr auto KERNEL_TEXT	{std::uintptr_t {0x100000}};
 constexpr auto KERNEL_RODATA	{std::uintptr_t {0x103000}};
 constexpr auto KERNEL_DATA	{std::uintptr_t {0x105000}};
 constexpr auto KERNEL_END	{std::uintptr_t {0x108000}};
+// Boot stack guard page (in bss)
+constexpr auto KERNEL_GUARD	{std::uintptr_t {0x106000}};
 
 // Entry bits
 constexpr auto WRITABLE		{static_cast<paging::entry_t>(paging::FLAGS::WRITABLE)};
@@ -178,6 +182,10 @@ static void testInit() {
 		const auto entry {entryAt(KERNEL_OFFSET + page, 0)};
 		IGROS_CHECK((0 == (entry & WRITABLE)) && (NO_EXECUTE == (entry & NO_EXECUTE)));
 	}
+	// Boot stack guard page isn't mapped at kernel offset, its neighbours are
+	IGROS_CHECK(paging::INVALID == translate(KERNEL_OFFSET + KERNEL_GUARD));
+	IGROS_CHECK(KERNEL_GUARD - 1 == translate(KERNEL_OFFSET + KERNEL_GUARD - 1));
+	IGROS_CHECK(KERNEL_GUARD + paging::PAGE_SIZE == translate(KERNEL_OFFSET + KERNEL_GUARD + paging::PAGE_SIZE));
 	// Data, low memory around kernel and identity mapping: read + write, no execute
 	for (const auto virt : {KERNEL_OFFSET + KERNEL_DATA, KERNEL_OFFSET + KERNEL_END - paging::PAGE_SIZE, KERNEL_OFFSET + KERNEL_END,
 				KERNEL_OFFSET + 0xB8000, KERNEL_OFFSET + KERNEL_TEXT - paging::PAGE_SIZE, KERNEL_TEXT, std::uintptr_t {0x1000}}) {

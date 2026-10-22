@@ -91,7 +91,7 @@ namespace igros::x86_64 {
 		constexpr static auto	GDT_ENTRY_DATA_RING3		{flags_t::GDT_SEG_RING3_DATA};
 
 		// Number of GDT entries
-		constexpr static auto	GDT_SIZE			{6_usize};
+		constexpr static auto	GDT_SIZE			{7_usize};
 
 		// Copy c-tor
 		gdt(const gdt &other) = delete;
@@ -129,8 +129,17 @@ namespace igros::x86_64 {
 		// GDT table
 		using table_t = std::array<gdt::entry_t, gdt::GDT_SIZE>;
 
+		// Segment selectors (index * 8, see init)
+		constexpr static auto	KERNEL_CODE		{igros_word_t {0x08}};
+		constexpr static auto	KERNEL_DATA		{igros_word_t {0x10}};
+		constexpr static auto	TSS			{igros_word_t {0x28}};	// 16-byte descriptor: entries 5 and 6
+
 		// Default c-tor
 		gdt() noexcept = default;
+
+		// 64-bit available TSS descriptor (two GDT entries: base is 64-bit)
+		[[nodiscard]]
+		constexpr static auto	tssEntry(const igros_quad_t base, const igros_dword_t limit) noexcept -> std::array<entry_t, 2>;
 
 		// Set GDT entry
 		template<igros_dword_t BASE, igros_dword_t LIMIT, flags_t FLAGS>
@@ -161,6 +170,32 @@ namespace igros::x86_64 {
 			.access		= static_cast<igros_byte_t>(FLAGS & 0x00FF_u16),
 			.limitFlags	= static_cast<igros_byte_t>(((LIMIT & 0xF0000_u32) >> 16) | (static_cast<igros_word_t>(FLAGS & 0x0F00_u16) >> 4)),
 			.baseHigh	= static_cast<igros_byte_t>((BASE & 0xFF000000_u32) >> 24)
+		};
+	}
+
+	// 64-bit available TSS descriptor
+	[[nodiscard]]
+	constexpr auto gdt::tssEntry(const igros_quad_t base, const igros_dword_t limit) noexcept -> std::array<entry_t, 2> {
+		// Present, ring 0, type 9 (available 64-bit TSS), byte granular limit
+		constexpr auto TSS_AVAILABLE {0x89_u8};
+		return {
+			entry_t {
+				.limitLow	= static_cast<igros_word_t>(limit & 0xFFFF_u32),
+				.baseLow	= static_cast<igros_word_t>(base & 0xFFFF_u64),
+				.baseMid	= static_cast<igros_byte_t>((base >> 16) & 0xFF_u64),
+				.access		= TSS_AVAILABLE,
+				.limitFlags	= static_cast<igros_byte_t>((limit >> 16) & 0x0F_u32),
+				.baseHigh	= static_cast<igros_byte_t>((base >> 24) & 0xFF_u64)
+			},
+			// Upper half: base bits 32..63, rest reserved
+			entry_t {
+				.limitLow	= static_cast<igros_word_t>((base >> 32) & 0xFFFF_u64),
+				.baseLow	= static_cast<igros_word_t>((base >> 48) & 0xFFFF_u64),
+				.baseMid	= 0_u8,
+				.access		= 0_u8,
+				.limitFlags	= 0_u8,
+				.baseHigh	= 0_u8
+			}
 		};
 	}
 

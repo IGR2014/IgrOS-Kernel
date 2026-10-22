@@ -53,12 +53,12 @@ namespace igros::x86 {
 	// Initialize x86
 	static void platformInit() noexcept {
 
+		// Setup Global Descriptors Table and task state segment (IDT refers to it)
+		native::gdt::init();
 		// Setup Interrupts Descriptor Table
 		native::idt::init();
 		// Init exceptions
 		except::init();
-		// Setup Global Descriptors Table
-		native::gdt::init();
 
 		// Init interrupts
 		irq::init();

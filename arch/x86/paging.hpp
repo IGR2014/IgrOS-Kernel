@@ -102,6 +102,7 @@ namespace igros::x86 {
 		// Build kernel page tables and switch to them:
 		// - first 4 MB at kernel offset with kernel section rights (code: read + execute,
 		//   read-only data: read, everything else: read + write, no execute),
+		//   except boot stack guard page,
 		// - first 4 MB identity mapped (boot data), except null page, no execute,
 		// - rest of RAM at kernel offset with large pages (direct map), no execute;
 		// enables NX (if supported) and write protection in kernel mode (CR0.WP)

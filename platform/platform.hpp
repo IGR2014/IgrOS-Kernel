@@ -29,6 +29,8 @@ extern const igros::igros_byte_t _SECTION_KERNEL_END_;
 extern const igros::igros_byte_t _SECTION_TEXT_START_;
 extern const igros::igros_byte_t _SECTION_RODATA_START_;
 extern const igros::igros_byte_t _SECTION_DATA_START_;
+// Boot stack guard page (from boot.s, page aligned)
+extern const igros::igros_byte_t _KERNEL_STACK_GUARD_;
 // Kernel virtual memory offset (absolute symbol, its address is the offset value)
 extern const igros::igros_byte_t KERNEL_OFFSET_VIRT;
 
@@ -149,6 +151,9 @@ namespace igros::platform {
 		// Get kernel writable data start (data and bss: [dataStart, kernelEnd))
 		[[nodiscard]]
 		constexpr static auto	dataStart() noexcept -> const igros_byte_t*;
+		// Get boot stack guard page (one page right below boot stack, never mapped)
+		[[nodiscard]]
+		constexpr static auto	stackGuard() noexcept -> const igros_byte_t*;
 		// Get kernel virtual memory offset (kernel virtual address = physical address + offset)
 		[[nodiscard]]
 		static auto		kernelOffset() noexcept -> igros_usize_t;
@@ -308,6 +313,12 @@ namespace igros::platform {
 	[[nodiscard]]
 	constexpr auto Platform::dataStart() noexcept -> const igros_byte_t* {
 		return &_SECTION_DATA_START_;
+	}
+
+	// Get boot stack guard page
+	[[nodiscard]]
+	constexpr auto Platform::stackGuard() noexcept -> const igros_byte_t* {
+		return &_KERNEL_STACK_GUARD_;
 	}
 
 	// Get kernel virtual memory offset

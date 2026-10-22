@@ -251,13 +251,17 @@ namespace igros::x86 {
 		}
 
 		// Low memory: at kernel offset with kernel section rights and identity (boot data);
-		// identity null page stays unmapped to catch null pointer dereference
+		// identity null page stays unmapped to catch null pointer dereference,
+		// boot stack guard page stays unmapped to catch kernel stack overflow
 		const auto data		{klib::make_kflags<FLAGS>(FLAGS::PRESENT, FLAGS::WRITABLE, FLAGS::NO_EXECUTE)};
 		const auto offset	{platform::Platform::kernelOffset()};
+		const auto guard	{static_cast<mem::phys_t>(std::bit_cast<igros_usize_t>(platform::Platform::stackGuard()) - offset)};
 		auto mapped		{true};
 		for (auto phys {0_u64}; phys < mem::LOW_MEMORY_LIMIT; phys += PAGE_SIZE) {
 			const auto page {static_cast<igros_usize_t>(phys)};
-			mapped = mapped && paging::map(top, phys, std::bit_cast<const void*>(page + offset), paging::kernelFlags(phys));
+			if (guard != phys) {
+				mapped = mapped && paging::map(top, phys, std::bit_cast<const void*>(page + offset), paging::kernelFlags(phys));
+			}
 			if (0_u64 != phys) {
 				mapped = mapped && paging::map(top, phys, std::bit_cast<const void*>(page), data);
 			}
