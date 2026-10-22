@@ -99,13 +99,11 @@ jobs:
 
     # Install dependencies (toolchain included)
     - name: 'Install Dependencies'
-      # Mirror stalls and dpkg lock (unattended upgrades) must fail fast and retry, not hang the job
-      timeout-minutes: 10
+      # Stalled apt mirror: phases time out and retry (ci-apt.sh) instead of hanging the job
+      timeout-minutes: 15
       shell: bash
       run: |
-        echo 'Acquire::Retries "5"; Acquire::http::Timeout "30"; Acquire::https::Timeout "30"; DPkg::Lock::Timeout "300";' | sudo tee /etc/apt/apt.conf.d/80-ci > /dev/null
-        sudo apt-get update
-        sudo apt-get install -y --no-install-recommends \
+        bash config/script/ci-apt.sh \
           ccache clang cmake doxygen g++-multilib gcc-multilib graphviz grub-common grub-pc-bin \
           lld mtools ninja-build qemu-system-x86 xorriso
         clang++ --version
@@ -179,7 +177,7 @@ jobs:
     name: 'Unit Tests'
     # OS
     runs-on: ubuntu-26.04
-    timeout-minutes: 15
+    timeout-minutes: 20
 
     # Strategy with languages matrix
     strategy:
@@ -197,13 +195,11 @@ jobs:
 
     # Install dependencies (multilib for 32-bit i386 code paths)
     - name: 'Install Dependencies'
-      # Mirror stalls and dpkg lock (unattended upgrades) must fail fast and retry, not hang the job
-      timeout-minutes: 10
+      # Stalled apt mirror: phases time out and retry (ci-apt.sh) instead of hanging the job
+      timeout-minutes: 15
       shell: bash
       run: |
-        echo 'Acquire::Retries "5"; Acquire::http::Timeout "30"; Acquire::https::Timeout "30"; DPkg::Lock::Timeout "300";' | sudo tee /etc/apt/apt.conf.d/80-ci > /dev/null
-        sudo apt-get update
-        sudo apt-get install -y --no-install-recommends clang cmake g++-multilib ninja-build
+        bash config/script/ci-apt.sh clang cmake g++-multilib ninja-build
 
     # Configure
     - name: 'CMake Configure'
