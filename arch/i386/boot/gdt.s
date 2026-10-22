@@ -29,7 +29,7 @@
 .type gdtResetSegments, %function
 gdtResetSegments:
 
-	ljmpl	$KERNEL_SEGMENT_CODE, $1f	# Long jump for CS changes to take affect
+	ljmpl	$KERNEL_SEGMENT_CODE, $1f	# Far jump for CS changes to take effect
 
 1:
 	movw	$KERNEL_SEGMENT_DATA, %ax	# Set proper segment registers
@@ -49,9 +49,7 @@ gdtLoad:
 
 	movl	4(%esp), %eax			# Get pointer from stack
 	lgdtl	(%eax)				# Load GDT from pointer
-	leal	gdtResetSegments, %ebp		# Reset segments after GDT change
-	calll	*%ebp
-	retl
+	jmp	gdtResetSegments		# Reset segments (tail call, no clobbered callee-saved registers)
 
 .size gdtLoad, . - gdtLoad
 
@@ -60,7 +58,8 @@ gdtLoad:
 .type gdtStore, %function
 gdtStore:
 
-	sgdtl	(%eax)				# Store GDT to EAX
+	movl	4(%esp), %eax			# Get pointer from stack
+	sgdtl	(%eax)				# Store GDT to pointer
 	retl
 
 .size gdtStore, . - gdtStore

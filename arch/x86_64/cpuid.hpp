@@ -3,9 +3,9 @@
 //	CPUID detection
 //
 //	File:	cpuid.hpp
-//	Date:	16 Dec 2022
+//	Date:	22 Oct 2026
 //
-//	Copyright (c) 2017 - 2022, Igor Baklykov
+//	Copyright (c) 2017 - 2026, Igor Baklykov
 //	All rights reserved.
 //
 //
@@ -22,22 +22,18 @@
 namespace igros::x86_64 {
 
 
-	// CPUID EAX value (e.g. flag)
-	enum class cpuidFlags_t : igros_dword_t {
-
-		// "Intel" features list
-		FEATURES_INTEL		= 0x00000000_u32,		//
-		INFO_PROC_VERSION	= 0x00000001_u32,		//
-		INFO_CACHE_TLB		= 0x00000002_u32,		//
-		INFO_PENTIUM_III_SERIAL	= 0x00000003_u32,		//
-
-		// "AMD" features list
-		FEATURES_AMD		= 0x80000000_u32		//
-
+	// CPUID leaves
+	enum class CPUID : igros_dword_t {
+		VENDOR			= 0x00000000_u32,		// Max basic leaf and vendor string
+		FEATURES		= 0x00000001_u32,		// Version and feature flags
+		CACHE_TLB		= 0x00000002_u32,		// Cache and TLB descriptors
+		EXTENDED_FEATURES	= 0x00000007_u32,		// Structured extended features (subleaf 0)
+		EXTENDED_MAX		= 0x80000000_u32,		// Max extended leaf
+		EXTENDED_INFO		= 0x80000001_u32,		// Extended feature flags (long mode, NX, 1 GB pages)
+		ADDRESS_SIZES		= 0x80000008_u32		// Physical and linear address sizes
 	};
 
-
-	// CPUID registers values holder
+	// CPUID result registers
 	struct cpuidRegs_t {
 		igros_dword_t		eax;			// EAX register value
 		igros_dword_t		ebx;			// EBX register value
@@ -46,13 +42,25 @@ namespace igros::x86_64 {
 	};
 
 
-	// Check if CPUID exists (Looks like on i386 not)
+	// Execute CPUID (CPUID is always available in long mode; caller checks leaf is supported)
 	[[nodiscard]]
-	auto	cpuidCheck() noexcept -> bool;
+	inline auto cpuid(const CPUID leaf, const igros_dword_t subleaf = 0_u32) noexcept -> cpuidRegs_t {
+		auto regs {cpuidRegs_t {}};
+		asm volatile (
+			"cpuid"
+			: "=a" (regs.eax), "=b" (regs.ebx), "=c" (regs.ecx), "=d" (regs.edx)
+			: "a" (static_cast<igros_dword_t>(leaf)), "c" (subleaf)
+		);
+		return regs;
+	}
 
-	// CPUID instruction call
+	// Check CPUID leaf is supported (basic and extended ranges are checked separately)
 	[[nodiscard]]
-	auto	cpuid(const cpuidFlags_t flag) noexcept -> cpuidRegs_t;
+	inline auto cpuidHasLeaf(const CPUID leaf) noexcept -> bool {
+		const auto value	{static_cast<igros_dword_t>(leaf)};
+		const auto base		{value & 0x80000000_u32};
+		return cpuid(static_cast<CPUID>(base)).eax >= value;
+	}
 
 
 }	// namespace igros::x86_64

@@ -24,7 +24,6 @@
 .type idtLoad, %function
 idtLoad:
 
-	cld				# Clear direction flag
 	lidtq	(%rdi)			# Load IDT from pointer
 	retq				# Done here
 
@@ -35,8 +34,7 @@ idtLoad:
 .type idtStore, %function
 idtStore:
 
-	cld				# Clear direction flag
-	sidtq	(%rax)			# Store IDT to pointer RAX
+	sidtq	(%rdi)			# Store IDT to pointer (RDI)
 	retq
 
 .size idtStore, . - idtStore

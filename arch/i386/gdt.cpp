@@ -28,7 +28,7 @@ extern "C" {
 	// Load GDT
 	void	gdtLoad(const igros::i386::gdt::pointer_t* const gdtPtr) noexcept;
 	// Store GDT
-	auto	gdtStore() noexcept -> const igros::i386::gdt::pointer_t*;
+	void	gdtStore(igros::i386::gdt::pointer_t* const gdtPtr) noexcept;
 	
 
 #ifdef	__cplusplus

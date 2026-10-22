@@ -3,15 +3,16 @@
 #	Global descriptor table low-level operations
 #
 #	File:	gdt.s
-#	Date:	22 Mar 2023
+#	Date:	22 Oct 2026
 #
-#	Copyright (c) 2017 - 2022, Igor Baklykov
+#	Copyright (c) 2017 - 2026, Igor Baklykov
 #	All rights reserved.
 #
 #
 
 
-.set	KERNEL_SEGMENT_DATA,	0x00		# Kernel data segment
+.set	KERNEL_SEGMENT_CODE,	0x08		# Kernel code segment (gdt.cpp entry 1)
+.set	KERNEL_SEGMENT_DATA,	0x10		# Kernel data segment (gdt.cpp entry 2)
 
 
 .code64
@@ -24,13 +25,14 @@
 .global	gdtStore				# Store GDT
 
 
-# Reset segments
+# Reset segments (reload CS with far return, data segments directly)
 .type gdtResetSegments, %function
 gdtResetSegments:
 
-	cld					# Clear direction flag
-	movabsq	$1f, %rax			# Move absolute address to RAX
-	jmpq	*%rax				# Jump from RAX for CS changes to take affect
+	pushq	$KERNEL_SEGMENT_CODE		# New CS
+	leaq	1f(%rip), %rax			# Return address
+	pushq	%rax				# --//--
+	lretq					# Far return: CS takes effect
 
 1:
 	movw	$KERNEL_SEGMENT_DATA, %ax	# Set proper segment registers
@@ -44,25 +46,21 @@ gdtResetSegments:
 .size gdtResetSegments, . - gdtResetSegments
 
 
-# Load GDT
+# Load GDT (RDI - pointer to GDT pointer)
 .type gdtLoad, %function
 gdtLoad:
 
-	cld					# Clear direction flag
 	lgdtq	(%rdi)				# Load GDT from pointer
-	movq	$gdtResetSegments, %rax		# Reset segments after GDT change
-	callq	*%rax
-	retq
+	jmp	gdtResetSegments		# Reset segments (tail call)
 
 .size gdtLoad, . - gdtLoad
 
 
-# Store GDT
+# Store GDT (RDI - pointer to GDT pointer to fill)
 .type gdtStore, %function
 gdtStore:
 
-	cld					# Clear direction flag
-	sgdtq	(%rax)				# Load GDT to pointer RAX
+	sgdtq	(%rdi)				# Store GDT to pointer
 	retq
 
 .size gdtStore, . - gdtStore

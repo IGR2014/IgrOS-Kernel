@@ -25,23 +25,13 @@ extern "C" {
 #endif	// __cplusplus
 
 
-	// Check if loaded with multiboot loader
-	[[nodiscard]]
-	auto	checkMultiboot() noexcept -> igros::igros_byte_t;
-	// Check CPUID is extended
+	// Check CPUID instruction is available (non-zero if available)
 	[[nodiscard]]
 	auto	checkCPUID() noexcept -> igros::igros_byte_t;
-	// Check CPUID for long mode existance
+
+	// Check CPU supports long mode (non-zero if supported)
 	[[nodiscard]]
 	auto	checkLongMode() noexcept -> igros::igros_byte_t;
-
-	// Setup page tables
-	void	setupPageTables() noexcept;
-	// Enable paging
-	void	enablePaging() noexcept;
-
-	// Perform jum to long mode
-	void	jumpToLongMode() noexcept;
 
 
 #ifdef	__cplusplus

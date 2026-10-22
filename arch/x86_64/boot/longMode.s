@@ -11,12 +11,10 @@
 #
 
 
-.set	EAXMAGIC,		0x2BADB002
-.set	CPUIDBIT,		1<<21
-.set	CPUIDMAGIC,		0x80000000
-.set	CPUIDEXTENDED,		0x80000001
-.set	LONGMODEBIT,		1<<29
-.set	LONGMODEBITCR,		0xC0000080
+.set	CPUIDBIT,		1<<21			# EFLAGS.ID: CPUID available if it can be toggled
+.set	CPUIDMAGIC,		0x80000000		# Max extended CPUID leaf
+.set	CPUIDEXTENDED,		0x80000001		# Extended feature flags leaf
+.set	LONGMODEBIT,		1<<29			# EDX.LM: long mode supported
 
 
 .code32
@@ -58,8 +56,8 @@ checkLongMode:
 
 	movl	$CPUIDMAGIC, %eax
 	cpuid
-	cmp	$CPUIDEXTENDED, %eax
-	jl	1f
+	cmpl	$CPUIDEXTENDED, %eax			# Leaf numbers are unsigned
+	jb	1f
 	movl	$CPUIDEXTENDED, %eax
 	cpuid
 	test	$LONGMODEBIT, %edx

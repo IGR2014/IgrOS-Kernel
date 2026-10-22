@@ -35,7 +35,8 @@ idtLoad:
 .type idtStore, %function
 idtStore:
 
-	sidtl	(%eax)			# Store IDT to EAX
+	movl	4(%esp), %eax		# Get pointer from stack
+	sidtl	(%eax)			# Store IDT to pointer
 	retl
 
 .size idtStore, . - idtStore

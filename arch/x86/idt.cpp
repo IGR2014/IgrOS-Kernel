@@ -42,7 +42,7 @@ extern "C" {
 	// Load IDT
 	void	idtLoad(const igros::x86::native::idt::pointer_t* const idtPtr) noexcept;
 	// Store IDT
-	auto	idtStore() noexcept -> const igros::x86::native::idt::pointer_t*;
+	void	idtStore(igros::x86::native::idt::pointer_t* const idtPtr) noexcept;
 
 
 #ifdef	__cplusplus
