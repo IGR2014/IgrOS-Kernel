@@ -54,11 +54,12 @@ run() {
 	return "${status}"
 }
 
-# Use main Ubuntu archive instead of runner's (Azure) mirror
+# Use main Ubuntu archive instead of runner's (Azure) mirror: runner images
+# list it in mirror+file:/etc/apt/apt-mirrors.txt, older ones in sources
 switchMirror() {
 	phase "switching to archive.ubuntu.com"
 	sudo sed -i -e 's#https\?://azure\.archive\.ubuntu\.com#http://archive.ubuntu.com#g' \
-		/etc/apt/sources.list /etc/apt/sources.list.d/*.list /etc/apt/sources.list.d/*.sources 2>/dev/null || true
+		/etc/apt/apt-mirrors.txt /etc/apt/sources.list /etc/apt/sources.list.d/*.list /etc/apt/sources.list.d/*.sources 2>/dev/null || true
 }
 
 # Don't rebuild man page index after install (slow on runner images)
