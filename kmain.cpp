@@ -45,10 +45,12 @@ extern "C" {
 			ctor();
 		}
 
+		// Test multiboot before anything reads multiboot info (hang on error;
+		// screen is reachable through boot page tables, before platform init)
+		multiboot->test(magic);
+
 		// Initialize physical memory allocator (needed by paging)
-		if (igros::multiboot::check(magic)) [[likely]] {
-			igros::mem::phys::init(*multiboot);
-		}
+		igros::mem::phys::init(*multiboot);
 
 		// Initialize platform
 		igros::platform::Platform::current().initialize();
@@ -56,8 +58,6 @@ extern "C" {
 		// Write Multiboot magic error message message
 		igros::klib::kprintf("IgrOS kernel");
 
-		// Test multiboot (Hang on error)
-		multiboot->test(magic);
 		// Print kernel header
 		multiboot->printHeader();
 		// Show multiboot flags

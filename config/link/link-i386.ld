@@ -120,3 +120,8 @@ SECTIONS {
 	}
 
 }
+
+/* Boot code maps only the first 4 MB of physical memory (boot.s, mem::LOW_MEMORY_LIMIT) */
+ASSERT(_SECTION_KERNEL_END_ - KERNEL_OFFSET_VIRT <= 0x400000, "Kernel image exceeds 4 MB mapped by boot code")
+/* Kernel offset is hardcoded in boot.s (KERNEL_VMA): both values must match */
+ASSERT(KERNEL_OFFSET_VIRT_BOOT == KERNEL_OFFSET_VIRT, "boot.s KERNEL_VMA doesn't match linker script KERNEL_OFFSET_VIRT")
