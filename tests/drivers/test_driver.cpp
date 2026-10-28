@@ -3,7 +3,7 @@
 //	Drivers list initialization tests
 //
 //	File:	test_driver.cpp
-//	Date:	19 Oct 2026
+//	Date:	28 Oct 2026
 //
 //	Copyright (c) 2017 - 2026, Igor Baklykov
 //	All rights reserved.
@@ -11,6 +11,8 @@
 //
 
 
+// C++
+#include <array>
 // IgrOS-Kernel drivers
 #include <drivers/driver.hpp>
 // Tests
@@ -27,11 +29,11 @@ static auto initialized {0};
 int main() {
 
 	// Every driver initialized in order, failures counted and reported
-	constexpr igros::drivers::driver_t DRIVERS[] {
+	constexpr std::array<igros::drivers::driver_t, 3> DRIVERS {{
 		{"first",	[]() noexcept { return 1 == ++initialized; }},
 		{"broken",	[]() noexcept { ++initialized; return false; }},
 		{"last",	[]() noexcept { return 3 == ++initialized; }},
-	};
+	}};
 	hw::reset();
 	IGROS_CHECK(1 == igros::drivers::init(DRIVERS));
 	IGROS_CHECK(3 == initialized);

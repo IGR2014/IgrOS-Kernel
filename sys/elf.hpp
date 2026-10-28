@@ -3,7 +3,7 @@
 //	ELF header info
 //
 //	File:	elf.hpp
-//	Date:	16 Dec 2022
+//	Date:	28 Oct 2026
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -15,6 +15,7 @@
 
 
 // C++
+#include <array>
 #include <cstdint>
 // IgrOS-Kernel arch
 #include <arch/types.hpp>
@@ -76,13 +77,13 @@ namespace igros::sys {
 
 	// ELF identity class
 	struct elfIdentity_t {
-		igros_byte_t		magic[4_usize];			// ELF magic
-		ELF_CLASS		classType;			// ELF class
-		ELF_DATA		dataType;			// ELF data order
-		ELF_VERSION		version;			// ELF version
-		ELF_ABI			abiType;			// ELS OS ABI
-		igros_byte_t		abiVersion;			// ELS OS ABI version
-		igros_byte_t		reserved[7_usize];		// Unused
+		std::array<std::byte, 4_usize>		magic;			// ELF magic
+		ELF_CLASS				classType;		// ELF class
+		ELF_DATA				dataType;		// ELF data order
+		ELF_VERSION				version;		// ELF version
+		ELF_ABI					abiType;		// ELS OS ABI
+		igros_byte_t				abiVersion;		// ELS OS ABI version
+		std::array<std::byte, 7_usize>		reserved;		// Unused
 	};
 
 

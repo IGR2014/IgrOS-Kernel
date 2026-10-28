@@ -3,7 +3,7 @@
 //	Multiboot 1 header info
 //
 //	File:	multiboot.hpp
-//	Date:	16 Mar 2023
+//	Date:	28 Oct 2026
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -15,6 +15,7 @@
 
 
 // C++
+#include <array>
 #include <bit>
 // IgrOS-Kernel arch
 #include <arch/types.hpp>
@@ -92,46 +93,46 @@ namespace igros::multiboot {
 	// Multiboot 1 information from bootloader
 	struct info_t final {
 
-		klib::kFlags<flags_t>	flags;				// Multiboot present features flag
+		klib::kFlags<flags_t>			flags;				// Multiboot present features flag
 
-		igros_dword_t		memLow;				// Multiboot bios memory low info
-		igros_dword_t		memHigh;			// Multiboot bios memory high info
+		igros_dword_t				memLow;				// Multiboot bios memory low info
+		igros_dword_t				memHigh;			// Multiboot bios memory high info
 
-		igros_dword_t		bootDevice;			// Multiboot boot device
+		igros_dword_t				bootDevice;			// Multiboot boot device
 
-		igros_dword_t		cmdLine;			// Multiboot bootloader command line
+		igros_dword_t				cmdLine;			// Multiboot bootloader command line
 
-		igros_dword_t		modulesCount;			// Multiboot kernel modules count
-		igros_dword_t		modulesAddr;			// Multiboot kernel modules address
+		igros_dword_t				modulesCount;			// Multiboot kernel modules count
+		igros_dword_t				modulesAddr;			// Multiboot kernel modules address
 
-		igros_dword_t		syms[4_usize];			// Multiboot kernel symbols
+		std::array<igros_dword_t, 4_usize>	syms;				// Multiboot kernel symbols
 
-		igros_dword_t		mmapLength;			// Multiboot memory map length
-		igros_dword_t		mmapAddr;			// Multiboot memory map start address
+		igros_dword_t				mmapLength;			// Multiboot memory map length
+		igros_dword_t				mmapAddr;			// Multiboot memory map start address
 
-		igros_dword_t		drivesLength;			// Multiboot drives info length
-		igros_dword_t		drivesAddr;			// Multiboot drives info start address
+		igros_dword_t				drivesLength;			// Multiboot drives info length
+		igros_dword_t				drivesAddr;			// Multiboot drives info start address
 
-		igros_dword_t		configTable;			// Multiboot config table
+		igros_dword_t				configTable;			// Multiboot config table
 
-		igros_dword_t		bootloaderName;			// Multiboot bootloader name
+		igros_dword_t				bootloaderName;			// Multiboot bootloader name
 
-		igros_dword_t		apmTable;			// Multiboot APM table
+		igros_dword_t				apmTable;			// Multiboot APM table
 
-		igros_dword_t		vbeControlInfo;			// Multiboot VBE control info
-		igros_dword_t		vbeModeInfo;			// Multiboot VBE mode info
-		igros_word_t		vbeModeCurrent;			// Multiboot VBE current mode
-		igros_word_t		vbeInterfaceSeg;		// Multiboot VBE interface segment
-		igros_word_t		vbeInterfaceOffset;		// Multiboot VBE interface offset
-		igros_word_t		vbeInterfaceLen;		// Multiboot VBE interface length
+		igros_dword_t				vbeControlInfo;			// Multiboot VBE control info
+		igros_dword_t				vbeModeInfo;			// Multiboot VBE mode info
+		igros_word_t				vbeModeCurrent;			// Multiboot VBE current mode
+		igros_word_t				vbeInterfaceSeg;		// Multiboot VBE interface segment
+		igros_word_t				vbeInterfaceOffset;		// Multiboot VBE interface offset
+		igros_word_t				vbeInterfaceLen;		// Multiboot VBE interface length
 
-		igros_quad_t		fbAddress;			// Multiboot FB address
-		igros_dword_t		fbPitch;			// Multiboot FB pitch
-		igros_dword_t		fbWidth;			// Multiboot FB width
-		igros_dword_t		fbHeight;			// Multiboot FB height
-		igros_byte_t		fbBpp;				// Multiboot FB bpp
-		igros_byte_t		fbType;				// Multiboot FB type
-		igros_byte_t		fbColorInfo[6_usize];		// Multiboot FB color info
+		igros_quad_t				fbAddress;			// Multiboot FB address
+		igros_dword_t				fbPitch;			// Multiboot FB pitch
+		igros_dword_t				fbWidth;			// Multiboot FB width
+		igros_dword_t				fbHeight;			// Multiboot FB height
+		igros_byte_t				fbBpp;				// Multiboot FB bpp
+		igros_byte_t				fbType;				// Multiboot FB type
+		std::array<igros_byte_t, 6_usize>	fbColorInfo;			// Multiboot FB color info
 
 
 		// Test multiboot
@@ -326,18 +327,18 @@ namespace igros::multiboot {
 
 	// VBE config
 	struct vbeConfig final {
-		igros_sbyte_t		signature[4_usize];		// VBE signature ("VESA")
-		igros_word_t		version;			// VBE version (e.g. 0x0300 = 3.0)
-		igros_dword_t		oem;				// OEM string
-		igros_dword_t		caps;				// VBE capabilities
-		igros_dword_t		modes;				// VBE modes pointer
-		igros_word_t		memory;				// VBE video memory size in 64 Kb. blocks
-		igros_word_t		rev;				// VBE revision string
-		igros_dword_t		vendor;				// VBE vendor string
-		igros_dword_t		productName;			// VBE product name string
-		igros_dword_t		productRev;			// VBE product revision string
-		igros_byte_t		reserved[222_usize];		// VBE reserved
-		igros_byte_t		oemData[256_usize];		// VBE OEM data
+		std::array<igros_sbyte_t, 4_usize>	signature;		// VBE signature ("VESA")
+		igros_word_t				version;		// VBE version (e.g. 0x0300 = 3.0)
+		igros_dword_t				oem;			// OEM string
+		igros_dword_t				caps;			// VBE capabilities
+		igros_dword_t				modes;			// VBE modes pointer
+		igros_word_t				memory;			// VBE video memory size in 64 Kb. blocks
+		igros_word_t				rev;			// VBE revision string
+		igros_dword_t				vendor;			// VBE vendor string
+		igros_dword_t				productName;		// VBE product name string
+		igros_dword_t				productRev;		// VBE product revision string
+		std::array<std::byte, 222_usize>	reserved;		// VBE reserved
+		std::array<std::byte, 256_usize>	oemData;		// VBE OEM data
 	};
 
 	// VBE mode

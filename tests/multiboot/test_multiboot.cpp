@@ -3,7 +3,7 @@
 //	Multiboot information output tests
 //
 //	File:	test_multiboot.cpp
-//	Date:	19 Oct 2026
+//	Date:	28 Oct 2026
 //
 //	Copyright (c) 2017 - 2026, Igor Baklykov
 //	All rights reserved.
@@ -14,6 +14,7 @@
 // C
 #include <sys/mman.h>
 // C++
+#include <algorithm>
 #include <cstring>
 // IgrOS-Kernel multiboot
 #include <multiboot/multiboot.hpp>
@@ -134,7 +135,7 @@ static void testMemory() {
 static void testVBE() {
 	static igros::multiboot::vbeConfig	config {};
 	static igros::multiboot::vbeMode	mode {};
-	std::memcpy(config.signature, "VESA", 4);
+	std::copy_n("VESA", config.signature.size(), config.signature.begin());
 	config.version		= 0x0300;
 	config.memory		= 256;
 	mode.width		= 1024;
