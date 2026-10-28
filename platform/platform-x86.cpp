@@ -3,7 +3,7 @@
 //	Platform description for x86 family (i386 and x86_64)
 //
 //	File:	platform-x86.cpp
-//	Date:	22 Mar 2023
+//	Date:	28 Oct 2026
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -12,6 +12,7 @@
 
 
 // C++
+#include <array>
 #include <source_location>
 // IgrOS-Kernel arch x86
 #include <arch/x86/exceptions.hpp>
@@ -66,14 +67,14 @@ namespace igros::x86 {
 		irq::enable();
 
 		// Platform drivers (in init order)
-		constexpr drivers::driver_t DRIVERS[] {
+		constexpr std::array<drivers::driver_t, 4> DRIVERS {{
 			{"VGA",		arch::vmemInit},
 			{"UART",	arch::serialSetup},
 			{"Keyboard",	arch::keyboardSetup},
 			{"RTC",		arch::rtcSetup},
 			// PIT prints time every second, enable when needed
 			//{"PIT",		arch::pitSetup},
-		};
+		}};
 		// Setup drivers
 		drivers::init(DRIVERS);
 

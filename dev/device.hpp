@@ -3,7 +3,7 @@
 //	Device operations description
 //
 //	File:	device.hpp
-//	Date:	16 Dec 2022
+//	Date:	28 Oct 2026
 //
 //	Copyright (c) 2017 - 2022, Igor Baklykov
 //	All rights reserved.
@@ -15,6 +15,7 @@
 
 
 // C++
+#include <array>
 #include <cstdint>
 #include <type_traits>
 // IgrOS-Kernel arch
@@ -47,18 +48,18 @@ namespace igros::sys {
 	// Device description structure
 	struct device_t {
 
-		const char		name[64_usize];		// Get device name
+		std::array<const char, 64_usize>	name;			// Get device name
 
-		devFuncInit_t		init;			// Init device
-		devFuncDeinit_t		deinit;			// Deinit device
+		devFuncInit_t				init;			// Init device
+		devFuncDeinit_t				deinit;			// Deinit device
 
-		devFuncOpen_t		open;			// Open device
-		devFuncClose_t		close;			// Close device
+		devFuncOpen_t				open;			// Open device
+		devFuncClose_t				close;			// Close device
 
-		devFuncWrite_t		write;			// Write to device
-		devFuncRead_t		read;			// Read from device
+		devFuncWrite_t				write;			// Write to device
+		devFuncRead_t				read;			// Read from device
 
-		devFuncIOCTL_t		ioctl;			// Device IOCTL
+		devFuncIOCTL_t				ioctl;			// Device IOCTL
 
 	};
 

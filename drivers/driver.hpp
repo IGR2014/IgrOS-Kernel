@@ -3,7 +3,7 @@
 //	Kernel driver interface
 //
 //	File:	driver.hpp
-//	Date:	11 Oct 2026
+//	Date:	28 Oct 2026
 //
 //	Copyright (c) 2017 - 2026, Igor Baklykov
 //	All rights reserved.
@@ -15,6 +15,7 @@
 
 
 // C++
+#include <array>
 #include <type_traits>
 // IgrOS-Kernel arch
 #include <arch/types.hpp>
@@ -41,7 +42,7 @@ namespace igros::drivers {
 
 	// Initialize drivers in order and print status of each, returns failed drivers count
 	template<igros_usize_t N>
-	auto init(const driver_t (&drivers)[N]) noexcept -> igros_usize_t {
+	auto init(const std::array<drivers::driver_t, N> &drivers) noexcept -> igros_usize_t {
 		// Failed drivers count
 		auto failed {0_usize};
 		// Init drivers one by one (failed driver doesn't stop the rest)
