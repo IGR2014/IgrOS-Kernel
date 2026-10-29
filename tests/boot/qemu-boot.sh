@@ -27,10 +27,11 @@ mkfifo "${MONITOR}.in" "${MONITOR}.out"
 touch "${SERIAL}"
 
 # Wait until serial output contains text (or QEMU exits / timeout)
-waitFor() {
+wait_for() {
+	local text="$1"
 	local steps=$((TIMEOUT * 2))
 	for ((i = 0; i < steps; i++)); do
-		grep -qF "$1" "${SERIAL}" && return 0
+		grep -qF "${text}" "${SERIAL}" && return 0
 		kill -0 "${PID}" 2>/dev/null || return 1
 		sleep 0.5
 	done
@@ -46,13 +47,13 @@ cat "${MONITOR}.out" > /dev/null &
 exec 3> "${MONITOR}.in"
 
 RESULT=0
-if ! waitFor "Booted successfully"; then
+if ! wait_for "Booted successfully"; then
 	echo "FAILED: kernel didn't finish booting"
 	RESULT=1
 else
 	# Press and release Enter: kernel prints keyboard IRQ for both
 	echo "sendkey ret" >&3
-	if ! waitFor "RELEASED"; then
+	if ! wait_for "RELEASED"; then
 		echo "FAILED: keyboard interrupt not handled"
 		RESULT=1
 	fi
