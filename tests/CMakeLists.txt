@@ -188,6 +188,24 @@ igros_test(phys		mem/test_phys.cpp	mem/phys.cpp)
 # Architecture
 igros_test(irq		arch/test_irq.cpp	arch/x86/irq.cpp)
 igros_test(isr		arch/test_isr.cpp	arch/x86/isr.cpp arch/x86/irq.cpp arch/x86/exceptions.cpp klib/kPrint.cpp klib/kMemory.cpp)
+# Descriptor tables (lgdt/lidt/ltr and interrupt entry points stubbed)
+igros_test(gdt		arch/test_gdt.cpp	arch/${IGROS_TEST_ARCH}/gdt.cpp arch/${IGROS_TEST_ARCH}/tss.cpp klib/kPrint.cpp klib/kMemory.cpp)
+igros_test(idt		arch/test_idt.cpp	arch/x86/idt.cpp)
+foreach(TEST gdt idt)
+	target_sources(
+		test_${TEST}
+		PRIVATE
+		stubs/descriptors.cpp
+	)
+endforeach()
+# CPU features: CPUID/MSR headers shadowed by fakes (searched before kernel headers)
+igros_test(features	arch/test_features.cpp	arch/x86/features.cpp)
+target_include_directories(
+	test_features
+	BEFORE
+	PRIVATE
+	"${CMAKE_CURRENT_SOURCE_DIR}/fakes"
+)
 # Paging test emulates MMU with Linux shared memory and signals
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	igros_test(paging	arch/test_paging.cpp	arch/x86/paging.cpp mem/phys.cpp arch/x86/isr.cpp arch/x86/irq.cpp klib/kPrint.cpp klib/kMemory.cpp)
