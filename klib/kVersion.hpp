@@ -81,7 +81,7 @@ namespace igros::klib {
 	///
 	[[nodiscard]]
 	constexpr auto kVersion::text() noexcept -> const char* {
-		return "v" IGROS_GIT_VERSION;	// " [ " VERSION_NAME " ]";
+		return "v" IGROS_GIT_VERSION;
 	}
 
 

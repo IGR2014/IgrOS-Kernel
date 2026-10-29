@@ -174,47 +174,28 @@ namespace igros::klib {
 		}
 
 
-	}	// namespace
 
+		// Parse flags, field width and length modifier of a placeholder
+		// (fmt points to '%' on entry, to the last parsed character on return)
+		[[nodiscard]]
+		auto parseSpec(const char* &fmt) noexcept -> spec_t {
 
-	// Kernel vsnprintf function
-	auto kvsnprintf(char* const buffer, const igros_usize_t size, const char* const format, std::va_list list) noexcept -> igros_usize_t {
-
-		// Error checks
-		if ((nullptr == buffer) || (0_usize == size) || (nullptr == format)) [[unlikely]] {
-			return 0_usize;
-		}
-
-		// Output
-		auto out {writer_t {buffer, size}};
-		// Local copy of arguments (parameter may be decayed array, it can't be passed by reference)
-		std::va_list args;
-		va_copy(args, list);
-
-		// Format string position (stops when output is full: remaining arguments are not needed)
-		for (auto fmt {format}; ('\0' != *fmt) && !out.isFull(); ++fmt) {
-
-			// Plain character
-			if ('%' != *fmt) [[likely]] {
-				out.put(*fmt);
-				continue;
-			}
+			auto spec {spec_t {}};
 
 			// Flags
-			auto spec {spec_t {}};
-			for (;; ++fmt) {
+			while (('0' == fmt[1]) || ('-' == fmt[1])) {
 				if ('0' == fmt[1]) {
 					spec.zero = true;
-				} else if ('-' == fmt[1]) {
-					spec.left = true;
 				} else {
-					break;
+					spec.left = true;
 				}
+				++fmt;
 			}
 
 			// Field width (any number of digits)
-			for (; ('0' <= fmt[1]) && ('9' >= fmt[1]); ++fmt) {
+			while (('0' <= fmt[1]) && ('9' >= fmt[1])) {
 				spec.width = spec.width * 10_usize + static_cast<igros_usize_t>(fmt[1] - '0');
+				++fmt;
 			}
 
 			// Length modifier
@@ -236,6 +217,41 @@ namespace igros::klib {
 				default:
 					break;
 			}
+
+			return spec;
+
+		}
+
+
+	}	// namespace
+
+
+	// Kernel vsnprintf function
+	auto kvsnprintf(char* const buffer, const igros_usize_t size, const char* const format, std::va_list list) noexcept -> igros_usize_t {
+
+		// Error checks
+		if ((nullptr == buffer) || (0_usize == size) || (nullptr == format)) [[unlikely]] {
+			return 0_usize;
+		}
+
+		// Output
+		auto out {writer_t {buffer, size}};
+		// Local copy of arguments (parameter may be decayed array, it can't be passed by reference)
+		std::va_list args;
+		va_copy(args, list);
+
+		// Format string position (stops when output is full: remaining arguments are not needed)
+		auto fmt {format};
+		while (('\0' != *fmt) && !out.isFull()) {
+
+			// Plain character
+			if ('%' != *fmt) [[likely]] {
+				out.put(*fmt++);
+				continue;
+			}
+
+			// Flags, field width, length modifier
+			const auto spec {parseSpec(fmt)};
 
 			// Unterminated placeholder at format end
 			if ('\0' == fmt[1]) [[unlikely]] {
@@ -288,6 +304,8 @@ namespace igros::klib {
 					out.put('?');
 					break;
 			}
+			// Next format character
+			++fmt;
 
 		}
 
