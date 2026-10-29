@@ -95,5 +95,5 @@ namespace igros::x86_64 {
 	}
 
 
-}	// namespace igros::x86_^4
+}	// namespace igros::x86_64
 

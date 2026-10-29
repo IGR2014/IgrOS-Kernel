@@ -64,6 +64,22 @@ namespace igros::test::hw {
 	// Console output (kprintf through VGA stub)
 	inline std::string		console;
 
+	// Descriptor tables passed to CPU (lgdt/lidt operands) and task register (ltr)
+	inline const void*		gdtPointer	{nullptr};
+	inline const void*		idtPointer	{nullptr};
+	inline std::uint16_t		taskRegister	{0};
+
+	// CPUID results by leaf (EAX, EBX, ECX, EDX; missing leaf reads zeros)
+	struct cpuidRegs {
+		std::uint32_t	eax;
+		std::uint32_t	ebx;
+		std::uint32_t	ecx;
+		std::uint32_t	edx;
+	};
+	inline std::map<std::uint32_t, cpuidRegs>	cpuid;
+	// Model specific registers (missing register reads zero)
+	inline std::map<std::uint32_t, std::uint64_t>	msr;
+
 	// CPU halt jumps back to IGROS_CHECK_HALTS
 	inline std::jmp_buf		haltJump;
 	inline bool			haltArmed	{false};
@@ -81,6 +97,11 @@ namespace igros::test::hw {
 		noExecute	= false;
 		invalidated.clear();
 		console.clear();
+		gdtPointer	= nullptr;
+		idtPointer	= nullptr;
+		taskRegister	= 0;
+		cpuid.clear();
+		msr.clear();
 	}
 
 	// Values written to port (in order)

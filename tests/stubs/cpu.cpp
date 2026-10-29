@@ -114,7 +114,8 @@ extern "C" {
 	}
 
 
-	// CPU features
+	// CPU features (weak: arch/x86/features.cpp replaces it when under test)
+	__attribute__((weak))
 	auto cpuEnableNoExecute() noexcept -> bool {
 		return hw::noExecute;
 	}
