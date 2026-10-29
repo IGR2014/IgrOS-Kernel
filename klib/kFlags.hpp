@@ -87,15 +87,24 @@ namespace igros::klib {
 		[[maybe_unused]]
 		constexpr auto	operator^=(const kFlags<T, U> &other) noexcept -> kFlags&;
 
-		/// @brief Bitwise AND operator
+		/// @brief Bitwise AND operator (hidden friend: found by ADL only)
 		[[nodiscard]]
-		constexpr auto	operator&(const kFlags<T, U> &other) const noexcept -> kFlags;
-		/// @brief Bitwise OR operator
+		friend constexpr auto	operator&(kFlags lhs, const kFlags &rhs) noexcept -> kFlags {
+			lhs &= rhs;
+			return lhs;
+		}
+		/// @brief Bitwise OR operator (hidden friend: found by ADL only)
 		[[nodiscard]]
-		constexpr auto	operator|(const kFlags<T, U> &other) const noexcept -> kFlags;
-		/// @brief Bitwise XOR operator
+		friend constexpr auto	operator|(kFlags lhs, const kFlags &rhs) noexcept -> kFlags {
+			lhs |= rhs;
+			return lhs;
+		}
+		/// @brief Bitwise XOR operator (hidden friend: found by ADL only)
 		[[nodiscard]]
-		constexpr auto	operator^(const kFlags<T, U> &other) const noexcept -> kFlags;
+		friend constexpr auto	operator^(kFlags lhs, const kFlags &rhs) noexcept -> kFlags {
+			lhs ^= rhs;
+			return lhs;
+		}
 
 		/// @brief Bitwise AND operator
 		[[maybe_unused]]
@@ -107,15 +116,24 @@ namespace igros::klib {
 		[[maybe_unused]]
 		constexpr auto	operator^=(const T &other) noexcept -> kFlags&;
 
-		/// @brief Bitwise AND operator
+		/// @brief Bitwise AND operator (hidden friend: found by ADL only)
 		[[nodiscard]]
-		constexpr auto	operator&(const T &other) const noexcept -> kFlags;
-		/// @brief Bitwise OR operator
+		friend constexpr auto	operator&(kFlags lhs, const T &rhs) noexcept -> kFlags {
+			lhs &= rhs;
+			return lhs;
+		}
+		/// @brief Bitwise OR operator (hidden friend: found by ADL only)
 		[[nodiscard]]
-		constexpr auto	operator|(const T &other) const noexcept -> kFlags;
-		/// @brief Bitwise XOR operator
+		friend constexpr auto	operator|(kFlags lhs, const T &rhs) noexcept -> kFlags {
+			lhs |= rhs;
+			return lhs;
+		}
+		/// @brief Bitwise XOR operator (hidden friend: found by ADL only)
 		[[nodiscard]]
-		constexpr auto	operator^(const T &other) const noexcept -> kFlags;
+		friend constexpr auto	operator^(kFlags lhs, const T &rhs) noexcept -> kFlags {
+			lhs ^= rhs;
+			return lhs;
+		}
 
 		/// @brief Bitwise NOT operator
 		[[nodiscard]]
@@ -217,7 +235,8 @@ namespace igros::klib {
 	requires kflags_enum<T, U>
 	[[maybe_unused]]
 	constexpr auto kFlags<T, U>::operator&=(const kFlags<T, U> &other) noexcept -> kFlags<T, U>& {
-		return *this &= static_cast<T>(other);
+		*this &= static_cast<T>(other);
+		return *this;
 	}
 
 	////////////////////////////////////////////////////
@@ -230,7 +249,8 @@ namespace igros::klib {
 	requires kflags_enum<T, U>
 	[[maybe_unused]]
 	constexpr auto kFlags<T, U>::operator|=(const kFlags<T, U> &other) noexcept -> kFlags<T, U>& {
-		return *this |= static_cast<T>(other);
+		*this |= static_cast<T>(other);
+		return *this;
 	}
 
 	////////////////////////////////////////////////////
@@ -243,48 +263,10 @@ namespace igros::klib {
 	requires kflags_enum<T, U>
 	[[maybe_unused]]
 	constexpr auto kFlags<T, U>::operator^=(const kFlags<T, U> &other) noexcept -> kFlags<T, U>& {
-		return *this ^= static_cast<T>(other);
+		*this ^= static_cast<T>(other);
+		return *this;
 	}
 
-
-	////////////////////////////////////////////////////
-	///
-	/// @brief Bitwise AND operator
-	/// @param[in] other Other flags value
-	/// @return Result of (this AND other)
-	///
-	template<class T, class U>
-	requires kflags_enum<T, U>
-	[[nodiscard]]
-	constexpr auto kFlags<T, U>::operator&(const kFlags<T, U> &other) const noexcept -> kFlags<T, U> {
-		return *this & static_cast<T>(other);
-	}
-
-	////////////////////////////////////////////////////
-	///
-	/// @brief Bitwise OR operator
-	/// @param[in] other Other flags value
-	/// @return Result of (this OR other)
-	///
-	template<class T, class U>
-	requires kflags_enum<T, U>
-	[[nodiscard]]
-	constexpr auto kFlags<T, U>::operator|(const kFlags<T, U> &other) const noexcept -> kFlags<T, U> {
-		return *this | static_cast<T>(other);
-	}
-
-	////////////////////////////////////////////////////
-	///
-	/// @brief Bitwise XOR operator
-	/// @param[in] other Other flags value
-	/// @return Result of (this XOR other)
-	///
-	template<class T, class U>
-	requires kflags_enum<T, U>
-	[[nodiscard]]
-	constexpr auto kFlags<T, U>::operator^(const kFlags<T, U> &other) const noexcept -> kFlags<T, U> {
-		return *this ^ static_cast<T>(other);
-	}
 
 
 	////////////////////////////////////////////////////
@@ -335,45 +317,6 @@ namespace igros::klib {
 		return *this;
 	}
 
-
-	////////////////////////////////////////////////////
-	///
-	/// @brief Bitwise AND operator
-	/// @param[in] other Other flags value of type @c T
-	/// @return Result of (this AND other)
-	///
-	template<class T, class U>
-	requires kflags_enum<T, U>
-	[[nodiscard]]
-	constexpr auto kFlags<T, U>::operator&(const T &other) const noexcept -> kFlags<T, U> {
-		return kFlags<T, U>(*this) &= other;
-	}
-
-	////////////////////////////////////////////////////
-	///
-	/// @brief Bitwise OR operator
-	/// @param[in] other Other flags value of type @c T
-	/// @return Result of (this OR other)
-	///
-	template<class T, class U>
-	requires kflags_enum<T, U>
-	[[nodiscard]]
-	constexpr auto kFlags<T, U>::operator|(const T &other) const noexcept -> kFlags<T, U> {
-		return kFlags<T, U>(*this) |= other;
-	}
-
-	////////////////////////////////////////////////////
-	///
-	/// @brief Bitwise XOR operator
-	/// @param[in] other Other flags value of type @c T
-	/// @return Result of (this XOR other)
-	///
-	template<class T, class U>
-	requires kflags_enum<T, U>
-	[[nodiscard]]
-	constexpr auto kFlags<T, U>::operator^(const T &other) const noexcept -> kFlags<T, U> {
-		return kFlags<T, U>(*this) ^= other;
-	}
 
 
 	////////////////////////////////////////////////////

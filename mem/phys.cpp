@@ -127,11 +127,11 @@ namespace igros::mem {
 		if (info.hasInfoModules()) {
 			const auto* const modules {std::bit_cast<const multiboot::moduleEntry*>(static_cast<igros_usize_t>(info.modulesAddr))};
 			phys::markUsed(info.modulesAddr, static_cast<phys_t>(info.modulesAddr) + info.modulesCount * sizeof(multiboot::moduleEntry));
-			for (const auto &module : std::span {modules, info.modulesCount}) {
-				phys::markUsed(module.start, module.end);
-				if (0_u32 != module.name) {
-					const auto* const name {std::bit_cast<const char*>(static_cast<igros_usize_t>(module.name))};
-					phys::markUsed(module.name, static_cast<phys_t>(module.name) + klib::kstrlen(name) + 1_u64);
+			for (const auto &bootModule : std::span {modules, info.modulesCount}) {
+				phys::markUsed(bootModule.start, bootModule.end);
+				if (0_u32 != bootModule.name) {
+					const auto* const name {std::bit_cast<const char*>(static_cast<igros_usize_t>(bootModule.name))};
+					phys::markUsed(bootModule.name, static_cast<phys_t>(bootModule.name) + klib::kstrlen(name) + 1_u64);
 				}
 			}
 		}

@@ -30,8 +30,7 @@ namespace igros::arch {
 	// PIT ports
 	constexpr auto PIT_CONTROL	{static_cast<port_t>(0x0043_u16)};
 	constexpr auto PIT_CHANNEL_0	{static_cast<port_t>(0x0040_u16)};
-	//constexpr auto PIT_CHANNEL_1	{static_cast<port_t>(PIT_CHANNEL_0 + 1_u16)};
-	//constexpr auto PIT_CHANNEL_2	{static_cast<port_t>(PIT_CHANNEL_1 + 1_u16)};
+	// (channels 1 and 2 - ports 0x41 and 0x42 - are not used)
 
 
 	// PIT driver state
@@ -76,7 +75,7 @@ namespace igros::arch {
 	// Get expired ticks
 	[[nodiscard]]
 	auto pitGetTicks() noexcept -> igros_quad_t {
-		// Send latch command for channel 0;
+		// Send latch command for channel 0
 		io::writePort8(PIT_CONTROL, 0x00_u8);
 		// Get current counter value (counts down from divisor)
 		const auto loByte	{io::readPort8(PIT_CHANNEL_0)};
@@ -91,8 +90,10 @@ namespace igros::arch {
 
 	// PIT interrupt (#0) handler
 	static void pitInterruptHandler([[maybe_unused]] const register_t* regs) noexcept {
+		// Count every tick (pitGetTicks() relies on it, regardless of output below)
+		++pit.ticks;
 		// Output every N-th tick were N = frequency
-		if ((0_u16 != pit.frequency) && (0_usize == (++pit.ticks % pit.frequency))) [[unlikely]] {
+		if ((0_u16 != pit.frequency) && (0_usize == (pit.ticks % pit.frequency))) [[unlikely]] {
 			// Current time to HH:MM:SS.zzz
 			const auto elapsed	{pitGetTicks()};
 			const auto res		{klib::kdivmod(elapsed, PIT_MAIN_FREQUENCY)};
