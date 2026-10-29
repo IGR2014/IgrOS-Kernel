@@ -2,11 +2,21 @@
 name: 'IgrOS-Kernel CI/CD'
 
 # Triggered on push to any branch, PR to master or manually
+# (documentation-only changes don't need a kernel build)
 on:
   push:
     branches: [ '**' ]
+    paths-ignore: &docs
+      - '**.md'
+      - 'LICENSE'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.vscode/**'
+      - '.devcontainer/**'
+      - '*.code-workspace'
+      - '*.kateproject'
   pull_request:
     branches: [ 'master' ]
+    paths-ignore: *docs
   workflow_dispatch:
 
 # A newer push to the same branch/PR cancels the run still in progress
@@ -26,8 +36,11 @@ jobs:
 
     # Name
     name: 'Delete old artifacts'
+    # PR from a branch of this repository: same commit was already built by its push run
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository
     # OS
     runs-on: ubuntu-26.04
+    timeout-minutes: 5
 
     # Deleting artifacts
     permissions:
@@ -58,14 +71,14 @@ jobs:
         done
 
 
-  # Build Kernel
+  # Unit tests, kernel build and QEMU boot test in one job per toolchain:
+  # packages are installed once and nothing waits for a separate test job
   BuildKernel:
 
     # Name
-    name: 'Build with CMake'
-    # Only after all unit tests passed (no runner minutes on broken commits)
-    # and old artifacts are gone (room for the uploads)
-    needs: [ Cleanup, UnitTests ]
+    name: 'Build & Test'
+    # Old artifacts are gone first (room for the uploads)
+    needs: [ Cleanup ]
     # OS
     runs-on: ubuntu-26.04
     # A hung build or boot test must not burn runner minutes for hours
@@ -75,10 +88,13 @@ jobs:
     env:
       IGROS_KERNEL_DIR_BUILD: "${{ github.workspace }}/build"
       IGROS_KERNEL_DIR_INSTALL: "${{ github.workspace }}/install"
-      CCACHE_BASEDIR: "${{ github.workspace }}/.ccache/build-linux-${{ matrix.compiler }}-${{ matrix.arch }}-debug"
+      # Same ccache directory and settings the build preset uses (its environment overrides
+      # these during the kernel build), so unit tests and kernel share one cache and statistics
+      CCACHE_BASEDIR: "${{ github.workspace }}"
+      CCACHE_CONFIGPATH: "${{ github.workspace }}/.ccache/build-linux-${{ matrix.compiler }}-${{ matrix.arch }}-debug"
       CCACHE_DIR: "${{ github.workspace }}/.ccache/build-linux-${{ matrix.compiler }}-${{ matrix.arch }}-debug/cache"
-      # Keeps each cache entry (and the repo's 10 GB cache quota) under control
-      CCACHE_MAXSIZE: "500M"
+      CCACHE_COMPRESS: "true"
+      CCACHE_MAXSIZE: "200M"
       PRESET: "linux-${{ matrix.compiler }}-${{ matrix.arch }}-debug"
 
     # Strategy with languages matrix
@@ -91,42 +107,53 @@ jobs:
     # Job steps
     steps:
 
-    # Checkout
+    # Checkout (full history: kernel version is taken from git tags)
     - name: 'Checkout repository'
       uses: actions/checkout@v7
       with:
         fetch-depth: 0
 
-    # Install dependencies (toolchain included)
+    # Install dependencies (toolchain, ISO tools, QEMU; no Doxygen: docs aren't part of "all")
     - name: 'Install Dependencies'
       # Stalled apt mirror: phases time out and retry (ci-apt.sh) instead of hanging the job
       timeout-minutes: 15
       shell: bash
       run: |
         bash config/script/ci-apt.sh \
-          ccache clang cmake doxygen g++-multilib gcc-multilib graphviz grub-common grub-pc-bin \
+          ccache clang cmake g++-multilib gcc-multilib grub-common grub-pc-bin \
           lld mtools ninja-build qemu-system-x86 xorriso
         clang++ --version
         ld.lld --version
 
-    # Restore CCache Cache
+    # Restore CCache Cache (kernel and unit tests share it)
     # (the build directory itself is not cached: a fresh checkout makes every source newer
     # than the cached objects, so Ninja rebuilds everything anyway - ccache is what saves time)
     - name: 'Restore CCache Cache'
       uses: actions/cache@v6
       with:
-        path: ${{ env.CCACHE_BASEDIR }}
+        path: ${{ github.workspace }}/.ccache
         key: ccache-${{ matrix.compiler }}-${{ matrix.arch }}-${{ github.sha }}
         restore-keys: |
           ccache-${{ matrix.compiler }}-${{ matrix.arch }}-
+
+    # Host unit tests first: a broken commit fails fast, before the kernel build
+    - name: 'Unit Tests'
+      shell: bash
+      run: |
+        mkdir -p "${CCACHE_DIR}"
+        # Statistics below then show this job only
+        ccache -z
+        cmake -S tests -B build/tests -G Ninja \
+          -DCMAKE_CXX_COMPILER=${{ matrix.compiler }} \
+          -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+          -DIGROS_TEST_ARCH=${{ matrix.arch }}
+        cmake --build build/tests --parallel
+        ctest --test-dir build/tests --output-on-failure --no-tests=error --parallel
 
     # Configure
     - name: 'CMake Configure'
       shell: bash
       run: |
-        mkdir -p "${CCACHE_BASEDIR}"
-        # Statistics below then show this build only
-        ccache -z
         cmake --preset="config-${PRESET}"
 
     # Build
@@ -168,53 +195,3 @@ jobs:
       shell: bash
       run: |
         ccache -sv
-
-
-  # Host unit tests
-  UnitTests:
-
-    # Name
-    name: 'Unit Tests'
-    # OS
-    runs-on: ubuntu-26.04
-    timeout-minutes: 20
-
-    # Strategy with languages matrix
-    strategy:
-      fail-fast: false
-      matrix:
-        arch: [ 'i386', 'x86_64' ]
-        compiler: [ 'clang++', 'g++' ]
-
-    # Job steps
-    steps:
-
-    # Checkout
-    - name: 'Checkout repository'
-      uses: actions/checkout@v7
-
-    # Install dependencies (multilib for 32-bit i386 code paths)
-    - name: 'Install Dependencies'
-      # Stalled apt mirror: phases time out and retry (ci-apt.sh) instead of hanging the job
-      timeout-minutes: 15
-      shell: bash
-      run: |
-        bash config/script/ci-apt.sh clang cmake g++-multilib ninja-build
-
-    # Configure
-    - name: 'CMake Configure'
-      shell: bash
-      run: |
-        cmake -S tests -B build/tests -G Ninja -DCMAKE_CXX_COMPILER=${{ matrix.compiler }} -DIGROS_TEST_ARCH=${{ matrix.arch }}
-
-    # Build
-    - name: 'CMake Build'
-      shell: bash
-      run: |
-        cmake --build build/tests --parallel
-
-    # Run
-    - name: 'CTest'
-      shell: bash
-      run: |
-        ctest --test-dir build/tests --output-on-failure --no-tests=error

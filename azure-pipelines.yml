@@ -1,9 +1,17 @@
 # Name
 name: 'IgrOS-Kernel CI/CD'
 
-# Triggered on push
+# Triggered on push (documentation-only changes don't need a kernel build)
 trigger:
-- '*'
+  branches:
+    include:
+    - '*'
+  paths:
+    exclude:
+    - '**/*.md'
+    - 'LICENSE'
+    - '.vscode/*'
+    - '.devcontainer/*'
 
 # Project jobs
 jobs:
@@ -11,8 +19,10 @@ jobs:
   # Build Linux
   - job: Build_Linux
 
-     # Name
-    displayName: 'Build with CMake under Linux'
+    # Name
+    displayName: 'Build & Test under Linux'
+    # A hung build or boot test must not burn agent minutes
+    timeoutInMinutes: 30
 
     # OS
     pool:
@@ -37,104 +47,101 @@ jobs:
 
     # Job variables
     variables:
-    - name: IGROS_DIR_BUILD
-      value: "$(Build.SourcesDirectory)/build"
-      readonly: "true"
     - name: IGROS_DIR_INSTALL
       value: "$(Build.SourcesDirectory)/install"
       readonly: "true"
+    - name: PRESET
+      value: "linux-$(compiler)-$(arch)-debug"
+    # Same ccache directory and settings the build preset uses (its environment
+    # overrides these during the kernel build), so unit tests share the cache
     - name: CCACHE_BASEDIR
-      value: "$(Build.SourcesDirectory)/.ccache/build-linux-$(compiler)-x86_64-debug"
+      value: "$(Build.SourcesDirectory)"
+    - name: CCACHE_CONFIGPATH
+      value: "$(Build.SourcesDirectory)/.ccache/build-linux-$(compiler)-$(arch)-debug"
     - name: CCACHE_DIR
-      value: "$(Build.SourcesDirectory)/.ccache/build-linux-$(compiler)-x86_64-debug/cache"
+      value: "$(Build.SourcesDirectory)/.ccache/build-linux-$(compiler)-$(arch)-debug/cache"
+    - name: CCACHE_COMPRESS
+      value: "true"
+    - name: CCACHE_MAXSIZE
+      value: "200M"
     - name: DEBIAN_FRONTEND
       value: "noninteractive"
 
     # Job steps
     steps:
 
-      # Checkout
+      # Checkout (full history: kernel version is taken from git tags)
       - checkout: self
         fetchDepth: "0"
         displayName: 'Git Checkout'
 
-      # Install dependencies
+      # Install dependencies (toolchain, ISO tools, QEMU; no Doxygen: docs aren't part of "all")
       - task: CmdLine@2
+        timeoutInMinutes: 15
         inputs:
           script: |
-            sudo apt-get update
-            sudo apt install -y --no-install-recommends ccache cmake doxygen graphviz g++-multilib gcc-multilib grub-common grub-pc-bin mtools ninja-build qemu-system-x86 xorriso
-        displayName: 'Install Dependencies'
-
-      # Install Clang (Ubuntu 24.04 packages, same toolchain as Docker image)
-      - task: CmdLine@2
-        inputs:
-          script: |
-            sudo apt install -y --no-install-recommends clang lld
+            bash config/script/ci-apt.sh \
+              ccache clang cmake g++-multilib gcc-multilib grub-common grub-pc-bin \
+              lld mtools ninja-build qemu-system-x86 xorriso
             clang++ --version
             ld.lld --version
-        displayName: 'Install Clang'
+        displayName: 'Install Dependencies'
 
-      # Restore Build Cache (CMakeCache.txt holds absolute paths: key on sources directory)
-      - task: Cache@2
-        inputs:
-          key: '"build" | "$(compiler)" | "$(arch)" | "$(Build.SourcesDirectory)" | $(Build.SourceVersion)'
-          restoreKeys: |
-            "build" | "$(compiler)" | "$(arch)" | "$(Build.SourcesDirectory)"
-          path: $(IGROS_DIR_BUILD)
-        displayName: 'Restore Build Cache'
-
-      # Restore CCache Cache
+      # Restore CCache Cache (build and install trees are not cached: a fresh
+      # checkout makes every source newer than them, Ninja rebuilds anyway)
       - task: Cache@2
         inputs:
           key: '"ccache" | "$(compiler)" | "$(arch)" | $(Build.SourceVersion)'
           restoreKeys: |
             "ccache" | "$(compiler)" | "$(arch)"
-          path: $(CCACHE_BASEDIR)
+          path: $(Build.SourcesDirectory)/.ccache
         displayName: 'Restore CCache Cache'
 
-      # Restore Install Cache
-      - task: Cache@2
+      # Host unit tests first: a broken commit fails fast, before the kernel build
+      - task: CmdLine@2
         inputs:
-          key: '"install" | "$(compiler)" | "$(arch)" | $(Build.SourceVersion)'
-          restoreKeys: |
-            "install" | "$(compiler)" | "$(arch)"
-          path: $(IGROS_DIR_INSTALL)
-        displayName: 'Restore Install Cache'
+          script: |
+            set -e
+            mkdir -p "$(CCACHE_DIR)"
+            ccache -z
+            cmake -S tests -B build/tests -G Ninja -DCMAKE_CXX_COMPILER=$(compiler) -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DIGROS_TEST_ARCH=$(arch)
+            cmake --build build/tests --parallel
+            ctest --test-dir build/tests --output-on-failure --no-tests=error --parallel
+        displayName: 'Unit Tests'
 
       # CMake Configuration
       - task: CmdLine@2
         inputs:
           script: |
-            mkdir -p $(CCACHE_DIR)
-            cmake --preset="config-linux-$(compiler)-$(arch)-debug"
+            cmake --preset="config-$(PRESET)"
         displayName: 'CMake Configuration'
 
       # CMake Build
       - task: CmdLine@2
         inputs:
           script: |
-            cmake --build --preset="build-linux-$(compiler)-$(arch)-debug" --target all --parallel
+            cmake --build --preset="build-$(PRESET)" --target all --parallel
         displayName: 'CMake Build'
 
       # CMake Install
       - task: CmdLine@2
         inputs:
           script: |
-            cmake --build --preset="build-linux-$(compiler)-$(arch)-debug" --target install
+            cmake --build --preset="build-$(PRESET)" --target install
         displayName: 'CMake Install'
 
       # Boot kernel in QEMU (reaches end of kmain, handles keyboard IRQ)
       - task: CmdLine@2
+        timeoutInMinutes: 5
         inputs:
           script: |
-            bash tests/boot/qemu-boot.sh $(arch) "$(IGROS_DIR_INSTALL)/Debug/config-linux-$(compiler)-$(arch)-debug/kernel.iso"
+            bash tests/boot/qemu-boot.sh $(arch) "$(IGROS_DIR_INSTALL)/Debug/config-$(PRESET)/kernel.iso"
         displayName: 'QEMU Boot Test'
 
       # CCache Statistics
       - task: CmdLine@2
+        condition: always()
         inputs:
           script: |
             ccache -sv
         displayName: 'CCache Statistics'
-
