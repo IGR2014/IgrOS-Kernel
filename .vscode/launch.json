@@ -75,7 +75,7 @@
 					"ignoreFailures": true
 				}
 			],
-			"preLaunchTask": "Debug QEMU x86_64",
+			"preLaunchTask": "Debug QEMU x86_64"
 		}
 	]
 }

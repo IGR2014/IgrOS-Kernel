@@ -6,6 +6,8 @@ USER root
 
 # Toolchain only: sources are mounted at runtime (see docker-compose.yaml),
 # so code changes don't require rebuilding the image
+# (versions follow the Ubuntu 26.04 archive, like CI runners - not pinned)
+# hadolint ignore=DL3008
 RUN \
 	apt-get update && \
 	apt-get install -y --no-install-recommends \
@@ -49,6 +51,7 @@ FROM toolchain AS dev
 USER root
 
 # Devcontainer addons
+# hadolint ignore=DL3008
 RUN \
 	apt-get update && \
 	apt-get install -y --no-install-recommends \
