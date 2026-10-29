@@ -1,55 +1,62 @@
-# For most projects, this workflow file will not need changing; you simply need
-# to commit it to your repository.
-#
-# You may wish to alter this file to override the set of languages analyzed,
-# or to provide custom queries or build logic.
-#
-# ******** NOTE ********
-# We have attempted to detect the languages in your repository. Please check
-# the `language` matrix defined below to confirm you have the correct set of
-# supported CodeQL languages.
-#
 name: 'CodeQL'
 
-# Triggered on push to any branch, PR to master or manually
+# Push to master, PR to master, weekly (new queries in CodeQL releases) or manually.
+# Code scanning shows alerts for the default branch and pull requests only, so other
+# branch pushes would just spend runner minutes.
 # (not workflow_run: it always uses workflow files and code of the default branch)
 on:
   push:
-    branches: [ '**' ]
+    branches: [ 'master' ]
+    paths-ignore: &docs
+      - '**.md'
+      - 'LICENSE'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.vscode/**'
+      - '.devcontainer/**'
+      - '*.code-workspace'
+      - '*.kateproject'
   pull_request:
     branches: [ 'master' ]
+    paths-ignore: *docs
+  schedule:
+    - cron: '17 3 * * 1'
   workflow_dispatch:
+
+# A newer push to the same branch/PR cancels the analysis still in progress
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   analyze:
     name: Analyze
     runs-on: ubuntu-26.04
+    timeout-minutes: 30
     permissions:
       actions: read
       contents: read
       security-events: write
 
-    strategy:
-      fail-fast: false
-      max-parallel: 4
-      matrix:
-        arch: [ 'i386', 'x86_64' ]
-        compiler: [ 'clang++', 'g++' ]
-
     # Environment variables
     env:
       IGROS_KERNEL_DIR_BUILD: "${{ github.workspace }}/build"
-      IGROS_KERNEL_DIR_INSTALL: "${{ github.workspace }}/install"
       # CodeQL must see every compiler invocation: no ccache, no restored build
       CCACHE_DISABLE: "1"
       CLICOLOR_FORCE: "1"
       NINJA_STATUS: "[%p::%e\t%f/%t]\t"
 
     steps:
+    # Shallow checkout is enough: version from git tags doesn't matter for analysis
     - name: Checkout repository
       uses: actions/checkout@v7
-      with:
-        fetch-depth: 0
+
+    # Install dependencies (compilers only: no ISO tools, QEMU, Doxygen or ccache needed)
+    - name: 'Install Dependencies'
+      # Stalled apt mirror: phases time out and retry (ci-apt.sh) instead of hanging the job
+      timeout-minutes: 15
+      shell: bash
+      run: |
+        bash config/script/ci-apt.sh clang cmake g++-multilib gcc-multilib lld ninja-build
 
     # CodeQL initialize
     - name: Initialize CodeQL
@@ -58,44 +65,22 @@ jobs:
         languages: c-cpp
         build-mode: manual
 
-   # Install dependencies
-    - name: 'Install Dependencies'
-      # Stalled apt mirror: phases time out and retry (ci-apt.sh) instead of hanging the job
-      timeout-minutes: 15
+    # One database for every toolchain: arch- (#ifdef IGROS_ARCH_*) and
+    # compiler-specific code paths are all extracted, alerts are reported once
+    # (kernel builds take seconds, separate jobs only repeated setup and duplicated alerts)
+    - name: 'CMake Build (all toolchains)'
       shell: bash
       run: |
-        bash config/script/ci-apt.sh ccache cmake doxygen graphviz g++-multilib gcc-multilib grub-common grub-pc-bin mtools ninja-build xorriso
-
-    # Install Clang (Ubuntu 24.04 packages, same toolchain as Docker image)
-    - name: 'Install Clang'
-      shell: bash
-      run: |
-        bash config/script/ci-apt.sh clang lld
-        clang++ --version
-        ld.lld --version
-
-    # Configure
-    - name: 'CMake Configure'
-      shell: bash
-      run: |
-        cmake --preset="config-linux-${{ matrix.compiler }}-${{ matrix.arch }}-debug"
-
-    # Build
-    - name: 'CMake Build'
-      shell: bash
-      run: |
-        cmake --build --preset="build-linux-${{ matrix.compiler }}-${{ matrix.arch }}-debug" --target all --parallel
-
-    # Install
-    - name: 'CMake Install'
-      shell: bash
-      run: |
-        cmake --build --preset="build-linux-${{ matrix.compiler }}-${{ matrix.arch }}-debug" --target install
+        for compiler in clang++ g++; do
+          for arch in i386 x86_64; do
+            preset="linux-${compiler}-${arch}-debug"
+            cmake --preset="config-${preset}"
+            cmake --build --preset="build-${preset}" --target all --parallel
+          done
+        done
 
     # CodeQL Analysis
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v4
       with:
-        # Separate category per matrix job, otherwise analyses of one commit replace each other
-        category: '/language:c-cpp/arch:${{ matrix.arch }}/compiler:${{ matrix.compiler }}'
-
+        category: '/language:c-cpp'
