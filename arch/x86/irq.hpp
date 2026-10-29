@@ -162,8 +162,8 @@ namespace igros::x86 {
 	// Disable interrupts in scope (restores previous state on exit)
 	class [[nodiscard]] irq::guard final {
 
-		// Saved flags
-		igros_usize_t	mFlags;
+		// Saved flags (interrupts are disabled while saving)
+		igros_usize_t	mFlags {::irqSave()};
 
 		// Copy c-tor
 		guard(const guard &other) = delete;
@@ -174,7 +174,7 @@ namespace igros::x86 {
 	public:
 
 		// Save flags and disable interrupts
-		guard() noexcept : mFlags {::irqSave()} {}
+		guard() noexcept = default;
 		// Restore flags
 		~guard() noexcept {
 			::irqRestore(mFlags);

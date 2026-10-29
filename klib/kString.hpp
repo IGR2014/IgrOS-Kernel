@@ -104,7 +104,10 @@ namespace igros::klib {
 	constexpr auto kstrcmp(const char* src1, const char* src2, igros_usize_t size) noexcept -> igros_sdword_t {
 		// Null pointers ordering
 		if ((nullptr == src1) || (nullptr == src2)) [[unlikely]] {
-			return (src1 == src2) ? 0_i32 : ((nullptr == src1) ? -1_i32 : 1_i32);
+			if (src1 == src2) {
+				return 0_i32;
+			}
+			return (nullptr == src1) ? -1_i32 : 1_i32;
 		}
 		// Find first difference
 		for (; size > 0_usize; --size, ++src1, ++src2) {

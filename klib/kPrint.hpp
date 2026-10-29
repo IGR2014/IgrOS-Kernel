@@ -119,10 +119,9 @@ namespace igros::klib {
 		if (isNegative) [[unlikely]] {
 			temp[--first] = '-';
 		}
-		const auto text		{std::span {temp}.subspan(first)};
 
 		// Copy only if it fits whole
-		if (text.size() <= buffer.size()) [[likely]] {
+		if (const auto text {std::span {temp}.subspan(first)}; text.size() <= buffer.size()) [[likely]] {
 			std::ranges::copy(text, buffer.begin());
 		}
 

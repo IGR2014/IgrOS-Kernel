@@ -73,7 +73,7 @@ namespace igros::arch {
 		const auto rate	{static_cast<igros_word_t>(115200_u32 / static_cast<igros_dword_t>(baudRate))};
 		// LCR value
 		const auto lcr	{static_cast<igros_byte_t>(
-			((static_cast<igros_byte_t>(dataSize)	& 0x03_u8))		|
+			(static_cast<igros_byte_t>(dataSize)	& 0x03_u8)		|
 			((static_cast<igros_byte_t>(stopBits)	& 0x01_u8) << 2)	|
 			((static_cast<igros_byte_t>(parity)	& 0x03_u8) << 3)
 		)};
@@ -146,28 +146,31 @@ namespace igros::arch {
 	}
 
 
+	// Wait for transmitter and send one byte
+	[[nodiscard]]
+	static auto serialPut(const SERIAL_PORT port, const igros_byte_t value) noexcept -> bool {
+		if (!serialWaitWrite(port)) [[unlikely]] {
+			return false;
+		}
+		serialRegWrite(port, SERIAL_REG::DATA, value);
+		return true;
+	}
+
+
 	// Serial write
 	[[maybe_unused]]
 	auto serialWrite(const SERIAL_PORT port, const std::string_view text) noexcept -> igros_usize_t {
 		// Written size
 		auto written {0_usize};
-		// Write data
+		// Write data one-by-one (new line is sent as CR LF)
 		for (const auto symbol : text) {
-			// Wait for transmitter
-			if (!serialWaitWrite(port)) [[unlikely]] {
+			const auto sent {
+				(('\n' != symbol) || serialPut(port, '\r')) &&
+				serialPut(port, static_cast<igros_byte_t>(symbol))
+			};
+			if (!sent) [[unlikely]] {
 				break;
 			}
-			// Check if new line
-			if ('\n' == symbol) [[unlikely]] {
-				// Add CR
-				serialRegWrite(port, SERIAL_REG::DATA, '\r');
-				// Wait for CR to be sent
-				if (!serialWaitWrite(port)) [[unlikely]] {
-					break;
-				}
-			}
-			// One-by-one
-			serialRegWrite(port, SERIAL_REG::DATA, static_cast<igros_byte_t>(symbol));
 			++written;
 		}
 		// Return written size
