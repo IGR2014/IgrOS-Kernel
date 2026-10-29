@@ -5,14 +5,29 @@ name: 'SonarCloud'
 on:
   push:
     branches: [ '**' ]
+    paths-ignore: &docs
+      - '**.md'
+      - 'LICENSE'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.vscode/**'
+      - '.devcontainer/**'
+      - '*.code-workspace'
+      - '*.kateproject'
   pull_request:
     branches: [ 'master' ]
+    paths-ignore: *docs
   workflow_dispatch:
+
+# A newer push to the same branch/PR cancels the analysis still in progress
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   analyze:
     name: Analyze
     runs-on: ubuntu-26.04
+    timeout-minutes: 30
     permissions:
       contents: read
       pull-requests: read
@@ -33,7 +48,7 @@ jobs:
       timeout-minutes: 15
       shell: bash
       run: |
-        bash config/script/ci-apt.sh clang cmake g++-multilib gcovr jq lld ninja-build
+        bash config/script/ci-apt.sh clang cmake g++-multilib gcovr jq ninja-build
 
     # Configure both architectures with Clang
     # (one analysis per project/branch: Sonar keeps only the last one, and it

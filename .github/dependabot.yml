@@ -1,0 +1,11 @@
+# Keep GitHub Actions up to date (including the commit-pinned third-party actions
+# that receive secrets: Codacy coverage reporter, SonarQube scan)
+version: 2
+updates:
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+    groups:
+      actions:
+        patterns: [ '*' ]
