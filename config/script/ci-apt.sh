@@ -56,7 +56,7 @@ run() {
 
 # Use main Ubuntu archive instead of runner's (Azure) mirror: runner images
 # list it in mirror+file:/etc/apt/apt-mirrors.txt, older ones in sources
-switchMirror() {
+switch_mirror() {
 	phase "switching to archive.ubuntu.com"
 	sudo sed -i -e 's#https\?://azure\.archive\.ubuntu\.com#https://archive.ubuntu.com#g' \
 		/etc/apt/apt-mirrors.txt /etc/apt/sources.list /etc/apt/sources.list.d/*.list /etc/apt/sources.list.d/*.sources 2>/dev/null || true
@@ -67,7 +67,7 @@ sudo rm -f /var/lib/man-db/auto-update
 
 for ((attempt = 1; attempt <= ATTEMPTS; attempt++)); do
 	# Runner mirror failed once: try main archive
-	[[ "${attempt}" -eq 2 ]] && switchMirror
+	[[ "${attempt}" -eq 2 ]] && switch_mirror
 	phase "attempt ${attempt}/${ATTEMPTS}: update"
 	if run "${UPDATE_TIMEOUT}" update "${APT[@]}" update; then
 		phase "attempt ${attempt}/${ATTEMPTS}: install $*"
