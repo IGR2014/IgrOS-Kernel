@@ -22,6 +22,7 @@
 #include <klib/kFlags.hpp>
 // IgrOS-Kernel memory
 #include <mem/phys.hpp>
+#include <mem/virt.hpp>
 
 
 // x86 namespace
@@ -110,13 +111,13 @@ namespace igros::x86 {
 
 		// Map 4 KB page (false if structures can't be allocated or address is in a large page)
 		[[nodiscard]]
-		static auto	map(const mem::phys_t phys, const void* const virt, const klib::kFlags<FLAGS> flags) noexcept -> bool;
+		static auto	map(const mem::phys_t phys, const mem::virt_t virt, const klib::kFlags<FLAGS> flags) noexcept -> bool;
 		// Unmap 4 KB page
-		static void	unmap(const void* const virt) noexcept;
+		static void	unmap(const mem::virt_t virt) noexcept;
 
 		// Physical address of virtual address (INVALID if not mapped)
 		[[nodiscard]]
-		static auto	translate(const void* const virt) noexcept -> mem::phys_t;
+		static auto	translate(const mem::virt_t virt) noexcept -> mem::phys_t;
 
 		// Current top level table physical address
 		[[nodiscard]]
@@ -144,20 +145,20 @@ namespace igros::x86 {
 		static auto	allocTable() noexcept -> mem::phys_t;
 		// Index of virtual address in table of given level (0 - page table)
 		[[nodiscard]]
-		static auto	index(const void* const virt, const igros_usize_t level) noexcept -> igros_usize_t;
+		static auto	index(const mem::virt_t virt, const igros_usize_t level) noexcept -> igros_usize_t;
 		// Entry of virtual address at given level (0 - page table) of given hierarchy
 		// (create - allocate missing tables)
 		[[nodiscard]]
-		static auto	entry(const mem::phys_t top, const void* const virt, const bool create, const bool user, const igros_usize_t level = 0_usize) noexcept -> entry_t*;
+		static auto	entry(const mem::phys_t top, const mem::virt_t virt, const bool create, const bool user, const igros_usize_t level = 0_usize) noexcept -> entry_t*;
 		// Entry value for physical address with flags (drops NX if not enabled)
 		[[nodiscard]]
 		static auto	makeEntry(const mem::phys_t phys, const klib::kFlags<FLAGS> flags) noexcept -> entry_t;
 		// Map 4 KB page in given hierarchy
 		[[nodiscard]]
-		static auto	map(const mem::phys_t top, const mem::phys_t phys, const void* const virt, const klib::kFlags<FLAGS> flags) noexcept -> bool;
+		static auto	map(const mem::phys_t top, const mem::phys_t phys, const mem::virt_t virt, const klib::kFlags<FLAGS> flags) noexcept -> bool;
 		// Map large page in given hierarchy (fresh directory entry only)
 		[[nodiscard]]
-		static auto	mapLarge(const mem::phys_t top, const mem::phys_t phys, const void* const virt, const klib::kFlags<FLAGS> flags) noexcept -> bool;
+		static auto	mapLarge(const mem::phys_t top, const mem::phys_t phys, const mem::virt_t virt, const klib::kFlags<FLAGS> flags) noexcept -> bool;
 		// Rights of kernel offset mapping of low memory physical page (kernel sections)
 		[[nodiscard]]
 		static auto	kernelFlags(const mem::phys_t phys) noexcept -> klib::kFlags<FLAGS>;

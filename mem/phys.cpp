@@ -74,8 +74,9 @@ namespace igros::mem {
 		}
 
 		// Physical address of identity mapped object
+		template<class T>
 		[[nodiscard]]
-		auto physOf(const void* const object) noexcept -> phys_t {
+		auto physOf(const T* const object) noexcept -> phys_t {
 			return static_cast<phys_t>(std::bit_cast<igros_usize_t>(object));
 		}
 
