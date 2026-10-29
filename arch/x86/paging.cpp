@@ -47,6 +47,13 @@ namespace igros::x86 {
 		constinit paging::entry_t	noExecute	{0};
 
 
+
+		// Invalidate TLB entry of virtual address (invlpg takes memory operand)
+		void invalidate(const mem::virt_t virt) noexcept {
+			::pageInvalidate(std::bit_cast<const igros_byte_t*>(mem::address(virt)));
+		}
+
+
 	}	// namespace
 
 
@@ -79,14 +86,14 @@ namespace igros::x86 {
 
 	// Index of virtual address in table of given level (0 - page table)
 	[[nodiscard]]
-	auto paging::index(const void* const virt, const igros_usize_t level) noexcept -> igros_usize_t {
-		return (std::bit_cast<igros_usize_t>(virt) >> (PAGE_SHIFT + INDEX_BITS * level)) & (ENTRIES - 1_usize);
+	auto paging::index(const mem::virt_t virt, const igros_usize_t level) noexcept -> igros_usize_t {
+		return (mem::address(virt) >> (PAGE_SHIFT + INDEX_BITS * level)) & (ENTRIES - 1_usize);
 	}
 
 
 	// Entry of virtual address at given level of given hierarchy (create - allocate missing tables)
 	[[nodiscard]]
-	auto paging::entry(const mem::phys_t top, const void* const virt, const bool create, const bool user, const igros_usize_t level) noexcept -> entry_t* {
+	auto paging::entry(const mem::phys_t top, const mem::virt_t virt, const bool create, const bool user, const igros_usize_t level) noexcept -> entry_t* {
 		auto entries {paging::table(top)};
 		// Walk down to table of requested level
 		for (auto current {LEVELS - 1_usize}; (nullptr != entries) && (current > level); --current) {
@@ -123,9 +130,9 @@ namespace igros::x86 {
 
 	// Map 4 KB page in given hierarchy
 	[[nodiscard]]
-	auto paging::map(const mem::phys_t top, const mem::phys_t phys, const void* const virt, const klib::kFlags<FLAGS> flags) noexcept -> bool {
+	auto paging::map(const mem::phys_t top, const mem::phys_t phys, const mem::virt_t virt, const klib::kFlags<FLAGS> flags) noexcept -> bool {
 		// Page aligned addresses only
-		if (!klib::kAlign::check<PAGE_SIZE>(phys) || !klib::kAlign::check<PAGE_SIZE>(virt)) [[unlikely]] {
+		if (!klib::kAlign::check<PAGE_SIZE>(phys) || !klib::kAlign::check<PAGE_SIZE>(mem::address(virt))) [[unlikely]] {
 			return false;
 		}
 		// Physical address must fit into entry
@@ -137,15 +144,15 @@ namespace igros::x86 {
 			return false;
 		}
 		*page = paging::makeEntry(phys, flags);
-		::pageInvalidate(virt);
+		invalidate(virt);
 		return true;
 	}
 
 	// Map large page in given hierarchy (fresh directory entry only)
 	[[nodiscard]]
-	auto paging::mapLarge(const mem::phys_t top, const mem::phys_t phys, const void* const virt, const klib::kFlags<FLAGS> flags) noexcept -> bool {
+	auto paging::mapLarge(const mem::phys_t top, const mem::phys_t phys, const mem::virt_t virt, const klib::kFlags<FLAGS> flags) noexcept -> bool {
 		// Large page aligned addresses only, physical address must fit into entry
-		if (!klib::kAlign::check<LARGE_PAGE_SIZE>(phys) || !klib::kAlign::check<LARGE_PAGE_SIZE>(virt) ||
+		if (!klib::kAlign::check<LARGE_PAGE_SIZE>(phys) || !klib::kAlign::check<LARGE_PAGE_SIZE>(mem::address(virt)) ||
 			(0_u64 != (phys & ~static_cast<mem::phys_t>(ADDRESS_MASK)))) [[unlikely]] {
 			return false;
 		}
@@ -155,31 +162,31 @@ namespace igros::x86 {
 			return false;
 		}
 		*large = paging::makeEntry(phys, flags) | flag(FLAGS::HUGE);
-		::pageInvalidate(virt);
+		invalidate(virt);
 		return true;
 	}
 
 
 	// Map 4 KB page
 	[[nodiscard]]
-	auto paging::map(const mem::phys_t phys, const void* const virt, const klib::kFlags<FLAGS> flags) noexcept -> bool {
+	auto paging::map(const mem::phys_t phys, const mem::virt_t virt, const klib::kFlags<FLAGS> flags) noexcept -> bool {
 		return paging::map(paging::root(), phys, virt, flags);
 	}
 
 	// Unmap 4 KB page
-	void paging::unmap(const void* const virt) noexcept {
+	void paging::unmap(const mem::virt_t virt) noexcept {
 		const auto page {paging::entry(paging::root(), virt, false, false)};
 		if (nullptr != page) {
 			*page = 0_usize;
-			::pageInvalidate(virt);
+			invalidate(virt);
 		}
 	}
 
 
 	// Physical address of virtual address (INVALID if not mapped)
 	[[nodiscard]]
-	auto paging::translate(const void* const virt) noexcept -> mem::phys_t {
-		const auto address	{static_cast<mem::phys_t>(std::bit_cast<igros_usize_t>(virt))};
+	auto paging::translate(const mem::virt_t virt) noexcept -> mem::phys_t {
+		const auto address	{static_cast<mem::phys_t>(mem::address(virt))};
 		auto entries		{paging::table(paging::root())};
 		for (auto level {LEVELS - 1_usize}; nullptr != entries; --level) {
 			const auto current {entries[paging::index(virt, level)]};
@@ -260,17 +267,17 @@ namespace igros::x86 {
 		for (auto phys {0_u64}; phys < mem::LOW_MEMORY_LIMIT; phys += PAGE_SIZE) {
 			const auto page {static_cast<igros_usize_t>(phys)};
 			if (guard != phys) {
-				mapped = mapped && paging::map(top, phys, std::bit_cast<const void*>(page + offset), paging::kernelFlags(phys));
+				mapped = mapped && paging::map(top, phys, static_cast<mem::virt_t>(page + offset), paging::kernelFlags(phys));
 			}
 			if (0_u64 != phys) {
-				mapped = mapped && paging::map(top, phys, std::bit_cast<const void*>(page), data);
+				mapped = mapped && paging::map(top, phys, static_cast<mem::virt_t>(page), data);
 			}
 		}
 
 		// Rest of RAM at kernel offset (direct map) with large pages
 		const auto end {std::max(mem::LOW_MEMORY_LIMIT, std::min(klib::kAlign::up<LARGE_PAGE_SIZE>(mem::phys::top()), DIRECT_MAP_LIMIT))};
 		for (auto phys {mem::LOW_MEMORY_LIMIT}; phys < end; phys += LARGE_PAGE_SIZE) {
-			mapped = mapped && paging::mapLarge(top, phys, std::bit_cast<const void*>(static_cast<igros_usize_t>(phys) + offset), data);
+			mapped = mapped && paging::mapLarge(top, phys, static_cast<mem::virt_t>(static_cast<igros_usize_t>(phys) + offset), data);
 		}
 		if (!mapped) [[unlikely]] {
 			klib::kprintf("Paging:\t\tFAILED (can't build kernel mapping)");
@@ -300,7 +307,8 @@ namespace igros::x86 {
 	[[nodiscard]]
 	auto paging::selfTest() noexcept -> bool {
 		// Scratch page in dynamic mappings area (right above direct map)
-		const auto virt	{paging::dynamicStart()};
+		const auto page	{paging::dynamicStart()};
+		const auto virt	{mem::virtOf(page)};
 		const auto phys	{mem::phys::alloc(directEnd)};
 		if (0_u64 == phys) [[unlikely]] {
 			return false;
@@ -313,16 +321,16 @@ namespace igros::x86 {
 		}
 		auto passed {
 			(INVALID == paging::translate(virt))						&&
-			(INVALID == paging::translate(nullptr))					&&
+			(INVALID == paging::translate(mem::virt_t {0}))					&&
 			paging::map(phys, virt, klib::make_kflags<FLAGS>(FLAGS::PRESENT, FLAGS::WRITABLE, FLAGS::NO_EXECUTE))	&&
 			(phys + 0x123_u64 == paging::translate(virt + 0x123))
 		};
 		if (passed) {
 			// Write through new mapping, read through direct map alias
-			static_cast<volatile igros_byte_t*>(virt)[0x123] = 0x5A_u8;
+			static_cast<volatile igros_byte_t*>(page)[0x123] = 0x5A_u8;
 			passed = (0x5A_u8 == alias[0x123]);
 			alias[0x456] = 0xA5_u8;
-			passed = passed && (0xA5_u8 == static_cast<volatile igros_byte_t*>(virt)[0x456]);
+			passed = passed && (0xA5_u8 == static_cast<volatile igros_byte_t*>(page)[0x456]);
 		}
 		paging::unmap(virt);
 		passed = passed && (INVALID == paging::translate(virt));

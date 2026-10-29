@@ -66,15 +66,6 @@ int main() {
 	}
 	IGROS_CHECK(nullptr == kmemzero(static_cast<std::uint32_t*>(nullptr)));
 
-	// Copy
-	const char source[] {"copy"};
-	char destination[5] {};
-	IGROS_CHECK(destination == kmemcpy(destination, source, sizeof(source)));
-	IGROS_CHECK(('c' == destination[0]) && ('y' == destination[3]) && ('\0' == destination[4]));
-	IGROS_CHECK(destination == kmemcpy(destination, destination, sizeof(destination)));
-	IGROS_CHECK(destination == kmemcpy(destination, source, 0));
-	IGROS_CHECK(nullptr == kmemcpy(nullptr, source, 1));
-
 	return igros::test::result();
 
 }

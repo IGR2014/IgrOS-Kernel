@@ -53,9 +53,6 @@ namespace igros::klib {
 	}
 
 
-	// Copy memory
-	[[maybe_unused]]
-	auto	kmemcpy(const igros_pointer_t dst, const void* const src, const igros_usize_t size) noexcept -> igros_pointer_t;
 
 
 }	// namespace igros::klib

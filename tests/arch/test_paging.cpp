@@ -74,7 +74,7 @@ static auto memoryFile {-1};
 // Software MMU: map faulting page to physical page from page tables
 static void pageFault(const int signal, siginfo_t* const info, void* const) {
 	const auto page		{std::bit_cast<std::uintptr_t>(info->si_addr) & ~(paging::PAGE_SIZE - 1)};
-	const auto address	{paging::translate(std::bit_cast<const void*>(page))};
+	const auto address	{paging::translate(static_cast<igros::mem::virt_t>(page))};
 	if ((paging::INVALID == address) || (address >= igros::mem::LOW_MEMORY_LIMIT) ||
 		(MAP_FAILED == ::mmap(std::bit_cast<void*>(page), paging::PAGE_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_FIXED, memoryFile, static_cast<off_t>(address)))) {
 		::signal(signal, SIG_DFL);
@@ -130,13 +130,13 @@ static auto newTable() -> igros::mem::phys_t {
 template<class ...Flags>
 [[nodiscard]]
 static auto map(const igros::mem::phys_t address, const std::uintptr_t virt, Flags ...flags) -> bool {
-	return paging::map(address, std::bit_cast<const void*>(virt), igros::klib::make_kflags<paging::FLAGS>(paging::FLAGS::PRESENT, flags...));
+	return paging::map(address, static_cast<igros::mem::virt_t>(virt), igros::klib::make_kflags<paging::FLAGS>(paging::FLAGS::PRESENT, flags...));
 }
 
 // Translate virtual address
 [[nodiscard]]
 static auto translate(const std::uintptr_t virt) -> igros::mem::phys_t {
-	return paging::translate(std::bit_cast<const void*>(virt));
+	return paging::translate(static_cast<igros::mem::virt_t>(virt));
 }
 
 
@@ -248,11 +248,11 @@ static void testMap() {
 	IGROS_CHECK(0x8000 == translate(VIRT));
 	IGROS_CHECK(0 == (entryAt(VIRT, 0) & static_cast<paging::entry_t>(paging::FLAGS::WRITABLE)));
 	// Unmap
-	paging::unmap(std::bit_cast<const void*>(VIRT));
+	paging::unmap(static_cast<igros::mem::virt_t>(VIRT));
 	IGROS_CHECK(paging::INVALID == translate(VIRT));
 	IGROS_CHECK(3 == hw::invalidated.size());
 	// Unmapping missing page (no tables) does nothing
-	paging::unmap(std::bit_cast<const void*>(VIRT + 0x10000000));
+	paging::unmap(static_cast<igros::mem::virt_t>(VIRT + 0x10000000));
 	IGROS_CHECK(3 == hw::invalidated.size());
 }
 
@@ -301,7 +301,7 @@ static void testHuge() {
 	entryAt(hugeVirt, 1)	= hugePhys | static_cast<paging::entry_t>(paging::FLAGS::HUGE) | static_cast<paging::entry_t>(paging::FLAGS::PRESENT);
 	IGROS_CHECK(hugePhys + 0x12345 == translate(hugeVirt + 0x12345));
 	IGROS_CHECK(!map(0x9000, hugeVirt + paging::PAGE_SIZE));
-	paging::unmap(std::bit_cast<const void*>(hugeVirt));
+	paging::unmap(static_cast<igros::mem::virt_t>(hugeVirt));
 	IGROS_CHECK(hugePhys == translate(hugeVirt));
 }
 
