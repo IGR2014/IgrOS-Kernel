@@ -45,6 +45,8 @@ int main() {
 	// memset: byte value, exact size, returns destination
 	IGROS_CHECK(buffer == memset(buffer, 'x', 4));
 	IGROS_CHECK(equals(buffer, "xxxx\0", 5));
+	// Value is converted to unsigned char (0x141 -> 0x41): checked on purpose
+	// cppcheck-suppress memsetValueOutOfRange
 	memset(buffer, 0x141, 2);
 	IGROS_CHECK(equals(buffer, "AAxx", 4));
 	// (size in variable: literal 0 triggers transposed arguments warning)
@@ -66,12 +68,14 @@ int main() {
 	memmove(buffer, buffer, 6);
 	IGROS_CHECK(equals(buffer, "cdefef", 6));
 
-	// memcmp: unsigned bytes, first difference
+	// memcmp: unsigned bytes, first difference (constant inputs on purpose)
+	// cppcheck-suppress-begin staticStringCompare
 	IGROS_CHECK(0 == memcmp("abc", "abc", 3));
 	IGROS_CHECK(0 == memcmp("abc", "abd", 2));
 	IGROS_CHECK(memcmp("abc", "abd", 3) < 0);
 	IGROS_CHECK(memcmp("abd", "abc", 3) > 0);
 	IGROS_CHECK(memcmp("\x80", "\x7F", 1) > 0);
+	// cppcheck-suppress-end staticStringCompare
 
 	return igros::test::result();
 

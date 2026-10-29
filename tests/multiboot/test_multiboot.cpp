@@ -50,6 +50,8 @@ auto igros::platform::Platform::current() noexcept -> const Platform& {
 template<class T>
 [[nodiscard]]
 static auto address32(const T* const object) noexcept -> std::uint32_t {
+	// Truncation is safe: tests check that data lies below 4 GB
+	// cppcheck-suppress CastAddressToIntegerAtReturn
 	return static_cast<std::uint32_t>(reinterpret_cast<std::uintptr_t>(object));
 }
 
