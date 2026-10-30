@@ -167,6 +167,32 @@ function(igros_test NAME SOURCE)
 	)
 endfunction()
 
+# Integer literals
+igros_test(literals	arch/test_literals.cpp)
+# Out of range or floating-point literal with integer suffix must fail to compile with IgrOS message
+foreach(
+	LITERAL
+	"0x100_u8" "128_i8" "65536_u16" "0x80000000_i32" "0x100000000_u32" "18446744073709551616_u64" "1.5_u32"
+)
+	string(
+		MAKE_C_IDENTIFIER
+		"${LITERAL}" LITERAL_NAME
+	)
+	add_test(
+		NAME literals_${LITERAL_NAME}
+		COMMAND
+		${CMAKE_CXX_COMPILER} -std=c++20 -fsyntax-only
+		-I${IGROS_SOURCE_DIR} -DIGROS_ARCH_${IGROS_TEST_ARCH}
+		-DIGROS_TEST_LITERAL=${LITERAL}
+		${CMAKE_CURRENT_SOURCE_DIR}/arch/test_literals.cpp
+	)
+	set_tests_properties(
+		literals_${LITERAL_NAME}
+		PROPERTIES
+		PASS_REGULAR_EXPRESSION "IgrOS: integer literal"
+	)
+endforeach()
+
 # Kernel library
 igros_test(kprint	klib/test_kprint.cpp	klib/kPrint.cpp)
 igros_test(kstring	klib/test_kstring.cpp)
