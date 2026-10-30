@@ -59,11 +59,11 @@ static void resetPIT() {
 }
 
 
-// Frequency to divisor: mode 3 on channel 0, divisor low then high byte
+// Frequency to divisor: mode 2 on channel 0, divisor low then high byte
 static void testFrequency() {
 	resetPIT();
 	pitSetupFrequency(1000);
-	IGROS_CHECK((std::vector<std::uint32_t> {0x36}) == hw::writes(PIT_CONTROL));
+	IGROS_CHECK((std::vector<std::uint32_t> {0x34}) == hw::writes(PIT_CONTROL));
 	// 1193181 / 1000 = 1193 = 0x04A9
 	IGROS_CHECK((std::vector<std::uint32_t> {0xA9, 0x04}) == hw::writes(PIT_CHANNEL_0));
 	IGROS_CHECK(hw::printed("PIT frequency:\t1000 Hz"));
@@ -85,7 +85,7 @@ static void testTicks() {
 	latchCounter(193);
 	IGROS_CHECK(1000 == pitGetTicks());
 	// Latch command before reading
-	IGROS_CHECK((std::vector<std::uint32_t> {0x36, 0x00, 0x00}) == hw::writes(PIT_CONTROL));
+	IGROS_CHECK((std::vector<std::uint32_t> {0x34, 0x00, 0x00}) == hw::writes(PIT_CONTROL));
 }
 
 

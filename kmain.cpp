@@ -3,9 +3,9 @@
 //	Boot low-level main setup function
 //
 //	File:	boot.cpp
-//	Date:	21 Mar 2023
+//	Date:	30 Oct 2026
 //
-//	Copyright (c) 2017 - 2022, Igor Baklykov
+//	Copyright (c) 2017 - 2026, Igor Baklykov
 //	All rights reserved.
 //
 //
@@ -17,6 +17,7 @@
 // IgrOS-Kernel arch
 #include <arch/cpu.hpp>
 // IgrOS-Kernel memory
+#include <mem/direct.hpp>
 #include <mem/phys.hpp>
 // IgrOS-Kernel multiboot
 #include <multiboot/multiboot.hpp>
@@ -38,15 +39,21 @@ extern "C" {
 
 	// Kernel main function
 	[[noreturn]]
-	void kmain(const igros::multiboot::info_t* const multiboot, const igros::igros_dword_t magic) noexcept {
+	void kmain(const igros::igros_usize_t multibootAddress, const igros::igros_dword_t magic) noexcept {
 
 		// Run global constructors (dynamic initialization of global objects)
 		for (const auto ctor : std::span {_SECTION_INIT_ARRAY_START_, _SECTION_INIT_ARRAY_END_}) {
 			ctor();
 		}
 
-		// Test multiboot before anything reads multiboot info (hang on error;
-		// screen is reachable through boot page tables, before platform init)
+		// Multiboot info at physical address (screen is reachable through boot page tables, before platform init)
+		const auto* const multiboot {igros::mem::direct::pointer<const igros::multiboot::info_t>(multibootAddress)};
+		if (nullptr == multiboot) [[unlikely]] {
+			igros::klib::kprintf("Multiboot info at 0x%zx is not directly mapped", multibootAddress);
+			igros::arch::cpu::halt();
+		}
+
+		// Test multiboot before anything reads multiboot info (hang on error)
 		multiboot->test(magic);
 
 		// Initialize physical memory allocator (needed by paging)
@@ -55,7 +62,7 @@ extern "C" {
 		// Initialize platform
 		igros::platform::Platform::current().initialize();
 
-		// Write Multiboot magic error message message
+		// Write greetings message (screen is reachable through platform init)
 		igros::klib::kprintf("IgrOS kernel");
 
 		// Print kernel header

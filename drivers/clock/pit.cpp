@@ -3,9 +3,9 @@
 //	Programmable interrupt timer
 //
 //	File:	pit.cpp
-//	Date:	17 Mar 2023
+//	Date:	30 Oct 2026
 //
-//	Copyright (c) 2017 - 2022, Igor Baklykov
+//	Copyright (c) 2017 - 2026, Igor Baklykov
 //	All rights reserved.
 //
 //
@@ -57,8 +57,9 @@ namespace igros::arch {
 		// Save current real frequency value
 		pit.frequency	= static_cast<igros_word_t>(PIT_MAIN_FREQUENCY / pit.divisor);
 
-		// Tell pit we want to change divisor for channel 0
-		io::writePort8(PIT_CONTROL,	0x36_u8);
+		// Channel 0, low then high byte, mode 2 (rate generator: counter runs from divisor
+		// down to 1 once per period, so elapsed ticks are divisor - counter; mode 3 runs it twice)
+		io::writePort8(PIT_CONTROL,	0x34_u8);
 		// Set divisor (LOW first, then HIGH)
 		io::writePort8(PIT_CHANNEL_0,	static_cast<igros_byte_t>(pit.divisor & 0x00FF_u16));
 		io::writePort8(PIT_CHANNEL_0,	static_cast<igros_byte_t>((pit.divisor >> 8) & 0x00FF_u16));
