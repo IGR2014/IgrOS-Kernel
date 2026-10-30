@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 ################################################################
 #
-#	Run host unit tests and QEMU boot test of kernel built by build.sh
+#	Run host unit tests and QEMU (and BOCHS, if installed) boot tests of kernel built by build.sh
 #
 #	Usage: test.sh <i386|x86_64> [clang++|g++] [debug|release]
 #
@@ -26,5 +26,9 @@ cmake -S tests -B "build/tests-${ARCH}" -DCMAKE_CXX_COMPILER="${COMPILER}" -DIGR
 cmake --build "build/tests-${ARCH}" --parallel
 ctest --test-dir "build/tests-${ARCH}" --output-on-failure --no-tests=error
 
-# Boot test
-bash tests/boot/qemu-boot.sh "${ARCH}" "install/${TYPE_DIR}/config-linux-${COMPILER}-${ARCH}-${TYPE}/kernel.iso"
+# Boot tests
+ISO="install/${TYPE_DIR}/config-linux-${COMPILER}-${ARCH}-${TYPE}/kernel.iso"
+bash tests/boot/qemu-boot.sh "${ARCH}" "${ISO}"
+if command -v "${BOCHS:-bochs}" > /dev/null; then
+	bash tests/boot/bochs-boot.sh "${ARCH}" "${ISO}"
+fi
