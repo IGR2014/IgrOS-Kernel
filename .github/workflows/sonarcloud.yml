@@ -35,6 +35,10 @@ jobs:
     # Environment variables
     env:
       IGROS_KERNEL_DIR_BUILD: "${{ github.workspace }}/build"
+      # Runs started by Dependabot (and PRs from forks) get no repository secrets:
+      # upload steps are skipped then (secrets can't be tested in step conditions directly)
+      HAS_CODACY_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN != '' }}
+      HAS_SONAR_TOKEN: ${{ secrets.SONAR_TOKEN != '' }}
 
     steps:
     - name: Checkout repository
@@ -81,8 +85,15 @@ jobs:
         gcovr --root . --exclude 'tests/' --sonarqube build/coverage.xml --cobertura build/cobertura.xml build/tests-i386 build/tests-x86_64
         gcovr --root . --exclude 'tests/' build/tests-i386 build/tests-x86_64
 
+    # Uploads need tokens: say why they are skipped
+    - name: 'Missing Tokens'
+      if: env.HAS_CODACY_TOKEN != 'true' || env.HAS_SONAR_TOKEN != 'true'
+      run: |
+        echo "::notice::No Codacy/SonarCloud token for this run (Dependabot or fork): uploads skipped, tests and coverage still checked"
+
     # Codacy coverage upload
     - name: 'Codacy Coverage'
+      if: env.HAS_CODACY_TOKEN == 'true'
       # Third-party action gets CODACY_PROJECT_TOKEN: pinned to commit (v1.3.0)
       uses: codacy/codacy-coverage-reporter-action@89d6c85cfafaec52c72b6c5e8b2878d33104c699
       with:
@@ -91,6 +102,7 @@ jobs:
 
     # SonarCloud analysis
     - name: 'SonarCloud Analysis'
+      if: env.HAS_SONAR_TOKEN == 'true'
       # Third-party action gets SONAR_TOKEN: pinned to commit (v8.3.0)
       uses: SonarSource/sonarqube-scan-action@d209202bc7d53ff1cc128f7f907dac145c9d6ae9
       env:
