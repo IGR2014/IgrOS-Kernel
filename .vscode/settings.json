@@ -1,4 +1,8 @@
 {
 	"cmake.configureOnOpen": true,
-	"sonarlint.pathToCompileCommands": "${workspaceFolder}/build/Debug/compile_commands.json"
+	"sonarlint.pathToCompileCommands": "${workspaceFolder}/build/Debug/compile_commands.json",
+	"sonarlint.connectedMode.project": {
+		"connectionId": "igr2014",
+		"projectKey": "IGR2014_IgrOS-Kernel"
+	}
 }
