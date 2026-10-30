@@ -174,10 +174,10 @@ igros_test(kmemory	klib/test_kmemory.cpp)
 igros_test(kmath	klib/test_kmath.cpp)
 igros_test(kflags	klib/test_kflags.cpp)
 igros_test(kalign	klib/test_kalign.cpp)
-igros_test(libc		klib/test_libc.cpp	klib/libc.cpp)
+igros_test(klibc		klib/test_klibc.cpp	klib/kLibC.cpp)
 # Calls to C library functions must reach kernel implementations
 target_compile_options(
-	test_libc
+	test_klibc
 	PRIVATE
 	-fno-builtin
 )

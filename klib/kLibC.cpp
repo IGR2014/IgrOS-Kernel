@@ -2,8 +2,8 @@
 //
 //	Freestanding C runtime functions required by GCC/Clang
 //
-//	File:	libc.cpp
-//	Date:	09 Oct 2026
+//	File:	kLibC.cpp
+//	Date:	30 Oct 2026
 //
 //	Copyright (c) 2017 - 2026, Igor Baklykov
 //	All rights reserved.
@@ -76,6 +76,19 @@ extern "C" {
 			}
 		}
 		return 0;
+	}
+
+	// Find byte value in memory
+	IGROS_NO_LIBCALLS
+	void* memchr(const void* src, int val, std::size_t size) {
+		auto s {static_cast<const unsigned char*>(src)};
+		for (auto i {static_cast<std::size_t>(0)}; i < size; ++i) {
+			if (static_cast<unsigned char>(val) == s[i]) {
+				// C signature returns non-const pointer to const input
+				return const_cast<unsigned char*>(s + i);
+			}
+		}
+		return nullptr;
 	}
 
 
