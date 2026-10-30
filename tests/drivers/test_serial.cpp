@@ -44,6 +44,9 @@ constexpr auto COM1_LSR		{std::uint16_t {0x3FD}};
 // Line status bits
 constexpr auto LSR_DATA_READY	{0x01u};
 constexpr auto LSR_THR_EMPTY	{0x20u};
+constexpr auto LSR_TX_IDLE	{0x40u};
+// Modem control loopback bit
+constexpr auto MCR_LOOPBACK	{0x10u};
 
 
 // UART model: transmitter state and receive queue
@@ -53,7 +56,9 @@ static auto	rxQueue	{std::deque<char> {}};
 static auto uart(const std::uint16_t port) -> std::uint32_t {
 	switch (port) {
 		case COM1_LSR:
-			return (txReady ? LSR_THR_EMPTY : 0u) | (rxQueue.empty() ? 0u : LSR_DATA_READY);
+			// Loopback: written byte is received at once
+			return (txReady ? (LSR_THR_EMPTY | LSR_TX_IDLE) : 0u) |
+				((rxQueue.empty() && (0u == (hw::portValue[COM1_MCR] & MCR_LOOPBACK))) ? 0u : LSR_DATA_READY);
 		case COM1_DATA:
 			if (!rxQueue.empty()) {
 				const auto symbol {rxQueue.front()};
@@ -114,6 +119,27 @@ static void testInitFault() {
 }
 
 
+// Transmitter never idle: port is not touched (pending output must not be clobbered)
+static void testInitBusy() {
+	resetUART();
+	txReady = false;
+	IGROS_CHECK(!serialInit(SERIAL_PORT::COM1, BAUD_RATE::BAUD_115200, DATA_SIZE::CHAR_8, STOP_BITS::STOP_1, PARITY::NONE));
+	IGROS_CHECK(hw::writes(COM1_LCR).empty());
+	IGROS_CHECK(hw::writes(COM1_MCR).empty());
+}
+
+
+// Looped back byte never arrives (data ready not set)
+static void testInitNoLoopback() {
+	resetUART();
+	hw::portReadHook = [](const std::uint16_t port) -> std::uint32_t {
+		return (COM1_LSR == port) ? (LSR_THR_EMPTY | LSR_TX_IDLE) : 0xA5u;
+	};
+	IGROS_CHECK(!serialInit(SERIAL_PORT::COM1, BAUD_RATE::BAUD_115200, DATA_SIZE::CHAR_8, STOP_BITS::STOP_1, PARITY::NONE));
+	IGROS_CHECK((std::vector<std::uint32_t> {0x0B, 0x1E}) == hw::writes(COM1_MCR));
+}
+
+
 // Write: LF becomes CRLF, stops when transmitter never gets ready
 static void testWrite() {
 	resetUART();
@@ -170,6 +196,8 @@ static void testSetup() {
 int main() {
 	testInit();
 	testInitFault();
+	testInitBusy();
+	testInitNoLoopback();
 	testWrite();
 	testRead();
 	testSetup();
