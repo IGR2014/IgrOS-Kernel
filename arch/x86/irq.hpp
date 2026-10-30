@@ -3,9 +3,9 @@
 //	Interrupts low-level operations
 //
 //	File:	irq.hpp
-//	Date:	12 Mar 2023
+//	Date:	30 Oct 2026
 //
-//	Copyright (c) 2017 - 2022, Igor Baklykov
+//	Copyright (c) 2017 - 2026, Igor Baklykov
 //	All rights reserved.
 //
 //
@@ -160,10 +160,10 @@ namespace igros::x86 {
 
 
 	// Disable interrupts in scope (restores previous state on exit)
-	class [[nodiscard]] irq::guard final {
+	class [[nodiscard("Unnamed guard re-enables IRQs immediately")]] irq::guard final {
 
 		// Saved flags (interrupts are disabled while saving)
-		igros_usize_t	mFlags {::irqSave()};
+		igros_usize_t	mFlags	{::irqSave()};
 
 		// Copy c-tor
 		guard(const guard &other) = delete;
