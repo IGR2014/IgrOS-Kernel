@@ -3,9 +3,9 @@
 //	Multiboot 1 functions
 //
 //	File:	multiboot.cpp
-//	Date:	21 Mar 2023
+//	Date:	30 Oct 2026
 //
-//	Copyright (c) 2017 - 2022, Igor Baklykov
+//	Copyright (c) 2017 - 2026, Igor Baklykov
 //	All rights reserved.
 //
 //
@@ -27,6 +27,24 @@
 
 // Multiboot code zone
 namespace igros::multiboot {
+
+
+	// Anonymous namespace
+	namespace {
+
+
+		// VBE string at real mode segment:offset pointer (nullptr if not provided or not directly mapped)
+		[[nodiscard]]
+		auto vbeString(const igros_dword_t pointer) noexcept -> const char* {
+			if (0_u32 == pointer) {
+				return nullptr;
+			}
+			// Linear address: segment * 16 + offset
+			return mem::direct::string(static_cast<mem::phys_t>(((pointer & 0xFFFF0000_u32) >> 12) + (pointer & 0x0000FFFF_u32)));
+		}
+
+
+	}	// namespace
 
 
 	// Test multiboot
@@ -147,29 +165,27 @@ MEMORY MAP:
 		// Test VBE
 		if (info_t::hasInfoVBE()) [[likely]] {
 			// Get VBE config info
-			const auto* const config	{
-				std::bit_cast<const multiboot::vbeConfig* const>(static_cast<igros_usize_t>(vbeControlInfo))
-			};
+			const auto* const config	{mem::direct::pointer<const multiboot::vbeConfig>(vbeControlInfo)};
 			// Get current VBE mode
-			const auto* const mode		{
-				std::bit_cast<const multiboot::vbeMode* const>(static_cast<igros_usize_t>(vbeModeInfo))
-			};
+			const auto* const mode		{mem::direct::pointer<const multiboot::vbeMode>(vbeModeInfo)};
+			// Check if VBE info is reachable
+			if ((nullptr == config) || (nullptr == mode)) [[unlikely]] {
+				klib::kprintf(
+R"multiboot(
+VBE:
+	VBE info is not directly mapped...
+)multiboot"
+				);
+				return;
+			}
 			// Get OEM string
-			const auto* const oem		{
-				std::bit_cast<const char* const>(static_cast<igros_usize_t>(((config->oem & 0xFFFF0000) >> 12) + (config->oem & 0xFFFF)))
-			};
+			const auto* const oem		{vbeString(config->oem)};
 			// Get vendor string
-			const auto* const vendor	{
-				std::bit_cast<const char* const>(static_cast<igros_usize_t>(((config->vendor & 0xFFFF0000) >> 12) + (config->vendor & 0xFFFF)))
-			};
+			const auto* const vendor	{vbeString(config->vendor)};
 			// Get product string
-			const auto* const product	{
-				std::bit_cast<const char* const>(static_cast<igros_usize_t>(((config->productName & 0xFFFF0000) >> 12) + (config->productName & 0xFFFF)))
-			};
+			const auto* const product	{vbeString(config->productName)};
 			// Get revision string
-			const auto* const revision	{
-				std::bit_cast<const char* const>(static_cast<igros_usize_t>(((config->productRev & 0xFFFF0000) >> 12) + (config->productRev & 0xFFFF)))
-			};
+			const auto* const revision	{vbeString(config->productRev)};
 			// Dump VBE
 			klib::kprintf(
 R"multiboot(

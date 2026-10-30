@@ -3,7 +3,7 @@
 //	Physical memory allocator
 //
 //	File:	phys.hpp
-//	Date:	16 Dec 2022
+//	Date:	30 Oct 2026
 //
 //	Copyright (c) 2017 - 2026, Igor Baklykov
 //	All rights reserved.
@@ -16,8 +16,17 @@
 
 // IgrOS-Kernel arch
 #include <arch/types.hpp>
-// IgrOS-Kernel multiboot
-#include <multiboot/multiboot.hpp>
+
+
+// Multiboot code zone
+namespace igros::multiboot {
+
+
+	// Multiboot information (multiboot.hpp reaches its data through direct map, which needs this header)
+	struct info_t;
+
+
+}	// namespace igros::multiboot
 
 
 // Memory code zone

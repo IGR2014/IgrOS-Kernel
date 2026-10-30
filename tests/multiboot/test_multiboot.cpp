@@ -16,6 +16,8 @@
 // C++
 #include <algorithm>
 #include <cstring>
+// IgrOS-Kernel memory
+#include <mem/direct.hpp>
 // IgrOS-Kernel multiboot
 #include <multiboot/multiboot.hpp>
 // IgrOS-Kernel platform
@@ -222,7 +224,39 @@ static void testHeader() {
 }
 
 
+// Data out of direct map is never dereferenced
+static void testNotMapped() {
+	static const char cmdline[]	{"/boot/kernel.bin"};
+	static igros::multiboot::vbeConfig	config {};
+	auto &info {makeInfo((1u << 2) | (1u << 6) | (1u << 11))};
+	info.cmdLine		= address32(cmdline);
+	info.mmapAddr		= address32(cmdline);
+	info.mmapLength		= sizeof(cmdline);
+	info.vbeControlInfo	= address32(&config);
+	info.vbeModeInfo	= address32(&config);
+	const auto end {igros::mem::direct::end()};
+	// String starts in direct map, but its terminator doesn't
+	igros::mem::direct::setEnd(info.cmdLine + 4);
+	IGROS_CHECK(nullptr == info.commandLine());
+	// Nothing mapped
+	igros::mem::direct::setEnd(std::min(info.cmdLine, info.vbeControlInfo));
+	IGROS_CHECK(nullptr == info.commandLine());
+	auto entries {0};
+	for ([[maybe_unused]] const auto &entry : info.memoryMap()) {
+		++entries;
+	}
+	IGROS_CHECK(0 == entries);
+	info.printVBEInfo();
+	IGROS_CHECK(hw::printed("VBE info is not directly mapped..."));
+	// Mapped again
+	igros::mem::direct::setEnd(end);
+	IGROS_CHECK(nullptr != info.commandLine());
+}
+
+
 int main() {
+	// Test data lies below 4 GB with no kernel offset: whole range is "directly mapped"
+	igros::mem::direct::setEnd(0x100000000ull);
 	testMagic();
 	testEmpty();
 	testFlags();
@@ -230,6 +264,7 @@ int main() {
 	testVBE();
 	testFrameBuffer();
 	testHeader();
+	testNotMapped();
 	return igros::test::result();
 }
 

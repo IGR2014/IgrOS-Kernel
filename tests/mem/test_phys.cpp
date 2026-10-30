@@ -15,26 +15,30 @@
 #include <cstdint>
 #include <cstring>
 // IgrOS-Kernel memory
+#include <mem/direct.hpp>
 #include <mem/phys.hpp>
+// IgrOS-Kernel multiboot
+#include <multiboot/multiboot.hpp>
 // IgrOS-Kernel platform
 #include <platform/platform.hpp>
 // Tests
 #include <tests/test.hpp>
 
 
-// Linker script symbols at one address: kernel end == kernel offset, so the
-// kernel image reservation is empty and only allocator logic is tested
+// Linker script symbols at 0: no kernel offset (test data address is its physical
+// address), kernel end == kernel offset, so the kernel image reservation is empty
+// and only allocator logic is tested
 #define IGROS_STR2(x)	#x
 #define IGROS_STR(x)	IGROS_STR2(x)
 #define IGROS_SYMBOL(name)	IGROS_STR(__USER_LABEL_PREFIX__) #name
 
 asm(
-	".data; "
-	".globl " IGROS_SYMBOL(KERNEL_OFFSET_VIRT) "; " IGROS_SYMBOL(KERNEL_OFFSET_VIRT) ":; "
-	".globl " IGROS_SYMBOL(_SECTION_KERNEL_START_) "; " IGROS_SYMBOL(_SECTION_KERNEL_START_) ":; "
-	".globl " IGROS_SYMBOL(_SECTION_KERNEL_END_) "; " IGROS_SYMBOL(_SECTION_KERNEL_END_) ":; "
-	".byte 0; "
-	".text"
+	".globl " IGROS_SYMBOL(KERNEL_OFFSET_VIRT) "; "
+	".set " IGROS_SYMBOL(KERNEL_OFFSET_VIRT) ", 0; "
+	".globl " IGROS_SYMBOL(_SECTION_KERNEL_START_) "; "
+	".set " IGROS_SYMBOL(_SECTION_KERNEL_START_) ", 0; "
+	".globl " IGROS_SYMBOL(_SECTION_KERNEL_END_) "; "
+	".set " IGROS_SYMBOL(_SECTION_KERNEL_END_) ", 0"
 );
 
 
@@ -182,6 +186,9 @@ int main() {
 		std::printf("linker symbols are not at one address\n");
 		return igros::test::SKIPPED;
 	}
+
+	// Test data lies below 4 GB: whole range is "directly mapped"
+	igros::mem::direct::setEnd(phys::MEMORY_LIMIT);
 
 	testRanges();
 	if (!testInit()) {

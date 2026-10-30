@@ -26,6 +26,8 @@
 #include <klib/kAlign.hpp>
 #include <klib/kMemory.hpp>
 #include <klib/kPrint.hpp>
+// IgrOS-Kernel memory
+#include <mem/direct.hpp>
 // IgrOS-Kernel platform
 #include <platform/platform.hpp>
 
@@ -41,8 +43,6 @@ namespace igros::x86 {
 		// CR0 write protection bit (kernel can't write to read-only pages)
 		constexpr auto CR0_WP	{igros_usize_t {0x00010000}};
 
-		// End of physical memory mapped at kernel offset (boot code maps low memory)
-		constinit mem::phys_t	directEnd	{mem::LOW_MEMORY_LIMIT};
 		// NX bit value if no-execute is enabled (else 0: NX can't be used)
 		constinit paging::entry_t	noExecute	{0};
 
@@ -68,16 +68,13 @@ namespace igros::x86 {
 	[[nodiscard]]
 	auto paging::table(const mem::phys_t phys) noexcept -> entry_t* {
 		// Only directly mapped memory is reachable through kernel offset
-		if (phys >= directEnd) [[unlikely]] {
-			return nullptr;
-		}
-		return std::bit_cast<entry_t*>(static_cast<igros_usize_t>(phys) + platform::Platform::kernelOffset());
+		return mem::direct::pointer<entry_t>(phys, PAGE_SIZE);
 	}
 
 	// Allocate empty table (reachable through direct map, 0 if no memory)
 	[[nodiscard]]
 	auto paging::allocTable() noexcept -> mem::phys_t {
-		const auto page {mem::phys::alloc(directEnd)};
+		const auto page {mem::phys::alloc(mem::direct::end())};
 		if (0_u64 != page) [[likely]] {
 			klib::kmemset(std::span {paging::table(page), ENTRIES}, entry_t {0});
 		}
@@ -222,7 +219,7 @@ namespace igros::x86 {
 	// End of physical memory reachable through direct map
 	[[nodiscard]]
 	auto paging::directMapEnd() noexcept -> mem::phys_t {
-		return directEnd;
+		return mem::direct::end();
 	}
 
 	// Start of kernel dynamic mappings (right above direct map)
@@ -295,7 +292,7 @@ namespace igros::x86 {
 
 		// Switch to new tables: whole direct map is reachable from now on
 		::writeCR3(static_cast<igros_usize_t>(top));
-		directEnd = end;
+		mem::direct::setEnd(end);
 		// Kernel can't write to read-only pages (code and read-only data)
 		::writeCR0(::readCR0() | CR0_WP);
 
@@ -318,7 +315,7 @@ namespace igros::x86 {
 		// Scratch page in dynamic mappings area (right above direct map)
 		const auto page	{paging::dynamicStart()};
 		const auto virt	{mem::virtOf(page)};
-		const auto phys	{mem::phys::alloc(directEnd)};
+		const auto phys	{mem::phys::alloc(mem::direct::end())};
 		if (0_u64 == phys) [[unlikely]] {
 			return false;
 		}

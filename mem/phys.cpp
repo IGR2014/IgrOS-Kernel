@@ -3,7 +3,7 @@
 //	Physical memory allocator
 //
 //	File:	phys.cpp
-//	Date:	16 Dec 2022
+//	Date:	30 Oct 2026
 //
 //	Copyright (c) 2017 - 2026, Igor Baklykov
 //	All rights reserved.
@@ -22,7 +22,10 @@
 #include <klib/kAlign.hpp>
 #include <klib/kString.hpp>
 // IgrOS-Kernel memory
+#include <mem/direct.hpp>
 #include <mem/phys.hpp>
+// IgrOS-Kernel multiboot
+#include <multiboot/multiboot.hpp>
 // IgrOS-Kernel platform
 #include <platform/platform.hpp>
 
@@ -73,11 +76,10 @@ namespace igros::mem {
 			--freeCount;
 		}
 
-		// Physical address of identity mapped object
-		template<class T>
-		[[nodiscard]]
-		auto physOf(const T* const object) noexcept -> phys_t {
-			return static_cast<phys_t>(std::bit_cast<igros_usize_t>(object));
+		// Mark boot string as used (only first byte if string is not directly mapped)
+		void markUsedString(const phys_t address) noexcept {
+			const auto* const text {direct::string(address)};
+			phys::markUsed(address, address + ((nullptr != text) ? klib::kstrlen(text) : 0_usize) + 1_u64);
 		}
 
 
@@ -109,30 +111,33 @@ namespace igros::mem {
 		// Low memory (real mode IVT, BIOS data, EBDA, video memory, ROMs)
 		phys::markUsed(0_u64, LOW_MEMORY_RESERVED);
 		// Kernel image (loaded right above low memory)
-		const auto kernelEnd {static_cast<phys_t>(std::bit_cast<igros_usize_t>(platform::Platform::kernelEnd()) - platform::Platform::kernelOffset())};
-		phys::markUsed(0_u64, kernelEnd);
+		phys::markUsed(0_u64, direct::physOf(platform::Platform::kernelEnd()));
 
 		// Multiboot info structure
-		phys::markUsed(physOf(&info), physOf(&info) + sizeof(info));
+		phys::markUsed(direct::physOf(&info), direct::physOf(&info) + sizeof(info));
 		// Memory map
 		if (info.hasInfoMemoryMap()) {
 			phys::markUsed(info.mmapAddr, static_cast<phys_t>(info.mmapAddr) + info.mmapLength);
 		}
 		// Command line and bootloader name
-		for (const auto* const text : {info.commandLine(), info.loaderName()}) {
-			if (nullptr != text) {
-				phys::markUsed(physOf(text), physOf(text) + klib::kstrlen(text) + 1_u64);
-			}
+		if (info.hasInfoCommandLine()) {
+			markUsedString(info.cmdLine);
+		}
+		if (info.hasInfoBootloaderName()) {
+			markUsedString(info.bootloaderName);
 		}
 		// Modules list, modules and their names
 		if (info.hasInfoModules()) {
-			const auto* const modules {std::bit_cast<const multiboot::moduleEntry*>(static_cast<igros_usize_t>(info.modulesAddr))};
-			phys::markUsed(info.modulesAddr, static_cast<phys_t>(info.modulesAddr) + info.modulesCount * sizeof(multiboot::moduleEntry));
-			for (const auto &bootModule : std::span {modules, info.modulesCount}) {
-				phys::markUsed(bootModule.start, bootModule.end);
-				if (0_u32 != bootModule.name) {
-					const auto* const name {std::bit_cast<const char*>(static_cast<igros_usize_t>(bootModule.name))};
-					phys::markUsed(bootModule.name, static_cast<phys_t>(bootModule.name) + klib::kstrlen(name) + 1_u64);
+			const auto modulesSize {static_cast<phys_t>(info.modulesCount) * sizeof(multiboot::moduleEntry)};
+			phys::markUsed(info.modulesAddr, info.modulesAddr + modulesSize);
+			// Modules can't be found if modules list is not directly mapped
+			const auto* const modules {direct::pointer<const multiboot::moduleEntry>(info.modulesAddr, modulesSize)};
+			if (nullptr != modules) [[likely]] {
+				for (const auto &bootModule : std::span {modules, info.modulesCount}) {
+					phys::markUsed(bootModule.start, bootModule.end);
+					if (0_u32 != bootModule.name) {
+						markUsedString(bootModule.name);
+					}
 				}
 			}
 		}

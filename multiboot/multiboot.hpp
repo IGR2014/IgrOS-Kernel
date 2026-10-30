@@ -3,9 +3,9 @@
 //	Multiboot 1 header info
 //
 //	File:	multiboot.hpp
-//	Date:	28 Oct 2026
+//	Date:	30 Oct 2026
 //
-//	Copyright (c) 2017 - 2022, Igor Baklykov
+//	Copyright (c) 2017 - 2026, Igor Baklykov
 //	All rights reserved.
 //
 //
@@ -21,6 +21,8 @@
 #include <arch/types.hpp>
 // IgrOS-Kernel library
 #include <klib/kFlags.hpp>
+// IgrOS-Kernel memory
+#include <mem/direct.hpp>
 
 
 // Multiboot code zone
@@ -286,16 +288,16 @@ namespace igros::multiboot {
 	}
 
 
-	// Get multiboot command line
+	// Get multiboot command line (nullptr if not provided or not directly mapped)
 	[[nodiscard]]
 	inline auto info_t::commandLine() const noexcept -> const char* {
-		return (hasInfoCommandLine()) ? std::bit_cast<const char* const>(static_cast<igros_usize_t>(cmdLine)) : nullptr;
+		return (hasInfoCommandLine()) ? mem::direct::string(cmdLine) : nullptr;
 	}
 
-	// Get multiboot bootloader name
+	// Get multiboot bootloader name (nullptr if not provided or not directly mapped)
 	[[nodiscard]]
 	inline auto info_t::loaderName() const noexcept -> const char* {
-		return (hasInfoBootloaderName()) ? std::bit_cast<const char* const>(static_cast<igros_usize_t>(bootloaderName)) : nullptr;
+		return (hasInfoBootloaderName()) ? mem::direct::string(bootloaderName) : nullptr;
 	}
 
 
@@ -447,18 +449,19 @@ namespace igros::multiboot {
 	};
 
 
-	// Get multiboot memory map (empty if not provided)
+	// Get multiboot memory map (empty if not provided or not directly mapped)
 	[[nodiscard]]
 	inline auto info_t::memoryMap() const noexcept -> memoryMap_t {
 		// Check if memory map provided
 		if (!hasInfoMemoryMap()) [[unlikely]] {
 			return memoryMap_t {};
 		}
-		// Memory map at physical address (identity mapped by boot code)
-		return memoryMap_t {
-			std::bit_cast<const igros_byte_t*>(static_cast<igros_usize_t>(mmapAddr)),
-			mmapLength
-		};
+		// Memory map at physical address
+		const auto* const entries {mem::direct::pointer<const igros_byte_t>(mmapAddr, mmapLength)};
+		if (nullptr == entries) [[unlikely]] {
+			return memoryMap_t {};
+		}
+		return memoryMap_t {entries, mmapLength};
 	}
 
 
