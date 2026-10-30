@@ -82,6 +82,26 @@ namespace igros::mem {
 			phys::markUsed(address, address + ((nullptr != text) ? klib::kstrlen(text) : 0_usize) + 1_u64);
 		}
 
+		// Mark modules list, modules and their names as used
+		void markUsedModules(const multiboot::info_t &info) noexcept {
+			if (!info.hasInfoModules()) {
+				return;
+			}
+			const auto modulesSize {static_cast<phys_t>(info.modulesCount) * sizeof(multiboot::moduleEntry)};
+			phys::markUsed(info.modulesAddr, info.modulesAddr + modulesSize);
+			// Modules can't be found if modules list is not directly mapped
+			const auto* const modules {direct::pointer<const multiboot::moduleEntry>(info.modulesAddr, modulesSize)};
+			if (nullptr == modules) [[unlikely]] {
+				return;
+			}
+			for (const auto &bootModule : std::span {modules, info.modulesCount}) {
+				phys::markUsed(bootModule.start, bootModule.end);
+				if (0_u32 != bootModule.name) {
+					markUsedString(bootModule.name);
+				}
+			}
+		}
+
 
 	}	// namespace
 
@@ -127,20 +147,7 @@ namespace igros::mem {
 			markUsedString(info.bootloaderName);
 		}
 		// Modules list, modules and their names
-		if (info.hasInfoModules()) {
-			const auto modulesSize {static_cast<phys_t>(info.modulesCount) * sizeof(multiboot::moduleEntry)};
-			phys::markUsed(info.modulesAddr, info.modulesAddr + modulesSize);
-			// Modules can't be found if modules list is not directly mapped
-			const auto* const modules {direct::pointer<const multiboot::moduleEntry>(info.modulesAddr, modulesSize)};
-			if (nullptr != modules) [[likely]] {
-				for (const auto &bootModule : std::span {modules, info.modulesCount}) {
-					phys::markUsed(bootModule.start, bootModule.end);
-					if (0_u32 != bootModule.name) {
-						markUsedString(bootModule.name);
-					}
-				}
-			}
-		}
+		markUsedModules(info);
 
 	}
 

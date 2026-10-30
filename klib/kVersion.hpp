@@ -65,7 +65,7 @@ namespace igros::klib {
 	///
 	[[nodiscard]]
 	constexpr auto kVersion::value() noexcept -> igros_quad_t {
-		// Layout: major [63:56], minor [55:48], patch [47:32], build [31:0]
+		// Layout from high to low bits: major (8 bits), minor (8 bits), patch (16 bits), build (32 bits)
 		return	static_cast<igros_quad_t>(VERSION_BUILD) | (
 				(static_cast<igros_quad_t>(VERSION_PATCH) <<  0_usize) |
 				(static_cast<igros_quad_t>(VERSION_MINOR) << 16_usize) |
