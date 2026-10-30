@@ -14,6 +14,7 @@
 // C++
 #include <array>
 #include <bit>
+#include <string_view>
 // IgrOS-Kernel arch
 #include <arch/cpu.hpp>
 // IgrOS-Kernel arch platform
@@ -31,6 +32,16 @@ namespace igros::multiboot {
 
 	// Anonymous namespace
 	namespace {
+
+
+		// Build year (__DATE__ is "Mmm dd yyyy")
+		constexpr auto BUILD_YEAR {[]() consteval noexcept {
+			auto year {0_u32};
+			for (const auto digit : std::string_view {__DATE__}.substr(7)) {
+				year = year * 10_u32 + static_cast<igros_dword_t>(digit - '0');
+			}
+			return year;
+		}()};
 
 
 		// VBE string at real mode segment:offset pointer (nullptr if not provided or not directly mapped)
@@ -287,7 +298,7 @@ Kernel info:
 	Size:		%zu Kb.
 	Build:		%s, %s
 	Version:	%s
-	Author:		Igor Baklykov (c) %d - %d
+	Author:		Igor Baklykov (c) %u - %u
 	Loader:		"%s"
 	Command line:	"%s"
 )info",
@@ -298,8 +309,8 @@ Kernel info:
 			__DATE__,
 			__TIME__,
 			klib::kVersion::text(),
-			2017,
-			2023,
+			2017_u32,
+			BUILD_YEAR,
 			info_t::loaderName(),
 			info_t::commandLine()
 		);
