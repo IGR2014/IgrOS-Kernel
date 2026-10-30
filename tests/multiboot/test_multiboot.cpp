@@ -16,6 +16,8 @@
 // C++
 #include <algorithm>
 #include <cstring>
+#include <string>
+#include <string_view>
 // IgrOS-Kernel memory
 #include <mem/direct.hpp>
 // IgrOS-Kernel multiboot
@@ -216,6 +218,9 @@ static void testHeader() {
 	IGROS_CHECK(hw::printed("Arch:\t\ttest"));
 	IGROS_CHECK(hw::printed("Size:\t\t8 Kb."));
 	IGROS_CHECK(hw::printed("Version:\tv0.0.0"));
+	// Copyright up to build year
+	const auto author {std::string {"Author:\t\tIgor Baklykov (c) 2017 - "} + std::string_view {__DATE__}.substr(7).data()};
+	IGROS_CHECK(hw::printed(author.c_str()));
 	IGROS_CHECK(hw::printed("Loader:\t\t\"GRUB 2.12\""));
 	IGROS_CHECK(hw::printed("Command line:\t\"/boot/kernel.bin debug\""));
 	// Not provided
