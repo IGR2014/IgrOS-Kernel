@@ -354,12 +354,12 @@ namespace igros::x86 {
 		const auto error {static_cast<igros_usize_t>(regs->param)};
 		klib::kprintf(
 R"exception(
-EXCEPTION [#%u]
+EXCEPTION [#%zu]
 Name:		%s
 Address:	0x%016zx
 Reason:		%s page, %s access, %s mode%s%s
 )exception",
-			static_cast<igros_dword_t>(regs->number),
+			regs->number,
 			except::NAME[regs->number],
 			::readCR2(),
 			(0_usize != (error & 0x01_usize)) ? "protected"	: "missing",
