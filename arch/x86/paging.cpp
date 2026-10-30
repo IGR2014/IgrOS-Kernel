@@ -3,7 +3,7 @@
 //	Paging (i386 2-level and x86_64 4-level page tables)
 //
 //	File:	paging.cpp
-//	Date:	22 Oct 2026
+//	Date:	30 Oct 2026
 //
 //	Copyright (c) 2017 - 2026, Igor Baklykov
 //	All rights reserved.
@@ -96,7 +96,11 @@ namespace igros::x86 {
 	auto paging::entry(const mem::phys_t top, const mem::virt_t virt, const bool create, const bool user, const igros_usize_t level) noexcept -> entry_t* {
 		auto entries {paging::table(top)};
 		// Walk down to table of requested level
-		for (auto current {LEVELS - 1_usize}; (nullptr != entries) && (current > level); --current) {
+		for (auto current {LEVELS - 1_usize}; current > level; --current) {
+			// Check entries of current level
+			if (nullptr == entries) [[unlikely]] {
+				return nullptr;
+			}
 			auto &next {entries[paging::index(virt, current)]};
 			if (0_usize == (next & flag(FLAGS::PRESENT))) {
 				// Missing table
@@ -188,7 +192,12 @@ namespace igros::x86 {
 	auto paging::translate(const mem::virt_t virt) noexcept -> mem::phys_t {
 		const auto address	{static_cast<mem::phys_t>(mem::address(virt))};
 		auto entries		{paging::table(paging::root())};
-		for (auto level {LEVELS - 1_usize}; nullptr != entries; --level) {
+		for (auto step {0_usize}; step < LEVELS; ++step) {
+			const auto level {LEVELS - 1_usize - step};
+			// Check entries of current level
+			if (nullptr == entries) [[unlikely]] {
+				return INVALID;
+			}
 			const auto current {entries[paging::index(virt, level)]};
 			if (0_usize == (current & flag(FLAGS::PRESENT))) {
 				return INVALID;
@@ -350,12 +359,12 @@ namespace igros::x86 {
 R"exception(
 EXCEPTION [#%u]
 Name:		%s
-Address:	0x%016llx
+Address:	0x%016zx
 Reason:		%s page, %s access, %s mode%s%s
 )exception",
 			static_cast<igros_dword_t>(regs->number),
 			except::NAME[regs->number],
-			static_cast<unsigned long long>(::readCR2()),
+			::readCR2(),
 			(0_usize != (error & 0x01_usize)) ? "protected"	: "missing",
 			(0_usize != (error & 0x02_usize)) ? "write"	: "read",
 			(0_usize != (error & 0x04_usize)) ? "user"	: "kernel",

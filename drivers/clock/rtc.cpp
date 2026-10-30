@@ -3,9 +3,9 @@
 //	RTC clock driver
 //
 //	File:	rtc.cpp
-//	Date:	16 Dec 2022
+//	Date:	30 Oct 2026
 //
-//	Copyright (c) 2017 - 2022, Igor Baklykov
+//	Copyright (c) 2017 - 2026, Igor Baklykov
 //	All rights reserved.
 //
 //
@@ -135,8 +135,12 @@ namespace igros::arch {
 			return rtcReadDateTime();
 		};
 		auto rtcDateTime	{readStable()};
+		auto lastDateTime	{readStable()};
 		// Re-read until two reads match (update could happen between registers reads)
-		for (auto last {rtcDateTime}; last != (rtcDateTime = readStable()); last = rtcDateTime);
+		while (lastDateTime != rtcDateTime) {
+			lastDateTime	= rtcDateTime;
+			rtcDateTime	= readStable();
+		}
 		// Get RTC flags
 		const auto flags	{rtcRead(RTC_REGISTER_B)};
 		// Get RTC century

@@ -3,9 +3,9 @@
 //	UART driver
 //
 //	File:	serial.cpp
-//	Date:	21 Mar 2023
+//	Date:	30 Oct 2026
 //
-//	Copyright (c) 2017 - 2022, Igor Baklykov
+//	Copyright (c) 2017 - 2026, Igor Baklykov
 //	All rights reserved.
 //
 //
@@ -157,20 +157,32 @@ namespace igros::arch {
 	}
 
 
+	// Send one symbol (new line is sent as CR LF)
+	[[nodiscard]]
+	static auto serialPutSymbol(const SERIAL_PORT port, const char symbol) noexcept -> bool {
+		if (('\n' == symbol) && !serialPut(port, '\r')) [[unlikely]] {
+			return false;
+		}
+		return serialPut(port, static_cast<igros_byte_t>(symbol));
+	}
+
+	// Receive one symbol (only if available)
+	[[nodiscard]]
+	static auto serialGetSymbol(const SERIAL_PORT port, char &symbol) noexcept -> bool {
+		if (!serialReadyRead(port)) {
+			return false;
+		}
+		symbol = static_cast<char>(serialRegRead(port, SERIAL_REG::DATA));
+		return true;
+	}
+
+
 	// Serial write
 	[[maybe_unused]]
 	auto serialWrite(const SERIAL_PORT port, const std::string_view text) noexcept -> igros_usize_t {
-		// Written size
+		// Write data one-by-one until transmitter fails
 		auto written {0_usize};
-		// Write data one-by-one (new line is sent as CR LF)
-		for (const auto symbol : text) {
-			const auto sent {
-				(('\n' != symbol) || serialPut(port, '\r')) &&
-				serialPut(port, static_cast<igros_byte_t>(symbol))
-			};
-			if (!sent) [[unlikely]] {
-				break;
-			}
+		while ((written < text.size()) && serialPutSymbol(port, text[written])) {
 			++written;
 		}
 		// Return written size
@@ -180,15 +192,9 @@ namespace igros::arch {
 	// Serial read
 	[[maybe_unused]]
 	auto serialRead(const SERIAL_PORT port, const std::span<char> buffer) noexcept -> igros_usize_t {
-		// Read size
+		// Read data one-by-one while available (never past buffer size)
 		auto read {0_usize};
-		// Read available data
-		for (auto &symbol : buffer) {
-			if (!serialReadyRead(port)) {
-				break;
-			}
-			// One-by-one
-			symbol = static_cast<char>(serialRegRead(port, SERIAL_REG::DATA));
+		while ((read < buffer.size()) && serialGetSymbol(port, buffer[read])) {
 			++read;
 		}
 		// Return read size
