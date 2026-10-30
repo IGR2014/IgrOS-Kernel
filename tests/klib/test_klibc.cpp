@@ -2,8 +2,8 @@
 //
 //	Freestanding C library functions tests (compiler-generated calls)
 //
-//	File:	test_libc.cpp
-//	Date:	19 Oct 2026
+//	File:	test_klibc.cpp
+//	Date:	30 Oct 2026
 //
 //	Copyright (c) 2017 - 2026, Igor Baklykov
 //	All rights reserved.
@@ -23,6 +23,7 @@ extern "C" {
 	void*	memcpy(void* dst, const void* src, std::size_t size);
 	void*	memmove(void* dst, const void* src, std::size_t size);
 	int	memcmp(const void* lhs, const void* rhs, std::size_t size);
+	void*	memchr(const void* src, int val, std::size_t size);
 }
 
 
@@ -76,6 +77,15 @@ int main() {
 	IGROS_CHECK(memcmp("abd", "abc", 3) > 0);
 	IGROS_CHECK(memcmp("\x80", "\x7F", 1) > 0);
 	// cppcheck-suppress-end staticStringCompare
+
+	// memchr: first match, unsigned byte value, only within size
+	const char text[] {"abcabc\x80"};
+	IGROS_CHECK(text + 1 == memchr(text, 'b', sizeof(text)));
+	IGROS_CHECK(text + 6 == memchr(text, 0x180, sizeof(text)));
+	IGROS_CHECK(text + 7 == memchr(text, '\0', sizeof(text)));
+	IGROS_CHECK(nullptr == memchr(text, 'c', 2));
+	IGROS_CHECK(nullptr == memchr(text, 'z', sizeof(text)));
+	IGROS_CHECK(nullptr == memchr(text, 'a', empty));
 
 	return igros::test::result();
 

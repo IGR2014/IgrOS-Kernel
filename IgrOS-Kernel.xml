@@ -155,7 +155,7 @@
             <File name="klib\CMakeLists.txt" />
             <File name="klib\kAlign.hpp" />
             <File name="klib\kFlags.hpp" />
-            <File name="klib\libc.cpp" />
+            <File name="klib\kLibC.cpp" />
             <File name="klib\kMath.hpp" />
             <File name="klib\kMemory.cpp" />
             <File name="klib\kMemory.hpp" />
