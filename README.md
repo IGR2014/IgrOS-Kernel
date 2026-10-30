@@ -145,11 +145,11 @@ The repository is mirrored on [GitHub][Link-Repo-GitHub], [GitLab][Link-Repo-Git
 [Badge-GitHub]: https://img.shields.io/github/actions/workflow/status/IGR2014/IgrOS-Kernel/github-ci.yml?branch=master&label=GitHub%20Actions&style=for-the-badge&logo=GitHub
 [Badge-GitLab]: https://img.shields.io/gitlab/pipeline-status/IGR2014/IgrOS-Kernel?branch=master&label=GitLab%20CI&style=for-the-badge&logo=GitLab
 [Badge-License]: https://img.shields.io/github/license/IGR2014/IgrOS-Kernel?label=License&style=for-the-badge&logo=Open%20Source%20Initiative
-[Badge-Sonar-Bugs]: https://img.shields.io/sonar/bugs/IGR2014_IgrOS-Kernel/master?server=https%3A%2F%2Fsonarcloud.io&label=Bugs&style=for-the-badge&logo=SonarQubeCloud
-[Badge-Sonar-Code-Smells]: https://img.shields.io/sonar/code_smells/IGR2014_IgrOS-Kernel/master?server=https%3A%2F%2Fsonarcloud.io&label=Code%20Smells&style=for-the-badge&logo=SonarQubeCloud
-[Badge-Sonar-Coverage]: https://img.shields.io/sonar/coverage/IGR2014_IgrOS-Kernel/master?server=https%3A%2F%2Fsonarcloud.io&label=Coverage&style=for-the-badge&logo=SonarQubeCloud
-[Badge-Sonar-Quality-Gate]: https://img.shields.io/sonar/quality_gate/IGR2014_IgrOS-Kernel/master?server=https%3A%2F%2Fsonarcloud.io&label=Quality%20Gate&style=for-the-badge&logo=SonarQubeCloud
-[Badge-Sonar-Vulnerabilities]: https://img.shields.io/sonar/vulnerabilities/IGR2014_IgrOS-Kernel/master?server=https%3A%2F%2Fsonarcloud.io&label=Vulnerabilities&style=for-the-badge&logo=SonarQubeCloud
+[Badge-Sonar-Bugs]: https://img.shields.io/sonar/bugs/IgrOS-Kernel/master?server=https%3A%2F%2Fsonarcloud.io&label=Bugs&style=for-the-badge&logo=SonarQubeCloud
+[Badge-Sonar-Code-Smells]: https://img.shields.io/sonar/code_smells/IgrOS-Kernel/master?server=https%3A%2F%2Fsonarcloud.io&label=Code%20Smells&style=for-the-badge&logo=SonarQubeCloud
+[Badge-Sonar-Coverage]: https://img.shields.io/sonar/coverage/IgrOS-Kernel/master?server=https%3A%2F%2Fsonarcloud.io&label=Coverage&style=for-the-badge&logo=SonarQubeCloud
+[Badge-Sonar-Quality-Gate]: https://img.shields.io/sonar/quality_gate/IgrOS-Kernel/master?server=https%3A%2F%2Fsonarcloud.io&label=Quality%20Gate&style=for-the-badge&logo=SonarQubeCloud
+[Badge-Sonar-Vulnerabilities]: https://img.shields.io/sonar/vulnerabilities/IgrOS-Kernel/master?server=https%3A%2F%2Fsonarcloud.io&label=Vulnerabilities&style=for-the-badge&logo=SonarQubeCloud
 
 [Link-Arch-arm]: ./README.md
 [Link-Arch-arm64]: ./README.md
@@ -166,4 +166,4 @@ The repository is mirrored on [GitHub][Link-Repo-GitHub], [GitLab][Link-Repo-Git
 [Link-Repo-Azure]: https://dev.azure.com/prigoryan/IgrOS-Kernel/_git/IgrOS-Kernel
 [Link-Repo-GitHub]: https://github.com/IGR2014/IgrOS-Kernel
 [Link-Repo-GitLab]: https://gitlab.com/IGR2014/IgrOS-Kernel
-[Link-Sonar]: https://sonarcloud.io/dashboard?id=IGR2014_IgrOS-Kernel
+[Link-Sonar]: https://sonarcloud.io/dashboard?id=IgrOS-Kernel
