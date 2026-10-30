@@ -27,7 +27,11 @@ ISO="install/${TYPE_DIR}/config-linux-${COMPILER}-${ARCH}-${TYPE}/kernel.iso"
 
 CONFIG="install/${TYPE_DIR}/config-linux-${COMPILER}-${ARCH}-${TYPE}/bochs-config"
 
+# Legacy BIOS: rombios32 of BIOS-bochs-latest crashes (triple fault) in Bochs 2.8 of Ubuntu 26.04
+BIOS_DIR="${BXSHARE:-/usr/share/bochs}"
+
 cat << EOF > "${CONFIG}"
+romimage: file=${BIOS_DIR}/BIOS-bochs-legacy
 ata0: enabled=1, ioaddr1=0x1f0, ioaddr2=0x3f0, irq=14
 ata0-master: type=cdrom, path="./${ISO}", status=inserted
 boot: cdrom
