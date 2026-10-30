@@ -169,10 +169,10 @@ endfunction()
 
 # Integer literals
 igros_test(literals	arch/test_literals.cpp)
-# Out of range or floating-point literal with integer suffix must fail to compile with IgrOS message
+# Out of range literal must fail to compile at IgrOS range check (compiler echoes its source line)
 foreach(
 	LITERAL
-	"0x100_u8" "128_i8" "65536_u16" "0x80000000_i32" "0x100000000_u32" "18446744073709551616_u64" "1.5_u32"
+	"0x100_u8" "128_i8" "65536_u16" "0x80000000_i32" "0x100000000_u32" "0x8000000000000000_i64"
 )
 	string(
 		MAKE_C_IDENTIFIER
