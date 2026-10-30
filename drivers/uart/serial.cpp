@@ -42,6 +42,7 @@ namespace igros::arch {
 	// Line status register bits
 	constexpr auto SERIAL_LSR_DATA_READY	{0x01_u8};
 	constexpr auto SERIAL_LSR_THR_EMPTY	{0x20_u8};
+	constexpr auto SERIAL_LSR_TX_IDLE	{0x40_u8};	// Holding and shift registers empty
 
 	// Interrupt enable register bits
 	constexpr auto SERIAL_IER_RX		{0x01_u8};
@@ -64,6 +65,17 @@ namespace igros::arch {
 		return io::readPort8(serialRegister(port, reg));
 	}
 
+	// Wait until any of line status bits is set (bounded, so missing UART can't hang the kernel)
+	[[nodiscard]]
+	static auto serialWaitStatus(const SERIAL_PORT port, const igros_byte_t bits) noexcept -> bool {
+		for (auto spin {0_usize}; spin < 100000_usize; ++spin) {
+			if (0x00_u8 != (serialRegRead(port, SERIAL_REG::LSR) & bits)) [[likely]] {
+				return true;
+			}
+		}
+		return false;
+	}
+
 
 	// Initialize serial port
 	[[nodiscard]]
@@ -77,6 +89,11 @@ namespace igros::arch {
 			((static_cast<igros_byte_t>(stopBits)	& 0x01_u8) << 2)	|
 			((static_cast<igros_byte_t>(parity)	& 0x03_u8) << 3)
 		)};
+
+		// Let previous output finish (reprogramming would clobber byte being sent)
+		if (!serialWaitStatus(port, SERIAL_LSR_TX_IDLE)) [[unlikely]] {
+			return false;
+		}
 
 		// Disable SERIAL interrupts
 		serialRegWrite(port, SERIAL_REG::IER,	0x00_u8);
@@ -97,8 +114,8 @@ namespace igros::arch {
 		// Test port with 0xA5 byte
 		serialRegWrite(port, SERIAL_REG::DATA,	0xA5_u8);
 
-		// Check loopback
-		if (0xA5_u8 != serialRegRead(port, SERIAL_REG::DATA)) {
+		// Check loopback (byte comes back once shifted out: one character time)
+		if (!serialWaitStatus(port, SERIAL_LSR_DATA_READY) || (0xA5_u8 != serialRegRead(port, SERIAL_REG::DATA))) {
 			// Could not setup serial port
 			return false;
 		}
@@ -134,15 +151,10 @@ namespace igros::arch {
 		return 0x00_u8 != (serialRegRead(port, SERIAL_REG::LSR) & SERIAL_LSR_DATA_READY);
 	}
 
-	// Wait until write ready (bounded, so missing UART can't hang the kernel)
+	// Wait until write ready
 	[[nodiscard]]
 	static auto serialWaitWrite(const SERIAL_PORT port) noexcept -> bool {
-		for (auto spin {0_usize}; spin < 100000_usize; ++spin) {
-			if (serialReadyWrite(port)) [[likely]] {
-				return true;
-			}
-		}
-		return false;
+		return serialWaitStatus(port, SERIAL_LSR_THR_EMPTY);
 	}
 
 
