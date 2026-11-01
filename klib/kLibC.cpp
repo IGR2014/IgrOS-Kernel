@@ -12,6 +12,7 @@
 
 
 // C++
+#include <bit>
 #include <cstddef>
 
 
@@ -52,8 +53,7 @@ extern "C" {
 	IGROS_NO_LIBCALLS
 	void* memmove(void* dst, const void* src, std::size_t size) {
 		auto d {static_cast<unsigned char*>(dst)};
-		auto s {static_cast<const unsigned char*>(src)};
-		if (d < s) {
+		if (auto s {static_cast<const unsigned char*>(src)}; d < s) {
 			for (auto i {static_cast<std::size_t>(0)}; i < size; ++i) {
 				d[i] = s[i];
 			}
@@ -84,8 +84,9 @@ extern "C" {
 		auto s {static_cast<const unsigned char*>(src)};
 		for (auto i {static_cast<std::size_t>(0)}; i < size; ++i) {
 			if (static_cast<unsigned char>(val) == s[i]) {
-				// C signature returns non-const pointer to const input
-				return const_cast<unsigned char*>(s + i);
+				// C signature returns non-const pointer to const input (writing through it
+				// stays caller's responsibility, as in libc)
+				return std::bit_cast<void*>(s + i);
 			}
 		}
 		return nullptr;
