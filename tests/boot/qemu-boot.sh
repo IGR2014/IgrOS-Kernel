@@ -59,6 +59,9 @@ else
 	fi
 fi
 
+# QEMU may be gone already (triple fault with -no-reboot): writing to monitor
+# then raises SIGPIPE, which would end the script before the report below
+trap '' PIPE
 echo "quit" >&3 2>/dev/null
 exec 3>&-
 wait "${PID}" 2>/dev/null
