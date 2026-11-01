@@ -74,6 +74,9 @@ namespace igros {
 	/// @addtogroup Literals
 	/// @{
 
+	// Literals are evaluated by compiler only: no runtime code to cover
+	// GCOVR_EXCL_START
+
 	/// @brief Integer literals range check (operators are consteval, so a call
 	/// to non-constexpr std::abort for out of range value is a compile error)
 	namespace literal {
@@ -280,6 +283,8 @@ namespace igros {
 		// Checked value
 		return literal::make<igros_ssize_t>(value);
 	}
+
+	// GCOVR_EXCL_STOP
 
 	/// @}
 

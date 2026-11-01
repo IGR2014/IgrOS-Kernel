@@ -179,6 +179,81 @@ static auto testInit() -> bool {
 }
 
 
+// Multiboot info with given flags (flags field is the first dword)
+[[nodiscard]]
+static auto makeInfo(std::uint8_t* const raw, const std::uint32_t flags) noexcept -> igros::multiboot::info_t& {
+	std::memset(raw, 0, sizeof(igros::multiboot::info_t));
+	std::memcpy(raw, &flags, sizeof(flags));
+	return *reinterpret_cast<igros::multiboot::info_t*>(raw);
+}
+
+
+// Boot data reservation: command line, bootloader name, modules list, modules and their names
+static auto testBootData() -> bool {
+
+	constexpr auto PAGE {std::size_t {0x1000}};
+	// Page 0: command line, 1: bootloader name and memory map, 2: modules list and module
+	// name, 3..4: named module, 5: unnamed module, 6: free, 7: outside available memory
+	// (memory map is read through direct map too: it must lie below modules list)
+	alignas(0x1000) static std::uint8_t block[8 * PAGE] {};
+	alignas(8) static std::uint8_t infoRaw[sizeof(igros::multiboot::info_t)] {};
+
+	const auto base {reinterpret_cast<std::uintptr_t>(block)};
+	if ((base < igros::mem::LOW_MEMORY_RESERVED) || ((base + sizeof(block)) > 0xFFFFFFFFu)) {
+		std::printf("boot data test block outside 1 MB .. 4 GB\n");
+		return false;
+	}
+
+	std::strcpy(reinterpret_cast<char*>(block), "root=/dev/ram0");
+	std::strcpy(reinterpret_cast<char*>(block + PAGE), "GRUB");
+	std::strcpy(reinterpret_cast<char*>(block + (2 * PAGE) + 0x100), "initrd");
+	const igros::multiboot::moduleEntry modules[] {
+		{address32(block + (3 * PAGE)), address32(block + (4 * PAGE) + 0x100), address32(block + (2 * PAGE) + 0x100), 0},
+		{address32(block + (5 * PAGE)), address32(block + (5 * PAGE) + 0x10), 0, 0}
+	};
+	std::memcpy(block + (2 * PAGE), modules, sizeof(modules));
+	const rawEntry available {20, base, 7 * PAGE, 1};
+	std::memcpy(block + PAGE + 0x100, &available, sizeof(available));
+
+	// Memory map, command line, modules, bootloader name
+	auto &info {makeInfo(infoRaw, (1u << 2) | (1u << 3) | (1u << 6) | (1u << 9))};
+	info.mmapAddr		= address32(block + PAGE + 0x100);
+	info.mmapLength		= sizeof(available);
+	info.cmdLine		= address32(block);
+	info.bootloaderName	= address32(block + PAGE);
+	info.modulesAddr	= address32(block + (2 * PAGE));
+	info.modulesCount	= 2;
+
+	// Only the page after boot data stays free
+	phys::init(info);
+	IGROS_CHECK(1 == phys::freePages());
+	IGROS_CHECK((base + (6 * PAGE)) == phys::alloc());
+
+	// Modules list beyond direct map: list itself is reserved, modules can't be found
+	igros::mem::direct::setEnd(base + (2 * PAGE));
+	phys::init(info);
+	igros::mem::direct::setEnd(phys::MEMORY_LIMIT);
+	IGROS_CHECK(4 == phys::freePages());
+	IGROS_CHECK((base + (3 * PAGE)) == phys::alloc());
+
+	return true;
+
+}
+
+
+// Basic memory info when there is no memory map: upper memory starts at 1 MB
+static void testMemoryFallback() {
+	alignas(8) static std::uint8_t infoRaw[sizeof(igros::multiboot::info_t)] {};
+	auto &info {makeInfo(infoRaw, 1u << 0)};
+	// 1 MB of upper memory (in KB)
+	info.memHigh = 1024;
+	phys::init(info);
+	IGROS_CHECK(0x200000 == phys::top());
+	// Every page of 1 .. 2 MB, but the one holding test info structure if it lies there
+	IGROS_CHECK((phys::freePages() <= 256) && (phys::freePages() >= 255));
+}
+
+
 int main() {
 
 	// Kernel image reservation must be empty for these tests
@@ -191,9 +266,10 @@ int main() {
 	igros::mem::direct::setEnd(phys::MEMORY_LIMIT);
 
 	testRanges();
-	if (!testInit()) {
+	if (!testInit() || !testBootData()) {
 		return igros::test::SKIPPED;
 	}
+	testMemoryFallback();
 
 	return igros::test::result();
 
