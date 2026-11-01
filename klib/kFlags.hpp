@@ -62,7 +62,7 @@ namespace igros::klib {
 		constexpr kFlags() noexcept = default;
 		/// @brief From initializer list
 		template<class ...Args>
-		constexpr explicit kFlags(std::in_place_t /*tag*/, Args &&...args) noexcept; 
+		constexpr explicit kFlags(std::in_place_t /*tag*/, const Args &...args) noexcept;
 
 		/// @brief Type conversion operator
 		[[nodiscard]]
@@ -139,16 +139,6 @@ namespace igros::klib {
 		[[nodiscard]]
 		constexpr auto	operator~() const noexcept -> kFlags;
 
-		/// @brief Copy c-tor
-		constexpr kFlags(const kFlags &value) noexcept = default;
-		/// @brief Copy assignment
-		constexpr auto	operator=(const kFlags &value) noexcept -> kFlags& = default;
-
-		/// @brief Move c-tor
-		constexpr kFlags(kFlags &&value) noexcept = default;
-		/// @brief Move assignment
-		constexpr auto	operator=(kFlags &&value) noexcept -> kFlags& = default;
-
 		/// @brief Type copy c-tor
 		constexpr explicit kFlags(const T &value) noexcept;
 		/// @brief Type copy assignment
@@ -183,7 +173,7 @@ namespace igros::klib {
 	template<class T, class U>
 	requires kflags_enum<T, U>
 	template<class ...Args>
-	constexpr kFlags<T, U>::kFlags(std::in_place_t /*tag*/, Args &&...args) noexcept :
+	constexpr kFlags<T, U>::kFlags(std::in_place_t /*tag*/, const Args &...args) noexcept :
 		mValue((static_cast<U>(args) | ...)) {}
 
 

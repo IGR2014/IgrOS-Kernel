@@ -160,7 +160,7 @@ namespace igros::klib {
 						putInteger(out, va_arg(list, igros_sdword_t), radix, spec, upper) :
 						putInteger(out, va_arg(list, igros_dword_t), radix, spec, upper);
 					break;
-				case argSize_t::QUAD:
+				case argSize_t::QUAD:	// NOLINT(bugprone-branch-clone): same as SIZE on 64-bit only
 					isSigned ?
 						putInteger(out, va_arg(list, igros_squad_t), radix, spec, upper) :
 						putInteger(out, va_arg(list, igros_quad_t), radix, spec, upper);
@@ -194,7 +194,7 @@ namespace igros::klib {
 
 			// Field width (any number of digits)
 			while (('0' <= fmt[1]) && ('9' >= fmt[1])) {
-				spec.width = spec.width * 10_usize + static_cast<igros_usize_t>(fmt[1] - '0');
+				spec.width = (spec.width * 10_usize) + static_cast<igros_usize_t>(fmt[1] - '0');
 				++fmt;
 			}
 
@@ -237,11 +237,11 @@ namespace igros::klib {
 		// Output
 		auto out {writer_t {buffer, size}};
 		// Local copy of arguments (parameter may be decayed array, it can't be passed by reference)
-		std::va_list args;
+		std::va_list args {};
 		va_copy(args, list);
 
 		// Format string position (stops when output is full: remaining arguments are not needed)
-		auto fmt {format};
+		const auto* fmt {format};
 		while (('\0' != *fmt) && !out.isFull()) {
 
 			// Plain character

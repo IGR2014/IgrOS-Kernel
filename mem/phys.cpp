@@ -161,7 +161,7 @@ namespace igros::mem {
 		// Find first word with free page
 		for (auto word {searchHint}; word < limitWords; ++word) {
 			if (0_u32 != freeMap[word]) {
-				const auto page {word * WORD_BITS + static_cast<igros_usize_t>(std::countr_zero(freeMap[word]))};
+				const auto page {(word * WORD_BITS) + static_cast<igros_usize_t>(std::countr_zero(freeMap[word]))};
 				// Free page is above limit
 				if (page >= limitPages) [[unlikely]] {
 					break;

@@ -122,6 +122,8 @@ namespace igros::x86 {
 
 		// Default c-tor
 		except() noexcept = default;
+		// D-tor
+		~except() noexcept = default;
 
 		// Init exceptions
 		static void	init() noexcept;

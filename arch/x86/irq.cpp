@@ -105,11 +105,11 @@ namespace igros::x86 {
 	[[nodiscard]]
 	igros_word_t irq::getMask() noexcept {
 		// Read slave PIC current mask
-		auto mask	{static_cast<igros_word_t>(::portRead8(PIC_SLAVE_DATA)) << 8};
+		auto value	{static_cast<igros_word_t>(::portRead8(PIC_SLAVE_DATA)) << 8};
 		// Read master PIC current mask
-		mask		|= ::portRead8(PIC_MASTER_DATA);
+		value		|= ::portRead8(PIC_MASTER_DATA);
 		// Return IRQ mask
-		return static_cast<igros_word_t>(mask);
+		return static_cast<igros_word_t>(value);
 	}
 
 

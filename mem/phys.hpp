@@ -59,6 +59,9 @@ namespace igros::mem {
 
 	public:
 
+		// D-tor
+		~phys() noexcept = default;
+
 		// Physical memory tracked by allocator (bitmap of 128 KB)
 		constexpr static auto	MEMORY_LIMIT	{0x100000000_u64};
 

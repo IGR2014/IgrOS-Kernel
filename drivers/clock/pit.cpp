@@ -48,7 +48,7 @@ namespace igros::arch {
 	void pitSetupFrequency(const igros_word_t frequency) noexcept {
 
 		// Lowest frequency which divisor fits into 16 bits (~19 Hz)
-		constexpr auto PIT_MIN_FREQUENCY {static_cast<igros_word_t>(PIT_MAIN_FREQUENCY / 0xFFFF_u32 + 1_u32)};
+		constexpr auto PIT_MIN_FREQUENCY {static_cast<igros_word_t>((PIT_MAIN_FREQUENCY / 0xFFFF_u32) + 1_u32)};
 		// Clamp requested frequency (also prevents division by zero)
 		const auto requested {(frequency < PIT_MIN_FREQUENCY) ? PIT_MIN_FREQUENCY : frequency};
 
@@ -85,7 +85,7 @@ namespace igros::arch {
 		// Total elapsed ticks value since IRQ
 		const auto elapsed	{static_cast<igros_word_t>(pit.divisor - counter)};
 		// Return full expired ticks count
-		return static_cast<igros_quad_t>(pit.ticks) * pit.divisor + elapsed;
+		return (static_cast<igros_quad_t>(pit.ticks) * pit.divisor) + elapsed;
 	}
 
 

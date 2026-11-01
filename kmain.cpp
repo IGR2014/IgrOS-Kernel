@@ -37,6 +37,10 @@ extern "C" {
 	extern const std::add_pointer_t<void ()>	_SECTION_INIT_ARRAY_END_[];
 
 
+	// Kernel main function (called from boot.s)
+	[[noreturn]]
+	void kmain(const igros::igros_usize_t multibootAddress, const igros::igros_dword_t magic) noexcept;
+
 	// Kernel main function
 	[[noreturn]]
 	void kmain(const igros::igros_usize_t multibootAddress, const igros::igros_dword_t magic) noexcept {

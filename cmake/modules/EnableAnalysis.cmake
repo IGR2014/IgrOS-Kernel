@@ -38,6 +38,8 @@ if(CMAKE_SCRIPT_MODE_FILE)
 			-p "${BUILD_DIR}"
 			-quiet
 			-header-filter=.*
+			# GCC build: its own warning options aren't Clang ones
+			-extra-arg=-Wno-unknown-warning-option
 			-export-fixes "${FIXES_FILE}"
 			# Only C++: assembly sources are in compile database too
 			".*\\.cpp$"
@@ -151,7 +153,7 @@ function(igros_enable_analysis TARGET)
 		set_target_properties(
 			${TARGET}
 			PROPERTIES
-			CXX_CLANG_TIDY "${IGROS_CLANG_TIDY_EXE};-use-color;-header-filter=.*"
+			CXX_CLANG_TIDY "${IGROS_CLANG_TIDY_EXE};-use-color;-header-filter=.*;-extra-arg=-Wno-unknown-warning-option"
 		)
 		message(
 			STATUS
@@ -167,15 +169,51 @@ function(igros_enable_analysis TARGET)
 			non-virtual-dtor
 			old-style-cast
 			cast-align
+			cast-qual
 			conversion
 			sign-conversion
 			null-dereference
 			double-promotion
 			format=2
 			implicit-fallthrough
+			undef
+			redundant-decls
+			missing-declarations
+			extra-semi
+			zero-as-null-pointer-constant
+			suggest-override
+			overloaded-virtual
+			deprecated-copy-dtor
+			vla
+			alloca
+			# Kernel stacks are small (double fault and IST stacks are a few pages)
+			frame-larger-than=1024
 		)
+		# Compiler specific (no GCC useless-cast: casts to width typedefs are useless
+		# on one architecture only)
+		if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+			list(
+				APPEND STRICT_WARNINGS
+				duplicated-cond
+				duplicated-branches
+				logical-op
+			)
+		elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+			list(
+				APPEND STRICT_WARNINGS
+				shadow-all
+				comma
+				extra-semi-stmt
+				unreachable-code-aggressive
+				loop-analysis
+				missing-variable-declarations
+				unused-member-function
+				unused-template
+			)
+		endif()
 		# Enabled as warnings, not errors: report without breaking the -Werror build
-		# (-Wno-error=format=2 isn't valid, format is covered by -Wall errors already)
+		# (-Wno-error=format=2 isn't valid, format is covered by -Wall errors already;
+		# valued warning in -Wno-error=: GCC keeps "=" in its name, Clang doesn't)
 		set(
 			STRICT_NO_ERROR
 			${STRICT_WARNINGS}
@@ -183,6 +221,21 @@ function(igros_enable_analysis TARGET)
 		list(
 			REMOVE_ITEM STRICT_NO_ERROR
 			format=2
+		)
+		if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+			set(
+				VALUE_SUFFIX
+				"="
+			)
+		else()
+			set(
+				VALUE_SUFFIX
+				""
+			)
+		endif()
+		list(
+			TRANSFORM STRICT_NO_ERROR
+			REPLACE "=.*$" "${VALUE_SUFFIX}"
 		)
 		list(
 			TRANSFORM STRICT_WARNINGS
@@ -306,6 +359,8 @@ function(igros_enable_analysis TARGET)
 				--cppcheck-build-dir=${CPPCHECK_BUILD_DIR}
 				--platform=${CPPCHECK_PLATFORM}
 				--enable=warning,style,performance,portability
+				--inconclusive
+				--check-level=exhaustive
 				--inline-suppr
 				--suppress=missingIncludeSystem
 				--suppress=unmatchedSuppression

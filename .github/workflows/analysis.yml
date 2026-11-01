@@ -76,7 +76,7 @@ jobs:
           lld mtools ninja-build python3 qemu-system-x86 xorriso
 
     # All configs: strict warnings, UBSan boot test, compiler warnings, ClangTidy, Cppcheck,
-    # host tests coverage (findings are the report, not a failure: see last step)
+    # host tests coverage (report is published first, failures are checked in last step)
     - name: 'Analysis'
       shell: bash
       run: |
@@ -150,15 +150,20 @@ jobs:
           fi
         fi
 
-    # Findings are reported; a config that doesn't configure, build or boot, or failing
-    # host tests fail the job
-    - name: 'Check Build and Boot'
+    # A config that doesn't configure, build or boot, failing host tests or any finding
+    # (the code is kept free of them: fix it, or suppress with a reason) fail the job
+    - name: 'Check Analysis'
       shell: bash
       run: |
         failed="$(grep -HE '^(configure|build|install|boot|coverage) [1-9]' build/analysis/*/reports/steps.txt || true)"
         if [[ -n "${failed}" ]]; then
           echo "::error::Analysis steps failed:"
           echo "${failed}"
+          exit 1
+        fi
+        read -r errors warnings info < <(python3 -c 'import json, sys; c = json.load(open(sys.argv[1])); print(c["error"], c["warning"], c["info"])' build/analysis/counts.json)
+        if [[ "$((errors + warnings + info))" -ne 0 ]]; then
+          echo "::error::Analysis findings: ${errors} errors, ${warnings} warnings, ${info} info (see report)"
           exit 1
         fi
 

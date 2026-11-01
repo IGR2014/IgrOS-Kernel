@@ -118,6 +118,8 @@ namespace igros::x86 {
 
 		// Default c-tor
 		irq() noexcept = default;
+		// D-tor
+		~irq() noexcept = default;
 
 		// Init IRQ
 		static void	init() noexcept;

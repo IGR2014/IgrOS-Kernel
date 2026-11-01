@@ -62,6 +62,8 @@ namespace igros::x86_64 {
 
 		// Default c-tor
 		cpu() noexcept = default;
+		// D-tor
+		~cpu() noexcept = default;
 
 		// Halt CPU
 		[[noreturn]]

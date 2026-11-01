@@ -44,6 +44,9 @@ namespace igros::x86 {
 
 	public:
 
+		// D-tor
+		~paging() noexcept = default;
+
 		// Page table entry (register-wide)
 		using entry_t	= igros_usize_t;
 

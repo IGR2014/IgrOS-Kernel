@@ -117,10 +117,10 @@ Coverage is reported to Codacy and SonarCloud. Locally, a coverage build of the 
 | Option / target             | What it does                                                                                              |
 |-----------------------------|-----------------------------------------------------------------------------------------------------------|
 | `IGROS_CXX_CLANG_TIDY=ON`   | ClangTidy pass during the build                                                                           |
-| `IGROS_CXX_STRICT_WARNINGS=ON` | Extra warnings (`-Wconversion`, `-Wshadow`, `-Wold-style-cast`...), reported but not fatal              |
+| `IGROS_CXX_STRICT_WARNINGS=ON` | Extra warnings (`-Wconversion`, `-Wshadow`, `-Wold-style-cast`, `-Wframe-larger-than=1024`...), reported but not fatal |
 | `IGROS_KERNEL_UBSAN=ON`     | UndefinedBehaviorSanitizer in trap mode: UB raises `#UD` (vector 6), no runtime library needed            |
-| `--target clang-tidy`       | ClangTidy over all C++ sources → `clang-tidy-report.txt` (needs `run-clang-tidy`)                         |
-| `--target cppcheck`         | Cppcheck over the compile database → `cppcheck-report.txt`                                                |
+| `--target clang-tidy`       | ClangTidy over all C++ sources with [`.clang-tidy`](./.clang-tidy) checks → `clang-tidy-report.txt` (needs `run-clang-tidy`) |
+| `--target cppcheck`         | Cppcheck over the compile database (inconclusive, exhaustive) → `cppcheck-report.txt`                      |
 | `--target codeql`           | CodeQL database from a separate clean build → `codeql-results.sarif` (needs `codeql` CLI)                 |
 | `--target compiler-warnings`| Compiler diagnostics of all C++ sources, recompiled to a temporary directory → `compiler-warnings.txt`     |
 | `--target analysis-report`  | HTML page with findings of the reports above → `index.html` (needs Python 3)                             |
@@ -134,7 +134,7 @@ cmake --build --preset build-linux-clang++-x86_64-debug --target cppcheck
 
 An open report page updates itself whenever the report is regenerated (it reloads `index.data.js`), also while `analysis.sh` is still running.
 
-In CI the [Analysis workflow](./.github/workflows/analysis.yml) runs `analysis.sh` (CodeQL goes to code scanning instead) and publishes the page on GitHub Pages: master at [igr2014.github.io/IgrOS-Kernel](https://igr2014.github.io/IgrOS-Kernel/), each pull request under `pr/<number>/` with a summary comment in the PR (removed when it is closed). Findings don't fail the workflow; a config that doesn't build or boot, or failing host tests, do.
+In CI the [Analysis workflow](./.github/workflows/analysis.yml) runs `analysis.sh` (CodeQL goes to code scanning instead) and publishes the page on GitHub Pages: master at [igr2014.github.io/IgrOS-Kernel](https://igr2014.github.io/IgrOS-Kernel/), each pull request under `pr/<number>/` with a summary comment in the PR (removed when it is closed). The code is kept free of findings, so any finding fails the workflow (after the report is published), as do a config that doesn't build or boot and failing host tests. A finding that doesn't apply is suppressed where it is, with a reason (`// NOLINT(<check>): <reason>`, `// cppcheck-suppress <id>`); a check that doesn't fit the kernel at all is disabled in `.clang-tidy` with the reason next to it.
 
 A UBSan trap before the IDT is loaded ends in a triple fault without a message. `analysis.sh` resolves it into the report; by hand, boot with `qemu-system-x86_64 ... -no-reboot -d int`, take `IP=` of the `v=06` line and resolve it with `addr2line -f -C -i -e kernel.bin <IP>`.
 

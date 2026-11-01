@@ -19,6 +19,7 @@
 #include <ranges>
 #include <span>
 #include <type_traits>
+#include <utility>
 // IgrOS-Kernel arch
 #include <arch/types.hpp>
 
@@ -33,7 +34,7 @@ namespace igros::klib {
 	requires std::ranges::output_range<R, std::ranges::range_value_t<R>>
 	[[maybe_unused]]
 	constexpr void kmemset(R &&dst, const std::ranges::range_value_t<R> &value) noexcept {
-		std::ranges::fill(dst, value);
+		std::ranges::fill(std::forward<R>(dst), value);
 	}
 
 

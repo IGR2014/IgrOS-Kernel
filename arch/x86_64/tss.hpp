@@ -36,6 +36,9 @@ namespace igros::x86_64 {
 
 	public:
 
+		// D-tor
+		~tss() noexcept = default;
+
 		// Interrupt stack table index (0 - no stack switch)
 		enum class IST : igros_byte_t {
 			NONE		= 0_u8,

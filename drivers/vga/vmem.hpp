@@ -75,7 +75,7 @@ namespace igros::arch {
 	// Set VGA memory cursor position
 	void	vmemCursorSet(const igros_byte_t x, const igros_byte_t y) noexcept;
 	// Set VGA memory cursor position
-	void	vmemCursorSet(const vmemCursor) noexcept;
+	void	vmemCursorSet(const vmemCursor cursor) noexcept;
 
 	// Get VGA memory cursor position
 	[[nodiscard]]

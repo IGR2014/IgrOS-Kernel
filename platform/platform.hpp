@@ -90,7 +90,7 @@ namespace igros::platform {
 		const char* const	mName		{nullptr};		// Platform name
 
 		init_t			mInit		{nullptr};		// Init function
-		finalize_t		mFinalzie	{nullptr};		// Finalize function
+		finalize_t		mFinalize	{nullptr};		// Finalize function
 
 		shutdown_t		mShutdown	{nullptr};		// Shutdown function
 		reboot_t		mReboot		{nullptr};		// Reboot function
@@ -106,12 +106,12 @@ namespace igros::platform {
 		// C-tor
 		constexpr Platform(
 			const char* const	name,
-			const init_t		init,
-			const finalize_t	finalize,
-			const shutdown_t	shutdown,
-			const reboot_t		reboot,
-			const suspend_t		suspend,
-			const wakeup_t		wakeup
+			const init_t		initFunc,
+			const finalize_t	finalizeFunc,
+			const shutdown_t	shutdownFunc,
+			const reboot_t		rebootFunc,
+			const suspend_t		suspendFunc,
+			const wakeup_t		wakeupFunc
 		) noexcept;
 
 		// Get platform name
@@ -141,7 +141,7 @@ namespace igros::platform {
 		constexpr static auto	kernelEnd() noexcept -> const igros_byte_t*;
 		// Get kernel size
 		[[nodiscard]]
-		constexpr static auto	kernelSize() noexcept -> igros_usize_t;
+		static auto		kernelSize() noexcept -> igros_usize_t;
 		// Get kernel code start (code: [textStart, rodataStart))
 		[[nodiscard]]
 		constexpr static auto	textStart() noexcept -> const igros_byte_t*;
@@ -185,20 +185,20 @@ namespace igros::platform {
 	// C-tor
 	constexpr Platform::Platform(
 		const char* const	name,
-		const init_t		init,
-		const finalize_t	finalize,
-		const shutdown_t	shutdown,
-		const reboot_t		reboot,
-		const suspend_t		suspend,
-		const wakeup_t		wakeup
+		const init_t		initFunc,
+		const finalize_t	finalizeFunc,
+		const shutdown_t	shutdownFunc,
+		const reboot_t		rebootFunc,
+		const suspend_t		suspendFunc,
+		const wakeup_t		wakeupFunc
 	) noexcept :
 		mName		(name),
-		mInit		(init),
-		mFinalzie	(finalize),
-		mShutdown	(shutdown),
-		mReboot		(reboot),
-		mSuspend	(suspend),
-		mWakeup		(wakeup) {}
+		mInit		(initFunc),
+		mFinalize	(finalizeFunc),
+		mShutdown	(shutdownFunc),
+		mReboot		(rebootFunc),
+		mSuspend	(suspendFunc),
+		mWakeup		(wakeupFunc) {}
 
 
 	// Get platform name
@@ -223,12 +223,12 @@ namespace igros::platform {
 	// Finalize platform
 	inline void Platform::finalize() const noexcept {
 		// Check if no finalize func
-		if (nullptr == mFinalzie) [[unlikely]] {
+		if (nullptr == mFinalize) [[unlikely]] {
 			// Exit
 			return;
 		}
 		// Do finalize
-		mFinalzie();
+		mFinalize();
 	}
 
 	// Shutdown platform
@@ -292,9 +292,10 @@ namespace igros::platform {
 
 	// Get kernel size
 	[[nodiscard]]
-	constexpr auto Platform::kernelSize() noexcept -> igros_usize_t {
-		// Kernel size (end - start)
-		return Platform::kernelEnd() - Platform::kernelStart();
+	inline auto Platform::kernelSize() noexcept -> igros_usize_t {
+		// Kernel size (end - start): addresses, not pointers - linker symbols are
+		// different objects, so pointer subtraction would be undefined behavior
+		return std::bit_cast<igros_usize_t>(Platform::kernelEnd()) - std::bit_cast<igros_usize_t>(Platform::kernelStart());
 	}
 
 	// Get kernel code start

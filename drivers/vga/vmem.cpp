@@ -97,7 +97,7 @@ namespace igros::arch {
 		// Choose cursor location low register
 		io::writePort8(VGA_CURSOR_CONTROL, 0x0F_u8);
 		// Write cursor position low byte
-		(position <<= 8) |= io::readPort8(VGA_CURSOR_DATA);
+		position = static_cast<igros_word_t>((position << 8) | io::readPort8(VGA_CURSOR_DATA));
 		// Return cursor data
 		return vmemCursor {
 			.x = static_cast<igros_byte_t>(position % VIDEO_MEM_WIDTH),
@@ -121,7 +121,7 @@ namespace igros::arch {
 		// Get current register value
 		const auto cursorStartReg {io::readPort8(VGA_CURSOR_DATA)};
 		// Send control word to disable cursor
-		io::writePort8(VGA_CURSOR_DATA, cursorStartReg & ~0x20_u8);
+		io::writePort8(VGA_CURSOR_DATA, static_cast<igros_byte_t>(cursorStartReg & ~0x20_u8));
 	}
 
 	// Set VGA memory color
@@ -146,7 +146,7 @@ namespace igros::arch {
 		// Tabulation symbol
 		} else if (symbol == '\t') {
 			// calculate new tab offset
-			cursorPos.x = (cursorPos.x + VIDEO_MEM_TAB_SIZE) & ~0x07_u8;
+			cursorPos.x = static_cast<igros_byte_t>((cursorPos.x + VIDEO_MEM_TAB_SIZE) & ~(VIDEO_MEM_TAB_SIZE - 1_usize));
 		// Carret return
 		} else if (symbol == '\r') {
 			// Move to start of the row
@@ -160,7 +160,7 @@ namespace igros::arch {
 		// If non-control (printable) character
 		} else if (symbol >= ' ') {
 			// Write symbol to VGA console
-			vmemScreen()[cursorPos.y * VIDEO_MEM_WIDTH + cursorPos.x] = vmemSymbol {
+			vmemScreen()[(cursorPos.y * VIDEO_MEM_WIDTH) + cursorPos.x] = vmemSymbol {
 				.symbol	= symbol,
 				.color	= static_cast<igros_byte_t>(vmemBkgColor)
 			};
@@ -180,7 +180,7 @@ namespace igros::arch {
 			cursorPos.y = VIDEO_MEM_HEIGHT - 1_u16;
 			// Move screen 1 line up
 			const auto screen {vmemScreen()};
-			std::shift_left(screen.begin(), screen.end(), VIDEO_MEM_WIDTH);
+			std::shift_left(screen.begin(), screen.end(), VIDEO_MEM_WIDTH);	// NOLINT(modernize-use-ranges): std::ranges::shift_left is C++23
 			// Clear bottom line
 			klib::kmemset(screen.last<VIDEO_MEM_WIDTH>(), vmemBlank());
 		}

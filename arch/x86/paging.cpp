@@ -91,7 +91,7 @@ namespace igros::x86 {
 	// Entry of virtual address at given level of given hierarchy (create - allocate missing tables)
 	[[nodiscard]]
 	auto paging::entry(const mem::phys_t top, const mem::virt_t virt, const bool create, const bool user, const igros_usize_t level) noexcept -> entry_t* {
-		auto entries {paging::table(top)};
+		auto* entries {paging::table(top)};
 		// Walk down to table of requested level
 		for (auto current {LEVELS - 1_usize}; current > level; --current) {
 			// Check entries of current level
@@ -140,7 +140,7 @@ namespace igros::x86 {
 		if (0_u64 != (phys & ~static_cast<mem::phys_t>(ADDRESS_MASK))) [[unlikely]] {
 			return false;
 		}
-		const auto page {paging::entry(top, virt, true, flags.isSet(FLAGS::USER))};
+		auto* const page {paging::entry(top, virt, true, flags.isSet(FLAGS::USER))};
 		if (nullptr == page) [[unlikely]] {
 			return false;
 		}
@@ -157,7 +157,7 @@ namespace igros::x86 {
 			(0_u64 != (phys & ~static_cast<mem::phys_t>(ADDRESS_MASK)))) [[unlikely]] {
 			return false;
 		}
-		const auto large {paging::entry(top, virt, true, flags.isSet(FLAGS::USER), 1_usize)};
+		auto* const large {paging::entry(top, virt, true, flags.isSet(FLAGS::USER), 1_usize)};
 		// Don't replace page table (its pages would leak)
 		if ((nullptr == large) || (0_usize != (*large & flag(FLAGS::PRESENT)) && (0_usize == (*large & flag(FLAGS::HUGE))))) [[unlikely]] {
 			return false;
@@ -176,7 +176,7 @@ namespace igros::x86 {
 
 	// Unmap 4 KB page
 	void paging::unmap(const mem::virt_t virt) noexcept {
-		const auto page {paging::entry(paging::root(), virt, false, false)};
+		auto* const page {paging::entry(paging::root(), virt, false, false)};
 		if (nullptr != page) {
 			*page = 0_usize;
 			invalidate(virt);
@@ -188,7 +188,7 @@ namespace igros::x86 {
 	[[nodiscard]]
 	auto paging::translate(const mem::virt_t virt) noexcept -> mem::phys_t {
 		const auto address	{static_cast<mem::phys_t>(mem::address(virt))};
-		auto entries		{paging::table(paging::root())};
+		auto* entries		{paging::table(paging::root())};
 		for (auto step {0_usize}; step < LEVELS; ++step) {
 			const auto level {LEVELS - 1_usize - step};
 			// Check entries of current level
@@ -233,7 +233,7 @@ namespace igros::x86 {
 	[[nodiscard]]
 	auto paging::kernelFlags(const mem::phys_t phys) noexcept -> klib::kFlags<FLAGS> {
 		using platform::Platform;
-		const auto virt {std::bit_cast<const igros_byte_t*>(static_cast<igros_usize_t>(phys) + Platform::kernelOffset())};
+		const auto* const virt {std::bit_cast<const igros_byte_t*>(static_cast<igros_usize_t>(phys) + Platform::kernelOffset())};
 		// Code: read + execute
 		if ((virt >= Platform::textStart()) && (virt < Platform::rodataStart())) {
 			return klib::make_kflags<FLAGS>(FLAGS::PRESENT);
@@ -313,14 +313,14 @@ namespace igros::x86 {
 	[[nodiscard]]
 	auto paging::selfTest() noexcept -> bool {
 		// Scratch page in dynamic mappings area (right above direct map)
-		const auto page	{paging::dynamicStart()};
+		auto* const page	{paging::dynamicStart()};
 		const auto virt	{mem::virtOf(page)};
 		const auto phys	{mem::phys::alloc(mem::direct::end())};
 		if (0_u64 == phys) [[unlikely]] {
 			return false;
 		}
 		// Direct map alias of scratch page
-		const auto alias {std::bit_cast<volatile igros_byte_t*>(paging::table(phys))};
+		auto* const alias {std::bit_cast<volatile igros_byte_t*>(paging::table(phys))};
 		if (nullptr == alias) [[unlikely]] {
 			mem::phys::free(phys);
 			return false;

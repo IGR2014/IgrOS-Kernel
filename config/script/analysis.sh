@@ -10,7 +10,8 @@
 #	Then host unit tests with coverage, then the report.
 #
 #	Usage: analysis.sh [<clang++|g++>:<i386|x86_64> ...]
-#	Result: build/analysis/index.html, short summary.md (configs in build/analysis/<compiler>-<arch>)
+#	Result: build/analysis/index.html, short summary.md, finding counts in counts.json
+#	(configs in build/analysis/<compiler>-<arch>)
 #
 #	Environment:
 #	  IGROS_ANALYSIS_DIR	- output directory inside sources (default: build/analysis)
@@ -94,6 +95,7 @@ report() {
 		--source-dir "${SOURCE_DIR}" \
 		--output "${OUT}/index.html" \
 		--markdown "${OUT}/summary.md" \
+		--counts "${OUT}/counts.json" \
 		--tests "${tests}" \
 		${status:+--status "${status}"} \
 		"${BUILDS[@]}"

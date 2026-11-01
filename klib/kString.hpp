@@ -40,7 +40,7 @@ namespace igros::klib {
 			return nullptr;
 		}
 		// Find null terminator
-		for (; '\0' != *src; ++src);
+		for (; '\0' != *src; ++src) {}
 		// Return pointer to null terminator
 		return src;
 	}
@@ -86,7 +86,7 @@ namespace igros::klib {
 		}
 		// Find dst end inside buffer
 		auto end {0_usize};
-		for (; (end < size) && ('\0' != dst[end]); ++end);
+		for (; (end < size) && ('\0' != dst[end]); ++end) {}
 		// No null terminator (or no space) - nothing could be appended
 		if (end >= size) [[unlikely]] {
 			return dst;

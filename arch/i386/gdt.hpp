@@ -30,7 +30,7 @@ namespace igros::i386 {
 	class gdt final {
 
 		// GDT flags enum
-		enum flags_t : igros_word_t {
+		enum flags_t : igros_word_t {	// NOLINT(cppcoreguidelines-use-enum-class): bit flags, combined and masked as integers
 			// GDT empty segment
 			GDT_SEG_EMPTY		= 0x0000_u16,
 			// GDT access page
@@ -137,6 +137,8 @@ namespace igros::i386 {
 
 		// Default c-tor
 		gdt() noexcept = default;
+		// D-tor
+		~gdt() noexcept = default;
 
 		// Available 32-bit TSS descriptor (base is known at run time only)
 		[[nodiscard]]

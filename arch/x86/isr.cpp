@@ -51,6 +51,9 @@ extern "C" {
 #endif	// __cplusplus
 
 
+	// Interrupts handler function (called from isr.s)
+	void isrHandler(const igros::x86::register_t* regs) noexcept;
+
 	// Interrupts handler function
 	void isrHandler(const igros::x86::register_t* regs) noexcept {
 		// Interrupt vector

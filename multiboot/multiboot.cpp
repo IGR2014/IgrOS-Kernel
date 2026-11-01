@@ -38,7 +38,7 @@ namespace igros::multiboot {
 		constexpr auto BUILD_YEAR {[]() consteval noexcept {
 			auto year {0_u32};
 			for (const auto digit : std::string_view {__DATE__}.substr(7)) {
-				year = year * 10_u32 + static_cast<igros_dword_t>(digit - '0');
+				year = (year * 10_u32) + static_cast<igros_dword_t>(digit - '0');
 			}
 			return year;
 		}()};
@@ -51,7 +51,7 @@ namespace igros::multiboot {
 				return nullptr;
 			}
 			// Linear address: segment * 16 + offset
-			return mem::direct::string(static_cast<mem::phys_t>(((pointer & 0xFFFF0000_u32) >> 12) + (pointer & 0x0000FFFF_u32)));
+			return mem::direct::string((static_cast<mem::phys_t>(pointer & 0xFFFF0000_u32) >> 12) + (pointer & 0x0000FFFF_u32));
 		}
 
 
@@ -156,7 +156,7 @@ MEMORY MAP:
 R"multiboot(	[%u] 0x%016llx - 0x%016llx)multiboot",
 					static_cast<igros_dword_t>(entry.type),
 					static_cast<unsigned long long>(entry.address),
-					static_cast<unsigned long long>(entry.address + entry.length)
+					static_cast<unsigned long long>(entry.address) + entry.length
 				);
 			}
 			klib::kprintf("\n");

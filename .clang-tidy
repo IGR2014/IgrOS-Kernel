@@ -1,0 +1,73 @@
+---
+# ClangTidy checks of kernel sources (EnableAnalysis.cmake: clang-tidy target, IGROS_CXX_CLANG_TIDY)
+#
+# Everything from bug-finding and guideline families, minus checks that don't fit
+# freestanding kernel code or contradict project conventions:
+#  - avoid-const-params-in-decls: declarations repeat definition signatures (const params)
+#  - magic-numbers: hardware ports, registers, bit layouts and descriptor fields
+#  - avoid-pragma-once: project header guard convention
+#  - include-cleaner: no IWYU mapping for freestanding headers, types come from arch/types.hpp
+#  - pro-bounds-*, pro-type-vararg, cert-dcl50-cpp: no GSL in kernel, raw memory and
+#    descriptor tables are pointers; kprintf is printf-like (format checked by compiler)
+#  - avoid-non-const-global-variables: drivers and CPU tables are global state
+#  - dynamic-static-initializers: false positive on extern declarations (linker/assembly symbols)
+#  - bitwise-pointer-cast: std::bit_cast is the pointer cast here (no reinterpret_cast, Sonar S3630)
+#  - easily-swappable-parameters: C library and mapping interfaces (dst, src, size)
+#  - enum-size: enum widths match hardware register and structure fields
+#  - use-equals-delete: copy/move are already deleted, kept private by convention
+#  - use-anonymous-namespace: static is used for file-local functions and data
+#  - use-trailing-return-type, identifier-length: style, not checked
+#  - avoid-const-or-ref-data-members: immutable members of non-assignable objects
+#  - avoid-do-while: digit loops emit at least one digit
+#  - uppercase-literal-suffix: flags user-defined literals (_u32, _usize) in templates
+#  - use-concise-preprocessor-directives: arch dispatch is "#if defined / #elif defined"
+#    chains (#elifdef is C++23)
+#
+Checks: >
+  -*,
+  clang-diagnostic-*,
+  bugprone-*,
+  cert-*,
+  clang-analyzer-*,
+  concurrency-*,
+  cppcoreguidelines-*,
+  misc-*,
+  modernize-*,
+  performance-*,
+  portability-*,
+  readability-*,
+  -readability-avoid-const-params-in-decls,
+  -readability-magic-numbers,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -portability-avoid-pragma-once,
+  -misc-include-cleaner,
+  -cppcoreguidelines-pro-bounds-pointer-arithmetic,
+  -cppcoreguidelines-pro-bounds-constant-array-index,
+  -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
+  -cppcoreguidelines-pro-type-vararg,
+  -cert-dcl50-cpp,
+  -cppcoreguidelines-avoid-non-const-global-variables,
+  -bugprone-dynamic-static-initializers,
+  -bugprone-bitwise-pointer-cast,
+  -bugprone-easily-swappable-parameters,
+  -performance-enum-size,
+  -modernize-use-equals-delete,
+  -misc-use-anonymous-namespace,
+  -modernize-use-trailing-return-type,
+  -readability-identifier-length,
+  -cppcoreguidelines-avoid-const-or-ref-data-members,
+  -cppcoreguidelines-avoid-do-while,
+  -readability-uppercase-literal-suffix,
+  -readability-use-concise-preprocessor-directives
+WarningsAsErrors: ''
+HeaderFilterRegex: '.*'
+CheckOptions:
+  # Linker script and boot assembly symbols
+  bugprone-reserved-identifier.AllowedIdentifiers: '^_SECTION_[A-Z_]+_$;^_KERNEL_STACK_GUARD_$'
+  cert-dcl37-c.AllowedIdentifiers: '^_SECTION_[A-Z_]+_$;^_KERNEL_STACK_GUARD_$'
+  cert-dcl51-cpp.AllowedIdentifiers: '^_SECTION_[A-Z_]+_$;^_KERNEL_STACK_GUARD_$'
+  # Plain data structures (multiboot, RTC, hardware tables)
+  misc-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic: true
+  # Scope guards: deleted copy is enough
+  cppcoreguidelines-special-member-functions.AllowMissingMoveFunctionsWhenCopyIsDeleted: true
+...

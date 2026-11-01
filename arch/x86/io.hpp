@@ -83,6 +83,8 @@ namespace igros::x86 {
 
 		// Default c-tor
 		io() noexcept = default;
+		// D-tor
+		~io() noexcept = default;
 
 		// Read byte from port
 		[[nodiscard]]

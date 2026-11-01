@@ -28,10 +28,18 @@
 extern "C" {
 
 
+	// Declarations (<cstring> isn't freestanding)
+	void*	memset(void* dst, int val, std::size_t size);
+	void*	memcpy(void* dst, const void* src, std::size_t size);
+	void*	memmove(void* dst, const void* src, std::size_t size);
+	int	memcmp(const void* lhs, const void* rhs, std::size_t size);
+	void*	memchr(const void* src, int val, std::size_t size);
+
+
 	// Fill memory with byte value
 	IGROS_NO_LIBCALLS
 	void* memset(void* dst, int val, std::size_t size) {
-		auto d {static_cast<unsigned char*>(dst)};
+		auto* d {static_cast<unsigned char*>(dst)};
 		for (auto i {static_cast<std::size_t>(0)}; i < size; ++i) {
 			d[i] = static_cast<unsigned char>(val);
 		}
@@ -41,8 +49,8 @@ extern "C" {
 	// Copy non-overlapping memory
 	IGROS_NO_LIBCALLS
 	void* memcpy(void* dst, const void* src, std::size_t size) {
-		auto d {static_cast<unsigned char*>(dst)};
-		auto s {static_cast<const unsigned char*>(src)};
+		auto* d {static_cast<unsigned char*>(dst)};
+		const auto* s {static_cast<const unsigned char*>(src)};
 		for (auto i {static_cast<std::size_t>(0)}; i < size; ++i) {
 			d[i] = s[i];
 		}
@@ -52,8 +60,8 @@ extern "C" {
 	// Copy possibly overlapping memory
 	IGROS_NO_LIBCALLS
 	void* memmove(void* dst, const void* src, std::size_t size) {
-		auto d {static_cast<unsigned char*>(dst)};
-		if (auto s {static_cast<const unsigned char*>(src)}; d < s) {
+		auto* d {static_cast<unsigned char*>(dst)};
+		if (const auto* s {static_cast<const unsigned char*>(src)}; d < s) {
 			for (auto i {static_cast<std::size_t>(0)}; i < size; ++i) {
 				d[i] = s[i];
 			}
@@ -68,8 +76,8 @@ extern "C" {
 	// Compare memory
 	IGROS_NO_LIBCALLS
 	int memcmp(const void* lhs, const void* rhs, std::size_t size) {
-		auto l {static_cast<const unsigned char*>(lhs)};
-		auto r {static_cast<const unsigned char*>(rhs)};
+		const auto* l {static_cast<const unsigned char*>(lhs)};
+		const auto* r {static_cast<const unsigned char*>(rhs)};
 		for (auto i {static_cast<std::size_t>(0)}; i < size; ++i) {
 			if (l[i] != r[i]) {
 				return (l[i] < r[i]) ? -1 : 1;
@@ -81,7 +89,7 @@ extern "C" {
 	// Find byte value in memory
 	IGROS_NO_LIBCALLS
 	void* memchr(const void* src, int val, std::size_t size) {
-		auto s {static_cast<const unsigned char*>(src)};
+		const auto* s {static_cast<const unsigned char*>(src)};
 		for (auto i {static_cast<std::size_t>(0)}; i < size; ++i) {
 			if (static_cast<unsigned char>(val) == s[i]) {
 				// C signature returns non-const pointer to const input (writing through it

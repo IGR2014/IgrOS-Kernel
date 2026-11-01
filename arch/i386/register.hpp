@@ -76,7 +76,7 @@ extern "C" {
 
 	// Read EIP register
 	[[nodiscard]]
-	auto	outEAX() noexcept -> igros::igros_dword_t;
+	auto	outEIP() noexcept -> igros::igros_dword_t;
 
 
 #ifdef	__cplusplus

@@ -45,6 +45,9 @@ namespace igros::mem {
 
 	public:
 
+		// D-tor
+		~direct() noexcept = default;
+
 		// End of directly mapped physical memory
 		[[nodiscard]]
 		static auto	end() noexcept -> phys_t;

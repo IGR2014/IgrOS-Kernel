@@ -68,12 +68,12 @@ namespace igros::x86 {
 
 		// Platform drivers (in init order)
 		constexpr std::array<drivers::driver_t, 4> DRIVERS {{
-			{"VGA",		arch::vmemInit},
-			{"UART",	arch::serialSetup},
-			{"Keyboard",	arch::keyboardSetup},
-			{"RTC",		arch::rtcSetup},
+			{.name = "VGA",		.init = arch::vmemInit},
+			{.name = "UART",	.init = arch::serialSetup},
+			{.name = "Keyboard",	.init = arch::keyboardSetup},
+			{.name = "RTC",		.init = arch::rtcSetup},
 			// PIT prints time every second, enable when needed
-			//{"PIT",		arch::pitSetup},
+			//{.name = "PIT",	.init = arch::pitSetup},
 		}};
 		// Setup drivers
 		drivers::init(DRIVERS);

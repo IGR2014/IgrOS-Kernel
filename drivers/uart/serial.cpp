@@ -50,7 +50,7 @@ namespace igros::arch {
 
 	// Serial port register address
 	[[nodiscard]]
-	constexpr auto serialRegister(const SERIAL_PORT port, const SERIAL_REG reg) noexcept -> port_t {
+	constexpr static auto serialRegister(const SERIAL_PORT port, const SERIAL_REG reg) noexcept -> port_t {
 		return static_cast<port_t>(static_cast<igros_word_t>(port) + static_cast<igros_word_t>(reg));
 	}
 

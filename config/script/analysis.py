@@ -14,7 +14,8 @@
 #	Usage:
 #	  analysis.py warnings --build-dir <dir> --output <file>
 #	  analysis.py report --source-dir <dir> --output <file.html> [--status <text>]
-#	                     [--markdown <summary.md>] [--tests <tests build dir>] [<name>=]<build dir>...
+#	                     [--markdown <summary.md>] [--counts <counts.json>] [--tests <tests build dir>]
+#	                     [<name>=]<build dir>...
 #
 #	Build directory reports (<build dir>/reports, every file optional):
 #	  compiler-warnings.txt, clang-tidy-report.txt, cppcheck-report.txt,
@@ -486,6 +487,8 @@ def make_report(args):
 	if args.markdown:
 		write_markdown(data, Path(args.markdown))
 	counts = {severity: sum(1 for item in items if item["severity"] == severity) for severity in SEVERITY_RANK}
+	if args.counts:
+		write_atomic(Path(args.counts), json.dumps(counts) + "\n")
 	print(f"Analysis report: {output} ({counts['error']} errors, {counts['warning']} warnings, {counts['info']} info)")
 	return 0
 
@@ -862,6 +865,7 @@ def main():
 	report.add_argument("--tests", help="Host tests build directory (coverage)")
 	report.add_argument("--status", help="Analysis state shown in the page (e.g. still running)")
 	report.add_argument("--markdown", help="Also write a short Markdown summary (CI job summary, PR comment)")
+	report.add_argument("--counts", help="Also write finding counts per severity as JSON (CI gate)")
 	report.add_argument("builds", nargs="+", metavar="[name=]build-dir")
 
 	args = parser.parse_args()
@@ -870,6 +874,8 @@ def main():
 	args.output = working_path(args.output)
 	if args.markdown:
 		args.markdown = working_path(args.markdown)
+	if args.counts:
+		args.counts = working_path(args.counts)
 	return make_report(args)
 
 

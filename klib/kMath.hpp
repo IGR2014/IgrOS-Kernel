@@ -64,21 +64,21 @@ namespace igros::klib {
 				: "cc"
 			);
 			return divmod_t<igros_quad_t> {
-				(static_cast<igros_quad_t>(quotientHigh) << 32) | quotientLow,
-				remainder
+				.quotient	= (static_cast<igros_quad_t>(quotientHigh) << 32) | quotientLow,
+				.remainder	= remainder
 			};
 		}
 #endif
 
 		// Divisor greater than dividend (or zero)
 		if ((0_u64 == divisor) || (divisor > dividend)) {
-			return divmod_t<igros_quad_t> {0_u64, dividend};
+			return divmod_t<igros_quad_t> {.quotient = 0_u64, .remainder = dividend};
 		}
 
 		// Shift-subtract long division: align divisor highest bit with dividend highest bit
 		const auto shift	{std::countl_zero(divisor) - std::countl_zero(dividend)};
 		auto aligned		{divisor << shift};
-		auto res		{divmod_t<igros_quad_t> {0_u64, dividend}};
+		auto res		{divmod_t<igros_quad_t> {.quotient = 0_u64, .remainder = dividend}};
 		// One quotient bit per shift
 		for (auto bit {0}; bit <= shift; ++bit) {
 			res.quotient <<= 1;

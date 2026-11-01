@@ -77,6 +77,8 @@ namespace igros::i386 {
 
 		// Default c-tor
 		idt() noexcept = default;
+		// D-tor
+		~idt() noexcept = default;
 
 		// Make IDT entry
 		[[nodiscard]]

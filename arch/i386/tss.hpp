@@ -36,6 +36,9 @@ namespace igros::i386 {
 
 	public:
 
+		// D-tor
+		~tss() noexcept = default;
+
 		// Double fault task stack size
 		constexpr static auto	STACK_SIZE	{0x4000_usize};
 
