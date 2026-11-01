@@ -88,6 +88,13 @@ The image contains only the toolchain; sources are mounted from the host, so cod
 docker compose up kernel_x86_64_clang_build   # also: kernel_i386_clang_build, kernel_{i386,x86_64}_gcc_build
 ```
 
+The `analysis` image adds analyzers, gcovr, QEMU and CodeQL to the toolchain and runs [all analysis](#analysis) at once:
+
+```sh
+docker compose run --rm kernel_analysis                  # all four configs
+docker compose run --rm kernel_analysis g++:x86_64       # or some of them
+```
+
 ---
 
 ## Testing
@@ -101,7 +108,37 @@ docker compose up kernel_x86_64_clang_build   # also: kernel_i386_clang_build, k
 - **Boot test** – [`tests/boot/qemu-boot.sh`](./tests/boot/qemu-boot.sh) boots the ISO in QEMU and checks that the kernel reaches the end of `kmain` and handles a keyboard IRQ.
 
 GitHub Actions and GitLab CI run both for every compiler/architecture combination; Azure Pipelines runs the boot test.
-Coverage is reported to Codacy and SonarCloud.
+Coverage is reported to Codacy and SonarCloud. Locally, a coverage build of the tests has a `coverage` target (needs `gcovr`), HTML report in `build/tests/reports/coverage/`.
+
+### Analysis
+
+[`cmake/modules/EnableAnalysis.cmake`](./cmake/modules/EnableAnalysis.cmake) adds options and on-demand report targets to the kernel build (reports go to `<build dir>/reports/`):
+
+| Option / target             | What it does                                                                                              |
+|-----------------------------|-----------------------------------------------------------------------------------------------------------|
+| `IGROS_CXX_CLANG_TIDY=ON`   | ClangTidy pass during the build                                                                           |
+| `IGROS_CXX_STRICT_WARNINGS=ON` | Extra warnings (`-Wconversion`, `-Wshadow`, `-Wold-style-cast`...), reported but not fatal              |
+| `IGROS_KERNEL_UBSAN=ON`     | UndefinedBehaviorSanitizer in trap mode: UB raises `#UD` (vector 6), no runtime library needed            |
+| `--target clang-tidy`       | ClangTidy over all C++ sources → `clang-tidy-report.txt` (needs `run-clang-tidy`)                         |
+| `--target cppcheck`         | Cppcheck over the compile database → `cppcheck-report.txt`                                                |
+| `--target codeql`           | CodeQL database from a separate clean build → `codeql-results.sarif` (needs `codeql` CLI)                 |
+| `--target compiler-warnings`| Compiler diagnostics of all C++ sources, recompiled to a temporary directory → `compiler-warnings.txt`     |
+| `--target analysis-report`  | HTML page with findings of the reports above → `index.html` (needs Python 3)                             |
+
+```sh
+cmake --preset config-linux-clang++-x86_64-debug -DIGROS_KERNEL_UBSAN=ON
+cmake --build --preset build-linux-clang++-x86_64-debug --target cppcheck
+```
+
+[`config/script/analysis.sh`](./config/script/analysis.sh) runs everything for all (or given) configs: a debug build with strict warnings and UBSan, QEMU boot test, all report targets (CodeQL for the first config only, `IGROS_ANALYSIS_CODEQL=all|none` to change), host tests coverage. The report in `build/analysis/index.html` merges findings of every tool and config (the same issue reported by several tools or configs is one entry), shows them per file with source lines, build and boot status per config and coverage.
+
+An open report page updates itself whenever the report is regenerated (it reloads `index.data.js`), also while `analysis.sh` is still running.
+
+In CI the [Analysis workflow](./.github/workflows/analysis.yml) runs `analysis.sh` (CodeQL goes to code scanning instead) and publishes the page on GitHub Pages: master at [igr2014.github.io/IgrOS-Kernel](https://igr2014.github.io/IgrOS-Kernel/), each pull request under `pr/<number>/` with a summary comment in the PR (removed when it is closed). Findings don't fail the workflow; a config that doesn't build or boot, or failing host tests, do.
+
+A UBSan trap before the IDT is loaded ends in a triple fault without a message. `analysis.sh` resolves it into the report; by hand, boot with `qemu-system-x86_64 ... -no-reboot -d int`, take `IP=` of the `v=06` line and resolve it with `addr2line -f -C -i -e kernel.bin <IP>`.
+
+ASan and gcov coverage need a hosted runtime the kernel doesn't have: coverage comes from the host unit tests, SonarCloud and Codacy run in CI.
 
 ---
 

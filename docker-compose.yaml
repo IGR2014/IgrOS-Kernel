@@ -28,3 +28,13 @@ services:
   kernel_x86_64_gcc_build:
     <<: *kernel-build
     command: ["x86_64", "g++", "debug"]
+
+  # All analysis tools over all configs: build/analysis/index.html
+  # command: [<clang++|g++>:<i386|x86_64> ...] (default: all four)
+  kernel_analysis:
+    <<: *kernel-build
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: analysis
+    image: igros/kernel-analysis:latest

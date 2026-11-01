@@ -43,6 +43,51 @@ ENV CCACHE_DIR=/home/igros/kernel/.ccache
 ENTRYPOINT ["/bin/sh", "-c", "set -e; preset=\"linux-$1-$0-${2:-debug}\"; cmake --preset=\"config-$preset\"; cmake --build --preset=\"build-$preset\" --target all --parallel; cmake --build --preset=\"build-$preset\" --target install; ccache -s"]
 
 
+# Analysis (see config/script/analysis.sh): toolchain + static analyzers,
+# coverage and QEMU for the UBSan boot check
+FROM toolchain AS analysis
+
+# Run as root
+USER root
+
+# Analysis tools
+# hadolint ignore=DL3008
+RUN \
+	apt-get update && \
+	apt-get install -y --no-install-recommends \
+		ca-certificates \
+		clang-tidy \
+		cppcheck \
+		curl \
+		gcovr \
+		python3 \
+		qemu-system-x86 \
+		zstd && \
+	apt-get clean && \
+	rm -rf /var/lib/apt/lists/*
+
+# CodeQL CLI with C/C++ query packs (pinned bundle, checksum verified)
+ARG CODEQL_VERSION=2.27.2
+ARG CODEQL_SHA256=638338a6489c4229c06012239f570dd76992b4ed862c1a7922d46496622a72ca
+# Bundle files are 0600 of the release builder: keep them readable for any (host) UID
+RUN \
+	curl -fsSL -o /tmp/codeql.tar.zst \
+		"https://github.com/github/codeql-action/releases/download/codeql-bundle-v${CODEQL_VERSION}/codeql-bundle-cpp-linux64.tar.zst" && \
+	printf '%s  %s\n' "${CODEQL_SHA256}" /tmp/codeql.tar.zst > /tmp/codeql.sha256 && \
+	sha256sum -c /tmp/codeql.sha256 && \
+	tar --zstd --no-same-owner -xf /tmp/codeql.tar.zst -C /opt && \
+	chmod -R a+rX /opt/codeql && \
+	ln -s /opt/codeql/codeql /usr/local/bin/codeql && \
+	rm /tmp/codeql.tar.zst /tmp/codeql.sha256
+
+# Run as unprivileged user by default (docker-compose overrides it with host UID/GID)
+USER ubuntu
+
+# Analyze all (or given) configs, report in build/analysis/index.html
+# Usage: docker run ... [<clang++|g++>:<i386|x86_64> ...]
+ENTRYPOINT ["bash", "config/script/analysis.sh"]
+
+
 # VS Code Dev Container (see .devcontainer/devcontainer.json):
 # toolchain + debugging tools
 FROM toolchain AS dev

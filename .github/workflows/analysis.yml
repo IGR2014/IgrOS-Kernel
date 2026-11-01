@@ -1,0 +1,199 @@
+# Name
+name: 'Analysis'
+
+# Every analysis tool over every toolchain (config/script/analysis.sh), report on GitHub Pages:
+# master at the site root, pull requests under pr/<number>/ (removed when the PR is closed).
+# Pages serves the gh-pages branch (Settings -> Pages -> Deploy from a branch: gh-pages, root).
+# CodeQL isn't run here: codeql.yml uploads it to code scanning.
+on:
+  push:
+    branches: [ 'master' ]
+    paths-ignore: &docs
+      - '**.md'
+      - 'LICENSE'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.vscode/**'
+      - '.devcontainer/**'
+      - '*.code-workspace'
+      - '*.kateproject'
+  pull_request:
+    branches: [ 'master' ]
+    types: [ opened, synchronize, reopened, closed ]
+    paths-ignore: *docs
+  workflow_dispatch:
+
+# A newer push to the same branch/PR (or closing the PR) cancels the run still in progress
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Least privilege by default; jobs that need more ask for it
+permissions:
+  contents: read
+
+# Project jobs
+jobs:
+
+  # Analyze, publish report, fail on broken build/boot
+  Analysis:
+
+    # Name
+    name: 'Analysis report'
+    if: github.event.action != 'closed'
+    # OS
+    runs-on: ubuntu-26.04
+    # Four builds, boot tests and host tests take a few minutes; a hang must not take hours
+    timeout-minutes: 30
+    # Push to gh-pages, pull request comment
+    permissions:
+      contents: write
+      pull-requests: write
+
+    # Environment variables
+    env:
+      IGROS_ANALYSIS_CODEQL: "none"
+      # Fork PR token is read-only: report is in the job summary only
+      PUBLISH: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+      SITE_DIR: ${{ github.event_name == 'pull_request' && format('pr/{0}', github.event.number) || '.' }}
+
+    # Job steps
+    steps:
+
+    # Checkout (full history: kernel version is taken from git tags)
+    - name: 'Checkout repository'
+      uses: actions/checkout@v7
+      with:
+        fetch-depth: 0
+
+    # Install dependencies (toolchain, ISO tools, QEMU, analyzers, coverage)
+    - name: 'Install Dependencies'
+      # Stalled apt mirror: phases time out and retry (ci-apt.sh) instead of hanging the job
+      timeout-minutes: 15
+      shell: bash
+      run: |
+        bash config/script/ci-apt.sh \
+          clang clang-tidy cmake cppcheck g++-multilib gcc-multilib gcovr grub-common grub-pc-bin \
+          lld mtools ninja-build python3 qemu-system-x86 xorriso
+
+    # All configs: strict warnings, UBSan boot test, compiler warnings, ClangTidy, Cppcheck,
+    # host tests coverage (findings are the report, not a failure: see last step)
+    - name: 'Analysis'
+      shell: bash
+      run: |
+        bash config/script/analysis.sh
+
+    # Report page: gh-pages branch, own directory only (other PRs publish in parallel)
+    - name: 'Publish Report'
+      if: env.PUBLISH == 'true'
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        url="https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+        if git ls-remote --exit-code --heads "${url}" gh-pages > /dev/null; then
+          git clone --quiet --filter=blob:none --branch gh-pages "${url}" site
+        else
+          git init --quiet -b gh-pages site
+          git -C site remote add origin "${url}"
+          # Plain files, no Jekyll processing
+          touch site/.nojekyll
+        fi
+        # Page, live data file and coverage report it links to (not the build directories)
+        rm -rf "site/${SITE_DIR}/index.html" "site/${SITE_DIR}/index.data.js" "site/${SITE_DIR}/tests"
+        mkdir -p "site/${SITE_DIR}/tests/reports"
+        cp build/analysis/index.html build/analysis/index.data.js "site/${SITE_DIR}/"
+        cp -r build/analysis/tests/reports/coverage "site/${SITE_DIR}/tests/reports/"
+        cd site
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git add -A
+        git commit --quiet -m "Analysis report: ${SITE_DIR} (${GITHUB_SHA::7})" || exit 0
+        # Another job may have pushed meanwhile: it touched another directory, rebase is clean
+        for attempt in 1 2 3 4 5; do
+          git push --quiet origin gh-pages && exit 0
+          git pull --quiet --rebase origin gh-pages
+        done
+        exit 1
+
+    # Summary with report link: job summary, pull request comment (updated in place)
+    - name: 'Report Summary'
+      if: success() || failure()
+      shell: bash
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        PR: ${{ github.event.number }}
+      run: |
+        [[ -f build/analysis/summary.md ]] || exit 0
+        owner="${GITHUB_REPOSITORY_OWNER,,}"
+        page="https://${owner}.github.io/${GITHUB_REPOSITORY#*/}/"
+        [[ "${SITE_DIR}" == "." ]] || page="${page}${SITE_DIR}/"
+        {
+          echo "<!-- igros-analysis -->"
+          echo "### Kernel analysis"
+          echo
+          cat build/analysis/summary.md
+          echo
+          if [[ "${PUBLISH}" == "true" ]]; then
+            echo "[Full report](${page}) (findings with source, coverage) for ${GITHUB_SHA::7}"
+          else
+            echo "_Fork pull request: report page isn't published, run config/script/analysis.sh locally_"
+          fi
+        } > build/analysis/comment.md
+        cat build/analysis/comment.md >> "${GITHUB_STEP_SUMMARY}"
+        if [[ -n "${PR}" && "${PUBLISH}" == "true" ]]; then
+          comment="$(gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments" --paginate \
+            -q '.[] | select(.body | startswith("<!-- igros-analysis -->")) | .id' | head -n 1)"
+          if [[ -n "${comment}" ]]; then
+            gh api -X PATCH "repos/${GITHUB_REPOSITORY}/issues/comments/${comment}" -F body=@build/analysis/comment.md > /dev/null
+          else
+            gh pr comment "${PR}" --body-file build/analysis/comment.md
+          fi
+        fi
+
+    # Findings are reported; a config that doesn't configure, build or boot, or failing
+    # host tests fail the job
+    - name: 'Check Build and Boot'
+      shell: bash
+      run: |
+        failed="$(grep -HE '^(configure|build|install|boot|coverage) [1-9]' build/analysis/*/reports/steps.txt || true)"
+        if [[ -n "${failed}" ]]; then
+          echo "::error::Analysis steps failed:"
+          echo "${failed}"
+          exit 1
+        fi
+
+  # Closed pull request: remove its report
+  Cleanup:
+
+    # Name
+    name: 'Remove PR report'
+    if: github.event.action == 'closed' && github.event.pull_request.head.repo.full_name == github.repository
+    # OS
+    runs-on: ubuntu-26.04
+    timeout-minutes: 5
+    # Push to gh-pages
+    permissions:
+      contents: write
+
+    # Job steps
+    steps:
+    - name: 'Remove Report'
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        PR: ${{ github.event.number }}
+      run: |
+        url="https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+        git ls-remote --exit-code --heads "${url}" gh-pages > /dev/null || exit 0
+        git clone --quiet --filter=blob:none --branch gh-pages "${url}" site
+        cd site
+        [[ -d "pr/${PR}" ]] || exit 0
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git rm -r --quiet "pr/${PR}"
+        git commit --quiet -m "Analysis report: remove pr/${PR}"
+        for attempt in 1 2 3 4 5; do
+          git push --quiet origin gh-pages && exit 0
+          git pull --quiet --rebase origin gh-pages
+        done
+        exit 1

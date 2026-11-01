@@ -81,6 +81,8 @@ include(CheckCompiler)
 include(EnableCCache)
 # Enable Doxygen
 include(EnableDoxygen)
+# Enable Analysis (ClangTidy, strict warnings, UBSan, Cppcheck/CodeQL targets)
+include(EnableAnalysis)
 
 # Enable CTest
 enable_testing()
@@ -91,34 +93,6 @@ option(
 	"Produce ANSI-colored output from compiler (GCC/Clang can do it)"
 	OFF
 )
-# ClangTidy pass
-option(
-	IGROS_CXX_CLANG_TIDY
-	"Add ClangTidy pass to build process"
-	OFF
-)
-
-# Use Clang-Tidy ?
-if (IGROS_CXX_CLANG_TIDY)
-	# Clang-Tidy extra args
-	if(("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC") OR (("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang") AND ("${CMAKE_CXX_SIMULATE_ID}" STREQUAL "MSVC")))
-		# Set extra Clang-Tidy checks
-		set(
-			IGROS_CLANG_TIDY_ARGS
-			"--extra-arg=/EHsc"
-			"--extra-arg=/DNOMINMAX"
-		)
-	endif()
-	# Set default Clang-Tidy checks
-	set(
-		CMAKE_CXX_CLANG_TIDY
-		"clang-tidy"
-		"-use-color"
-		"-header-filter=.*"
-		${IGROS_CLANG_TIDY_ARGS}
-	)
-endif()
-
 # Header
 message(
 	STATUS
@@ -256,6 +230,11 @@ add_subdirectory(
 # Add sys subdirectory
 add_subdirectory(
 	sys
+)
+
+# Kernel analysis (options and report targets, see cmake/modules/EnableAnalysis.cmake)
+igros_enable_analysis(
+	${IGROS_KERNEL}
 )
 
 # Kernel linker script

@@ -248,3 +248,50 @@ igros_test(rtc		drivers/test_rtc.cpp	drivers/clock/rtc.cpp klib/kPrint.cpp)
 # Multiboot and platform
 igros_test(multiboot	multiboot/test_multiboot.cpp	multiboot/multiboot.cpp klib/kPrint.cpp)
 igros_test(platform	platform/test_platform.cpp)
+
+# Coverage report (same gcovr filters as CI): runs tests, writes HTML and summary
+if(IGROS_TESTS_COVERAGE)
+	find_program(
+		IGROS_GCOVR_EXE
+		NAMES gcovr
+	)
+	mark_as_advanced(
+		IGROS_GCOVR_EXE
+	)
+	if(IGROS_GCOVR_EXE)
+		set(
+			IGROS_COVERAGE_DIR
+			"${CMAKE_BINARY_DIR}/reports/coverage"
+		)
+		# Absolute sources root: gcovr filters are relative to working (build) directory
+		cmake_path(
+			ABSOLUTE_PATH IGROS_SOURCE_DIR
+			NORMALIZE
+			OUTPUT_VARIABLE IGROS_COVERAGE_ROOT
+		)
+		add_custom_target(
+			coverage
+			COMMAND ${CMAKE_COMMAND} -E rm -rf "${IGROS_COVERAGE_DIR}"
+			COMMAND ${CMAKE_COMMAND} -E make_directory "${IGROS_COVERAGE_DIR}"
+			# Counters of previous runs would add up, stale ones break gcov
+			COMMAND ${CMAKE_COMMAND} -DDIR=${CMAKE_BINARY_DIR} -P "${CMAKE_CURRENT_LIST_DIR}/coverage-reset.cmake"
+			COMMAND ${CMAKE_CTEST_COMMAND} --test-dir "${CMAKE_BINARY_DIR}" --output-on-failure --no-tests=error
+			COMMAND "${IGROS_GCOVR_EXE}"
+				--root "${IGROS_COVERAGE_ROOT}"
+				--exclude "${IGROS_COVERAGE_ROOT}tests/"
+				--html-details "${IGROS_COVERAGE_DIR}/index.html"
+				--json-summary "${IGROS_COVERAGE_DIR}/summary.json"
+				--print-summary
+				"${CMAKE_BINARY_DIR}"
+			WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+			COMMENT "Running tests with coverage: ${IGROS_COVERAGE_DIR}/index.html"
+			VERBATIM
+			USES_TERMINAL
+		)
+	else()
+		message(
+			STATUS
+			"IgrOS tests: gcovr not found, no coverage target (ctest still collects .gcda)"
+		)
+	endif()
+endif()
