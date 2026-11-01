@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 ################################################################
 #
-#	Kernel analysis helper (Python 3.8+, standard library only)
+#	Kernel analysis helper (Python 3.9+, standard library only)
+#	Output files (and warnings build directory) must be inside the working directory
 #
 #	warnings	- recompile C++ sources of compile_commands.json into a temporary
 #			  directory and save compiler diagnostics (build log isn't kept)
@@ -462,15 +463,18 @@ def make_report(args):
 	configs = [parse_build(findings, spec, source_dir) for spec in args.builds]
 
 	items = sorted(findings.items.values(), key=lambda item: (item["file"], item["line"], -SEVERITY_RANK[item["severity"]]))
+	summaries = [config_summary(name, build_dir, items) for name, build_dir in configs]
 	data = {
 		"id":		str(time.time_ns()),
 		"title":	"IgrOS-Kernel analysis",
 		"status":	args.status or "",
 		"dataFile":	output.stem + ".data.js",
-		"generated":	datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
+		# UTC with offset: the page shows it in viewer's local time (CI runners are UTC)
+		"generated":	datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
 		"revision":	git_revision(source_dir),
-		"configs":	[config_summary(name, build_dir, items) for name, build_dir in configs],
-		"tools":	list(TOOLS),
+		"configs":	summaries,
+		# Tools that ran for some config (CI leaves CodeQL to code scanning: no empty column)
+		"tools":	[tool for tool in TOOLS if any(summary["tools"][tool]["ran"] for summary in summaries)],
 		"tests":	tests_summary(Path(args.tests).resolve() if args.tests else None, output.parent),
 		"findings":	items,
 		"sources":	snippets(items, source_dir)
@@ -639,8 +643,11 @@ function header() {
 	document.title = (D.status ? "⏳ " : "") + D.title;
 	$("title").textContent = D.title;
 	const lost = Date.now() - live.seen > 10000;
+	// Viewer's local time, UTC on hover
+	const generated = new Date(D.generated);
+	const local = generated.toLocaleString(undefined, { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", timeZoneName: "short" });
 	$("meta").innerHTML = [
-		"Generated " + esc(D.generated),
+		`<span title="${esc(generated.toISOString().replace("T", " ").slice(0, 16))} UTC">Generated ${esc(local)}</span>`,
 		D.revision && "revision " + esc(D.revision),
 		D.status && `<span class="pill warning">${esc(D.status)}</span>`,
 		`<span class="live${lost ? " lost" : ""}" title="${lost ? "Data file not found: showing last loaded results" : "Page updates when the report is regenerated"}">${lost ? "not updating" : "live"}</span>`
@@ -832,6 +839,15 @@ setInterval(poll, 3000);
 
 # ---------------------------------------------------------------- main
 
+# Command line paths that are written (or compiled from) must be inside the working directory:
+# a mistyped or crafted argument can't overwrite files elsewhere
+def working_path(value):
+	path = Path(value).resolve()
+	if not path.is_relative_to(Path.cwd().resolve()):
+		raise SystemExit(f"analysis.py: path outside working directory: {value}")
+	return path
+
+
 def main():
 	parser = argparse.ArgumentParser(description="IgrOS-Kernel analysis helper")
 	commands = parser.add_subparsers(dest="command", required=True)
@@ -850,7 +866,10 @@ def main():
 
 	args = parser.parse_args()
 	if args.command == "warnings":
-		return collect_warnings(Path(args.build_dir), Path(args.output))
+		return collect_warnings(working_path(args.build_dir), working_path(args.output))
+	args.output = working_path(args.output)
+	if args.markdown:
+		args.markdown = working_path(args.markdown)
 	return make_report(args)
 
 

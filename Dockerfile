@@ -43,6 +43,26 @@ ENV CCACHE_DIR=/home/igros/kernel/.ccache
 ENTRYPOINT ["/bin/sh", "-c", "set -e; preset=\"linux-$1-$0-${2:-debug}\"; cmake --preset=\"config-$preset\"; cmake --build --preset=\"build-$preset\" --target all --parallel; cmake --build --preset=\"build-$preset\" --target install; ccache -s"]
 
 
+# CodeQL bundle for analysis stage: Docker fetches it over HTTPS and verifies the
+# pinned checksum, unpacked here so the archive doesn't stay in an analysis layer
+FROM ubuntu:26.04 AS codeql
+
+# CodeQL release (C/C++ bundle: CLI and query packs)
+ARG CODEQL_VERSION=2.27.2
+ARG CODEQL_SHA256=638338a6489c4229c06012239f570dd76992b4ed862c1a7922d46496622a72ca
+ADD --checksum=sha256:${CODEQL_SHA256} \
+	"https://github.com/github/codeql-action/releases/download/codeql-bundle-v${CODEQL_VERSION}/codeql-bundle-cpp-linux64.tar.zst" \
+	/tmp/codeql.tar.zst
+
+# Bundle files are 0600 of the release builder: keep them readable for any (host) UID
+# hadolint ignore=DL3008
+RUN \
+	apt-get update && \
+	apt-get install -y --no-install-recommends zstd && \
+	tar --zstd --no-same-owner -xf /tmp/codeql.tar.zst -C /opt && \
+	chmod -R a+rX /opt/codeql
+
+
 # Analysis (see config/script/analysis.sh): toolchain + static analyzers,
 # coverage and QEMU for the UBSan boot check
 FROM toolchain AS analysis
@@ -58,27 +78,15 @@ RUN \
 		ca-certificates \
 		clang-tidy \
 		cppcheck \
-		curl \
 		gcovr \
 		python3 \
-		qemu-system-x86 \
-		zstd && \
+		qemu-system-x86 && \
 	apt-get clean && \
 	rm -rf /var/lib/apt/lists/*
 
-# CodeQL CLI with C/C++ query packs (pinned bundle, checksum verified)
-ARG CODEQL_VERSION=2.27.2
-ARG CODEQL_SHA256=638338a6489c4229c06012239f570dd76992b4ed862c1a7922d46496622a72ca
-# Bundle files are 0600 of the release builder: keep them readable for any (host) UID
-RUN \
-	curl -fsSL -o /tmp/codeql.tar.zst \
-		"https://github.com/github/codeql-action/releases/download/codeql-bundle-v${CODEQL_VERSION}/codeql-bundle-cpp-linux64.tar.zst" && \
-	printf '%s  %s\n' "${CODEQL_SHA256}" /tmp/codeql.tar.zst > /tmp/codeql.sha256 && \
-	sha256sum -c /tmp/codeql.sha256 && \
-	tar --zstd --no-same-owner -xf /tmp/codeql.tar.zst -C /opt && \
-	chmod -R a+rX /opt/codeql && \
-	ln -s /opt/codeql/codeql /usr/local/bin/codeql && \
-	rm /tmp/codeql.tar.zst /tmp/codeql.sha256
+# CodeQL CLI with C/C++ query packs (unpacked bundle from codeql stage)
+COPY --from=codeql /opt/codeql /opt/codeql
+RUN ln -s /opt/codeql/codeql /usr/local/bin/codeql
 
 # Run as unprivileged user by default (docker-compose overrides it with host UID/GID)
 USER ubuntu
