@@ -13,6 +13,7 @@
 
 // C++
 #include <bit>
+#include <cstddef>
 #include <cstdint>
 // IgrOS-Kernel arch
 #include <arch/x86/native.hpp>
@@ -178,6 +179,9 @@ static void testDoubleFaultTask() {
 // Task state segment: three distinct aligned interrupt stacks, no ring stacks, no I/O bitmap
 static void testTaskStateSegment() {
 	const auto &segment {tss::init()};
+	// Quad fields are naturally aligned (packed layout puts them at offsets 4 + 8n)
+	IGROS_CHECK(0 == ((std::bit_cast<std::uintptr_t>(&segment) + offsetof(tss::segment_t, ist)) % alignof(std::uint64_t)));
+	IGROS_CHECK(0 == ((std::bit_cast<std::uintptr_t>(&segment) + offsetof(tss::segment_t, rsp)) % alignof(std::uint64_t)));
 	for (auto index {0U}; index < 3U; ++index) {
 		IGROS_CHECK(0 != segment.ist[index]);
 		IGROS_CHECK(0 == (segment.ist[index] % 16));
