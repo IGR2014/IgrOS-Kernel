@@ -82,8 +82,7 @@ RUN \
 	apt-get install -y --no-install-recommends ca-certificates && \
 	bash /tmp/llvm/llvm-apt.sh "${LLVM_VERSION}" /tmp/llvm/llvm.asc && \
 	apt-get update && \
-	apt-get install -y --no-install-recommends \
-		clang-tidy-${LLVM_VERSION} \
+	apt-get install -y --no-install-recommends "clang-tidy-${LLVM_VERSION}" \
 		cppcheck \
 		gcovr \
 		python3 \
