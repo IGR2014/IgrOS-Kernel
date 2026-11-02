@@ -79,10 +79,10 @@ project(
 include(CheckCompiler)
 # Enable CCache
 include(EnableCCache)
-# Enable Doxygen
-include(EnableDoxygen)
 # Enable Analysis (ClangTidy, strict warnings, UBSan, Cppcheck/CodeQL targets)
 include(EnableAnalysis)
+# Enable Doxygen (warnings go to analysis reports directory)
+include(EnableDoxygen)
 
 # Enable CTest
 enable_testing()

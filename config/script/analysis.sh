@@ -6,11 +6,12 @@
 #	For each <compiler>:<arch> (default: all four) configures a debug build with
 #	strict warnings and UBSan (trap mode), builds and installs it, boots it in
 #	QEMU (a CPU exception, e.g. UBSan trap, is resolved to a source line) and
-#	runs compiler warnings, ClangTidy, Cppcheck and CodeQL report targets.
+#	runs compiler warnings, ClangTidy, Cppcheck, Doxygen and CodeQL report targets.
 #	Then host unit tests with coverage and ClangTidy over them, then the report.
 #
 #	Usage: analysis.sh [<clang++|g++>:<i386|x86_64> ...]
-#	Result: build/analysis/index.html, short summary.md, finding counts in counts.json
+#	Result: build/analysis/index.html, short summary.md, finding counts in counts.json,
+#	documentation of the first config in build/analysis/docs
 #	(configs in build/analysis/<compiler>-<arch>)
 #
 #	Environment:
@@ -113,7 +114,7 @@ for config in "${CONFIGS[@]}"; do
 	rm -rf "${OUT}/${name}/reports"
 	mkdir -p "${OUT}/${name}/reports"
 done
-rm -rf "${tests}/reports"
+rm -rf "${tests}/reports" "${OUT}/docs"
 mkdir -p "${tests}/reports"
 report "running: ${BUILDS[0]%%=*} (1/${#BUILDS[@]})" > /dev/null
 
@@ -145,6 +146,11 @@ for index in "${!CONFIGS[@]}"; do
 			step "${reports}" "${target}" cmake --build "${build}" --target "${target}"
 		fi
 	done
+	# Documentation: doc errors of every config (architecture code differs), first config's
+	# HTML next to the report
+	if grep -q "^documentation:" <<< "${targets}"; then
+		step "${reports}" doxygen cmake --build "${build}" --target documentation 			&& [[ "${index}" -eq 0 ]] 			&& rm -rf "${OUT}/docs" 			&& cp -r "${build}/docs/html" "${OUT}/docs"
+	fi
 	if grep -q "^codeql:" <<< "${targets}" \
 		&& { [[ "${CODEQL}" == "all" ]] || { [[ "${CODEQL}" == "first" ]] && [[ "${index}" -eq 0 ]]; }; }; then
 		step "${reports}" codeql cmake --build "${build}" --target codeql

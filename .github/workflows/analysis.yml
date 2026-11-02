@@ -67,7 +67,7 @@ jobs:
       with:
         fetch-depth: 0
 
-    # Install dependencies (toolchain, ISO tools, QEMU, analyzers, coverage);
+    # Install dependencies (toolchain, ISO tools, QEMU, analyzers, coverage, Doxygen);
     # ClangTidy from apt.llvm.org (same version as analysis image in Dockerfile)
     - name: 'Install Dependencies'
       # Stalled apt mirror: phases time out and retry (ci-apt.sh) instead of hanging the job
@@ -78,8 +78,8 @@ jobs:
       run: |
         sudo bash config/script/llvm-apt.sh "${LLVM_VERSION}"
         bash config/script/ci-apt.sh \
-          clang "clang-tidy-${LLVM_VERSION}" cmake cppcheck g++-multilib gcc-multilib gcovr grub-common grub-pc-bin \
-          lld mtools ninja-build python3 qemu-system-x86 xorriso
+          clang "clang-tidy-${LLVM_VERSION}" cmake cppcheck doxygen g++-multilib gcc-multilib gcovr graphviz \
+          grub-common grub-pc-bin lld mtools ninja-build python3 qemu-system-x86 xorriso
         sudo ln -sf "/usr/bin/clang-tidy-${LLVM_VERSION}" /usr/local/bin/clang-tidy
         sudo ln -sf "/usr/bin/run-clang-tidy-${LLVM_VERSION}" /usr/local/bin/run-clang-tidy
 
@@ -90,7 +90,8 @@ jobs:
       run: |
         bash config/script/analysis.sh
 
-    # Report site: page, its data file and the coverage report it links to (not build directories)
+    # Report site: page, its data file, the coverage report and documentation it links to
+    # (not build directories)
     - name: 'Collect Report'
       if: success() || failure()
       shell: bash
@@ -99,6 +100,7 @@ jobs:
         mkdir -p site/tests/reports
         cp build/analysis/index.html build/analysis/index.data.js site/
         [[ -d build/analysis/tests/reports/coverage ]] && cp -r build/analysis/tests/reports/coverage site/tests/reports/
+        [[ -d build/analysis/docs ]] && cp -r build/analysis/docs site/docs
         exit 0
 
     # Master: Pages artifact (Deploy job publishes it)

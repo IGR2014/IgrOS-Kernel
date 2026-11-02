@@ -123,6 +123,7 @@ Coverage is reported to Codacy and SonarCloud. Locally, a coverage build of the 
 | `--target cppcheck`         | Cppcheck over the compile database (inconclusive, exhaustive) → `cppcheck-report.txt`                      |
 | `--target codeql`           | CodeQL database from a separate clean build → `codeql-results.sarif` (needs `codeql` CLI)                 |
 | `--target compiler-warnings`| Compiler diagnostics of all C++ sources, recompiled to a temporary directory → `compiler-warnings.txt`     |
+| `--target documentation`    | Doxygen HTML of kernel sources (architecture of the build, README as main page) → `<build dir>/docs/html`; documentation errors → `reports/doxygen-warnings.txt` (needs `doxygen`, `dot` for diagrams) |
 | `--target analysis-report`  | HTML page with findings of the reports above → `index.html` (needs Python 3)                             |
 
 ```sh
@@ -134,11 +135,15 @@ cmake --build --preset build-linux-clang++-x86_64-debug --target cppcheck
 
 An open report page updates itself whenever the report is regenerated (it reloads `index.data.js`), also while `analysis.sh` is still running.
 
-In CI the [Analysis workflow](./.github/workflows/analysis.yml) runs `analysis.sh` (CodeQL goes to code scanning instead) and deploys the master report to GitHub Pages ([igr2014.github.io/IgrOS-Kernel](https://igr2014.github.io/IgrOS-Kernel/)); a pull request gets the report as a workflow artifact (kept 14 days), linked from a summary comment in the PR. The code is kept free of findings, so any finding fails the workflow (after the report is published), as do a config that doesn't build or boot and failing host tests. A finding that doesn't apply is suppressed where it is, with a reason (`// NOLINT(<check>): <reason>`, `// cppcheck-suppress <id>`); a check that doesn't fit the kernel at all is disabled in `.clang-tidy` with the reason next to it.
+In CI the [Analysis workflow](./.github/workflows/analysis.yml) runs `analysis.sh` (CodeQL goes to code scanning instead) and deploys the master report to GitHub Pages ([igr2014.github.io/IgrOS-Kernel](https://igr2014.github.io/IgrOS-Kernel/)) with the documentation ([/docs/](https://igr2014.github.io/IgrOS-Kernel/docs/)); a pull request gets the report as a workflow artifact (kept 14 days), linked from a summary comment in the PR. The code is kept free of findings, so any finding fails the workflow (after the report is published), as do a config that doesn't build or boot and failing host tests. A finding that doesn't apply is suppressed where it is, with a reason (`// NOLINT(<check>): <reason>`, `// cppcheck-suppress <id>`); a check that doesn't fit the kernel at all is disabled in `.clang-tidy` with the reason next to it.
 
 A UBSan trap before the IDT is loaded ends in a triple fault without a message. `analysis.sh` resolves it into the report; by hand, boot with `qemu-system-x86_64 ... -no-reboot -d int`, take `IP=` of the `v=06` line and resolve it with `addr2line -f -C -i -e kernel.bin <IP>`.
 
 ASan and gcov coverage need a hosted runtime the kernel doesn't have: coverage comes from the host unit tests, SonarCloud and Codacy run in CI.
+
+### Documentation
+
+Declarations are documented with Doxygen comments: `/// @brief`, `@param`, `@tparam` and `@return` above functions and types, `///<` after fields, constants and enumerators (comments inside function bodies stay `//`); namespaces are described in [`config/doxygen/namespaces.dox`](./config/doxygen/namespaces.dox). `cmake --build <build dir> --target documentation` builds the HTML; CI publishes it at [igr2014.github.io/IgrOS-Kernel/docs](https://igr2014.github.io/IgrOS-Kernel/docs/), and documentation errors (wrong parameter names, broken references) are analysis findings like other warnings.
 
 ---
 

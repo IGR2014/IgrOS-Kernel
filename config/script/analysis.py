@@ -67,6 +67,7 @@ TOOLS = {
 	"compiler":	"compiler-warnings.txt",
 	"clang-tidy":	"clang-tidy-report.txt",
 	"cppcheck":	"cppcheck-report.txt",
+	"doxygen":	"doxygen-warnings.txt",
 	"codeql":	"codeql-results.sarif",
 	"boot":		"boot.log"
 }
@@ -448,7 +449,7 @@ def parse_build(findings, spec, source_dir):
 		name = f"{cache.get('CMAKE_CXX_COMPILER_ID', '').lower() or 'kernel'}-{build_dir.name}"
 	reports = build_dir / "reports"
 	# Paths in compiler/ClangTidy output are relative to build directory, Cppcheck runs in sources
-	for tool, base in (("compiler", build_dir), ("clang-tidy", build_dir), ("cppcheck", source_dir)):
+	for tool, base in (("compiler", build_dir), ("clang-tidy", build_dir), ("cppcheck", source_dir), ("doxygen", source_dir)):
 		report = reports / TOOLS[tool]
 		if report.exists():
 			findings.parse_diagnostics(report, tool, name, base)
@@ -485,6 +486,8 @@ def make_report(args):
 		# Tools that ran for some config (CI leaves CodeQL to code scanning: no empty column)
 		"tools":	[tool for tool in TOOLS if any(summary["tools"][tool]["ran"] for summary in summaries)],
 		"tests":	tests_summary(Path(args.tests).resolve() if args.tests else None, output.parent),
+		# Doxygen documentation next to the page (analysis.sh copies it)
+		"docs":		"docs/index.html" if (output.parent / "docs" / "index.html").exists() else "",
 		"findings":	items,
 		"sources":	snippets(items, source_dir)
 	}
@@ -660,6 +663,7 @@ function header() {
 	$("meta").innerHTML = [
 		`<span title="${esc(generated.toISOString().replace("T", " ").slice(0, 16))} UTC">Generated ${esc(local)}</span>`,
 		D.revision && "revision " + esc(D.revision),
+		D.docs && `<a href="${esc(D.docs)}">documentation</a>`,
 		D.status && `<span class="pill warning">${esc(D.status)}</span>`,
 		`<span class="live${lost ? " lost" : ""}" title="${lost ? "Data file not found: showing last loaded results" : "Page updates when the report is regenerated"}">${lost ? "not updating" : "live"}</span>`
 	].filter(Boolean).join(" · ");
