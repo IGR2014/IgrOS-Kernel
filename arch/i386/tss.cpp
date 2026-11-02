@@ -1,14 +1,13 @@
 ////////////////////////////////////////////////////////////////
-//
-//	Task state segment (i386)
-//
-//	File:	tss.cpp
-//	Date:	22 Oct 2026
-//
-//	Copyright (c) 2017 - 2026, Igor Baklykov
-//	All rights reserved.
-//
-//
+///
+///	@file
+///	@brief		Task state segment (i386)
+///	@date		22 Oct 2026
+///
+///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
+///			All rights reserved.
+///	@author		Igor Baklykov
+///
 
 
 // C++
@@ -27,11 +26,11 @@
 namespace igros::i386 {
 
 
-	// Task state segments
+	/// @brief Task state segments
 	namespace {
 
 
-		// Empty task state segment (no I/O permission bitmap: offset past segment limit)
+		/// @brief Empty task state segment (no I/O permission bitmap: offset past segment limit)
 		constexpr tss::segment_t EMPTY_SEGMENT {
 			.link = 0_u32, .esp0 = 0_u32, .ss0 = 0_u32, .esp1 = 0_u32, .ss1 = 0_u32, .esp2 = 0_u32, .ss2 = 0_u32,
 			.cr3 = 0_u32, .eip = 0_u32, .eflags = 0_u32,
@@ -39,15 +38,15 @@ namespace igros::i386 {
 			.es = 0_u32, .cs = 0_u32, .ss = 0_u32, .ds = 0_u32, .fs = 0_u32, .gs = 0_u32, .ldt = 0_u32,
 			.trap = 0_u16, .iomapBase = static_cast<igros_word_t>(sizeof(tss::segment_t)),
 		};
-		// Kernel task
+		/// @brief Kernel task
 		constinit tss::segment_t kernelSegment		{EMPTY_SEGMENT};
-		// Double fault task
+		/// @brief Double fault task
 		constinit tss::segment_t doubleFaultSegment	{EMPTY_SEGMENT};
-		// Double fault task stack
+		/// @brief Double fault task stack
 		alignas(16) constinit std::array<igros_byte_t, tss::STACK_SIZE> doubleFaultStack {};
 
 
-		// Double fault task: interrupted state was saved in kernel task state segment
+		/// @brief Double fault task: interrupted state was saved in kernel task state segment
 		[[noreturn]]
 		void doubleFaultTask() noexcept {
 			const auto &state {tss::kernel()};

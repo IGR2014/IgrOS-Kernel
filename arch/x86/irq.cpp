@@ -1,14 +1,13 @@
 ////////////////////////////////////////////////////////////////
-//
-//	Interrupts low-level operations
-//
-//	File:	irq.cpp
-//	Date:	16 Dec 2022
-//
-//	Copyright (c) 2017 - 2022, Igor Baklykov
-//	All rights reserved.
-//
-//
+///
+///	@file
+///	@brief		Interrupts low-level operations
+///	@date		16 Dec 2022
+///
+///	@copyright	Copyright (c) 2017 - 2022, Igor Baklykov
+///			All rights reserved.
+///	@author		Igor Baklykov
+///
 
 
 // IgrOS-Kernel arch x86
@@ -26,9 +25,9 @@ extern "C" {
 #endif	// __cplusplus
 
 
-	// Enable interrupts
+	/// @brief Enable interrupts
 	void	irqEnable() noexcept;
-	// Disable interrupts
+	/// @brief Disable interrupts
 	void	irqDisable() noexcept;
 
 

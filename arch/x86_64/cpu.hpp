@@ -1,14 +1,13 @@
 ////////////////////////////////////////////////////////////////
-//
-//	CPU operations
-//
-//	File:	cpu.hpp
-//	Date:	13 Mar 2023
-//
-//	Copyright (c) 2017 - 2022, Igor Baklykov
-//	All rights reserved.
-//
-//
+///
+///	@file
+///	@brief		CPU operations
+///	@date		13 Mar 2023
+///
+///	@copyright	Copyright (c) 2017 - 2022, Igor Baklykov
+///			All rights reserved.
+///	@author		Igor Baklykov
+///
 
 
 #pragma once
@@ -28,7 +27,7 @@ extern "C" {
 #endif	// __cplusplus
 
 
-	// Halt CPU
+	/// @brief Halt CPU
 	[[noreturn]]
 	void	cpuHalt() noexcept;
 
@@ -44,46 +43,47 @@ extern "C" {
 namespace igros::x86_64 {
 
 
-	// CPU representation
+	/// @brief CPU representation
 	class cpu final {
 
-		// Copy c-tor
+		/// @brief Copy c-tor
 		cpu(const cpu &other) = delete;
-		// Copy assignment
+		/// @brief Copy assignment
 		cpu& operator=(const cpu &other) = delete;
 
-		// Move c-tor
+		/// @brief Move c-tor
 		cpu(cpu &&other) = delete;
-		// Move assignment
+		/// @brief Move assignment
 		cpu& operator=(cpu &&other) = delete;
 
 
 	public:
 
-		// Default c-tor
+		/// @brief Default c-tor
 		cpu() noexcept = default;
-		// D-tor
+		/// @brief D-tor
 		~cpu() noexcept = default;
 
-		// Halt CPU
+		/// @brief Halt CPU
 		[[noreturn]]
 		static void	halt() noexcept;
 
-		// Dump CPU registers
+		/// @brief Dump CPU registers
+		/// @param regs Registers saved on interrupt
 		static void	dumpRegisters(const register_t* const regs) noexcept;
 
 
 	};
 
 
-	// Halt CPU
+	/// @brief Halt CPU
 	[[noreturn]]
 	inline void cpu::halt() noexcept {
 		::cpuHalt();
 	}
 
 
-	// Dump registers
+	/// @brief Dump registers
 	inline void cpu::dumpRegisters(const register_t* const regs) noexcept {
 		// 64-bit register value as format "%llx" argument
 		constexpr auto r = [](const igros_quad_t value) constexpr noexcept {

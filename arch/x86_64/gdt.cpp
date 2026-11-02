@@ -1,14 +1,13 @@
 ////////////////////////////////////////////////////////////////
-//
-//	Global descriptor table low-level operations
-//
-//	File:	gdt.cpp
-//	Date:	22 Oct 2026
-//
-//	Copyright (c) 2017 - 2026, Igor Baklykov
-//	All rights reserved.
-//
-//
+///
+///	@file
+///	@brief		Global descriptor table low-level operations
+///	@date		22 Oct 2026
+///
+///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
+///			All rights reserved.
+///	@author		Igor Baklykov
+///
 
 
 // C++
@@ -26,15 +25,18 @@ extern "C" {
 #endif	// __cplusplus
 
 
-	// Reset segments to apply new GDT
+	/// @brief Reset segments to apply new GDT
 	void	gdtResetSegments() noexcept;
 
-	// Load GDT
+	/// @brief Load GDT
+	/// @param gdtPtr GDT pointer (size and address)
 	void	gdtLoad(const igros::x86_64::gdt::pointer_t* gdtPtr) noexcept;
-	// Store GDT
+	/// @brief Store GDT
+	/// @param gdtPtr Stored GDT pointer
 	void	gdtStore(igros::x86_64::gdt::pointer_t* const gdtPtr) noexcept;
 
-	// Load task register
+	/// @brief Load task register
+	/// @param selector TSS selector
 	void	tssLoad(const igros::igros_word_t selector) noexcept;
 
 

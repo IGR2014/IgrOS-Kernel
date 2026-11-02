@@ -1,14 +1,12 @@
 ////////////////////////////////////////////////////////////////
 ///
+///	@file
 ///	@brief		IgrOS version info
-///
-///	@file		kVersion.hpp
 ///	@date		21 Mar 2023
 ///
-///	@copyright	Copyright (c) 2017 - 2023,
+///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
 ///			All rights reserved.
 ///	@author		Igor Baklykov
-///
 ///
 
 

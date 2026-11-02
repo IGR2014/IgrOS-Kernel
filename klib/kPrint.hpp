@@ -1,14 +1,13 @@
 ////////////////////////////////////////////////////////////////
-//
-//	Kernel text print functions
-//
-//	File:	kPrint.hpp
-//	Date:	30 Oct 2026
-//
-//	Copyright (c) 2017 - 2026, Igor Baklykov
-//	All rights reserved.
-//
-//
+///
+///	@file
+///	@brief		Kernel text print functions
+///	@date		30 Oct 2026
+///
+///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
+///			All rights reserved.
+///	@author		Igor Baklykov
+///
 
 
 #pragma once
@@ -32,17 +31,23 @@
 namespace igros::klib {
 
 
-	// Integer representation types
+	/// @brief Integer representation types
 	enum class [[nodiscard("Radix value is meaningless if discarded")]] radix_t : igros_byte_t {
-		BIN	= 0x02_u8,			// (Base 2)	Binary integer format
-		OCT	= 0x08_u8,			// (Base 8)	Oct integer format
-		DEC	= 0x0A_u8,			// (Base 10)	Decimal integer format
-		HEX	= 0x10_u8,			// (Base 16)	Hexidemical integer format
+		BIN	= 0x02_u8,			///< (Base 2)	Binary integer format
+		OCT	= 0x08_u8,			///< (Base 8)	Oct integer format
+		DEC	= 0x0A_u8,			///< (Base 10)	Decimal integer format
+		HEX	= 0x10_u8,			///< (Base 16)	Hexidemical integer format
 	};
 
 
-	// Digits of unsigned value written to the end of buffer (no sign, no terminator)
-	// Buffer must fit all digits (std::numeric_limits<U>::digits for binary)
+	/// @brief Digits of unsigned value written to the end of buffer (no sign, no terminator)
+	/// Buffer must fit all digits (std::numeric_limits<U>::digits for binary)
+	/// @tparam U Unsigned integer type
+	/// @param buffer Output buffer (digits end at its end)
+	/// @param value Value
+	/// @param radix Radix
+	/// @param upper Uppercase hexadecimal digits
+	/// @return View of written digits (inside buffer)
 	template<std::unsigned_integral U>
 	[[nodiscard]]
 	constexpr auto kdigits(const std::span<char> buffer, U value, const radix_t radix, const bool upper = false) noexcept -> std::string_view {
@@ -94,15 +99,27 @@ namespace igros::klib {
 	}
 
 
-	// Kernel vsnprintf function (returns written length without terminator)
+	/// @brief Kernel vsnprintf function (returns written length without terminator)
+	/// @param buffer Output buffer
+	/// @param size Buffer size (output is clipped and always terminated)
+	/// @param format printf-like format
+	/// @param list Arguments
+	/// @return Written length without terminator
 	[[gnu::format(printf, 3, 0)]]
 	auto	kvsnprintf(char* const buffer, const igros_usize_t size, const char* const format, std::va_list list) noexcept -> igros_usize_t;
 
-	// Kernel snprintf function (returns written length without terminator)
+	/// @brief Kernel snprintf function (returns written length without terminator)
+	/// @param buffer Output buffer
+	/// @param size Buffer size (output is clipped and always terminated)
+	/// @param format printf-like format
+	/// @param ... Arguments
+	/// @return Written length without terminator
 	[[gnu::format(printf, 3, 4)]]
 	auto	ksnprintf(char* const buffer, const igros_usize_t size, const char* const format, ...) noexcept -> igros_usize_t;
 
-	// Kernel printf function (arguments are checked against format at compile time)
+	/// @brief Kernel printf function (arguments are checked against format at compile time)
+	/// @param format printf-like format (line feed is added)
+	/// @param ... Arguments
 	[[gnu::format(printf, 1, 2)]]
 	void	kprintf(const char* const format, ...) noexcept;
 

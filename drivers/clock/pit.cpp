@@ -1,14 +1,13 @@
 ////////////////////////////////////////////////////////////////
-//
-//	Programmable interrupt timer
-//
-//	File:	pit.cpp
-//	Date:	30 Oct 2026
-//
-//	Copyright (c) 2017 - 2026, Igor Baklykov
-//	All rights reserved.
-//
-//
+///
+///	@file
+///	@brief		Programmable interrupt timer
+///	@date		30 Oct 2026
+///
+///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
+///			All rights reserved.
+///	@author		Igor Baklykov
+///
 
 
 // IgrOS-Kernel arch
@@ -28,24 +27,24 @@ namespace igros::arch {
 
 
 	// PIT ports
-	constexpr auto PIT_CONTROL	{static_cast<port_t>(0x0043_u16)};
-	constexpr auto PIT_CHANNEL_0	{static_cast<port_t>(0x0040_u16)};
+	constexpr auto PIT_CONTROL	{static_cast<port_t>(0x0043_u16)};	///< Mode/command register
+	constexpr auto PIT_CHANNEL_0	{static_cast<port_t>(0x0040_u16)};	///< Channel 0 data port (system timer)
 	// (channels 1 and 2 - ports 0x41 and 0x42 - are not used)
 
 
-	// Anonymous namespace
+	/// @brief Anonymous namespace
 	namespace {
 
-		// PIT driver state
+		/// @brief PIT driver state
 		struct pit_t {
-			igros_usize_t	ticks		{0_usize};	// IRQ ticks count
-			igros_word_t	frequency	{0_u16};	// Current frequency
-			igros_word_t	divisor		{1_u16};	// Current divisor
+			igros_usize_t	ticks		{0_usize};	///< IRQ ticks count
+			igros_word_t	frequency	{0_u16};	///< Current frequency
+			igros_word_t	divisor		{1_u16};	///< Current divisor
 		};
 
 	}	// namespace
 
-	// PIT state
+	/// @brief PIT state
 	constinit static pit_t pit {};
 
 
@@ -94,7 +93,8 @@ namespace igros::arch {
 	}
 
 
-	// PIT interrupt (#0) handler
+	/// @brief PIT interrupt (#0) handler
+	/// @param regs Registers saved on interrupt (unused)
 	static void pitInterruptHandler([[maybe_unused]] const register_t* regs) noexcept {
 		// Count every tick (pitGetTicks() relies on it, regardless of output below)
 		++pit.ticks;

@@ -1,14 +1,13 @@
 ////////////////////////////////////////////////////////////////
-//
-//	Boot low-level main setup function
-//
-//	File:	boot.cpp
-//	Date:	30 Oct 2026
-//
-//	Copyright (c) 2017 - 2026, Igor Baklykov
-//	All rights reserved.
-//
-//
+///
+///	@file
+///	@brief		Boot low-level main setup function
+///	@date		30 Oct 2026
+///
+///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
+///			All rights reserved.
+///	@author		Igor Baklykov
+///
 
 
 // C++
@@ -33,11 +32,13 @@ extern "C" {
 
 
 	// Global constructors (from linker script)
-	extern const std::add_pointer_t<void ()>	_SECTION_INIT_ARRAY_START_[];
-	extern const std::add_pointer_t<void ()>	_SECTION_INIT_ARRAY_END_[];
+	extern const std::add_pointer_t<void ()>	_SECTION_INIT_ARRAY_START_[];	///< First global constructor
+	extern const std::add_pointer_t<void ()>	_SECTION_INIT_ARRAY_END_[];	///< Global constructors end
 
 
-	// Kernel main function (called from boot.s)
+	/// @brief Kernel main function (called from boot.s)
+	/// @param multibootAddress Physical address of multiboot information
+	/// @param magic Bootloader magic (multiboot check)
 	[[noreturn]]
 	void kmain(const igros::igros_usize_t multibootAddress, const igros::igros_dword_t magic) noexcept;
 

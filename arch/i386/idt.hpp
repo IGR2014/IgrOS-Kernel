@@ -1,14 +1,13 @@
 ////////////////////////////////////////////////////////////////
-//
-//	Interrupt descriptor table low-level operations
-//
-//	File:	idt.hpp
-//	Date:	22 Dec 2023
-//
-//	Copyright (c) 2017 - 2022, Igor Baklykov
-//	All rights reserved.
-//
-//
+///
+///	@file
+///	@brief		Interrupt descriptor table low-level operations
+///	@date		22 Dec 2023
+///
+///	@copyright	Copyright (c) 2017 - 2022, Igor Baklykov
+///			All rights reserved.
+///	@author		Igor Baklykov
+///
 
 
 #pragma once
@@ -31,20 +30,20 @@
 namespace igros::i386 {
 
 
-	// IDT structure
+	/// @brief IDT structure
 	class idt final {
 
-		// Number of IDT entries
+		/// @brief Number of IDT entries
 		constexpr static auto IDT_SIZE {256_usize};
 
-		// Copy c-tor
+		/// @brief Copy c-tor
 		idt(const idt &other) = delete;
-		// Copy assignment
+		/// @brief Copy assignment
 		auto	operator=(const idt &other) -> idt& = delete;
 
-		// Move c-tor
+		/// @brief Move c-tor
 		idt(idt &&other) = delete;
-		// Move assignment
+		/// @brief Move assignment
 		auto	operator=(idt &&other) -> idt& = delete;
 
 
@@ -52,52 +51,59 @@ namespace igros::i386 {
 
 #pragma pack(push, 1)
 
-		// IDT table entry
+		/// @brief IDT table entry
 		struct entry_t {
-			igros_word_t	offsetLow;	// Offset lower part (0..15)
-			igros_word_t	selector;	// Selectod from GDT/LDT
-			igros_byte_t	reserved;	// Must be zero
-			igros_byte_t	type;		// Type attributes
-			igros_word_t	offsetHigh;	// Offset higher part (16..31)
+			igros_word_t	offsetLow;	///< Offset lower part (0..15)
+			igros_word_t	selector;	///< Selectod from GDT/LDT
+			igros_byte_t	reserved;	///< Must be zero
+			igros_byte_t	type;		///< Type attributes
+			igros_word_t	offsetHigh;	///< Offset higher part (16..31)
 		};
 
-		// IDT table pointer
+		/// @brief IDT table pointer
 		struct pointer_t {
-			igros_word_t	size;		// IDT size
-			const entry_t*	pointer;	// IDT pointer
+			igros_word_t	size;		///< IDT size
+			const entry_t*	pointer;	///< IDT pointer
 		};
 
 #pragma pack(pop)
 
-		// IDT table type
+		/// @brief IDT table type
 		using table_t	= std::array<entry_t, IDT_SIZE>;
 
-		// IDT offset type
+		/// @brief IDT offset type
 		using offset_t	= std::add_pointer_t<void ()>;
 
-		// Default c-tor
+		/// @brief Default c-tor
 		idt() noexcept = default;
-		// D-tor
+		/// @brief D-tor
 		~idt() noexcept = default;
 
-		// Make IDT entry
+		/// @brief Make IDT entry
+		/// @param handle Handler address
+		/// @param selector Code segment selector
+		/// @param type Gate type and attributes
+		/// @return IDT entry
 		[[nodiscard]]
 		static auto	setEntry(const offset_t handle, const igros_word_t selector, const igros_byte_t type) noexcept -> entry_t;
-		// Calc IDT size
+		/// @brief Calc IDT size
+		/// @param table IDT
+		/// @return IDT size in bytes - 1 (IDT pointer limit)
 		[[nodiscard]]
 		constexpr static auto	calcSize(const table_t &table) noexcept -> igros_word_t;
 
-		// Set IDT pointer
+		/// @brief Set IDT pointer
+		/// @param pointer IDT pointer to load
 		static void		setPointer(const pointer_t &pointer) noexcept;
 
-		// Init IDT table
+		/// @brief Init IDT table
 		static void		init() noexcept;
 
 
 	};
 
 
-	// Make IDT entry
+	/// @brief Make IDT entry
 	[[nodiscard]]
 	inline auto idt::setEntry(const offset_t handle, const igros_word_t selector, const igros_byte_t type) noexcept -> entry_t {
 		// Handler address
@@ -111,7 +117,7 @@ namespace igros::i386 {
 		};
 	}
 
-	// Calculate IDT size
+	/// @brief Calculate IDT size
 	[[nodiscard]]
 	constexpr auto idt::calcSize(const table_t &table) noexcept -> igros_word_t {
 		return static_cast<igros_word_t>(table.size() * sizeof(entry_t)) - 1_u16;

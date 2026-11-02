@@ -1,14 +1,13 @@
 ////////////////////////////////////////////////////////////////
-//
-//	IO low-level port operations
-//
-//	File:	io.hpp
-//	Date:	16 Dec 2022
-//
-//	Copyright (c) 2017 - 2022, Igor Baklykov
-//	All rights reserved.
-//
-//
+///
+///	@file
+///	@brief		IO low-level port operations
+///	@date		16 Dec 2022
+///
+///	@copyright	Copyright (c) 2017 - 2022, Igor Baklykov
+///			All rights reserved.
+///	@author		Igor Baklykov
+///
 
 
 #pragma once
@@ -22,7 +21,7 @@
 namespace igros::x86 {
 
 
-	// Define port data type which is 16bit word
+	/// @brief Define port data type which is 16bit word
 	using port_t	= igros_word_t;
 
 
@@ -36,21 +35,33 @@ extern "C" {
 #endif	// __cplusplus
 
 
-	// Read byte from port
+	/// @brief Read byte from port
+	/// @param addr Port
+	/// @return Read byte
 	[[nodiscard]]
 	auto	portRead8(const igros::x86::port_t addr) noexcept -> igros::igros_byte_t;
-	// Read word from port
+	/// @brief Read word from port
+	/// @param addr Port
+	/// @return Read word
 	[[nodiscard]]
 	auto	portRead16(const igros::x86::port_t addr) noexcept -> igros::igros_word_t;
-	// Read long from port
+	/// @brief Read long from port
+	/// @param addr Port
+	/// @return Read long
 	[[nodiscard]]
 	auto	portRead32(const igros::x86::port_t addr) noexcept -> igros::igros_dword_t;
 
-	// Write byte to port
+	/// @brief Write byte to port
+	/// @param addr Port
+	/// @param value Written byte
 	void	portWrite8(const igros::x86::port_t addr, const igros::igros_byte_t value) noexcept;
-	// Write word to port
+	/// @brief Write word to port
+	/// @param addr Port
+	/// @param value Written word
 	void	portWrite16(const igros::x86::port_t addr, const igros::igros_word_t value) noexcept;
-	// Write long to port
+	/// @brief Write long to port
+	/// @param addr Port
+	/// @param value Written long
 	void	portWrite32(const igros::x86::port_t addr, const igros::igros_dword_t value) noexcept;
 
 
@@ -65,130 +76,154 @@ extern "C" {
 namespace igros::x86 {
 
 
-	// I/O structure
+	/// @brief I/O structure
 	class io final {
 
-		// Copy c-tor
+		/// @brief Copy c-tor
 		io(const io &other) = delete;
-		// Copy assignment
+		/// @brief Copy assignment
 		io& operator=(const io &other) = delete;
 
-		// Move c-tor
+		/// @brief Move c-tor
 		io(io &&other) = delete;
-		// Move assignment
+		/// @brief Move assignment
 		io& operator=(io &&other) = delete;
 
 
 	public:
 
-		// Default c-tor
+		/// @brief Default c-tor
 		io() noexcept = default;
-		// D-tor
+		/// @brief D-tor
 		~io() noexcept = default;
 
-		// Read byte from port
+		/// @brief Read byte from port
+		/// @param addr Port
+		/// @return Read byte
 		[[nodiscard]]
 		static auto	readPort8(const port_t addr) noexcept -> igros_byte_t;
-		// Read word from port
+		/// @brief Read word from port
+		/// @param addr Port
+		/// @return Read word
 		[[nodiscard]]
 		static auto	readPort16(const port_t addr) noexcept -> igros_word_t;
-		// Read long from port
+		/// @brief Read long from port
+		/// @param addr Port
+		/// @return Read long
 		[[nodiscard]]
 		static auto	readPort32(const port_t addr) noexcept -> igros_dword_t;
 
-		// Write byte to port
+		/// @brief Write byte to port
+		/// @param addr Port
+		/// @param value Written byte
 		static void	writePort8(const port_t addr, const igros_byte_t value) noexcept;
-		// Write word to port
+		/// @brief Write word to port
+		/// @param addr Port
+		/// @param value Written word
 		static void	writePort16(const port_t addr, const igros_word_t value) noexcept;
-		// Write long to port
+		/// @brief Write long to port
+		/// @param addr Port
+		/// @param value Written long
 		static void	writePort32(const port_t addr, const igros_dword_t value) noexcept;
 
-		// Read byte from memory
+		/// @brief Read byte from memory
+		/// @param addr Memory address (volatile access)
+		/// @return Read byte
 		[[nodiscard]]
 		static auto	readMemory8(const igros_byte_t* const addr) noexcept -> igros_byte_t;
-		// Read word from memory
+		/// @brief Read word from memory
+		/// @param addr Memory address (volatile access)
+		/// @return Read word
 		[[nodiscard]]
 		static auto	readMemory16(const igros_word_t* const addr) noexcept -> igros_word_t;
-		// Read long from memory
+		/// @brief Read long from memory
+		/// @param addr Memory address (volatile access)
+		/// @return Read long
 		[[nodiscard]]
 		static auto	readMemory32(const igros_dword_t* const addr) noexcept -> igros_dword_t;
 
-		// Write byte to memory
+		/// @brief Write byte to memory
+		/// @param addr Memory address (volatile access)
+		/// @param value Written byte
 		static void	writeMemory8(igros_byte_t* const addr, const igros_byte_t value) noexcept;
-		// Write word to memory
+		/// @brief Write word to memory
+		/// @param addr Memory address (volatile access)
+		/// @param value Written word
 		static void	writeMemory16(igros_word_t* const addr, const igros_word_t value) noexcept;
-		// Write long to memory
+		/// @brief Write long to memory
+		/// @param addr Memory address (volatile access)
+		/// @param value Written long
 		static void	writeMemory32(igros_dword_t* const addr, const igros_dword_t value) noexcept;
 
 
 	};
 
 
-	// Read byte from port
+	/// @brief Read byte from port
 	[[nodiscard]]
 	inline auto io::readPort8(const port_t addr) noexcept -> igros_byte_t {
 		return ::portRead8(addr);
 	}
 
-	// Read word from port
+	/// @brief Read word from port
 	[[nodiscard]]
 	inline auto io::readPort16(const port_t addr) noexcept -> igros_word_t {
 		return ::portRead16(addr);
 	}
 
-	// Read long from port
+	/// @brief Read long from port
 	[[nodiscard]]
 	inline auto io::readPort32(const port_t addr) noexcept -> igros_dword_t {
 		return ::portRead32(addr);
 	}
 
 
-	// Write byte to port
+	/// @brief Write byte to port
 	inline void io::writePort8(const port_t addr, const igros_byte_t value) noexcept {
 		::portWrite8(addr, value);
 	}
 
-	// Write word to port
+	/// @brief Write word to port
 	inline void io::writePort16(const port_t addr, const igros_word_t value) noexcept {
 		::portWrite16(addr, value);
 	}
 
-	// Write long to port
+	/// @brief Write long to port
 	inline void io::writePort32(const port_t addr, const igros_dword_t value) noexcept {
 		::portWrite32(addr, value);
 	}
 
 
-	// Read byte from memory
+	/// @brief Read byte from memory
 	[[nodiscard]]
 	inline auto io::readMemory8(const igros_byte_t* const addr) noexcept -> igros_byte_t {
 		return *addr;
 	}
 
-	// Read word from memory
+	/// @brief Read word from memory
 	[[nodiscard]]
 	inline auto io::readMemory16(const igros_word_t* const addr) noexcept -> igros_word_t {
 		return *addr;
 	}
 
-	// Read long from memory
+	/// @brief Read long from memory
 	[[nodiscard]]
 	inline auto io::readMemory32(const igros_dword_t* const addr) noexcept -> igros_dword_t {
 		return *addr;
 	}
 
 
-	// Write byte to memory
+	/// @brief Write byte to memory
 	inline void io::writeMemory8(igros_byte_t* const addr, const igros_byte_t value) noexcept {
 		*addr = value;
 	}
 
-	// Write word to memory
+	/// @brief Write word to memory
 	inline void io::writeMemory16(igros_word_t* const addr, const igros_word_t value) noexcept {
 		*addr = value;
 	}
 
-	// Write long to memory
+	/// @brief Write long to memory
 	inline void io::writeMemory32(igros_dword_t* const addr, const igros_dword_t value) noexcept {
 		*addr = value;
 	}

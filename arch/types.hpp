@@ -1,14 +1,13 @@
 ////////////////////////////////////////////////////////////////
-//
-//	Common C++ types redefinition
-//
-//	File:	types.hpp
-//	Date:	30 Oct 2026
-//
-//	Copyright (c) 2017 - 2026, Igor Baklykov
-//	All rights reserved.
-//
-//
+///
+///	@file
+///	@brief		Common C++ types redefinition
+///	@date		30 Oct 2026
+///
+///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
+///			All rights reserved.
+///	@author		Igor Baklykov
+///
 
 
 #pragma once
@@ -32,36 +31,27 @@ namespace igros {
 	/// @addtogroup Types
 	/// @{
 
-	//////////////////////////////////////
-	///
-	/// Signed integers
-	///
-	using	igros_sbyte_t		= std::int8_t;
-	using	igros_sword_t		= std::int16_t;
-	using	igros_sdword_t		= std::int32_t;
-	using	igros_squad_t		= std::int64_t;
+	// Signed integers
+	using	igros_sbyte_t		= std::int8_t;	///< 8-bit signed integer
+	using	igros_sword_t		= std::int16_t;	///< 16-bit signed integer
+	using	igros_sdword_t		= std::int32_t;	///< 32-bit signed integer
+	using	igros_squad_t		= std::int64_t;	///< 64-bit signed integer
 
-	//////////////////////////////////////
-	///
-	/// Unsigned integers
-	///
-	using	igros_byte_t		= std::uint8_t;
-	using	igros_word_t		= std::uint16_t;
-	using	igros_dword_t		= std::uint32_t;
-	using	igros_quad_t		= std::uint64_t;
+	// Unsigned integers
+	using	igros_byte_t		= std::uint8_t;	///< 8-bit unsigned integer
+	using	igros_word_t		= std::uint16_t;	///< 16-bit unsigned integer
+	using	igros_dword_t		= std::uint32_t;	///< 32-bit unsigned integer
+	using	igros_quad_t		= std::uint64_t;	///< 64-bit unsigned integer
 
-	//////////////////////////////////////
-	///
-	/// Floating-point reals
-	///
-	using	igros_real32_t		= float;
-	using	igros_real64_t		= double;
+	// Floating-point reals
+	using	igros_real32_t		= float;	///< 32-bit floating point
+	using	igros_real64_t		= double;	///< 64-bit floating point
 
 	// Size types
-	using	igros_usize_t		= std::size_t;
-	using	igros_ssize_t		= std::ptrdiff_t;
+	using	igros_usize_t		= std::size_t;	///< Unsigned size
+	using	igros_ssize_t		= std::ptrdiff_t;	///< Signed size (difference)
 
-	// Common pointer type
+	/// @brief Common pointer type
 	using	igros_pointer_t		= std::add_pointer_t<void>;
 
 

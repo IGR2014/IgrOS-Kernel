@@ -1,14 +1,13 @@
 ////////////////////////////////////////////////////////////////
-//
-//	Exceptions low-level operations
-//
-//	File:	exceptions.cpp
-//	Date:	16 Mar 2023
-//
-//	Copyright (c) 2017 - 2022, Igor Baklykov
-//	All rights reserved.
-//
-//
+///
+///	@file
+///	@brief		Exceptions low-level operations
+///	@date		16 Mar 2023
+///
+///	@copyright	Copyright (c) 2017 - 2022, Igor Baklykov
+///			All rights reserved.
+///	@author		Igor Baklykov
+///
 
 
 // IgrOS-Kernel arch x86

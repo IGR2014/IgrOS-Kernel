@@ -1,14 +1,13 @@
 ////////////////////////////////////////////////////////////////
-//
-//	CPU operations
-//
-//	File:	cpu.hpp
-//	Date:	21 Mar 2023
-//
-//	Copyright (c) 2017 - 2026, Igor Baklykov
-//	All rights reserved.
-//
-//
+///
+///	@file
+///	@brief		CPU operations
+///	@date		21 Mar 2023
+///
+///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
+///			All rights reserved.
+///	@author		Igor Baklykov
+///
 
 
 #pragma once
@@ -33,7 +32,7 @@
 namespace igros::arch {
 
 
-	// CPU control every architecture must provide
+	/// @brief CPU control every architecture must provide
 	template<class T>
 	concept Cpu = requires(const register_t* const regs) {
 		// Halt CPU (never returns)
@@ -45,7 +44,7 @@ namespace igros::arch {
 
 #if	defined (IGROS_ARCH_i386) || defined (IGROS_ARCH_x86_64)
 
-	// CPU type
+	/// @brief CPU type
 	using x86::cpu;
 
 #endif

@@ -1,14 +1,13 @@
 ////////////////////////////////////////////////////////////////
-//
-//	Kernel math functions definitions
-//
-//	File:	kMath.hpp
-//	Date:	19 Mar 2023
-//
-//	Copyright (c) 2017 - 2026, Igor Baklykov
-//	All rights reserved.
-//
-//
+///
+///	@file
+///	@brief		Kernel math functions definitions
+///	@date		19 Mar 2023
+///
+///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
+///			All rights reserved.
+///	@author		Igor Baklykov
+///
 
 
 #pragma once
@@ -26,24 +25,32 @@
 namespace igros::klib {
 
 
-	// Combined division & modulo result
+	/// @brief Combined division & modulo result
+	/// @tparam T Integer type
 	template<std::integral T>
 	struct divmod_t final {
-		T	quotient;		// Quotient (truncated towards zero)
-		T	remainder;		// Remainder (sign of dividend)
+		T	quotient;		///< Quotient (truncated towards zero)
+		T	remainder;		///< Remainder (sign of dividend)
 
-		// Comparison
+		/// @brief Comparison
+		/// @param other Compared result
+		/// @return true if quotients and remainders are equal
 		constexpr auto	operator==(const divmod_t &other) const noexcept -> bool = default;
 	};
 
 
-	// Integers of the same signedness (mixed ones convert signed to unsigned silently)
+	/// @brief Integers of the same signedness (mixed ones convert signed to unsigned silently)
+	/// @tparam T Dividend type
+	/// @tparam D Divisor type
 	template<class T, class D>
 	concept kdivisible = std::integral<T> && std::integral<D> && (std::is_signed_v<T> == std::is_signed_v<D>);
 
 
-	// 64-bit unsigned division for 32-bit CPU (no 64-bit "/" and "%" without libgcc __udivdi3/__umoddi3)
-	// Division by zero returns {0, dividend}
+	/// @brief 64-bit unsigned division for 32-bit CPU (no 64-bit "/" and "%" without libgcc __udivdi3/__umoddi3)
+	/// Division by zero returns {0, dividend}
+	/// @param dividend Dividend
+	/// @param divisor Divisor
+	/// @return Quotient and remainder
 	[[nodiscard]]
 	constexpr auto kudivmod64(const igros_quad_t dividend, const igros_quad_t divisor) noexcept -> divmod_t<igros_quad_t> {
 
@@ -93,9 +100,14 @@ namespace igros::klib {
 	}
 
 
-	// Divide integer by integer of the same signedness
-	// Returns quotient (truncated towards zero) and remainder (sign of dividend), like C++ "/" and "%"
-	// Divisor must not be zero (traps like native division, except software 64-bit division on i386)
+	/// @brief Divide integer by integer of the same signedness
+	/// Returns quotient (truncated towards zero) and remainder (sign of dividend), like C++ "/" and "%"
+	/// Divisor must not be zero (traps like native division, except software 64-bit division on i386)
+	/// @tparam T Dividend type
+	/// @tparam D Divisor type (same signedness)
+	/// @param dividend Dividend
+	/// @param divisor Divisor (not zero)
+	/// @return Quotient and remainder
 	template<std::integral T, std::integral D>
 	requires kdivisible<T, D>
 	[[nodiscard]]

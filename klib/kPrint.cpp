@@ -1,14 +1,13 @@
 ////////////////////////////////////////////////////////////////
-//
-//	Kernel text print functions
-//
-//	File:	kPrint.cpp
-//	Date:	22 Dec 2023
-//
-//	Copyright (c) 2017 - 2026, Igor Baklykov
-//	All rights reserved.
-//
-//
+///
+///	@file
+///	@brief		Kernel text print functions
+///	@date		22 Dec 2023
+///
+///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
+///			All rights reserved.
+///	@author		Igor Baklykov
+///
 
 
 // C++
@@ -34,65 +33,75 @@
 namespace igros::klib {
 
 
-	// Format implementation details
+	/// @brief Format implementation details
 	namespace {
 
 
-		// Argument size (length modifier)
+		/// @brief Argument size (length modifier)
 		enum class argSize_t : igros_byte_t {
-			BYTE,		// hh
-			WORD,		// h
-			DWORD,		// (none)
-			QUAD,		// ll (l on 64-bit)
-			SIZE,		// z, t
+			BYTE,		///< hh
+			WORD,		///< h
+			DWORD,		///< (none)
+			QUAD,		///< ll (l on 64-bit)
+			SIZE,		///< z, t
 		};
 
-		// Conversion specification
+		/// @brief Conversion specification
 		struct spec_t {
-			igros_usize_t	width	{0_usize};		// Minimal field width
-			argSize_t	size	{argSize_t::DWORD};	// Argument size
-			bool		zero	{false};		// Pad numbers with '0' (after sign)
-			bool		left	{false};		// Left-justify (pad with spaces after text)
+			igros_usize_t	width	{0_usize};		///< Minimal field width
+			argSize_t	size	{argSize_t::DWORD};	///< Argument size
+			bool		zero	{false};		///< Pad numbers with '0' (after sign)
+			bool		left	{false};		///< Left-justify (pad with spaces after text)
 		};
 
 
-		// Output buffer writer: never writes past last position (reserved for terminator)
+		/// @brief Output buffer writer: never writes past last position (reserved for terminator)
 		class writer_t final {
 
-			char*		mPos;		// Current position
-			char* const	mEnd;		// Terminator position
+			char*		mPos;		///< Current position
+			char* const	mEnd;		///< Terminator position
 
 		public:
 
-			// Writer for buffer of given size (at least 1)
+			/// @brief Writer for buffer of given size (at least 1)
+			/// @param buffer Output buffer
+			/// @param size Buffer size
 			writer_t(char* const buffer, const igros_usize_t size) noexcept :
 				mPos	{buffer},
 				mEnd	{buffer + size - 1_usize} {}
 
-			// No space left
+			/// @brief No space left
+			/// @return true if only terminator position is left
 			[[nodiscard]]
 			auto	isFull() const noexcept -> bool {
 				return mPos >= mEnd;
 			}
 
-			// Character
+			/// @brief Character
+			/// @param symbol Character
 			void	put(const char symbol) noexcept {
 				if (!isFull()) [[likely]] {
 					*mPos++ = symbol;
 				}
 			}
 
-			// Text (clipped; no substr: it may throw)
+			/// @brief Text (clipped; no substr: it may throw)
+			/// @param text Text
 			void	put(const std::string_view text) noexcept {
 				mPos = std::ranges::copy_n(text.data(), static_cast<std::ptrdiff_t>(std::min(text.size(), space())), mPos).out;
 			}
 
-			// Repeated character (clipped)
+			/// @brief Repeated character (clipped)
+			/// @param symbol Character
+			/// @param count Number of characters
 			void	fill(const char symbol, const igros_usize_t count) noexcept {
 				mPos = std::ranges::fill_n(mPos, static_cast<std::ptrdiff_t>(std::min(count, space())), symbol);
 			}
 
-			// Prefix (sign) and text padded to field width
+			/// @brief Prefix (sign) and text padded to field width
+			/// @param prefix Prefix (sign), before zero padding
+			/// @param text Text
+			/// @param spec Field width and padding flags
 			void	padded(const std::string_view prefix, const std::string_view text, const spec_t &spec) noexcept {
 				const auto length	{prefix.size() + text.size()};
 				const auto padding	{(spec.width > length) ? (spec.width - length) : 0_usize};
@@ -111,7 +120,9 @@ namespace igros::klib {
 				}
 			}
 
-			// Terminate, return written length
+			/// @brief Terminate, return written length
+			/// @param buffer Output buffer start
+			/// @return Written length without terminator
 			auto	finish(const char* const buffer) noexcept -> igros_usize_t {
 				*mPos = '\0';
 				return static_cast<igros_usize_t>(mPos - buffer);
@@ -119,7 +130,8 @@ namespace igros::klib {
 
 		private:
 
-			// Space left
+			/// @brief Space left
+			/// @return Number of characters that still fit
 			[[nodiscard]]
 			auto	space() const noexcept -> igros_usize_t {
 				return static_cast<igros_usize_t>(mEnd - mPos);
@@ -128,7 +140,13 @@ namespace igros::klib {
 		};
 
 
-		// Integer with sign (signed types, decimal only) and padding
+		/// @brief Integer with sign (signed types, decimal only) and padding
+		/// @tparam T Integer type
+		/// @param out Output writer
+		/// @param value Value
+		/// @param radix Radix (sign for decimal only)
+		/// @param spec Field width and padding flags
+		/// @param upper Uppercase hexadecimal digits
 		template<std::integral T>
 		void putInteger(writer_t &out, const T value, const radix_t radix, const spec_t &spec, const bool upper = false) noexcept {
 			using U = std::make_unsigned_t<T>;
@@ -141,7 +159,13 @@ namespace igros::klib {
 			out.padded(isNegative ? MINUS : NONE, kdigits(digits, magnitude, radix, upper), spec);
 		}
 
-		// Integer argument of given size: signed or unsigned
+		/// @brief Integer argument of given size: signed or unsigned
+		/// @param out Output writer
+		/// @param list Arguments (one is taken)
+		/// @param radix Radix
+		/// @param spec Conversion specification (argument size)
+		/// @param isSigned Signed conversion
+		/// @param upper Uppercase hexadecimal digits
 		void putArgument(writer_t &out, std::va_list &list, const radix_t radix, const spec_t &spec, const bool isSigned, const bool upper) noexcept {
 			// Smaller than int arguments are promoted to int
 			switch (spec.size) {
@@ -175,8 +199,10 @@ namespace igros::klib {
 
 
 
-		// Parse flags, field width and length modifier of a placeholder
-		// (fmt points to '%' on entry, to the last parsed character on return)
+		/// @brief Parse flags, field width and length modifier of a placeholder
+		/// (fmt points to '%' on entry, to the last parsed character on return)
+		/// @param fmt Format position (advanced past parsed characters)
+		/// @return Parsed specification
 		[[nodiscard]]
 		auto parseSpec(const char* &fmt) noexcept -> spec_t {
 

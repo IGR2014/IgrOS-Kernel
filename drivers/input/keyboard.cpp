@@ -1,14 +1,13 @@
 ////////////////////////////////////////////////////////////////
-//
-//	Keyboard generic handling
-//
-//	File:	keyboard.cpp
-//	Date:	12 Mar 2023
-//
-//	Copyright (c) 2017 - 2022, Igor Baklykov
-//	All rights reserved.
-//
-//
+///
+///	@file
+///	@brief		Keyboard generic handling
+///	@date		12 Mar 2023
+///
+///	@copyright	Copyright (c) 2017 - 2022, Igor Baklykov
+///			All rights reserved.
+///	@author		Igor Baklykov
+///
 
 
 // IgrOS-Kernel arch
@@ -27,11 +26,12 @@ namespace igros::arch {
 
 
 	// Keyboard ports
-	constexpr auto KEYBOARD_CONTROL	{static_cast<port_t>(0x0064_u16)};
-	constexpr auto KEYBOARD_DATA	{static_cast<port_t>(0x0060_u16)};
+	constexpr auto KEYBOARD_CONTROL	{static_cast<port_t>(0x0064_u16)};	///< Controller status/command port
+	constexpr auto KEYBOARD_DATA	{static_cast<port_t>(0x0060_u16)};	///< Data port
 
 
-	// Keyboard interrupt (#1) handler
+	/// @brief Keyboard interrupt (#1) handler
+	/// @param regs Registers saved on interrupt (unused)
 	static void keyboardInterruptHandler([[maybe_unused]] const register_t* regs) noexcept {
 		// Check keyboard data port
 		if (const auto status = io::readPort8(KEYBOARD_CONTROL); status & 0x01_u8) [[likely]] {

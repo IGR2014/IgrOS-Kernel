@@ -1,14 +1,13 @@
 ////////////////////////////////////////////////////////////////
-//
-//	I/O operations
-//
-//	File:	io.hpp
-//	Date:	21 Mar 2023
-//
-//	Copyright (c) 2017 - 2026, Igor Baklykov
-//	All rights reserved.
-//
-//
+///
+///	@file
+///	@brief		I/O operations
+///	@date		21 Mar 2023
+///
+///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
+///			All rights reserved.
+///	@author		Igor Baklykov
+///
 
 
 #pragma once
@@ -35,7 +34,7 @@
 namespace igros::arch {
 
 
-	// Port I/O every architecture must provide
+	/// @brief Port I/O every architecture must provide
 	template<class T, class P>
 	concept PortIO = requires(const P port, const igros_byte_t byte, const igros_word_t word, const igros_dword_t dword) {
 		{ T::readPort8(port) }		-> std::same_as<igros_byte_t>;
@@ -49,9 +48,9 @@ namespace igros::arch {
 
 #if	defined (IGROS_ARCH_i386) || defined (IGROS_ARCH_x86_64)
 
-	// I/O port address type
+	/// @brief I/O port address type
 	using x86::port_t;
-	// I/O type
+	/// @brief I/O type
 	using x86::io;
 
 #endif

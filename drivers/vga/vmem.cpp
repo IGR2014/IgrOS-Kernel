@@ -1,14 +1,13 @@
 ////////////////////////////////////////////////////////////////
-//
-//	VGA memory low-level operations
-//
-//	File:	vmem.cpp
-//	Date:	16 Dec 2022
-//
-//	Copyright (c) 2017 - 2022, Igor Baklykov
-//	All rights reserved.
-//
-//
+///
+///	@file
+///	@brief		VGA memory low-level operations
+///	@date		16 Dec 2022
+///
+///	@copyright	Copyright (c) 2017 - 2022, Igor Baklykov
+///			All rights reserved.
+///	@author		Igor Baklykov
+///
 
 
 // C++
@@ -31,14 +30,15 @@ namespace igros::arch {
 
 
 	// VGA cursor control ports
-	constexpr auto VGA_CURSOR_CONTROL	{static_cast<port_t>(0x03D4_u16)};
-	constexpr auto VGA_CURSOR_DATA		{static_cast<port_t>(VGA_CURSOR_CONTROL + 1_u16)};
+	constexpr auto VGA_CURSOR_CONTROL	{static_cast<port_t>(0x03D4_u16)};	///< CRT controller register select port
+	constexpr auto VGA_CURSOR_DATA		{static_cast<port_t>(VGA_CURSOR_CONTROL + 1_u16)};	///< CRT controller data port
 
 
-	// VGA text buffer physical address
+	/// @brief VGA text buffer physical address
 	constexpr auto VIDEO_MEM_PHYS	{0x000B8000_usize};
 
-	// VGA text buffer (low memory is mapped at kernel virtual offset)
+	/// @brief VGA text buffer (low memory is mapped at kernel virtual offset)
+	/// @return Text mode cells
 	[[nodiscard]]
 	static auto vmemScreen() noexcept -> std::span<vmemSymbol, VIDEO_MEM_SIZE> {
 		return std::span<vmemSymbol, VIDEO_MEM_SIZE> {
@@ -47,14 +47,15 @@ namespace igros::arch {
 		};
 	}
 
-	// VGA memory background symbol
+	/// @brief VGA memory background symbol
 	constinit static auto vmemBkgColor	{vmemColor::Green};
 
-	// Current cursor coordinates
+	/// @brief Current cursor coordinates
 	constinit static vmemCursor cursorPos {};
 
 
-	// Blank symbol (space with current background)
+	/// @brief Blank symbol (space with current background)
+	/// @return Space in current colors
 	[[nodiscard]]
 	static auto vmemBlank() noexcept -> vmemSymbol {
 		return vmemSymbol {

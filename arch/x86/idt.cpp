@@ -1,14 +1,13 @@
 ////////////////////////////////////////////////////////////////
-//
-//	Interrupt descriptor table low-level operations
-//
-//	File:	idt.cpp
-//	Date:	19 Dec 2023
-//
-//	Copyright (c) 2017 - 2026, Igor Baklykov
-//	All rights reserved.
-//
-//
+///
+///	@file
+///	@brief		Interrupt descriptor table low-level operations
+///	@date		19 Dec 2023
+///
+///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
+///			All rights reserved.
+///	@author		Igor Baklykov
+///
 
 
 // C++
@@ -42,9 +41,11 @@ extern "C" {
 #endif	// __cplusplus
 
 
-	// Load IDT
+	/// @brief Load IDT
+	/// @param idtPtr IDT pointer (size and address)
 	void	idtLoad(const igros::x86::native::idt::pointer_t* const idtPtr) noexcept;
-	// Store IDT
+	/// @brief Store IDT
+	/// @param idtPtr Stored IDT pointer
 	void	idtStore(igros::x86::native::idt::pointer_t* const idtPtr) noexcept;
 
 

@@ -1,14 +1,13 @@
 ////////////////////////////////////////////////////////////////
-//
-//	x86 family current (native) architecture selection
-//
-//	File:	native.hpp
-//	Date:	09 Oct 2026
-//
-//	Copyright (c) 2017 - 2026, Igor Baklykov
-//	All rights reserved.
-//
-//
+///
+///	@file
+///	@brief		x86 family current (native) architecture selection
+///	@date		09 Oct 2026
+///
+///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
+///			All rights reserved.
+///	@author		Igor Baklykov
+///
 
 
 #pragma once
@@ -39,24 +38,24 @@ namespace igros::x86 {
 
 #if	defined (IGROS_ARCH_i386)
 
-	// Current architecture
+	/// @brief Current architecture
 	namespace native = igros::i386;
-	// Current architecture name
+	/// @brief Current architecture name
 	constexpr auto ARCH_NAME {"i386"};
 
 #elif	defined (IGROS_ARCH_x86_64)
 
-	// Current architecture
+	/// @brief Current architecture
 	namespace native = igros::x86_64;
-	// Current architecture name
+	/// @brief Current architecture name
 	constexpr auto ARCH_NAME {"x86_64"};
 
 #endif
 
 
-	// CPU of current architecture
+	/// @brief CPU of current architecture
 	using native::cpu;
-	// Registers of current architecture
+	/// @brief Registers of current architecture
 	using native::register_t;
 
 

@@ -1,14 +1,13 @@
 ////////////////////////////////////////////////////////////////
-//
-//	UART driver
-//
-//	File:	serial.cpp
-//	Date:	30 Oct 2026
-//
-//	Copyright (c) 2017 - 2026, Igor Baklykov
-//	All rights reserved.
-//
-//
+///
+///	@file
+///	@brief		UART driver
+///	@date		30 Oct 2026
+///
+///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
+///			All rights reserved.
+///	@author		Igor Baklykov
+///
 
 
 // C++
@@ -28,58 +27,72 @@
 namespace igros::arch {
 
 
-	// Anonymous namespace
+	/// @brief Anonymous namespace
 	namespace {
 
-		// Serial port registers (offsets from port base)
+		/// @brief Serial port registers (offsets from port base)
 		enum class SERIAL_REG : igros_word_t {
-			DATA		= 0x00_u16,	// Data (DLAB = 0) / divisor low byte (DLAB = 1)
-			IER		= 0x01_u16,	// Interrupt enable (DLAB = 0) / divisor high byte (DLAB = 1)
-			IIR		= 0x02_u16,	// Interrupt identification (read) / FIFO control (write)
-			LCR		= 0x03_u16,	// Line control
-			MCR		= 0x04_u16,	// Modem control
-			LSR		= 0x05_u16,	// Line status
-			MSR		= 0x06_u16,	// Modem status
-			SCRATCH		= 0x07_u16,	// Scratch
+			DATA		= 0x00_u16,	///< Data (DLAB = 0) / divisor low byte (DLAB = 1)
+			IER		= 0x01_u16,	///< Interrupt enable (DLAB = 0) / divisor high byte (DLAB = 1)
+			IIR		= 0x02_u16,	///< Interrupt identification (read) / FIFO control (write)
+			LCR		= 0x03_u16,	///< Line control
+			MCR		= 0x04_u16,	///< Modem control
+			LSR		= 0x05_u16,	///< Line status
+			MSR		= 0x06_u16,	///< Modem status
+			SCRATCH		= 0x07_u16,	///< Scratch
 		};
 
-		// Line status register bits
+		/// @brief Line status register bits
 		enum class SERIAL_LSR : igros_byte_t {
-			DATA_READY	= 0x01_u8,	// Received byte available
-			THR_EMPTY	= 0x20_u8,	// Transmitter holding register empty
-			TX_IDLE		= 0x40_u8,	// Holding and shift registers empty
+			DATA_READY	= 0x01_u8,	///< Received byte available
+			THR_EMPTY	= 0x20_u8,	///< Transmitter holding register empty
+			TX_IDLE		= 0x40_u8,	///< Holding and shift registers empty
 		};
 
 	}	// namespace
 
-	// Interrupt enable register bits
+	/// @brief Interrupt enable register bits
 	constexpr auto SERIAL_IER_RX		{0x01_u8};
 
 
-	// Serial port register address
+	/// @brief Serial port register address
+	/// @param port Serial port
+	/// @param reg Register
+	/// @return Register port
 	[[nodiscard]]
 	constexpr static auto serialRegister(const SERIAL_PORT port, const SERIAL_REG reg) noexcept -> port_t {
 		return static_cast<port_t>(static_cast<igros_word_t>(port) + static_cast<igros_word_t>(reg));
 	}
 
-	// Write serial port register
+	/// @brief Write serial port register
+	/// @param port Serial port
+	/// @param reg Register
+	/// @param value Written value
 	static void serialRegWrite(const SERIAL_PORT port, const SERIAL_REG reg, const igros_byte_t value) noexcept {
 		io::writePort8(serialRegister(port, reg), value);
 	}
 
-	// Read serial port register
+	/// @brief Read serial port register
+	/// @param port Serial port
+	/// @param reg Register
+	/// @return Register value
 	[[nodiscard]]
 	static auto serialRegRead(const SERIAL_PORT port, const SERIAL_REG reg) noexcept -> igros_byte_t {
 		return io::readPort8(serialRegister(port, reg));
 	}
 
-	// Read line status register
+	/// @brief Read line status register
+	/// @param port Serial port
+	/// @return Line status bits
 	[[nodiscard]]
 	static auto serialStatus(const SERIAL_PORT port) noexcept -> klib::kFlags<SERIAL_LSR> {
 		return klib::kFlags<SERIAL_LSR>::from(serialRegRead(port, SERIAL_REG::LSR));
 	}
 
-	// Wait until line status bit is set (bounded, so missing UART can't hang the kernel)
+	/// @brief Wait until line status bit is set (bounded, so missing UART can't hang the kernel)
+	/// @param port Serial port
+	/// @param status Awaited status bit
+	/// @return false if bit wasn't set in time
 	[[nodiscard]]
 	static auto serialWaitStatus(const SERIAL_PORT port, const SERIAL_LSR status) noexcept -> bool {
 		for (auto spin {0_usize}; spin < 100000_usize; ++spin) {
@@ -165,14 +178,19 @@ namespace igros::arch {
 		return serialStatus(port).isSet(SERIAL_LSR::DATA_READY);
 	}
 
-	// Wait until write ready
+	/// @brief Wait until write ready
+	/// @param port Serial port
+	/// @return false if port wasn't ready in time
 	[[nodiscard]]
 	static auto serialWaitWrite(const SERIAL_PORT port) noexcept -> bool {
 		return serialWaitStatus(port, SERIAL_LSR::THR_EMPTY);
 	}
 
 
-	// Wait for transmitter and send one byte
+	/// @brief Wait for transmitter and send one byte
+	/// @param port Serial port
+	/// @param value Byte
+	/// @return false if port wasn't ready in time
 	[[nodiscard]]
 	static auto serialPut(const SERIAL_PORT port, const igros_byte_t value) noexcept -> bool {
 		if (!serialWaitWrite(port)) [[unlikely]] {
@@ -183,7 +201,10 @@ namespace igros::arch {
 	}
 
 
-	// Send one symbol (new line is sent as CR LF)
+	/// @brief Send one symbol (new line is sent as CR LF)
+	/// @param port Serial port
+	/// @param symbol Character
+	/// @return false if port wasn't ready in time
 	[[nodiscard]]
 	static auto serialPutSymbol(const SERIAL_PORT port, const char symbol) noexcept -> bool {
 		if (('\n' == symbol) && !serialPut(port, '\r')) [[unlikely]] {
@@ -192,7 +213,10 @@ namespace igros::arch {
 		return serialPut(port, static_cast<igros_byte_t>(symbol));
 	}
 
-	// Receive one symbol (only if available)
+	/// @brief Receive one symbol (only if available)
+	/// @param port Serial port
+	/// @param symbol Received character
+	/// @return true if a character was received
 	[[nodiscard]]
 	static auto serialGetSymbol(const SERIAL_PORT port, char &symbol) noexcept -> bool {
 		if (!serialReadyRead(port)) {
@@ -241,7 +265,8 @@ namespace igros::arch {
 	}
 
 
-	// Serial #1 | #3 IRQ handler
+	/// @brief Serial #1 | #3 IRQ handler
+	/// @param regs Registers saved on interrupt (unused)
 	static void serialInterruptHandler1([[maybe_unused]] const register_t* const regs) noexcept {
 		// Zero-initialized
 		auto data {std::array<char, 128_usize> {}};

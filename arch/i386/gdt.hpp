@@ -1,14 +1,13 @@
 ////////////////////////////////////////////////////////////////
-//
-//	Global descriptor table low-level operations
-//
-//	File:	gdt.hpp
-//	Date:	19 Dec 2023
-//
-//	Copyright (c) 2017 - 2022, Igor Baklykov
-//	All rights reserved.
-//
-//
+///
+///	@file
+///	@brief		Global descriptor table low-level operations
+///	@date		19 Dec 2023
+///
+///	@copyright	Copyright (c) 2017 - 2022, Igor Baklykov
+///			All rights reserved.
+///	@author		Igor Baklykov
+///
 
 
 #pragma once
@@ -24,16 +23,16 @@
 namespace igros::i386 {
 
 
-	// GDT structure
+	/// @brief GDT structure
 	class gdt final {
 
-		// GDT flags enum
+		/// @brief GDT flags enum
 		enum flags_t : igros_word_t {	// NOLINT(cppcoreguidelines-use-enum-class): bit flags, combined and masked as integers
-			// GDT empty segment
+			/// @brief GDT empty segment
 			GDT_SEG_EMPTY		= 0x0000_u16,
-			// GDT access page
+			/// @brief GDT access page
 			GDT_SEG_TYPE_ACCESS	= 0x0001_u16,
-			// GDT page types
+			/// @brief GDT page types
 			GDT_SEG_TYPE_RODATA	= GDT_SEG_EMPTY,
 			GDT_SEG_TYPE_DATA	= 0x0002_u16,
 			GDT_SEG_TYPE_ROSTACK	= 0x0004_u16,
@@ -42,18 +41,18 @@ namespace igros::i386 {
 			GDT_SEG_TYPE_CODE	= 0x000A_u16,
 			GDT_SEG_TYPE_EXCONF	= 0x000C_u16,
 			GDT_SEG_TYPE_CONF	= 0x000E_u16,
-			// GDT rings
+			/// @brief GDT rings
 			GDT_SEG_RING0		= 0x0010_u16,
 			GDT_SEG_RING1		= 0x0030_u16,
 			GDT_SEG_RING2		= 0x0050_u16,
 			GDT_SEG_RING3		= 0x0070_u16,
-			// GDT use ring number
+			/// @brief GDT use ring number
 			GDT_SEG_RING_USE	= 0x0080_u16,
-			// GDT types
+			/// @brief GDT types
 			GDT_SEG_L		= 0x0200_u16,
 			GDT_SEG_SZ		= 0x0400_u16,
 			GDT_SEG_G		= 0x0800_u16,
-			// GDT entries
+			/// @brief GDT entries
 			GDT_SEG_RING0_CODE	= GDT_SEG_G		|
 						  GDT_SEG_SZ		|
 						  GDT_SEG_RING_USE	|
@@ -77,28 +76,28 @@ namespace igros::i386 {
 		};
 
 
-		// Empty GDT entry (the first one)
+		/// @brief Empty GDT entry (the first one)
 		constexpr static auto	GDT_ENTRY_EMPTY			{flags_t::GDT_SEG_EMPTY};
-		// Kernel code page (4 Mb page, ring 0, code)
+		/// @brief Kernel code page (4 Mb page, ring 0, code)
 		constexpr static auto	GDT_ENTRY_CODE_RING0		{flags_t::GDT_SEG_RING0_CODE};
-		// Kernel data page (4 Mb page, ring 0, data)
+		/// @brief Kernel data page (4 Mb page, ring 0, data)
 		constexpr static auto	GDT_ENTRY_DATA_RING0		{flags_t::GDT_SEG_RING0_DATA};
-		// User code page (4 Mb page, ring 3, code)
+		/// @brief User code page (4 Mb page, ring 3, code)
 		constexpr static auto	GDT_ENTRY_CODE_RING3		{flags_t::GDT_SEG_RING3_CODE};
-		// User data page (4 Mb page, ring 3, data)
+		/// @brief User data page (4 Mb page, ring 3, data)
 		constexpr static auto	GDT_ENTRY_DATA_RING3		{flags_t::GDT_SEG_RING3_DATA};
 
-		// Number of GDT entries
+		/// @brief Number of GDT entries
 		constexpr static auto	GDT_SIZE			{7_usize};
 
-		// Copy c-tor
+		/// @brief Copy c-tor
 		gdt(const gdt &other) = delete;
-		// Copy assignment
+		/// @brief Copy assignment
 		auto	operator=(const gdt &other) -> gdt& = delete;
 
-		// Move c-tor
+		/// @brief Move c-tor
 		gdt(gdt &&other) = delete;
-		// Move assignment
+		/// @brief Move assignment
 		auto	operator=(gdt &&other) -> gdt& = delete;
 
 
@@ -106,61 +105,71 @@ namespace igros::i386 {
 
 #pragma pack(push, 1)
 
-		// GDT table entry
+		/// @brief GDT table entry
 		struct entry_t {
-			igros_word_t	limitLow;
-			igros_word_t	baseLow;
-			igros_byte_t	baseMid;
-			igros_byte_t	access;
-			igros_byte_t	limitFlags;
-			igros_byte_t	baseHigh;
+			igros_word_t	limitLow;	///< Limit bits 0..15
+			igros_word_t	baseLow;	///< Base bits 0..15
+			igros_byte_t	baseMid;	///< Base bits 16..23
+			igros_byte_t	access;	///< Access byte (present, privilege, type)
+			igros_byte_t	limitFlags;	///< Limit bits 16..19 and flags (granularity, size, long mode)
+			igros_byte_t	baseHigh;	///< Base bits 24..31
 		};
 
-		// GDT table pointer
+		/// @brief GDT table pointer
 		struct pointer_t {
-			igros_word_t	size;		// GDT size
-			const entry_t*	pointer;	// GDT pointer
+			igros_word_t	size;		///< GDT size
+			const entry_t*	pointer;	///< GDT pointer
 		};
 
 #pragma pack(pop)
 
-		// GDT table
+		/// @brief GDT table
 		using table_t = std::array<gdt::entry_t, gdt::GDT_SIZE>;
 
 		// Segment selectors (index * 8, see init)
-		constexpr static auto	KERNEL_CODE		{igros_word_t {0x08}};
-		constexpr static auto	KERNEL_DATA		{igros_word_t {0x10}};
-		constexpr static auto	TSS			{igros_word_t {0x28}};	// Kernel task
-		constexpr static auto	TSS_DOUBLE_FAULT	{igros_word_t {0x30}};	// Double fault task
+		constexpr static auto	KERNEL_CODE		{igros_word_t {0x08}};	///< Kernel code segment
+		constexpr static auto	KERNEL_DATA		{igros_word_t {0x10}};	///< Kernel data segment
+		constexpr static auto	TSS			{igros_word_t {0x28}};	///< Kernel task
+		constexpr static auto	TSS_DOUBLE_FAULT	{igros_word_t {0x30}};	///< Double fault task
 
-		// Default c-tor
+		/// @brief Default c-tor
 		gdt() noexcept = default;
-		// D-tor
+		/// @brief D-tor
 		~gdt() noexcept = default;
 
-		// Available 32-bit TSS descriptor (base is known at run time only)
+		/// @brief Available 32-bit TSS descriptor (base is known at run time only)
+		/// @param base TSS address
+		/// @param limit TSS size - 1
+		/// @return GDT entry
 		[[nodiscard]]
 		constexpr static auto	tssEntry(const igros_dword_t base, const igros_dword_t limit) noexcept -> entry_t;
 
-		// Set GDT entry
+		/// @brief Set GDT entry
+		/// @tparam BASE Segment base
+		/// @tparam LIMIT Segment limit (20 bits used)
+		/// @tparam FLAGS Access byte and flags
+		/// @return GDT entry
 		template<igros_dword_t BASE, igros_dword_t LIMIT, gdt::flags_t FLAGS>
 		[[nodiscard]]
 		constexpr static auto	setEntry() noexcept -> entry_t;
-		// Calc GDT size
+		/// @brief Calc GDT size
+		/// @param table GDT
+		/// @return GDT size in bytes - 1 (GDT pointer limit)
 		[[nodiscard]]
 		constexpr static auto	calcSize(const table_t &table) noexcept -> igros_word_t;
 
-		// Set GDT pointer
+		/// @brief Set GDT pointer
+		/// @param pointer GDT pointer to load
 		static void		setPointer(const pointer_t &pointer) noexcept;
 
-		// Init GDT table
+		/// @brief Init GDT table
 		static void		init() noexcept;
 
 
 	};
 
 
-	// Set GDT entry
+	/// @brief Set GDT entry
 	template<igros_dword_t BASE, igros_dword_t LIMIT, gdt::flags_t FLAGS>
 	[[nodiscard]]
 	constexpr auto gdt::setEntry() noexcept -> entry_t {
@@ -174,7 +183,7 @@ namespace igros::i386 {
 		};
 	}
 
-	// Available 32-bit TSS descriptor
+	/// @brief Available 32-bit TSS descriptor
 	[[nodiscard]]
 	constexpr auto gdt::tssEntry(const igros_dword_t base, const igros_dword_t limit) noexcept -> entry_t {
 		// Present, ring 0, type 9 (available 32-bit TSS), byte granular limit
@@ -189,7 +198,7 @@ namespace igros::i386 {
 		};
 	}
 
-	// Calculate GDT size
+	/// @brief Calculate GDT size
 	[[nodiscard]]
 	constexpr auto gdt::calcSize(const table_t &table) noexcept -> igros_word_t {
 		// Size equals to (Num of entries * Entry size) - 1

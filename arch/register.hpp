@@ -1,14 +1,13 @@
 ////////////////////////////////////////////////////////////////
-//
-//	Architecture register type deduction
-//
-//	File:	register.hpp
-//	Date:	16 Dec 2022
-//
-//	Copyright (c) 2017 - 2022, Igor Baklykov
-//	All rights reserved.
-//
-//
+///
+///	@file
+///	@brief		Architecture register type deduction
+///	@date		16 Dec 2022
+///
+///	@copyright	Copyright (c) 2017 - 2022, Igor Baklykov
+///			All rights reserved.
+///	@author		Igor Baklykov
+///
 
 
 #pragma once
@@ -26,12 +25,12 @@ namespace igros::arch {
 
 #if	defined (IGROS_ARCH_i386)
 
-	// Register type
+	/// @brief Register type
 	using	i386::register_t;
 
 #elif	defined (IGROS_ARCH_x86_64)
 
-	// Register type
+	/// @brief Register type
 	using	x86_64::register_t;
 
 #else

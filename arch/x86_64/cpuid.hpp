@@ -1,14 +1,13 @@
 ////////////////////////////////////////////////////////////////
-//
-//	CPUID detection
-//
-//	File:	cpuid.hpp
-//	Date:	22 Oct 2026
-//
-//	Copyright (c) 2017 - 2026, Igor Baklykov
-//	All rights reserved.
-//
-//
+///
+///	@file
+///	@brief		CPUID detection
+///	@date		22 Oct 2026
+///
+///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
+///			All rights reserved.
+///	@author		Igor Baklykov
+///
 
 
 #pragma once
@@ -22,27 +21,30 @@
 namespace igros::x86_64 {
 
 
-	// CPUID leaves
+	/// @brief CPUID leaves
 	enum class CPUID : igros_dword_t {
-		VENDOR			= 0x00000000_u32,		// Max basic leaf and vendor string
-		FEATURES		= 0x00000001_u32,		// Version and feature flags
-		CACHE_TLB		= 0x00000002_u32,		// Cache and TLB descriptors
-		EXTENDED_FEATURES	= 0x00000007_u32,		// Structured extended features (subleaf 0)
-		EXTENDED_MAX		= 0x80000000_u32,		// Max extended leaf
-		EXTENDED_INFO		= 0x80000001_u32,		// Extended feature flags (long mode, NX, 1 GB pages)
-		ADDRESS_SIZES		= 0x80000008_u32,		// Physical and linear address sizes
+		VENDOR			= 0x00000000_u32,		///< Max basic leaf and vendor string
+		FEATURES		= 0x00000001_u32,		///< Version and feature flags
+		CACHE_TLB		= 0x00000002_u32,		///< Cache and TLB descriptors
+		EXTENDED_FEATURES	= 0x00000007_u32,		///< Structured extended features (subleaf 0)
+		EXTENDED_MAX		= 0x80000000_u32,		///< Max extended leaf
+		EXTENDED_INFO		= 0x80000001_u32,		///< Extended feature flags (long mode, NX, 1 GB pages)
+		ADDRESS_SIZES		= 0x80000008_u32,		///< Physical and linear address sizes
 	};
 
-	// CPUID result registers
+	/// @brief CPUID result registers
 	struct cpuidRegs_t {
-		igros_dword_t		eax;			// EAX register value
-		igros_dword_t		ebx;			// EBX register value
-		igros_dword_t		ecx;			// ECX register value
-		igros_dword_t		edx;			// EDX register value
+		igros_dword_t		eax;			///< EAX register value
+		igros_dword_t		ebx;			///< EBX register value
+		igros_dword_t		ecx;			///< ECX register value
+		igros_dword_t		edx;			///< EDX register value
 	};
 
 
-	// Execute CPUID (CPUID is always available in long mode; caller checks leaf is supported)
+	/// @brief Execute CPUID (CPUID is always available in long mode; caller checks leaf is supported)
+	/// @param leaf CPUID leaf (EAX)
+	/// @param subleaf CPUID subleaf (ECX)
+	/// @return EAX, EBX, ECX and EDX values
 	[[nodiscard]]
 	inline auto cpuid(const CPUID leaf, const igros_dword_t subleaf = 0_u32) noexcept -> cpuidRegs_t {
 		auto regs {cpuidRegs_t {}};
@@ -54,7 +56,9 @@ namespace igros::x86_64 {
 		return regs;
 	}
 
-	// Check CPUID leaf is supported (basic and extended ranges are checked separately)
+	/// @brief Check CPUID leaf is supported (basic and extended ranges are checked separately)
+	/// @param leaf CPUID leaf
+	/// @return true if leaf is within supported range
 	[[nodiscard]]
 	inline auto cpuidHasLeaf(const CPUID leaf) noexcept -> bool {
 		const auto value	{static_cast<igros_dword_t>(leaf)};

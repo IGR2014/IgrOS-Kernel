@@ -1,14 +1,13 @@
 ////////////////////////////////////////////////////////////////
-//
-//	Keyboard generic handling
-//
-//	File:	keyboard.hpp
-//	Date:	16 Dec 2022
-//
-//	Copyright (c) 2017 - 2022, Igor Baklykov
-//	All rights reserved.
-//
-//
+///
+///	@file
+///	@brief		Keyboard generic handling
+///	@date		16 Dec 2022
+///
+///	@copyright	Copyright (c) 2017 - 2022, Igor Baklykov
+///			All rights reserved.
+///	@author		Igor Baklykov
+///
 
 
 #pragma once
@@ -25,7 +24,8 @@ namespace igros::arch {
 	// Set keyboard LEDs
 	//void	keyboardSetLED();
 
-	// Setup keyboard function
+	/// @brief Setup keyboard function
+	/// @return true if keyboard is set up
 	[[nodiscard]]
 	auto	keyboardSetup() noexcept -> bool;
 

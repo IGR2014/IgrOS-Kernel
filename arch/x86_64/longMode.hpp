@@ -1,14 +1,13 @@
 ////////////////////////////////////////////////////////////////
-//
-//	Long mode low-level preparation operations
-//
-//	File:	longMode.hpp
-//	Date:	16 Dec 2022
-//
-//	Copyright (c) 2017, Igor Baklykov
-//	All rights reserved.
-//
-//
+///
+///	@file
+///	@brief		Long mode low-level preparation operations
+///	@date		16 Dec 2022
+///
+///	@copyright	Copyright (c) 2017, Igor Baklykov
+///			All rights reserved.
+///	@author		Igor Baklykov
+///
 
 
 #pragma	once
@@ -25,11 +24,13 @@ extern "C" {
 #endif	// __cplusplus
 
 
-	// Check CPUID instruction is available (non-zero if available)
+	/// @brief Check CPUID instruction is available (non-zero if available)
+	/// @return Non-zero if CPUID is available
 	[[nodiscard]]
 	auto	checkCPUID() noexcept -> igros::igros_byte_t;
 
-	// Check CPU supports long mode (non-zero if supported)
+	/// @brief Check CPU supports long mode (non-zero if supported)
+	/// @return Non-zero if long mode is supported
 	[[nodiscard]]
 	auto	checkLongMode() noexcept -> igros::igros_byte_t;
 

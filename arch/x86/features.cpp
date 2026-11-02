@@ -1,14 +1,13 @@
 ////////////////////////////////////////////////////////////////
-//
-//	CPU feature control
-//
-//	File:	features.cpp
-//	Date:	22 Oct 2026
-//
-//	Copyright (c) 2017 - 2026, Igor Baklykov
-//	All rights reserved.
-//
-//
+///
+///	@file
+///	@brief		CPU feature control
+///	@date		22 Oct 2026
+///
+///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
+///			All rights reserved.
+///	@author		Igor Baklykov
+///
 
 
 // IgrOS-Kernel arch x86

@@ -1,14 +1,13 @@
 ////////////////////////////////////////////////////////////////
-//
-//	Kernel driver interface
-//
-//	File:	driver.hpp
-//	Date:	28 Oct 2026
-//
-//	Copyright (c) 2017 - 2026, Igor Baklykov
-//	All rights reserved.
-//
-//
+///
+///	@file
+///	@brief		Kernel driver interface
+///	@date		28 Oct 2026
+///
+///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
+///			All rights reserved.
+///	@author		Igor Baklykov
+///
 
 
 #pragma once
@@ -27,20 +26,23 @@
 namespace igros::drivers {
 
 
-	// Driver init function (returns true on success)
+	/// @brief Driver init function (returns true on success)
 	using driverInit_t	= std::add_pointer_t<auto () noexcept -> bool>;
 
 
-	// Kernel driver description
+	/// @brief Kernel driver description
 	struct driver_t {
 
-		const char*	name;		// Driver name
-		driverInit_t	init;		// Driver init function
+		const char*	name;		///< Driver name
+		driverInit_t	init;		///< Driver init function
 
 	};
 
 
-	// Initialize drivers in order and print status of each, returns failed drivers count
+	/// @brief Initialize drivers in order and print status of each, returns failed drivers count
+	/// @tparam N Number of drivers
+	/// @param drivers Drivers in init order
+	/// @return Number of drivers that failed to initialize
 	template<igros_usize_t N>
 	auto init(const std::array<drivers::driver_t, N> &drivers) noexcept -> igros_usize_t {
 		// Failed drivers count

@@ -1,14 +1,13 @@
 ////////////////////////////////////////////////////////////////
-//
-//	Architecture interrupts type deduction
-//
-//	File:	irq.hpp
-//	Date:	21 Mar 2023
-//
-//	Copyright (c) 2017 - 2026, Igor Baklykov
-//	All rights reserved.
-//
-//
+///
+///	@file
+///	@brief		Architecture interrupts type deduction
+///	@date		21 Mar 2023
+///
+///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
+///			All rights reserved.
+///	@author		Igor Baklykov
+///
 
 
 #pragma once
@@ -35,8 +34,8 @@
 namespace igros::arch {
 
 
-	// Interrupts control every architecture must provide
-	// (plus "install<line, handler>()" / "uninstall<line>()" templates)
+	/// @brief Interrupts control every architecture must provide
+	/// (plus "install<line, handler>()" / "uninstall<line>()" templates)
 	template<class T, class L>
 	concept Interrupts = requires(const L line) {
 		{ T::enable() }		-> std::same_as<void>;
@@ -51,11 +50,11 @@ namespace igros::arch {
 
 #if	defined (IGROS_ARCH_i386) || defined (IGROS_ARCH_x86_64)
 
-	// IRQ line type
+	/// @brief IRQ line type
 	using x86::irq_t;
-	// IRQ handler type
+	/// @brief IRQ handler type
 	using x86::isr_t;
-	// IRQ type
+	/// @brief IRQ type
 	using x86::irq;
 
 #endif

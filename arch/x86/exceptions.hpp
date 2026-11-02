@@ -1,14 +1,13 @@
 ////////////////////////////////////////////////////////////////
-//
-//	Exceptions low-level operations
-//
-//	File:	exceptions.hpp
-//	Date:	19 Dec 2023
-//
-//	Copyright (c) 2017 - 2023, Igor Baklykov
-//	All rights reserved.
-//
-//
+///
+///	@file
+///	@brief		Exceptions low-level operations
+///	@date		19 Dec 2023
+///
+///	@copyright	Copyright (c) 2017 - 2023, Igor Baklykov
+///			All rights reserved.
+///	@author		Igor Baklykov
+///
 
 
 #pragma once
@@ -29,7 +28,7 @@ extern "C" {
 #endif	// __cplusplus
 
 
-	// Exception handlers addresses, indexed by exception number (exceptions.s)
+	/// @brief Exception handlers addresses, indexed by exception number (exceptions.s)
 	extern const std::add_pointer_t<void () noexcept>	exHandlerTable[32];
 
 
@@ -44,23 +43,23 @@ extern "C" {
 namespace igros::x86 {
 
 
-	// Exceptions structure
+	/// @brief Exceptions structure
 	class except final {
 
-		// Copy c-tor
+		/// @brief Copy c-tor
 		except(const except &other) = delete;
-		// Copy assignment
+		/// @brief Copy assignment
 		auto	operator=(const except &other) -> except& = delete;
 
-		// Move c-tor
+		/// @brief Move c-tor
 		except(except &&other) = delete;
-		// Move assignment
+		/// @brief Move assignment
 		auto	operator=(except &&other) -> except& = delete;
 
 
 	public:
 
-		// Exceptions names
+		/// @brief Exceptions names
 		constexpr static std::array<const char* const, 32_usize> NAME {
 			"DIVIDE BY ZERO",			// 0
 			"DEBUG",				// 1
@@ -96,7 +95,7 @@ namespace igros::x86 {
 			"RESERVED",				// 31
 		};
 
-		// Exceptions number enumeration
+		/// @brief Exceptions number enumeration
 		enum class NUMBER : igros_dword_t {
 			DIVIDE_BY_ZERO			= 0_u32,
 			DEBUG				= 1_u32,
@@ -120,22 +119,23 @@ namespace igros::x86 {
 		};
 
 
-		// Default c-tor
+		/// @brief Default c-tor
 		except() noexcept = default;
-		// D-tor
+		/// @brief D-tor
 		~except() noexcept = default;
 
-		// Init exceptions
+		/// @brief Init exceptions
 		static void	init() noexcept;
 
-		// Install exceptions handler
+		/// @brief Install exceptions handler
 		template<NUMBER N, isr_t HANDLE>
 		constexpr static void	install() noexcept;
-		// Uninstall exceptions handler
+		/// @brief Uninstall exceptions handler
 		template<NUMBER N>
 		constexpr static void	uninstall() noexcept;
 
-		// Default exception handler
+		/// @brief Default exception handler
+		/// @param regs Registers saved on exception
 		[[noreturn]]
 		static void	defaultHandler(const register_t* regs) noexcept;
 
@@ -143,14 +143,14 @@ namespace igros::x86 {
 	};
 
 
-	// Install handler
+	/// @brief Install handler
 	template<except::NUMBER N, isr_t HANDLE>
 	constexpr void except::install() noexcept {
 		// Install ISR
 		isrHandlerInstall(static_cast<igros_dword_t>(N), HANDLE);
 	}
 
-	// Uninstall handler
+	/// @brief Uninstall handler
 	template<except::NUMBER N>
 	constexpr void except::uninstall() noexcept {
 		// Uninstall ISR

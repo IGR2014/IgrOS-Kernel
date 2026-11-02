@@ -1,0 +1,36 @@
+/// @file
+/// @brief Namespace descriptions for Doxygen (namespaces are opened in many files)
+
+
+/// @namespace igros
+/// @brief IgrOS kernel: common types and literals
+
+/// @namespace igros::arch
+/// @brief Architecture-independent interface: drivers and aliases of current architecture types
+
+/// @namespace igros::x86
+/// @brief Code shared by i386 and x86_64: ports, interrupts, exceptions, paging
+
+/// @namespace igros::i386
+/// @brief i386 (32-bit protected mode): GDT, IDT, TSS, CPU registers
+
+/// @namespace igros::x86_64
+/// @brief x86_64 (long mode): GDT, IDT, TSS, CPUID, MSR, CPU registers
+
+/// @namespace igros::klib
+/// @brief Freestanding kernel library: printing, math, alignment, flags, strings
+
+/// @namespace igros::mem
+/// @brief Memory management: physical page allocator, direct map, virtual addresses
+
+/// @namespace igros::multiboot
+/// @brief Multiboot 1 information passed by the bootloader
+
+/// @namespace igros::platform
+/// @brief Platform description and initialization
+
+/// @namespace igros::drivers
+/// @brief Driver table and initialization
+
+/// @namespace igros::sys
+/// @brief System formats (ELF)

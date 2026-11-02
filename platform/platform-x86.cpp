@@ -1,14 +1,13 @@
 ////////////////////////////////////////////////////////////////
-//
-//	Platform description for x86 family (i386 and x86_64)
-//
-//	File:	platform-x86.cpp
-//	Date:	28 Oct 2026
-//
-//	Copyright (c) 2017 - 2022, Igor Baklykov
-//	All rights reserved.
-//
-//
+///
+///	@file
+///	@brief		Platform description for x86 family (i386 and x86_64)
+///	@date		28 Oct 2026
+///
+///	@copyright	Copyright (c) 2017 - 2022, Igor Baklykov
+///			All rights reserved.
+///	@author		Igor Baklykov
+///
 
 
 // C++
@@ -51,7 +50,7 @@
 namespace igros::x86 {
 
 
-	// Initialize x86
+	/// @brief Initialize x86
 	static void platformInit() noexcept {
 
 		// Setup Global Descriptors Table and task state segment (IDT refers to it)
@@ -89,7 +88,7 @@ namespace igros::x86 {
 
 	}
 
-	// Finalize x86
+	/// @brief Finalize x86
 	static void platformFinalize() noexcept {
 		// Debug print
 		klib::kprintf(
@@ -98,7 +97,7 @@ namespace igros::x86 {
 		);
 	}
 
-	// Shutdown x86
+	/// @brief Shutdown x86
 	static void platformShutdown() noexcept {
 		// Debug print
 		klib::kprintf(
@@ -107,7 +106,7 @@ namespace igros::x86 {
 		);
 	}
 
-	// Reboot x86
+	/// @brief Reboot x86
 	static void platformReboot() noexcept {
 		// Debug print
 		klib::kprintf(
@@ -116,7 +115,7 @@ namespace igros::x86 {
 		);
 	}
 
-	// Suspend x86
+	/// @brief Suspend x86
 	static void platformSuspend() noexcept {
 		// Debug print
 		klib::kprintf(
@@ -125,7 +124,7 @@ namespace igros::x86 {
 		);
 	}
 
-	// Wakeup x86
+	/// @brief Wakeup x86
 	static void platformWakeup() noexcept {
 		// Debug print
 		klib::kprintf(

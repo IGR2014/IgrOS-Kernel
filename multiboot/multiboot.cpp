@@ -1,14 +1,13 @@
 ////////////////////////////////////////////////////////////////
-//
-//	Multiboot 1 functions
-//
-//	File:	multiboot.cpp
-//	Date:	30 Oct 2026
-//
-//	Copyright (c) 2017 - 2026, Igor Baklykov
-//	All rights reserved.
-//
-//
+///
+///	@file
+///	@brief		Multiboot 1 functions
+///	@date		30 Oct 2026
+///
+///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
+///			All rights reserved.
+///	@author		Igor Baklykov
+///
 
 
 // C++
@@ -30,11 +29,11 @@
 namespace igros::multiboot {
 
 
-	// Anonymous namespace
+	/// @brief Anonymous namespace
 	namespace {
 
 
-		// Build year (__DATE__ is "Mmm dd yyyy")
+		/// @brief Build year (__DATE__ is "Mmm dd yyyy")
 		constexpr auto BUILD_YEAR = []() consteval noexcept {
 			auto year {0_u32};
 			for (const auto digit : std::string_view {__DATE__}.substr(7)) {
@@ -44,7 +43,9 @@ namespace igros::multiboot {
 		}();
 
 
-		// VBE string at real mode segment:offset pointer (nullptr if not provided or not directly mapped)
+		/// @brief VBE string at real mode segment:offset pointer (nullptr if not provided or not directly mapped)
+		/// @param pointer Real mode segment:offset
+		/// @return String, nullptr if not provided
 		[[nodiscard]]
 		auto vbeString(const igros_dword_t pointer) noexcept -> const char* {
 			if (0_u32 == pointer) {

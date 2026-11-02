@@ -1,14 +1,13 @@
 ////////////////////////////////////////////////////////////////
-//
-//	RTC clock driver
-//
-//	File:	rtc.cpp
-//	Date:	02 Nov 2026
-//
-//	Copyright (c) 2017 - 2026, Igor Baklykov
-//	All rights reserved.
-//
-//
+///
+///	@file
+///	@brief		RTC clock driver
+///	@date		02 Nov 2026
+///
+///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
+///			All rights reserved.
+///	@author		Igor Baklykov
+///
 
 
 // IgrOS-Kernel arch
@@ -25,8 +24,8 @@ namespace igros::arch {
 
 
 	// CMOS ports
-	constexpr auto CMOS_COMMAND	{static_cast<port_t>(0x0070_u16)};
-	constexpr auto CMOS_DATA	{static_cast<port_t>(CMOS_COMMAND + 1_u16)};
+	constexpr auto CMOS_COMMAND	{static_cast<port_t>(0x0070_u16)};	///< Register select port
+	constexpr auto CMOS_DATA	{static_cast<port_t>(CMOS_COMMAND + 1_u16)};	///< Data port
 
 
 	// Clock from RTC conversion
@@ -45,31 +44,31 @@ namespace igros::arch {
 
 
 	// RTC date/time commands
-	constexpr auto RTC_YEAR		{0x09_u8};
-	constexpr auto RTC_MONTH	{0x08_u8};
-	constexpr auto RTC_DAY		{0x07_u8};
-	constexpr auto RTC_WEEKDAY	{0x06_u8};
-	constexpr auto RTC_HOUR		{0x04_u8};
-	constexpr auto RTC_MINUTE	{0x02_u8};
-	constexpr auto RTC_SECOND	{0x00_u8};
+	constexpr auto RTC_YEAR		{0x09_u8};	///< Year register
+	constexpr auto RTC_MONTH	{0x08_u8};	///< Month register
+	constexpr auto RTC_DAY		{0x07_u8};	///< Day of month register
+	constexpr auto RTC_WEEKDAY	{0x06_u8};	///< Day of week register
+	constexpr auto RTC_HOUR		{0x04_u8};	///< Hour register
+	constexpr auto RTC_MINUTE	{0x02_u8};	///< Minute register
+	constexpr auto RTC_SECOND	{0x00_u8};	///< Second register
 
-	constexpr auto RTC_CENTURY	{0x32_u8};
+	constexpr auto RTC_CENTURY	{0x32_u8};	///< Century register (ACPI FADT default)
 
-	constexpr auto RTC_REGISTER_A	{0x0A_u8};
-	constexpr auto RTC_REGISTER_B	{0x0B_u8};
+	constexpr auto RTC_REGISTER_A	{0x0A_u8};	///< Status register A
+	constexpr auto RTC_REGISTER_B	{0x0B_u8};	///< Status register B
 
-	// Anonymous namespace
+	/// @brief Anonymous namespace
 	namespace {
 
-		// Register A bits
+		/// @brief Register A bits
 		enum class RTC_A : igros_byte_t {
-			UPDATING	= 0x80_u8,	// Date/time update in progress (values unstable)
+			UPDATING	= 0x80_u8,	///< Date/time update in progress (values unstable)
 		};
 
-		// Register B bits
+		/// @brief Register B bits
 		enum class RTC_B : igros_byte_t {
-			TIME_24		= 0x02_u8,	// 24-hour format (12-hour otherwise, bit 7 of hour - PM)
-			BINARY		= 0x04_u8,	// Binary values (BCD otherwise)
+			TIME_24		= 0x02_u8,	///< 24-hour format (12-hour otherwise, bit 7 of hour - PM)
+			BINARY		= 0x04_u8,	///< Binary values (BCD otherwise)
 		};
 
 	}	// namespace
@@ -142,7 +141,7 @@ namespace igros::arch {
 	}
 
 	// Get current date/time
-	clockDateTime_t clockGetCurrentDateTime() noexcept {
+	auto clockGetCurrentDateTime() noexcept -> clockDateTime_t {
 		// Read CMOS date/time (once no update is in progress)
 		const auto readStable = []() noexcept {
 			while (klib::kFlags<RTC_A>::from(rtcRead(RTC_REGISTER_A)).isSet(RTC_A::UPDATING)) {

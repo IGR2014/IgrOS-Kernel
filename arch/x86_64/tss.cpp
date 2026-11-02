@@ -1,14 +1,13 @@
 ////////////////////////////////////////////////////////////////
-//
-//	Task state segment (x86_64)
-//
-//	File:	tss.cpp
-//	Date:	22 Oct 2026
-//
-//	Copyright (c) 2017 - 2026, Igor Baklykov
-//	All rights reserved.
-//
-//
+///
+///	@file
+///	@brief		Task state segment (x86_64)
+///	@date		22 Oct 2026
+///
+///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
+///			All rights reserved.
+///	@author		Igor Baklykov
+///
 
 
 // C++

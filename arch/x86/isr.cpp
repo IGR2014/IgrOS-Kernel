@@ -1,14 +1,13 @@
 ////////////////////////////////////////////////////////////////
-//
-//	Interrupt service routines low-level operations
-//
-//	File:	isr.cpp
-//	Date:	19 Dec 2023
-//
-//	Copyright (c) 2017 - 2022, Igor Baklykov
-//	All rights reserved.
-//
-//
+///
+///	@file
+///	@brief		Interrupt service routines low-level operations
+///	@date		19 Dec 2023
+///
+///	@copyright	Copyright (c) 2017 - 2022, Igor Baklykov
+///			All rights reserved.
+///	@author		Igor Baklykov
+///
 
 
 // IgrOS-Kernel library
@@ -24,7 +23,7 @@
 namespace igros::x86 {
 
 
-	// Interrupt handlers
+	/// @brief Interrupt handlers
 	constinit static auto isrList {std::array<isr_t, ISR_SIZE> {}};
 
 
@@ -51,7 +50,8 @@ extern "C" {
 #endif	// __cplusplus
 
 
-	// Interrupts handler function (called from isr.s)
+	/// @brief Interrupts handler function (called from isr.s)
+	/// @param regs Registers saved by interrupt entry stub
 	void isrHandler(const igros::x86::register_t* regs) noexcept;
 
 	// Interrupts handler function

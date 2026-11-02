@@ -1,14 +1,13 @@
 ////////////////////////////////////////////////////////////////
-//
-//	Programmable interrupt timer
-//
-//	File:	pit.hpp
-//	Date:	16 Dec 2022
-//
-//	Copyright (c) 2017 - 2022, Igor Baklykov
-//	All rights reserved.
-//
-//
+///
+///	@file
+///	@brief		Programmable interrupt timer
+///	@date		16 Dec 2022
+///
+///	@copyright	Copyright (c) 2017 - 2022, Igor Baklykov
+///			All rights reserved.
+///	@author		Igor Baklykov
+///
 
 
 #pragma once
@@ -22,20 +21,23 @@
 namespace igros::arch {
 
 
-	// PIT frequency (1.193181(3) MHz)
+	/// @brief PIT frequency (1.193181(3) MHz)
 	constexpr auto PIT_MAIN_FREQUENCY	= 1193181_u32;
-	// Default pit frequency (100 Hz)
+	/// @brief Default pit frequency (100 Hz)
 	constexpr auto PIT_DEFAULT_FREQUENCY	= 100_u32;
 
 
-	// Setup PIT frequency
+	/// @brief Setup PIT frequency
+	/// @param frequency Interrupt frequency in Hz
 	void	pitSetupFrequency(const igros_word_t frequency) noexcept;
 
-	// Get expired ticks
+	/// @brief Get expired ticks
+	/// @return Timer interrupts since setup
 	[[nodiscard]]
 	auto	pitGetTicks() noexcept -> igros_quad_t;
 
-	// Setup programmable interrupt timer
+	/// @brief Setup programmable interrupt timer
+	/// @return true if timer is set up
 	[[nodiscard]]
 	auto	pitSetup() noexcept -> bool;
 

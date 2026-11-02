@@ -1,14 +1,13 @@
 ////////////////////////////////////////////////////////////////
-//
-//	Paging (i386 2-level and x86_64 4-level page tables)
-//
-//	File:	paging.cpp
-//	Date:	02 Nov 2026
-//
-//	Copyright (c) 2017 - 2026, Igor Baklykov
-//	All rights reserved.
-//
-//
+///
+///	@file
+///	@brief		Paging (i386 2-level and x86_64 4-level page tables)
+///	@date		02 Nov 2026
+///
+///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
+///			All rights reserved.
+///	@author		Igor Baklykov
+///
 
 
 // C++
@@ -35,19 +34,20 @@
 namespace igros::x86 {
 
 
-	// Paging state
+	/// @brief Paging state
 	namespace {
 
 
-		// CR0 write protection bit (kernel can't write to read-only pages)
+		/// @brief CR0 write protection bit (kernel can't write to read-only pages)
 		constexpr auto CR0_WP	{igros_usize_t {0x00010000}};
 
-		// NX bit value if no-execute is enabled (else 0: NX can't be used)
+		/// @brief NX bit value if no-execute is enabled (else 0: NX can't be used)
 		constinit paging::entry_t	noExecute	{0};
 
 
 
-		// Invalidate TLB entry of virtual address (invlpg takes memory operand)
+		/// @brief Invalidate TLB entry of virtual address (invlpg takes memory operand)
+		/// @param virt Virtual address
 		void invalidate(const mem::virt_t virt) noexcept {
 			::pageInvalidate(std::bit_cast<const igros_byte_t*>(mem::address(virt)));
 		}
@@ -56,13 +56,18 @@ namespace igros::x86 {
 	}	// namespace
 
 
-	// Entry flag value
+	/// @brief Entry flag value
+	/// @param value Flag
+	/// @return Flag bits in entry
 	[[nodiscard]]
 	constexpr static auto flag(const paging::FLAGS value) noexcept -> paging::entry_t {
 		return static_cast<paging::entry_t>(value);
 	}
 
-	// Is flag set in entry
+	/// @brief Is flag set in entry
+	/// @param entry Table entry
+	/// @param value Flag
+	/// @return true if flag is set in entry
 	[[nodiscard]]
 	constexpr static auto hasFlag(const paging::entry_t entry, const paging::FLAGS value) noexcept -> bool {
 		return klib::kFlags<paging::FLAGS>::from(entry).isSet(value);

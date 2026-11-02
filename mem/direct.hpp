@@ -1,14 +1,13 @@
 ////////////////////////////////////////////////////////////////
-//
-//	Direct map of physical memory
-//
-//	File:	direct.hpp
-//	Date:	30 Oct 2026
-//
-//	Copyright (c) 2017 - 2026, Igor Baklykov
-//	All rights reserved.
-//
-//
+///
+///	@file
+///	@brief		Direct map of physical memory
+///	@date		30 Oct 2026
+///
+///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
+///			All rights reserved.
+///	@author		Igor Baklykov
+///
 
 
 #pragma once
@@ -28,45 +27,59 @@
 namespace igros::mem {
 
 
-	// Direct map: physical memory at kernel virtual offset
-	// (boot code maps low memory, paging extends it up to top of RAM).
-	// Bootloader data may lie anywhere in physical memory,
-	// so every pointer is checked against directly mapped range
+	/// @brief Direct map: physical memory at kernel virtual offset
+	/// (boot code maps low memory, paging extends it up to top of RAM).
+	/// Bootloader data may lie anywhere in physical memory,
+	/// so every pointer is checked against directly mapped range
 	class direct final {
 
-		// End of directly mapped physical memory
+		/// @brief End of directly mapped physical memory
 		static inline constinit phys_t	mEnd	{LOW_MEMORY_LIMIT};
 
-		// Copy c-tor
+		/// @brief Copy c-tor
 		direct(const direct &other) = delete;
-		// Copy assignment
+		/// @brief Copy assignment
 		auto	operator=(const direct &other) -> direct& = delete;
 
 
 	public:
 
-		// D-tor
+		/// @brief D-tor
 		~direct() noexcept = default;
 
-		// End of directly mapped physical memory
+		/// @brief End of directly mapped physical memory
+		/// @return Physical address where direct map ends
 		[[nodiscard]]
 		static auto	end() noexcept -> phys_t;
-		// Set end of directly mapped physical memory (paging mapped more memory)
+		/// @brief Set end of directly mapped physical memory (paging mapped more memory)
+		/// @param end Physical address where direct map ends
 		static void	setEnd(const phys_t end) noexcept;
 
-		// Check if whole physical range is directly mapped
+		/// @brief Check if whole physical range is directly mapped
+		/// @param phys Physical address
+		/// @param size Range size
+		/// @return true if range is directly mapped
 		[[nodiscard]]
 		static auto	isMapped(const phys_t phys, const phys_t size) noexcept -> bool;
 
-		// Pointer to physical memory (nullptr if range is not directly mapped)
+		/// @brief Pointer to physical memory (nullptr if range is not directly mapped)
+		/// @tparam T Object type
+		/// @param phys Physical address
+		/// @param size Range that must be mapped
+		/// @return Pointer, nullptr if not directly mapped
 		template<class T>
 		[[nodiscard]]
 		static auto	pointer(const phys_t phys, const phys_t size = sizeof(T)) noexcept -> T*;
-		// String at physical memory (nullptr if not directly mapped up to null terminator)
+		/// @brief String at physical memory (nullptr if not directly mapped up to null terminator)
+		/// @param phys Physical address
+		/// @return String, nullptr if not directly mapped
 		[[nodiscard]]
 		static auto	string(const phys_t phys) noexcept -> const char*;
 
-		// Physical address of directly mapped object
+		/// @brief Physical address of directly mapped object
+		/// @tparam T Object type
+		/// @param object Directly mapped object
+		/// @return Physical address
 		template<class T>
 		[[nodiscard]]
 		static auto	physOf(const T* const object) noexcept -> phys_t;
@@ -74,26 +87,26 @@ namespace igros::mem {
 	};
 
 
-	// End of directly mapped physical memory
+	/// @brief End of directly mapped physical memory
 	[[nodiscard]]
 	inline auto direct::end() noexcept -> phys_t {
 		return mEnd;
 	}
 
-	// Set end of directly mapped physical memory (paging mapped more memory)
+	/// @brief Set end of directly mapped physical memory (paging mapped more memory)
 	inline void direct::setEnd(const phys_t end) noexcept {
 		mEnd = end;
 	}
 
 
-	// Check if whole physical range is directly mapped
+	/// @brief Check if whole physical range is directly mapped
 	[[nodiscard]]
 	inline auto direct::isMapped(const phys_t phys, const phys_t size) noexcept -> bool {
 		return (phys < mEnd) && (size <= (mEnd - phys));
 	}
 
 
-	// Pointer to physical memory (nullptr if range is not directly mapped)
+	/// @brief Pointer to physical memory (nullptr if range is not directly mapped)
 	template<class T>
 	[[nodiscard]]
 	inline auto direct::pointer(const phys_t phys, const phys_t size) noexcept -> T* {
@@ -103,7 +116,7 @@ namespace igros::mem {
 		return std::bit_cast<T*>(static_cast<igros_usize_t>(phys) + platform::Platform::kernelOffset());
 	}
 
-	// String at physical memory (nullptr if not directly mapped up to null terminator)
+	/// @brief String at physical memory (nullptr if not directly mapped up to null terminator)
 	[[nodiscard]]
 	inline auto direct::string(const phys_t phys) noexcept -> const char* {
 		const auto* const text {direct::pointer<const char>(phys)};
@@ -122,7 +135,7 @@ namespace igros::mem {
 	}
 
 
-	// Physical address of directly mapped object
+	/// @brief Physical address of directly mapped object
 	template<class T>
 	[[nodiscard]]
 	inline auto direct::physOf(const T* const object) noexcept -> phys_t {

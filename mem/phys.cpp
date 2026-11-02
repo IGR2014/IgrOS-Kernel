@@ -1,14 +1,13 @@
 ////////////////////////////////////////////////////////////////
-//
-//	Physical memory allocator
-//
-//	File:	phys.cpp
-//	Date:	30 Oct 2026
-//
-//	Copyright (c) 2017 - 2026, Igor Baklykov
-//	All rights reserved.
-//
-//
+///
+///	@file
+///	@brief		Physical memory allocator
+///	@date		30 Oct 2026
+///
+///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
+///			All rights reserved.
+///	@author		Igor Baklykov
+///
 
 
 // C++
@@ -34,55 +33,61 @@
 namespace igros::mem {
 
 
-	// Allocator state
+	/// @brief Allocator state
 	namespace {
 
 
-		// Bitmap word
+		/// @brief Bitmap word
 		using word_t = igros_dword_t;
 
-		// Pages per bitmap word
+		/// @brief Pages per bitmap word
 		constexpr auto WORD_BITS	{static_cast<igros_usize_t>(std::numeric_limits<word_t>::digits)};
-		// Number of tracked pages
+		/// @brief Number of tracked pages
 		constexpr auto PAGES		{static_cast<igros_usize_t>(phys::MEMORY_LIMIT >> PAGE_SHIFT)};
 
-		// Free pages bitmap (bit set - page is free)
-		// Zero-initialized (.bss): all memory is used until init
+		/// @brief Free pages bitmap (bit set - page is free)
+		/// Zero-initialized (.bss): all memory is used until init
 		constinit std::array<word_t, PAGES / WORD_BITS>	freeMap		{};
-		// Number of free pages
+		/// @brief Number of free pages
 		constinit igros_usize_t				freeCount	{0_usize};
-		// No free pages in words below this one
+		/// @brief No free pages in words below this one
 		constinit igros_usize_t				searchHint	{0_usize};
-		// End of highest memory marked free
+		/// @brief End of highest memory marked free
 		constinit phys_t				memoryTop	{0_u64};
 
 
-		// Check if page is free
+		/// @brief Check if page is free
+		/// @param page Page number
+		/// @return true if page is free
 		[[nodiscard]]
 		auto isFree(const igros_usize_t page) noexcept -> bool {
 			return 0_u32 != (freeMap[page / WORD_BITS] & (1_u32 << (page % WORD_BITS)));
 		}
 
-		// Mark page as free
+		/// @brief Mark page as free
+		/// @param page Page number
 		void setFree(const igros_usize_t page) noexcept {
 			freeMap[page / WORD_BITS] |= (1_u32 << (page % WORD_BITS));
 			++freeCount;
 			searchHint = std::min(searchHint, page / WORD_BITS);
 		}
 
-		// Mark page as used
+		/// @brief Mark page as used
+		/// @param page Page number
 		void setUsed(const igros_usize_t page) noexcept {
 			freeMap[page / WORD_BITS] &= ~(1_u32 << (page % WORD_BITS));
 			--freeCount;
 		}
 
-		// Mark boot string as used (only first byte if string is not directly mapped)
+		/// @brief Mark boot string as used (only first byte if string is not directly mapped)
+		/// @param address String physical address
 		void markUsedString(const phys_t address) noexcept {
 			const auto* const text {direct::string(address)};
 			phys::markUsed(address, address + klib::kstrview(text).size() + 1_u64);
 		}
 
-		// Mark modules list, modules and their names as used
+		/// @brief Mark modules list, modules and their names as used
+		/// @param info Multiboot information
 		void markUsedModules(const multiboot::info_t &info) noexcept {
 			if (!info.hasInfoModules()) {
 				return;

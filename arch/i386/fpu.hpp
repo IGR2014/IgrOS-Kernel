@@ -1,14 +1,13 @@
 ////////////////////////////////////////////////////////////////
-//
-//	FPU operations
-//
-//	File:	fpu.hpp
-//	Date:	16 Dec 2022
-//
-//	Copyright (c) 2017 - 2022, Igor Baklykov
-//	All rights reserved.
-//
-//
+///
+///	@file
+///	@brief		FPU operations
+///	@date		16 Dec 2022
+///
+///	@copyright	Copyright (c) 2017 - 2022, Igor Baklykov
+///			All rights reserved.
+///	@author		Igor Baklykov
+///
 
 
 #pragma once
@@ -27,7 +26,8 @@ extern "C" {
 #endif	// __cplusplus
 
 
-	// Check FPU
+	/// @brief Check FPU
+	/// @return true if FPU is present
 	[[nodiscard]]
 	auto	fpuCheck() noexcept -> bool;
 
@@ -43,26 +43,27 @@ extern "C" {
 namespace igros::i386 {
 
 
-	// FPU representation
+	/// @brief FPU representation
 	class fpu final {
 
-		// Copy c-tor
+		/// @brief Copy c-tor
 		fpu(const fpu &other) = delete;
-		// Copy assignment
+		/// @brief Copy assignment
 		fpu& operator=(const fpu &other) = delete;
 
-		// Move c-tor
+		/// @brief Move c-tor
 		fpu(fpu &&other) = delete;
-		// Move assignment
+		/// @brief Move assignment
 		fpu& operator=(fpu &&other) = delete;
 
 
 	public:
 
-		// Default c-tor
+		/// @brief Default c-tor
 		fpu() noexcept = default;
 
-		// Check FPU
+		/// @brief Check FPU
+		/// @return true if FPU is present
 		[[nodiscard]]
 		static auto	check() noexcept -> bool;
 
@@ -70,7 +71,7 @@ namespace igros::i386 {
 	};
 
 
-	// Check FPU
+	/// @brief Check FPU
 	[[nodiscard]]
 	inline auto fpu::check() noexcept -> bool {
 		return ::fpuCheck();

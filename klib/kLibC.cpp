@@ -1,14 +1,13 @@
 ////////////////////////////////////////////////////////////////
-//
-//	Freestanding C runtime functions required by GCC/Clang
-//
-//	File:	kLibC.cpp
-//	Date:	30 Oct 2026
-//
-//	Copyright (c) 2017 - 2026, Igor Baklykov
-//	All rights reserved.
-//
-//
+///
+///	@file
+///	@brief		Freestanding C runtime functions required by GCC/Clang
+///	@date		30 Oct 2026
+///
+///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
+///			All rights reserved.
+///	@author		Igor Baklykov
+///
 
 
 // C++
@@ -37,7 +36,11 @@ extern "C" {
 	std::size_t	strlen(const char* src);
 
 
-	// Fill memory with byte value
+	/// @brief Fill memory with byte value
+	/// @param dst Destination memory
+	/// @param val Byte value (converted to unsigned char)
+	/// @param size Number of bytes
+	/// @return dst
 	IGROS_NO_LIBCALLS
 	void* memset(void* dst, int val, std::size_t size) {
 		auto* d {static_cast<unsigned char*>(dst)};
@@ -47,7 +50,11 @@ extern "C" {
 		return dst;
 	}
 
-	// Copy non-overlapping memory
+	/// @brief Copy non-overlapping memory
+	/// @param dst Destination memory
+	/// @param src Source memory (must not overlap destination)
+	/// @param size Number of bytes
+	/// @return dst
 	IGROS_NO_LIBCALLS
 	void* memcpy(void* dst, const void* src, std::size_t size) {
 		auto* d {static_cast<unsigned char*>(dst)};
@@ -58,7 +65,11 @@ extern "C" {
 		return dst;
 	}
 
-	// Copy possibly overlapping memory
+	/// @brief Copy possibly overlapping memory
+	/// @param dst Destination memory
+	/// @param src Source memory (may overlap destination)
+	/// @param size Number of bytes
+	/// @return dst
 	IGROS_NO_LIBCALLS
 	void* memmove(void* dst, const void* src, std::size_t size) {
 		auto* d {static_cast<unsigned char*>(dst)};
@@ -74,7 +85,11 @@ extern "C" {
 		return dst;
 	}
 
-	// Compare memory
+	/// @brief Compare memory
+	/// @param lhs First memory block
+	/// @param rhs Second memory block
+	/// @param size Number of bytes
+	/// @return Negative, zero or positive: first differing byte (unsigned) of lhs is less, equal or greater
 	IGROS_NO_LIBCALLS
 	int memcmp(const void* lhs, const void* rhs, std::size_t size) {
 		const auto* l {static_cast<const unsigned char*>(lhs)};
@@ -87,7 +102,11 @@ extern "C" {
 		return 0;
 	}
 
-	// Find byte value in memory
+	/// @brief Find byte value in memory
+	/// @param src Searched memory
+	/// @param val Byte value (converted to unsigned char)
+	/// @param size Number of bytes
+	/// @return Pointer to first matching byte, nullptr if not found
 	IGROS_NO_LIBCALLS
 	void* memchr(const void* src, int val, std::size_t size) {
 		const auto* s {static_cast<const unsigned char*>(src)};
@@ -101,7 +120,9 @@ extern "C" {
 		return nullptr;
 	}
 
-	// String length (std::string_view length of C string)
+	/// @brief String length (std::string_view length of C string)
+	/// @param src Null-terminated string
+	/// @return Number of characters before terminator
 	IGROS_NO_LIBCALLS
 	std::size_t strlen(const char* src) {
 		auto size {static_cast<std::size_t>(0)};
