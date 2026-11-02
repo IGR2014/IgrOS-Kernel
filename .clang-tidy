@@ -72,6 +72,9 @@ CheckOptions:
   bugprone-signed-bitwise.IgnorePositiveIntegerLiterals: true
   # Only parameters of the same type (int and size_t convert, but aren't mixed up in practice)
   bugprone-easily-swappable-parameters.ModelImplicitConversions: false
+  # Trailing return types for functions; lambdas keep deduced ones (explicit ones are
+  # redundant, Sonar S3574)
+  modernize-use-trailing-return-type.TransformLambdas: none
   # Scope guards: deleted copy is enough
   cppcoreguidelines-special-member-functions.AllowMissingMoveFunctionsWhenCopyIsDeleted: true
 ...

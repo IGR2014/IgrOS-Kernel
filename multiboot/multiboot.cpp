@@ -34,7 +34,7 @@ namespace igros::multiboot {
 
 
 		/// @brief Build year (__DATE__ is "Mmm dd yyyy")
-		constexpr auto BUILD_YEAR = []() consteval noexcept -> igros_dword_t {
+		constexpr auto BUILD_YEAR = []() consteval noexcept {
 			auto year {0_u32};
 			for (const auto digit : std::string_view {__DATE__}.substr(7)) {
 				year = (year * 10_u32) + static_cast<igros_dword_t>(digit - '0');

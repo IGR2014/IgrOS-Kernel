@@ -190,7 +190,7 @@ static void testTaskStateSegment() {
 	IGROS_CHECK(segment.ist[1] != segment.ist[2]);
 	IGROS_CHECK(segment.ist[0] != segment.ist[2]);
 	// Stacks don't overlap
-	const auto distance = [](const std::uint64_t a, const std::uint64_t b) -> std::uint64_t {
+	const auto distance = [](const std::uint64_t a, const std::uint64_t b) {
 		return (a > b) ? (a - b) : (b - a);
 	};
 	IGROS_CHECK(distance(segment.ist[0], segment.ist[1]) >= tss::STACK_SIZE);

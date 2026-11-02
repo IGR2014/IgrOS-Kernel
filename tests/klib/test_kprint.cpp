@@ -111,7 +111,7 @@ auto main() -> int {
 	IGROS_CHECK(0 == igros::klib::ksnprintf(lengthBuffer, 0, "%d", 1));
 
 	// Digits (also at compile time)
-	static_assert([]() -> bool {
+	static_assert([] {
 		std::array<char, 8> digits {};
 		return igros::klib::kdigits(digits, 0xBEEFu, igros::klib::radix_t::HEX, true) == "BEEF";
 	}());

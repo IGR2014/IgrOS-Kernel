@@ -85,7 +85,7 @@ namespace igros::i386 {
 
 		// Task state segments: kernel task and double fault task
 		tss::init(KERNEL_CODE, KERNEL_DATA);
-		const auto entry = [](const tss::segment_t &segment) noexcept -> entry_t {
+		const auto entry = [](const tss::segment_t &segment) noexcept {
 			return gdt::tssEntry(static_cast<igros_dword_t>(std::bit_cast<igros_usize_t>(&segment)), static_cast<igros_dword_t>(sizeof(segment) - 1_usize));
 		};
 		table[TSS / sizeof(entry_t)]			= entry(tss::kernel());

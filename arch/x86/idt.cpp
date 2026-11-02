@@ -84,7 +84,7 @@ namespace igros {
 		constinit static idt::table_t table {};
 
 		// Kernel interrupt gate for handler
-		const auto gate = [](const std::add_pointer_t<void () noexcept> handler) noexcept -> idt::entry_t {
+		const auto gate = [](const std::add_pointer_t<void () noexcept> handler) noexcept {
 			return idt::setEntry(handler, KERNEL_CODE, INTERRUPT_GATE);
 		};
 		// Exceptions setup (vectors from 0)
@@ -94,7 +94,7 @@ namespace igros {
 
 		// Exceptions that can't trust current stack
 		using enum x86::except::NUMBER;
-		const auto vector = [](const x86::except::NUMBER number) noexcept -> igros_usize_t {
+		const auto vector = [](const x86::except::NUMBER number) noexcept {
 			return static_cast<igros_usize_t>(number);
 		};
 

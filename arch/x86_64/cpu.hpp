@@ -84,7 +84,7 @@ namespace igros::x86_64 {
 	/// @brief Dump registers
 	inline void cpu::dumpRegisters(const register_t* const regs) noexcept {
 		// 64-bit register value as format "%llx" argument
-		constexpr auto r = [](const igros_quad_t value) constexpr noexcept -> unsigned long long {
+		constexpr auto r = [](const igros_quad_t value) constexpr noexcept {
 			return static_cast<unsigned long long>(value);
 		};
 		// Print regs

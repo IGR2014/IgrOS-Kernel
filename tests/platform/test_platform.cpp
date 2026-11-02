@@ -57,12 +57,12 @@ auto main() -> int {
 	// Hooks are called in order
 	const Platform platform {
 		"hooks",
-		[]() -> void { calls += 'i'; },
-		[]() -> void { calls += 'f'; },
-		[]() -> void { calls += 's'; },
-		[]() -> void { calls += 'r'; },
-		[]() -> void { calls += 'u'; },
-		[]() -> void { calls += 'w'; }
+		[] { calls += 'i'; },
+		[] { calls += 'f'; },
+		[] { calls += 's'; },
+		[] { calls += 'r'; },
+		[] { calls += 'u'; },
+		[] { calls += 'w'; }
 	};
 	IGROS_CHECK(0 == std::strcmp("hooks", platform.name()));
 	platform.initialize();

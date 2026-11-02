@@ -144,7 +144,7 @@ namespace igros::arch {
 	// Get current date/time
 	auto clockGetCurrentDateTime() noexcept -> clockDateTime_t {
 		// Read CMOS date/time (once no update is in progress)
-		const auto readStable = []() noexcept -> rtcDateTime_t {
+		const auto readStable = []() noexcept {
 			while (klib::kFlags<RTC_A>::from(rtcRead(RTC_REGISTER_A)).isSet(RTC_A::UPDATING)) {
 				// Wait for update end
 			}
