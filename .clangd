@@ -1,7 +1,38 @@
+# clangd configuration (https://clangd.llvm.org/config)
+#
+# Compile flags: compile database of a build when clangd is pointed to one
+# (--compile-commands-dir=build/Debug/<preset>, e.g. in the Dev Container), otherwise
+# compile_flags.txt (kernel flags and definitions for x86_64).
+# clang-tidy checks come from .clang-tidy (tests/.clang-tidy for tests), as in analysis.
 ---
-# Compile flags
 CompileFlags:
-	Add: [-std=c++20]
+  # GCC builds' compile databases have GCC-only warning options
+  Add: [-Wno-unknown-warning-option]
 
-...
+Diagnostics:
+  # Freestanding headers have no include mapping (misc-include-cleaner is off too)
+  UnusedIncludes: None
+  MissingIncludes: None
 
+InlayHints:
+  Enabled: true
+  ParameterNames: true
+  DeducedTypes: true
+  Designators: true
+  BlockEnd: false
+
+Hover:
+  ShowAKA: true
+
+Completion:
+  AllScopes: true
+
+Index:
+  Background: Build
+
+---
+# Host unit tests are hosted programs (C library, exceptions, RTTI)
+If:
+  PathMatch: tests/.*
+CompileFlags:
+  Remove: [-ffreestanding, -fno-builtin, -fno-exceptions, -fno-rtti, -fno-threadsafe-statics]
