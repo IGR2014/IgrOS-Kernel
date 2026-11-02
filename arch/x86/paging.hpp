@@ -29,6 +29,7 @@ namespace igros::x86 {
 
 
 	/// @brief Paging
+	///
 	/// Physical memory is mapped at kernel virtual offset (direct map): first 4 MB
 	/// by boot code, up to top of RAM (DIRECT_MAP_LIMIT at most) once init built
 	/// kernel page tables. Page tables are accessed through the direct map; table
@@ -103,6 +104,7 @@ namespace igros::x86 {
 
 
 		/// @brief Build kernel page tables and switch to them:
+		///
 		/// - first 4 MB at kernel offset with kernel section rights (code: read + execute,
 		///   read-only data: read, everything else: read + write, no execute),
 		///   except boot stack guard page,
@@ -166,6 +168,7 @@ namespace igros::x86 {
 		[[nodiscard]]
 		static auto	index(const mem::virt_t virt, const igros_usize_t level) noexcept -> igros_usize_t;
 		/// @brief Entry of virtual address at given level (0 - page table) of given hierarchy
+		///
 		/// (create - allocate missing tables)
 		/// @param top Top level table physical address
 		/// @param virt Virtual address

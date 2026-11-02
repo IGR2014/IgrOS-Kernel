@@ -46,6 +46,7 @@ namespace igros::mem {
 		constexpr auto PAGES		{static_cast<igros_usize_t>(phys::MEMORY_LIMIT >> PAGE_SHIFT)};
 
 		/// @brief Free pages bitmap (bit set - page is free)
+		///
 		/// Zero-initialized (.bss): all memory is used until init
 		constinit std::array<word_t, PAGES / WORD_BITS>	freeMap		{};
 		/// @brief Number of free pages

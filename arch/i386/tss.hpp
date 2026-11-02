@@ -22,6 +22,7 @@ namespace igros::i386 {
 
 
 	/// @brief Task state segments: kernel task (CPU saves interrupted state there on
+	///
 	/// task switch, ring 0 stack for future user mode) and double fault task
 	/// (reached through IDT task gate: known good stack and page directory
 	/// even if kernel stack overflowed)

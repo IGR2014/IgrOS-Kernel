@@ -76,6 +76,40 @@ if(DOXYGEN_FOUND)
 		DOXYGEN_GENERATE_TREEVIEW
 		YES
 	)
+	# doxygen-awesome-css theme (config/doxygen/doxygen-awesome, MIT), sidebar layout, dark
+	# mode toggle (dark by default), colors of the analysis site (config/doxygen/igros.css)
+	set(
+		IGROS_DOXYGEN_THEME_DIR
+		"${PROJECT_SOURCE_DIR}/config/doxygen"
+	)
+	set(
+		DOXYGEN_HTML_HEADER
+		"${IGROS_DOXYGEN_THEME_DIR}/header.html"
+	)
+	set(
+		DOXYGEN_HTML_EXTRA_STYLESHEET
+		"${IGROS_DOXYGEN_THEME_DIR}/doxygen-awesome/doxygen-awesome.css"
+		"${IGROS_DOXYGEN_THEME_DIR}/doxygen-awesome/doxygen-awesome-sidebar-only.css"
+		"${IGROS_DOXYGEN_THEME_DIR}/doxygen-awesome/doxygen-awesome-sidebar-only-darkmode-toggle.css"
+		"${IGROS_DOXYGEN_THEME_DIR}/igros.css"
+	)
+	set(
+		DOXYGEN_HTML_EXTRA_FILES
+		"${IGROS_DOXYGEN_THEME_DIR}/doxygen-awesome/doxygen-awesome-darkmode-toggle.js"
+	)
+	# Theme handles dark mode itself (Doxygen's own one would conflict)
+	set(
+		DOXYGEN_HTML_COLORSTYLE
+		LIGHT
+	)
+	set(
+		DOXYGEN_DISABLE_INDEX
+		NO
+	)
+	set(
+		DOXYGEN_FULL_SIDEBAR
+		NO
+	)
 	set(
 		DOXYGEN_SOURCE_BROWSER
 		YES

@@ -47,6 +47,7 @@ namespace igros::klib {
 
 
 	/// @brief 64-bit unsigned division for 32-bit CPU (no 64-bit "/" and "%" without libgcc __udivdi3/__umoddi3)
+	///
 	/// Division by zero returns {0, dividend}
 	/// @param dividend Dividend
 	/// @param divisor Divisor
@@ -101,6 +102,7 @@ namespace igros::klib {
 
 
 	/// @brief Divide integer by integer of the same signedness
+	///
 	/// Returns quotient (truncated towards zero) and remainder (sign of dividend), like C++ "/" and "%"
 	/// Divisor must not be zero (traps like native division, except software 64-bit division on i386)
 	/// @tparam T Dividend type

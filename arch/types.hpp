@@ -68,6 +68,7 @@ namespace igros {
 	// GCOVR_EXCL_START
 
 	/// @brief Integer literals range check (operators are consteval, so a call
+	///
 	/// to non-constexpr std::abort for out of range value is a compile error)
 	namespace literal {
 

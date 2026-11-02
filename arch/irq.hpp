@@ -35,6 +35,7 @@ namespace igros::arch {
 
 
 	/// @brief Interrupts control every architecture must provide
+	///
 	/// (plus "install<line, handler>()" / "uninstall<line>()" templates)
 	template<class T, class L>
 	concept Interrupts = requires(const L line) {

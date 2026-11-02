@@ -24,6 +24,7 @@ namespace igros::x86_64 {
 
 
 	/// @brief Task state segment: in long mode only stack pointers for privilege
+	///
 	/// changes (RSP0..2) and interrupt stack table (IST1..7)
 	class tss final {
 

@@ -28,6 +28,7 @@ namespace igros::mem {
 
 
 	/// @brief Direct map: physical memory at kernel virtual offset
+	///
 	/// (boot code maps low memory, paging extends it up to top of RAM).
 	/// Bootloader data may lie anywhere in physical memory,
 	/// so every pointer is checked against directly mapped range

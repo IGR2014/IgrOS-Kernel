@@ -1,17 +1,17 @@
 # IgrOS-Kernel
 
-[![Badge-CPP]][Link-CPP]
-[![Badge-License]][Link-License]
+[![Badge-CPP][Badge-CPP]][Link-CPP]
+[![Badge-License][Badge-License]][Link-License]
 
 **IgrOS-Kernel** is a hobby operating system kernel written in modern **C++20** with a thin layer of assembly.
 It boots via **Multiboot** (GRUB) on **i386** and **x86_64**, sets up the CPU (GDT, IDT, exceptions, interrupts, paging),
 manages physical memory and drives basic PC hardware: VGA text mode, serial port, PIT timer, keyboard and CMOS clock.
 
-[![Badge-Arch-i386]][Link-Arch-i386]
-[![Badge-Arch-x86_64]][Link-Arch-x86_64]
-[![Badge-Arch-arm]][Link-Arch-arm]
-[![Badge-Arch-arm64]][Link-Arch-arm64]
-[![Badge-Arch-avr]][Link-Arch-avr]
+[![Badge-Arch-i386][Badge-Arch-i386]][Link-Arch-i386]
+[![Badge-Arch-x86_64][Badge-Arch-x86_64]][Link-Arch-x86_64]
+[![Badge-Arch-arm][Badge-Arch-arm]][Link-Arch-arm]
+[![Badge-Arch-arm64][Badge-Arch-arm64]][Link-Arch-arm64]
+[![Badge-Arch-avr][Badge-Arch-avr]][Link-Arch-avr]
 
 ---
 
@@ -19,9 +19,9 @@ manages physical memory and drives basic PC hardware: VGA text mode, serial port
 
 | | |
 | :--- | :--- |
-| **CI/CD**      | [![Badge-GitHub]][Link-GitHub] [![Badge-GitLab]][Link-GitLab] [![Badge-Azure-DevOps]][Link-Azure-DevOps] |
-| **Codacy**     | [![Badge-Codacy-Quality]][Link-Codacy] [![Badge-Codacy-Coverage]][Link-Codacy-Coverage] |
-| **SonarCloud** | [![Badge-Sonar-Quality-Gate]][Link-Sonar] [![Badge-Sonar-Coverage]][Link-Sonar] [![Badge-Sonar-Bugs]][Link-Sonar] [![Badge-Sonar-Vulnerabilities]][Link-Sonar] [![Badge-Sonar-Code-Smells]][Link-Sonar] |
+| **CI/CD**      | [![Badge-GitHub][Badge-GitHub]][Link-GitHub] [![Badge-GitLab][Badge-GitLab]][Link-GitLab] [![Badge-Azure-DevOps][Badge-Azure-DevOps]][Link-Azure-DevOps] |
+| **Codacy**     | [![Badge-Codacy-Quality][Badge-Codacy-Quality]][Link-Codacy] [![Badge-Codacy-Coverage][Badge-Codacy-Coverage]][Link-Codacy-Coverage] |
+| **SonarCloud** | [![Badge-Sonar-Quality-Gate][Badge-Sonar-Quality-Gate]][Link-Sonar] [![Badge-Sonar-Coverage][Badge-Sonar-Coverage]][Link-Sonar] [![Badge-Sonar-Bugs][Badge-Sonar-Bugs]][Link-Sonar] [![Badge-Sonar-Vulnerabilities][Badge-Sonar-Vulnerabilities]][Link-Sonar] [![Badge-Sonar-Code-Smells][Badge-Sonar-Code-Smells]][Link-Sonar] |
 
 ---
 

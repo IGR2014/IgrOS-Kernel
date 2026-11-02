@@ -24,6 +24,7 @@ namespace igros::mem {
 
 
 	/// @brief Virtual address: translated by paging, never dereferenced through this type.
+	///
 	/// Distinct type, so physical addresses (phys_t), plain integers and virtual
 	/// addresses can't be mixed up (phys_t and igros_usize_t are the same type on x86_64)
 	enum class virt_t : igros_usize_t {};

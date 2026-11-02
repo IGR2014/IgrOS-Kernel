@@ -25,6 +25,7 @@ extern "C" {
 
 
 	/// @brief Enable no-execute page protection (EFER.NXE) if CPU supports it
+	///
 	/// (false on i386: NX bit exists only in PAE and long mode page tables)
 	/// @return true if no-execute protection is enabled
 	[[nodiscard]]

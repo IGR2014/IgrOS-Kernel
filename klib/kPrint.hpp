@@ -41,6 +41,7 @@ namespace igros::klib {
 
 
 	/// @brief Digits of unsigned value written to the end of buffer (no sign, no terminator)
+	///
 	/// Buffer must fit all digits (std::numeric_limits<U>::digits for binary)
 	/// @tparam U Unsigned integer type
 	/// @param buffer Output buffer (digits end at its end)

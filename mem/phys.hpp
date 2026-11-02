@@ -46,6 +46,7 @@ namespace igros::mem {
 
 
 	/// @brief Physical page frame allocator
+	///
 	/// (bitmap of physical pages: never touches the pages themselves,
 	/// so free memory doesn't have to be mapped)
 	class phys final {

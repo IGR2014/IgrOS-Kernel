@@ -200,6 +200,7 @@ namespace igros::klib {
 
 
 		/// @brief Parse flags, field width and length modifier of a placeholder
+		///
 		/// (fmt points to '%' on entry, to the last parsed character on return)
 		/// @param fmt Format position (advanced past parsed characters)
 		/// @return Parsed specification

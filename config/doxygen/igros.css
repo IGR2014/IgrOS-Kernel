@@ -1,0 +1,42 @@
+/*
+ * doxygen-awesome theme colors matching the analysis report and main page
+ * (light and dark palettes of config/pages/index.html)
+ */
+
+html {
+	--primary-color: #2f5fb3;
+	--primary-dark-color: #234a8c;
+	--primary-light-color: #6d8fcc;
+	--page-background-color: #f6f7f9;
+	--page-foreground-color: #1d2330;
+	--page-secondary-foreground-color: #5d6676;
+	--separator-color: #dde1e7;
+	--side-nav-background: #ffffff;
+	--code-background: #f3f4f7;
+	--tablehead-background: #f0f2f5;
+}
+
+html.dark-mode {
+	--primary-color: #8ab4f8;
+	--primary-dark-color: #b3cdfb;
+	--primary-light-color: #5d8fd8;
+	--box-shadow: 0 2px 8px 0 rgba(0, 0, 0, .45);
+	--odd-color: rgba(255, 255, 255, .025);
+	--menu-selected-background: rgba(138, 180, 248, .14);
+	--page-background-color: #12151b;
+	--page-foreground-color: #e3e7ee;
+	--page-secondary-foreground-color: #98a1b0;
+	--separator-color: #2c323d;
+	--side-nav-background: #1a1e26;
+	--code-background: #151920;
+	--section-code-background: rgba(255, 255, 255, .06);
+	--section-code-border: rgba(255, 255, 255, .14);
+	--tablehead-background: #1a1e26;
+	--blockquote-background: #1a1e26;
+	--blockquote-foreground: #98a1b0;
+	--fragment-background: #151920;
+	--fragment-foreground: #e3e7ee;
+	--fragment-linenumber-background: #1a1e26;
+	--fragment-linenumber-border: #2c323d;
+	--fragment-linenumber-color: #98a1b0;
+}
