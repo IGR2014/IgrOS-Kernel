@@ -33,7 +33,7 @@ extern "C" {
 	void*	memmove(void* dst, const void* src, std::size_t size);
 	int	memcmp(const void* lhs, const void* rhs, std::size_t size);
 	void*	memchr(const void* src, int val, std::size_t size);
-	std::size_t	strlen(const char* src);
+	std::size_t	strlen(const char* src);	// flawfinder: ignore (implements strlen)
 
 
 	/// @brief Fill memory with byte value
@@ -124,7 +124,7 @@ extern "C" {
 	/// @param src Null-terminated string
 	/// @return Number of characters before terminator
 	IGROS_NO_LIBCALLS
-	std::size_t strlen(const char* src) {
+	std::size_t strlen(const char* src) {	// flawfinder: ignore (implements strlen)
 		auto size {static_cast<std::size_t>(0)};
 		while ('\0' != src[size]) {
 			++size;

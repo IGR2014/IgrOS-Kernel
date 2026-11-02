@@ -61,10 +61,12 @@ namespace igros::i386 {
 		};
 
 		/// @brief IDT table pointer
+		// cppcheck-suppress-begin unusedStructMember ; fixed layout read by the CPU, not by C++ code
 		struct pointer_t {
 			igros_word_t	size;		///< IDT size
 			const entry_t*	pointer;	///< IDT pointer
 		};
+		// cppcheck-suppress-end unusedStructMember
 
 #pragma pack(pop)
 

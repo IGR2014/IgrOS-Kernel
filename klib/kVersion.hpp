@@ -38,6 +38,7 @@ namespace igros::klib {
 		constexpr static auto VERSION_PATCH	{static_cast<igros_word_t>(IGROS_GIT_VERSION_PATCH)};		///< Kernel version patch
 		constexpr static auto VERSION_BUILD	{static_cast<igros_dword_t>(IGROS_GIT_VERSION_BUILD)};		///< Kernel version build
 
+		// cppcheck-suppress unusedStructMember ; release name, kept with version fields
 		constexpr static auto VERSION_NAME	{"BETA"};							///< Kernel version name
 
 

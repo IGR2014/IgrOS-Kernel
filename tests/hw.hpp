@@ -70,12 +70,14 @@ namespace igros::test::hw {
 	inline std::uint16_t		taskRegister	{0};
 
 	// CPUID results by leaf (EAX, EBX, ECX, EDX; missing leaf reads zeros)
+	// cppcheck-suppress-begin unusedStructMember ; register set, tests read the registers they need
 	struct cpuidRegs {
 		std::uint32_t	eax;
 		std::uint32_t	ebx;
 		std::uint32_t	ecx;
 		std::uint32_t	edx;
 	};
+	// cppcheck-suppress-end unusedStructMember
 	inline std::map<std::uint32_t, cpuidRegs>	cpuid;
 	// Model specific registers (missing register reads zero)
 	inline std::map<std::uint32_t, std::uint64_t>	msr;

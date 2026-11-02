@@ -29,7 +29,7 @@ import json
 import os
 import re
 import shlex
-import subprocess
+import subprocess  # nosec B404: runs git and the build's compilers only
 import sys
 import tempfile
 import time
@@ -104,7 +104,8 @@ def collect_warnings(build_dir, output):
 			elif arg not in ("-MD", "-MMD"):
 				command.append(arg)
 		with tempfile.TemporaryDirectory() as temp:
-			result = subprocess.run(
+			# Compiler command from the build's compile database
+			result = subprocess.run(  # nosec B603
 				command + ["-o", os.path.join(temp, "source.o")],
 				cwd=entry["directory"],
 				capture_output=True,
@@ -283,11 +284,12 @@ def read_cache(build_dir):
 
 def git_revision(source_dir):
 	try:
-		revision = subprocess.run(
+		# git from PATH, fixed arguments
+		revision = subprocess.run(  # nosec B603 B607
 			["git", "-C", str(source_dir), "rev-parse", "--short", "HEAD"],
 			capture_output=True, text=True, check=True
 		).stdout.strip()
-		dirty = subprocess.run(
+		dirty = subprocess.run(  # nosec B603 B607
 			["git", "-C", str(source_dir), "status", "--porcelain", "--untracked-files=no"],
 			capture_output=True, text=True, check=True
 		).stdout.strip()

@@ -1,0 +1,7 @@
+---
+# Codacy configuration
+exclude_paths:
+  # Third-party Doxygen theme (doxygen-awesome-css, vendored as released)
+  - "config/doxygen/doxygen-awesome/**"
+  # Doxygen's own HTML header template (alternative blocks share ids)
+  - "config/doxygen/header.html"

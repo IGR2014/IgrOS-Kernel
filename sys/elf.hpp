@@ -75,6 +75,7 @@ namespace igros::sys {
 
 
 	/// @brief ELF identity class
+	// cppcheck-suppress-begin unusedStructMember ; ELF format layout
 	struct elfIdentity_t {
 		std::array<std::byte, 4_usize>		magic;			///< ELF magic
 		ELF_CLASS				classType;		///< ELF class
@@ -84,6 +85,7 @@ namespace igros::sys {
 		igros_byte_t				abiVersion;		///< ELS OS ABI version
 		std::array<std::byte, 7_usize>		reserved;		///< Unused
 	};
+	// cppcheck-suppress-end unusedStructMember
 
 
 	/// @brief ELF type
@@ -121,6 +123,7 @@ namespace igros::sys {
 	};
 
 	/// @brief ELF file header
+        // cppcheck-suppress-begin unusedStructMember ; ELF format layout
         struct elfHeader_t {
 		elfIdentity_t		identity;			///< ELF Header identity
 		ELF_TYPE		type;				///< ELF Header type
@@ -137,6 +140,7 @@ namespace igros::sys {
 		igros_word_t		sectionHeaderNum;		///< ELF Header section header count
 		igros_word_t		sectionNamesIndex;		///< ELF Header names section index
         };
+        // cppcheck-suppress-end unusedStructMember
 
 
 	/// @brief ELF program type
@@ -155,6 +159,7 @@ namespace igros::sys {
 	};
 
 	/// @brief ELF program header
+	// cppcheck-suppress-begin unusedStructMember ; ELF format layout
 	struct elfProgramHeader_t {
 
 		ELF_PROGRAM_TYPE	type;				///< ELF Program table type
@@ -180,6 +185,7 @@ namespace igros::sys {
 		igros_pointer_t		align;				///< ELF Program table segment alignment
 
 	};
+	// cppcheck-suppress-end unusedStructMember
 
 
 }	// namespace igros::sys
