@@ -1,9 +1,10 @@
 # Name
 name: 'Analysis'
 
-# Every analysis tool over every toolchain (config/script/analysis.sh): master report deployed
-# to GitHub Pages (Settings -> Pages -> Source: GitHub Actions), pull request report uploaded
-# as workflow artifact (linked in the PR comment, expires on its own).
+# Every analysis tool over every toolchain (config/script/analysis.sh): master site deployed
+# to GitHub Pages (Settings -> Pages -> Source: GitHub Actions): main page (config/pages),
+# report under analysis/, documentation under docs/. Pull request site uploaded as workflow
+# artifact (linked in the PR comment, expires on its own).
 # CodeQL isn't run here: codeql.yml uploads it to code scanning.
 on:
   push:
@@ -53,6 +54,8 @@ jobs:
     # Environment variables
     env:
       IGROS_ANALYSIS_CODEQL: "none"
+      # Report page links documentation of the site (analysis/ and docs/ side by side)
+      IGROS_ANALYSIS_DOCS_LINK: "../docs/index.html"
       # Pages serve master only (github-pages environment allows the default branch)
       PAGES: ${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
       # Fork PR token is read-only: no PR comment, report is in job summary and artifact
@@ -90,16 +93,17 @@ jobs:
       run: |
         bash config/script/analysis.sh
 
-    # Report site: page, its data file, the coverage report and documentation it links to
-    # (not build directories)
+    # Site: main page, report (page, data file, coverage report it links to) under analysis/,
+    # documentation under docs/ (not build directories)
     - name: 'Collect Report'
       if: success() || failure()
       shell: bash
       run: |
         [[ -f build/analysis/index.html ]] || exit 0
-        mkdir -p site/tests/reports
-        cp build/analysis/index.html build/analysis/index.data.js site/
-        [[ -d build/analysis/tests/reports/coverage ]] && cp -r build/analysis/tests/reports/coverage site/tests/reports/
+        mkdir -p site/analysis/tests/reports
+        cp config/pages/index.html site/
+        cp build/analysis/index.html build/analysis/index.data.js site/analysis/
+        [[ -d build/analysis/tests/reports/coverage ]] && cp -r build/analysis/tests/reports/coverage site/analysis/tests/reports/
         [[ -d build/analysis/docs ]] && cp -r build/analysis/docs site/docs
         exit 0
 
@@ -139,9 +143,9 @@ jobs:
           cat build/analysis/summary.md
           echo
           if [[ "${PAGES}" == "true" ]]; then
-            echo "[Full report](https://${owner}.github.io/${GITHUB_REPOSITORY#*/}/) (findings with source, coverage) for ${GITHUB_SHA::7}"
+            echo "[Full report](https://${owner}.github.io/${GITHUB_REPOSITORY#*/}/analysis/) (findings with source, coverage) for ${GITHUB_SHA::7}"
           elif [[ -n "${ARTIFACT_URL}" ]]; then
-            echo "[Full report](${ARTIFACT_URL}) for ${GITHUB_SHA::7}: download, open \`index.html\` (findings with source, coverage)"
+            echo "[Full report](${ARTIFACT_URL}) for ${GITHUB_SHA::7}: download, open \`analysis/index.html\` (findings with source, coverage)"
           fi
         } > build/analysis/comment.md
         cat build/analysis/comment.md >> "${GITHUB_STEP_SUMMARY}"

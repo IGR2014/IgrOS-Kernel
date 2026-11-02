@@ -487,7 +487,7 @@ def make_report(args):
 		"tools":	[tool for tool in TOOLS if any(summary["tools"][tool]["ran"] for summary in summaries)],
 		"tests":	tests_summary(Path(args.tests).resolve() if args.tests else None, output.parent),
 		# Doxygen documentation next to the page (analysis.sh copies it)
-		"docs":		"docs/index.html" if (output.parent / "docs" / "index.html").exists() else "",
+		"docs":		(args.docs_link or "docs/index.html") if (output.parent / "docs" / "index.html").exists() else "",
 		"findings":	items,
 		"sources":	snippets(items, source_dir)
 	}
@@ -879,6 +879,7 @@ def main():
 	report.add_argument("--status", help="Analysis state shown in the page (e.g. still running)")
 	report.add_argument("--markdown", help="Also write a short Markdown summary (CI job summary, PR comment)")
 	report.add_argument("--counts", help="Also write finding counts per severity as JSON (CI gate)")
+	report.add_argument("--docs-link", help="Documentation link of the page (default: docs/index.html next to it)")
 	report.add_argument("builds", nargs="+", metavar="[name=]build-dir")
 
 	args = parser.parse_args()

@@ -18,6 +18,8 @@
 #	  IGROS_ANALYSIS_DIR	- output directory inside sources (default: build/analysis)
 #	  IGROS_ANALYSIS_CODEQL	- CodeQL for "first" config (default), "all" or "none"
 #				  (separate clean build, a few minutes per config)
+#	  IGROS_ANALYSIS_DOCS_LINK	- documentation link of the report page (default: docs/ next to it;
+#				  site layout of CI: ../docs/index.html)
 #
 #	Tools that aren't installed are skipped (analysis Docker image has all of them).
 #
@@ -98,6 +100,7 @@ report() {
 		--markdown "${OUT}/summary.md" \
 		--counts "${OUT}/counts.json" \
 		--tests "${tests}" \
+		${IGROS_ANALYSIS_DOCS_LINK:+--docs-link "${IGROS_ANALYSIS_DOCS_LINK}"} \
 		${status:+--status "${status}"} \
 		"${BUILDS[@]}"
 }
