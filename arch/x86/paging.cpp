@@ -188,7 +188,7 @@ namespace igros::x86 {
 	[[nodiscard]]
 	auto paging::translate(const mem::virt_t virt) noexcept -> mem::phys_t {
 		const auto address	{static_cast<mem::phys_t>(mem::address(virt))};
-		auto* entries		{paging::table(paging::root())};
+		const auto* entries	{paging::table(paging::root())};
 		for (auto step {0_usize}; step < LEVELS; ++step) {
 			const auto level {LEVELS - 1_usize - step};
 			// Check entries of current level

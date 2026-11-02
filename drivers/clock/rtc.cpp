@@ -131,7 +131,9 @@ namespace igros::arch {
 	clockDateTime_t clockGetCurrentDateTime() noexcept {
 		// Read CMOS date/time (once no update is in progress)
 		const auto readStable = []() noexcept {
-			while (0x00_u8 != (0x80_u8 & rtcRead(RTC_REGISTER_A))) {}
+			while (0x00_u8 != (0x80_u8 & rtcRead(RTC_REGISTER_A))) {
+				// Wait for update end
+			}
 			return rtcReadDateTime();
 		};
 		auto rtcDateTime	{readStable()};

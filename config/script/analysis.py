@@ -430,6 +430,7 @@ def write_markdown(data, path):
 
 # Open page reloads the data file: never let it see a half-written one
 def write_atomic(path, text):
+	path = working_path(path)
 	temp = path.with_name(path.name + ".tmp")
 	temp.write_text(text, encoding="utf-8")
 	os.replace(temp, path)
