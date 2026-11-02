@@ -14,18 +14,27 @@
         {
             "name": "Win32",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}"
             ],
-            "windowsSdkVersion": "10.0.19041.0",
             "defines": [
-                "UNICODE",
-                "_UNICODE"
+                "IGROS_KERNEL",
+                "IGROS_ARCH_x86_64",
+                "IGROS_ARCH=x86_64",
+                "IGROS_GIT_VERSION=\"0.0.0.0\"",
+                "IGROS_GIT_VERSION_MAJOR=0",
+                "IGROS_GIT_VERSION_MINOR=0",
+                "IGROS_GIT_VERSION_PATCH=0",
+                "IGROS_GIT_VERSION_BUILD=0",
+                "IGROS_GIT_HASH=\"0\""
             ],
-            "compilerPath": "C:/Program Files (x86)/Microsoft Visual Studio/2019/BuildTools/VC/Tools/MSVC/14.24.28314/bin/Hostx64/x64/cl.exe",
+            "compilerPath": "C:/Program Files/LLVM/bin/clang++.exe",
+            "compilerArgs": [
+                "-ffreestanding",
+                "-fno-exceptions"
+            ],
             "cStandard": "c17",
             "cppStandard": "c++20",
-            "intelliSenseMode": "msvc-x64",
-            "configurationProvider": "ms-vscode.cmake-tools"
+            "intelliSenseMode": "windows-clang-x64"
         }
     ],
     "version": 4

@@ -1,5 +1,23 @@
 {
 	"cmake.configureOnOpen": true,
+	"C_Cpp.codeAnalysis.clangTidy.path": "C:/Program Files/LLVM/bin/clang-tidy.exe",
+	// Windows IDE analysis: compiler cache and build output aren't sources; host tests are
+	// Linux programs (sys/mman.h, signals) and kLibC.cpp clashes with Windows C headers
+	// (memchr): CI analyzes both on Linux
+	"C_Cpp.codeAnalysis.exclude": {
+		"**/.ccache/**": true,
+		"**/build/**": true,
+		"**/install/**": true,
+		"tests/**": true,
+		"klib/kLibC.cpp": true
+	},
+	"C_Cpp.files.exclude": {
+		"**/.ccache": true,
+		"**/build": true,
+		"**/install": true,
+		"**/.vscode": true,
+		"**/.vs": true
+	},
 	"sonarlint.pathToCompileCommands": "${workspaceFolder}/build/Debug/compile_commands.json",
 	"sonarlint.connectedMode.project": {
 		"connectionId": "igr2014",
