@@ -38,8 +38,8 @@ constexpr auto EFER_NXE		{std::uint64_t {0x0800}};
 // No extended leaf 80000001h: NX can't be checked
 static void testNoExtendedLeaf() {
 	hw::reset();
-	hw::cpuid[EXTENDED_MAX]	= {EXTENDED_MAX, 0, 0, 0};
-	hw::cpuid[EXTENDED_INFO]	= {0, 0, 0, EDX_NX};	// not reachable: leaf above maximum
+	hw::cpuid[EXTENDED_MAX]	= {.eax = EXTENDED_MAX, .ebx = 0, .ecx = 0, .edx = 0};
+	hw::cpuid[EXTENDED_INFO]	= {.eax = 0, .ebx = 0, .ecx = 0, .edx = EDX_NX};	// not reachable: leaf above maximum
 	hw::msr[EFER]		= EFER_LONG_MODE;
 	IGROS_CHECK(!cpuEnableNoExecute());
 	IGROS_CHECK(EFER_LONG_MODE == hw::msr[EFER]);
@@ -49,8 +49,8 @@ static void testNoExtendedLeaf() {
 // Leaf present, NX not supported: EFER untouched
 static void testNoNX() {
 	hw::reset();
-	hw::cpuid[EXTENDED_MAX]	= {EXTENDED_INFO, 0, 0, 0};
-	hw::cpuid[EXTENDED_INFO]	= {0, 0, 0, ~EDX_NX};
+	hw::cpuid[EXTENDED_MAX]	= {.eax = EXTENDED_INFO, .ebx = 0, .ecx = 0, .edx = 0};
+	hw::cpuid[EXTENDED_INFO]	= {.eax = 0, .ebx = 0, .ecx = 0, .edx = ~EDX_NX};
 	hw::msr[EFER]		= EFER_LONG_MODE;
 	IGROS_CHECK(!cpuEnableNoExecute());
 	IGROS_CHECK(EFER_LONG_MODE == hw::msr[EFER]);
@@ -60,8 +60,8 @@ static void testNoNX() {
 // NX supported: EFER.NXE set, other bits kept
 static void testNX() {
 	hw::reset();
-	hw::cpuid[EXTENDED_MAX]	= {0x80000008, 0, 0, 0};
-	hw::cpuid[EXTENDED_INFO]	= {0, 0, 0, EDX_NX};
+	hw::cpuid[EXTENDED_MAX]	= {.eax = 0x80000008, .ebx = 0, .ecx = 0, .edx = 0};
+	hw::cpuid[EXTENDED_INFO]	= {.eax = 0, .ebx = 0, .ecx = 0, .edx = EDX_NX};
 	hw::msr[EFER]		= EFER_LONG_MODE;
 	IGROS_CHECK(cpuEnableNoExecute());
 	IGROS_CHECK((EFER_LONG_MODE | EFER_NXE) == hw::msr[EFER]);

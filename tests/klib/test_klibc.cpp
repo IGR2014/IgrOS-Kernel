@@ -49,11 +49,11 @@ int main() {
 	IGROS_CHECK(equals(buffer, "xxxx\0", 5));
 	// Value is converted to unsigned char (0x141 -> 0x41): checked on purpose
 	// cppcheck-suppress memsetValueOutOfRange
-	memset(buffer, 0x141, 2);
+	memset(buffer, 0x141, 2);	// NOLINT(bugprone-suspicious-memset-usage): truncation is checked
 	IGROS_CHECK(equals(buffer, "AAxx", 4));
-	// (size in variable: literal 0 triggers transposed arguments warning)
-	auto empty {std::size_t {0}};
-	memset(buffer, 'z', empty);
+	// Zero size writes nothing
+	const auto empty {std::size_t {0}};
+	memset(buffer, 'z', empty);	// NOLINT(bugprone-suspicious-memset-usage): zero size on purpose
 	IGROS_CHECK(equals(buffer, "AAxx", 4));
 
 	// memcpy

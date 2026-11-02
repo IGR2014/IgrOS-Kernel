@@ -30,14 +30,14 @@ namespace hw = igros::test::hw;
 [[nodiscard]]
 static auto portRead(const igros::x86::port_t addr) -> std::uint32_t {
 	const auto value {hw::portReadHook ? hw::portReadHook(addr) : hw::portValue[addr]};
-	hw::portLog.push_back({addr, value, false});
+	hw::portLog.push_back({.port = addr, .value = value, .write = false});
 	return value;
 }
 
 // Write port
 static void portWrite(const igros::x86::port_t addr, const std::uint32_t value) {
 	hw::portValue[addr] = value;
-	hw::portLog.push_back({addr, value, true});
+	hw::portLog.push_back({.port = addr, .value = value, .write = true});
 }
 
 

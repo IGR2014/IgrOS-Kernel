@@ -42,7 +42,7 @@ constexpr auto VGA_CURSOR_DATA		{std::uint16_t {0x3D5}};
 // Symbol at screen position
 [[nodiscard]]
 static auto at(const igros::igros_usize_t x, const igros::igros_usize_t y) -> const vmemSymbol& {
-	return vgaMemory[y * VIDEO_MEM_WIDTH + x];
+	return vgaMemory[(y * VIDEO_MEM_WIDTH) + x];
 }
 
 // Screen row starts with text
@@ -81,7 +81,7 @@ static auto cursorWritten() -> igros::igros_usize_t {
 static void testInit() {
 	hw::reset();
 	for (auto &symbol : vgaMemory) {
-		symbol = {'#', 0x00};
+		symbol = {.symbol = '#', .color = 0x00};
 	}
 	IGROS_CHECK(vmemInit());
 	auto blank {true};
@@ -146,7 +146,7 @@ static void testScroll() {
 static void testCursor() {
 	hw::reset();
 	vmemCursorSet(vmemCursor {.x = 5, .y = 3});
-	IGROS_CHECK(3 * VIDEO_MEM_WIDTH + 5 == cursorWritten());
+	IGROS_CHECK((3 * VIDEO_MEM_WIDTH) + 5 == cursorWritten());
 	// CRT controller model: data port returns selected register
 	auto registers {std::vector<std::uint8_t>(0x10, 0)};
 	registers[0x0A] = 0x2E;

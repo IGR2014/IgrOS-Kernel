@@ -62,6 +62,12 @@ set(
 	"${CMAKE_CURRENT_SOURCE_DIR}/.."
 )
 
+# Compile database (clang-tidy target)
+set(
+	CMAKE_EXPORT_COMPILE_COMMANDS
+	ON
+)
+
 message(
 	STATUS
 	"IgrOS tests: ${IGROS_TEST_ARCH} (${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION})"
@@ -293,4 +299,42 @@ if(IGROS_TESTS_COVERAGE)
 			"IgrOS tests: gcovr not found, no coverage target (ctest still collects .gcda)"
 		)
 	endif()
+endif()
+
+# ClangTidy report over test sources (kernel sources and headers are checked by kernel builds)
+find_program(
+	IGROS_CLANG_TIDY_EXE
+	NAMES clang-tidy
+)
+find_program(
+	IGROS_RUN_CLANG_TIDY_EXE
+	NAMES run-clang-tidy
+)
+mark_as_advanced(
+	IGROS_CLANG_TIDY_EXE
+	IGROS_RUN_CLANG_TIDY_EXE
+)
+if(IGROS_CLANG_TIDY_EXE AND IGROS_RUN_CLANG_TIDY_EXE)
+	cmake_path(
+		ABSOLUTE_PATH CMAKE_CURRENT_SOURCE_DIR
+		NORMALIZE
+		OUTPUT_VARIABLE IGROS_TESTS_ROOT
+	)
+	add_custom_target(
+		clang-tidy
+		COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}/reports"
+		COMMAND ${CMAKE_COMMAND}
+			-DRUN_CLANG_TIDY=${IGROS_RUN_CLANG_TIDY_EXE}
+			-DCLANG_TIDY=${IGROS_CLANG_TIDY_EXE}
+			-DBUILD_DIR=${CMAKE_BINARY_DIR}
+			-DREPORT_FILE=${CMAKE_BINARY_DIR}/reports/clang-tidy-report.txt
+			-DFIXES_FILE=${CMAKE_BINARY_DIR}/reports/clang-tidy-fixes.yaml
+			-DFILES_REGEX=^${IGROS_TESTS_ROOT}.*\.cpp$
+			-DHEADER_FILTER=^${IGROS_TESTS_ROOT}
+			-P "${IGROS_SOURCE_DIR}/cmake/modules/EnableAnalysis.cmake"
+		WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+		COMMENT "Running ClangTidy over test sources"
+		VERBATIM
+		USES_TERMINAL
+	)
 endif()

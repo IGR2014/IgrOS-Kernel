@@ -58,8 +58,8 @@ static void testMask() {
 	irq::mask(irq_t::KEYBOARD);
 	IGROS_CHECK(0xFEFF == irq::getMask());
 	// Lines past 15 are ignored
-	irq::mask(static_cast<irq_t>(16));
-	irq::unmask(static_cast<irq_t>(16));
+	irq::mask(static_cast<irq_t>(16));	// NOLINT(clang-analyzer-optin.core.EnumCastOutOfRange): invalid line on purpose
+	irq::unmask(static_cast<irq_t>(16));	// NOLINT(clang-analyzer-optin.core.EnumCastOutOfRange): invalid line on purpose
 	IGROS_CHECK(0xFEFF == irq::getMask());
 	irq::setMask(0x1234);
 	IGROS_CHECK(0x34 == hw::portValue[PIC_MASTER_DATA]);

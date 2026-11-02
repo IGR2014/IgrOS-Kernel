@@ -1,0 +1,25 @@
+---
+# ClangTidy checks of host tests: kernel checks (../.clang-tidy), minus checks that don't
+# fit test code:
+#  - reinterpret-cast, avoid-c-arrays: byte buffers stand in for physical memory, boot
+#    data and hardware tables at fake addresses
+#  - cognitive-complexity: test main() is a list of checks, each IGROS_CHECK is a branch
+#  - setjmp-longjmp, cert-err52-cpp: halt and page fault tests return to the test with
+#    (sig)longjmp
+#  - throwing-static-initialization, cert-err58-cpp: hardware stubs keep state in static
+#    containers (failed allocation ends the test)
+#
+InheritParentConfig: true
+Checks: >
+  -cppcoreguidelines-pro-type-reinterpret-cast,
+  -cppcoreguidelines-avoid-c-arrays,
+  -modernize-avoid-c-arrays,
+  -readability-function-cognitive-complexity,
+  -modernize-avoid-setjmp-longjmp,
+  -cert-err52-cpp,
+  -bugprone-throwing-static-initialization,
+  -cert-err58-cpp
+CheckOptions:
+  # IGROS_CHECK(condition) expands to if (!(condition))
+  readability-simplify-boolean-expr.IgnoreMacros: true
+...

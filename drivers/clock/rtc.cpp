@@ -61,6 +61,11 @@ namespace igros::arch {
 	// Anonymous namespace
 	namespace {
 
+		// Register A bits
+		enum class RTC_A : igros_byte_t {
+			UPDATING	= 0x80_u8,	// Date/time update in progress (values unstable)
+		};
+
 		// Register B bits
 		enum class RTC_B : igros_byte_t {
 			TIME_24		= 0x02_u8,	// 24-hour format (12-hour otherwise, bit 7 of hour - PM)
@@ -140,7 +145,7 @@ namespace igros::arch {
 	clockDateTime_t clockGetCurrentDateTime() noexcept {
 		// Read CMOS date/time (once no update is in progress)
 		const auto readStable = []() noexcept {
-			while (0x00_u8 != (0x80_u8 & rtcRead(RTC_REGISTER_A))) {
+			while (klib::kFlags<RTC_A>::from(rtcRead(RTC_REGISTER_A)).isSet(RTC_A::UPDATING)) {
 				// Wait for update end
 			}
 			return rtcReadDateTime();

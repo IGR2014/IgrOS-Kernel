@@ -50,6 +50,12 @@ auto igros::platform::Platform::current() noexcept -> const Platform& {
 }
 
 
+// Copy string with terminator into test memory
+static void copyString(char* const dst, const std::string_view text) {
+	std::memcpy(dst, text.data(), text.size());
+	dst[text.size()] = '\0';
+}
+
 // Multiboot data must be reachable through 32-bit multiboot fields
 template<class T>
 [[nodiscard]]
@@ -119,8 +125,8 @@ static void testMemory() {
 	};
 	#pragma pack(pop)
 	static const rawEntry map[] {
-		{20, 0x0000000000000000ull, 0x000000000009FC00ull, 1},
-		{20, 0x0000000000100000ull, 0x0000000007EE0000ull, 2},
+		{.size = 20, .address = 0x0000000000000000ull, .length = 0x000000000009FC00ull, .type = 1},
+		{.size = 20, .address = 0x0000000000100000ull, .length = 0x0000000007EE0000ull, .type = 2},
 	};
 	auto &info {makeInfo((1u << 0) | (1u << 6))};
 	info.memLow	= 639;
@@ -165,10 +171,10 @@ static void testVBE() {
 		std::printf("can't map low memory, VBE strings not tested\n");
 		return;
 	}
-	std::strcpy(low, "OEM");
-	std::strcpy(low + 0x10, "Vendor");
-	std::strcpy(low + 0x20, "Card");
-	std::strcpy(low + 0x30, "Rev");
+	copyString(low, "OEM");
+	copyString(low + 0x10, "Vendor");
+	copyString(low + 0x20, "Card");
+	copyString(low + 0x30, "Rev");
 	config.oem		= 0x90001000;
 	config.vendor		= 0x90001010;
 	config.productName	= 0x90001020;
@@ -232,7 +238,7 @@ static void testHeader() {
 // Data out of direct map is never dereferenced
 static void testNotMapped() {
 	static const char cmdline[]	{"/boot/kernel.bin"};
-	static igros::multiboot::vbeConfig	config {};
+	static igros::multiboot::vbeConfig	const config {};
 	auto &info {makeInfo((1u << 2) | (1u << 6) | (1u << 11))};
 	info.cmdLine		= address32(cmdline);
 	info.mmapAddr		= address32(cmdline);

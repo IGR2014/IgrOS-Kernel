@@ -53,8 +53,11 @@ static auto cmosRead(const std::uint16_t port) -> std::uint32_t {
 		--updating;
 		return 0x80;
 	}
-	if ((RTC_SECOND == index) && (secondsTick >= 0) && (0 == secondsTick--)) {
-		++cmos[RTC_SECOND];
+	if ((RTC_SECOND == index) && (secondsTick >= 0)) {
+		if (0 == secondsTick) {
+			++cmos[RTC_SECOND];
+		}
+		--secondsTick;
 	}
 	return cmos[index];
 }

@@ -12,7 +12,7 @@
 
 
 // C
-#include <signal.h>
+#include <csignal>
 #include <sys/mman.h>
 #include <unistd.h>
 // C++
@@ -31,7 +31,7 @@ namespace hw = igros::test::hw;
 
 // Low physical memory (page tables live there) is a shared memory file mapped
 // at kernel offset, so other virtual pages can alias it like with real MMU
-#define IGROS_TEST_KERNEL_OFFSET	0x20000000
+#define IGROS_TEST_KERNEL_OFFSET	0x20000000	// NOLINT(cppcoreguidelines-macro-usage,cppcoreguidelines-macro-to-enum,modernize-macro-to-enum): stringized into assembly below
 constexpr auto KERNEL_OFFSET	{std::uintptr_t {IGROS_TEST_KERNEL_OFFSET}};
 constexpr auto LOW_MEMORY	{static_cast<std::size_t>(igros::mem::LOW_MEMORY_LIMIT)};
 
@@ -72,12 +72,13 @@ constexpr auto CR0_WP		{std::uintptr_t {0x00010000}};
 static auto memoryFile {-1};
 
 // Software MMU: map faulting page to physical page from page tables
-static void pageFault(const int signal, siginfo_t* const info, void* const) {
+static void pageFault(const int signal, siginfo_t* const info, void* const /*context*/) {	// NOLINT(misc-const-correctness): sigaction handler signature
 	const auto page		{std::bit_cast<std::uintptr_t>(info->si_addr) & ~(paging::PAGE_SIZE - 1)};
 	const auto address	{paging::translate(static_cast<igros::mem::virt_t>(page))};
-	if ((paging::INVALID == address) || (address >= igros::mem::LOW_MEMORY_LIMIT) ||
+	// (INVALID address is above low memory limit too)
+	if ((address >= igros::mem::LOW_MEMORY_LIMIT) ||
 		(MAP_FAILED == ::mmap(std::bit_cast<void*>(page), paging::PAGE_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_FIXED, memoryFile, static_cast<off_t>(address)))) {
-		::signal(signal, SIG_DFL);
+		static_cast<void>(::signal(signal, SIG_DFL));
 	}
 }
 
@@ -88,7 +89,7 @@ static auto setupMemory() -> bool {
 	if ((memoryFile < 0) || (0 != ::ftruncate(memoryFile, static_cast<off_t>(LOW_MEMORY)))) {
 		return false;
 	}
-	const auto memory {::mmap(std::bit_cast<void*>(KERNEL_OFFSET), LOW_MEMORY, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_FIXED_NOREPLACE, memoryFile, 0)};
+	const auto* const memory {::mmap(std::bit_cast<void*>(KERNEL_OFFSET), LOW_MEMORY, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_FIXED_NOREPLACE, memoryFile, 0)};
 	if (std::bit_cast<void*>(KERNEL_OFFSET) != memory) {
 		return false;
 	}
@@ -108,9 +109,9 @@ static auto table(const igros::mem::phys_t address) -> paging::entry_t* {
 // Entry for virtual address at given level (tables must exist)
 [[nodiscard]]
 static auto entryAt(const std::uintptr_t virt, const igros::igros_usize_t level) -> paging::entry_t& {
-	auto entries {table(paging::root())};
+	auto* entries {table(paging::root())};
 	for (auto current {paging::LEVELS - 1}; ; --current) {
-		auto &entry {entries[(virt >> (paging::PAGE_SHIFT + paging::INDEX_BITS * current)) & (paging::ENTRIES - 1)]};
+		auto &entry {entries[(virt >> (paging::PAGE_SHIFT + (paging::INDEX_BITS * current))) & (paging::ENTRIES - 1)]};
 		if (current == level) {
 			return entry;
 		}
@@ -187,8 +188,10 @@ static void testInit() {
 	IGROS_CHECK(KERNEL_GUARD - 1 == translate(KERNEL_OFFSET + KERNEL_GUARD - 1));
 	IGROS_CHECK(KERNEL_GUARD + paging::PAGE_SIZE == translate(KERNEL_OFFSET + KERNEL_GUARD + paging::PAGE_SIZE));
 	// Data, low memory around kernel and identity mapping: read + write, no execute
-	for (const auto virt : {KERNEL_OFFSET + KERNEL_DATA, KERNEL_OFFSET + KERNEL_END - paging::PAGE_SIZE, KERNEL_OFFSET + KERNEL_END,
-				KERNEL_OFFSET + 0xB8000, KERNEL_OFFSET + KERNEL_TEXT - paging::PAGE_SIZE, KERNEL_TEXT, std::uintptr_t {0x1000}}) {
+	for (const auto virt : {
+		KERNEL_OFFSET + KERNEL_DATA, KERNEL_OFFSET + KERNEL_END - paging::PAGE_SIZE, KERNEL_OFFSET + KERNEL_END,
+		KERNEL_OFFSET + 0xB8000, KERNEL_OFFSET + KERNEL_TEXT - paging::PAGE_SIZE, KERNEL_TEXT, std::uintptr_t {0x1000},
+	}) {
 		const auto entry {entryAt(virt, 0)};
 		IGROS_CHECK((WRITABLE == (entry & WRITABLE)) && (NO_EXECUTE == (entry & NO_EXECUTE)));
 	}

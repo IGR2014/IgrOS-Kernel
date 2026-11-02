@@ -7,7 +7,7 @@
 #	strict warnings and UBSan (trap mode), builds and installs it, boots it in
 #	QEMU (a CPU exception, e.g. UBSan trap, is resolved to a source line) and
 #	runs compiler warnings, ClangTidy, Cppcheck and CodeQL report targets.
-#	Then host unit tests with coverage, then the report.
+#	Then host unit tests with coverage and ClangTidy over them, then the report.
 #
 #	Usage: analysis.sh [<clang++|g++>:<i386|x86_64> ...]
 #	Result: build/analysis/index.html, short summary.md, finding counts in counts.json
@@ -163,6 +163,9 @@ echo "== host tests"
 step "${tests}/reports" configure cmake -S tests -B "${tests}" -G Ninja -DCMAKE_CXX_COMPILER=g++ -DIGROS_TESTS_COVERAGE=ON \
 	&& step "${tests}/reports" build cmake --build "${tests}" --parallel \
 	&& step "${tests}/reports" coverage cmake --build "${tests}" --target coverage
+if grep -q "^clang-tidy:" <<< "$(cmake --build "${tests}" --target help 2> /dev/null)"; then
+	step "${tests}/reports" clang-tidy cmake --build "${tests}" --target clang-tidy
+fi
 
 echo "== report"
 report

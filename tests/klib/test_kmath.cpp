@@ -40,7 +40,7 @@ int main() {
 	// Unsigned 64-bit by 32-bit and 64-bit divisors
 	const std::uint64_t dividends[] {
 		0, 1, 7, 10, 255, 1193181, 0xFFFFFFFFull, 0x100000000ull,
-		12345678901ull, 0x8000000000000000ull, 0xFFFFFFFFFFFFFFFFull
+		12345678901ull, 0x8000000000000000ull, 0xFFFFFFFFFFFFFFFFull,
 	};
 	const std::uint32_t divisors[] {1, 2, 3, 8, 10, 16, 1193181, 0x7FFFFFFF, 0x80000000u, 0xFFFFFFFFu};
 	for (const auto a : dividends) {
@@ -54,7 +54,7 @@ int main() {
 
 	// Signed 64-bit (truncation towards zero)
 	const std::int64_t signedDividends[] {
-		0, 1, -1, 7, -7, 1000000007, -1000000007, 12345678901, -12345678901, INT64_MAX, INT64_MIN + 1
+		0, 1, -1, 7, -7, 1000000007, -1000000007, 12345678901, -12345678901, INT64_MAX, INT64_MIN + 1,
 	};
 	const std::int32_t signedDivisors[] {1, -1, 3, -3, 10, -10, INT32_MAX, INT32_MIN};
 	for (const auto a : signedDividends) {
@@ -62,14 +62,14 @@ int main() {
 			checkDivision<std::int64_t, std::int32_t>(a, b);
 			checkDivision<std::int64_t, std::int64_t>(a, b);
 		}
-		checkDivision<std::int64_t, std::int64_t>(a, 0x100000001ll);
-		checkDivision<std::int64_t, std::int64_t>(a, -0x100000001ll);
+		checkDivision<std::int64_t, std::int64_t>(a, 0x100000001LL);
+		checkDivision<std::int64_t, std::int64_t>(a, -0x100000001LL);
 	}
 
 	// Any integer sizes (64-bit dividend with narrow divisor uses software division on i386)
 	checkDivision<std::uint64_t, std::uint16_t>(0xFFFFFFFFFFFFFFFFull, 0xFFFF);
 	checkDivision<std::uint64_t, std::uint8_t>(12345678901ull, 7);
-	checkDivision<std::int64_t, std::int16_t>(-12345678901ll, -300);
+	checkDivision<std::int64_t, std::int16_t>(-12345678901LL, -300);
 	checkDivision<std::uint32_t, std::uint64_t>(0xFFFFFFFFu, 0x100000000ull);
 	checkDivision<std::int32_t, std::int64_t>(-7, 2);
 	checkDivision<std::uint8_t, std::uint8_t>(200, 7);
@@ -84,10 +84,10 @@ int main() {
 	}
 
 	// Compile time (shift-subtract path)
-	static_assert(kudivmod64(0xFFFFFFFFFFFFFFFFull, 10) == igros::klib::divmod_t<std::uint64_t> {1844674407370955161ull, 5});
-	static_assert(kudivmod64(12345678901ull, 0x100000001ull) == igros::klib::divmod_t<std::uint64_t> {2, 3755744307ull});
-	static_assert(kudivmod64(7, 8) == igros::klib::divmod_t<std::uint64_t> {0, 7});
-	static_assert(igros::klib::kdivmod(std::int64_t {-12345678901}, std::int64_t {1000}) == igros::klib::divmod_t<std::int64_t> {-12345678, -901});
+	static_assert(kudivmod64(0xFFFFFFFFFFFFFFFFull, 10) == igros::klib::divmod_t<std::uint64_t> {.quotient = 1844674407370955161ull, .remainder = 5});
+	static_assert(kudivmod64(12345678901ull, 0x100000001ull) == igros::klib::divmod_t<std::uint64_t> {.quotient = 2, .remainder = 3755744307ull});
+	static_assert(kudivmod64(7, 8) == igros::klib::divmod_t<std::uint64_t> {.quotient = 0, .remainder = 7});
+	static_assert(igros::klib::kdivmod(std::int64_t {-12345678901}, std::int64_t {1000}) == igros::klib::divmod_t<std::int64_t> {.quotient = -12345678, .remainder = -901});
 
 	// Mixed signedness is rejected
 	static_assert(igros::klib::kdivisible<std::uint64_t, std::uint32_t>);

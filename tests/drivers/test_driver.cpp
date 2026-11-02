@@ -29,11 +29,11 @@ static auto initialized {0};
 int main() {
 
 	// Every driver initialized in order, failures counted and reported
-	constexpr std::array<igros::drivers::driver_t, 3> DRIVERS {{
-		{"first",	[]() noexcept { return 1 == ++initialized; }},
-		{"broken",	[]() noexcept { ++initialized; return false; }},
-		{"last",	[]() noexcept { return 3 == ++initialized; }},
-	}};
+	constexpr auto DRIVERS = std::to_array<igros::drivers::driver_t>({
+		{.name = "first",	.init = []() noexcept { return 1 == ++initialized; }},
+		{.name = "broken",	.init = []() noexcept { ++initialized; return false; }},
+		{.name = "last",	.init = []() noexcept { return 3 == ++initialized; }},
+	});
 	hw::reset();
 	IGROS_CHECK(1 == igros::drivers::init(DRIVERS));
 	IGROS_CHECK(3 == initialized);

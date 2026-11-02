@@ -88,7 +88,7 @@ int main() {
 
 	// Pointer: zero-padded hex of pointer width
 	char pointer[32];
-	std::snprintf(pointer, sizeof(pointer), "%0*zx", static_cast<int>(sizeof(void*) * 2), static_cast<std::size_t>(0x1234));
+	static_cast<void>(std::snprintf(pointer, sizeof(pointer), "%0*zx", static_cast<int>(sizeof(void*) * 2), static_cast<std::size_t>(0x1234)));
 	checkFormat(64, pointer, "%p", reinterpret_cast<void*>(0x1234));
 
 	// Sign before zero padding, left-justify, uppercase hex
@@ -100,7 +100,7 @@ int main() {
 	// 64-bit decimals (split into 9-digit chunks on 32-bit CPU)
 	checkFormat(64, "4294967295|4294967296", "%llu|%llu", 4294967295ull, 4294967296ull);
 	checkFormat(64, "1000000000|10000000000000000000", "%llu|%llu", 1000000000ull, 10000000000000000000ull);
-	checkFormat(64, "123456789012345678|-1000000000000", "%llu|%lld", 123456789012345678ull, -1000000000000ll);
+	checkFormat(64, "123456789012345678|-1000000000000", "%llu|%lld", 123456789012345678ull, -1000000000000LL);
 	checkFormat(80, "1000000000000000000000000000000000000000000000000000000000000000", "%llb", 0x8000000000000000ull);
 	checkFormat(64, "1777777777777777777777", "%llo", 0xFFFFFFFFFFFFFFFFull);
 

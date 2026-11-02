@@ -31,8 +31,8 @@
 
 
 using namespace igros;
-using gdt = x86::native::gdt;
-using idt = x86::native::idt;
+using x86::native::gdt;
+using x86::native::idt;
 namespace hw = igros::test::hw;
 
 
@@ -75,7 +75,7 @@ static void testInit() {
 
 	IGROS_CHECK(nullptr != hw::idtPointer);
 	const auto &pointer {loadedIdt()};
-	IGROS_CHECK(256 * sizeof(idt::entry_t) - 1 == pointer.size);
+	IGROS_CHECK((256 * sizeof(idt::entry_t)) - 1 == pointer.size);
 	const auto* const table {pointer.pointer};
 
 	// Exceptions

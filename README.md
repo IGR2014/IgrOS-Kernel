@@ -130,7 +130,7 @@ cmake --preset config-linux-clang++-x86_64-debug -DIGROS_KERNEL_UBSAN=ON
 cmake --build --preset build-linux-clang++-x86_64-debug --target cppcheck
 ```
 
-[`config/script/analysis.sh`](./config/script/analysis.sh) runs everything for all (or given) configs: a debug build with strict warnings and UBSan, QEMU boot test, all report targets (CodeQL for the first config only, `IGROS_ANALYSIS_CODEQL=all|none` to change), host tests coverage. The report in `build/analysis/index.html` merges findings of every tool and config (the same issue reported by several tools or configs is one entry), shows them per file with source lines, build and boot status per config and coverage.
+[`config/script/analysis.sh`](./config/script/analysis.sh) runs everything for all (or given) configs: a debug build with strict warnings and UBSan, QEMU boot test, all report targets (CodeQL for the first config only, `IGROS_ANALYSIS_CODEQL=all|none` to change), host tests coverage and ClangTidy over test sources (with [`tests/.clang-tidy`](./tests/.clang-tidy) adjustments, findings under config `tests`). The report in `build/analysis/index.html` merges findings of every tool and config (the same issue reported by several tools or configs is one entry), shows them per file with source lines, build and boot status per config and coverage.
 
 An open report page updates itself whenever the report is regenerated (it reloads `index.data.js`), also while `analysis.sh` is still running.
 

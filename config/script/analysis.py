@@ -71,6 +71,9 @@ TOOLS = {
 	"boot":		"boot.log"
 }
 
+# Config name of findings in test sources
+TESTS_CONFIG = "tests"
+
 # Lines of source around a finding
 SNIPPET_CONTEXT = 3
 # Errors listed in Markdown summary
@@ -463,6 +466,10 @@ def make_report(args):
 	output = Path(args.output).resolve()
 	findings = Findings(source_dir)
 	configs = [parse_build(findings, spec, source_dir) for spec in args.builds]
+	# Test sources ClangTidy (paths relative to tests build directory)
+	tests_report = Path(args.tests).resolve() / "reports" / TOOLS["clang-tidy"] if args.tests else None
+	if tests_report and tests_report.exists():
+		findings.parse_diagnostics(tests_report, "clang-tidy", TESTS_CONFIG, tests_report.parent.parent)
 
 	items = sorted(findings.items.values(), key=lambda item: (item["file"], item["line"], -SEVERITY_RANK[item["severity"]]))
 	summaries = [config_summary(name, build_dir, items) for name, build_dir in configs]
@@ -745,7 +752,8 @@ function options() {
 		select.value = values.includes(state[select.id]) ? state[select.id] : (state[select.id] = "");
 	};
 	fill($("tool"), "all tools", D.tools);
-	fill($("config"), "all configs", D.configs.map((c) => c.name));
+	const tests = D.findings.some((f) => f.configs.includes("tests")) ? ["tests"] : [];
+	fill($("config"), "all configs", D.configs.map((c) => c.name).concat(tests));
 }
 document.querySelectorAll(".filters [data-severity]").forEach((box) => box.addEventListener("change", () => {
 	box.checked ? state.severity.add(box.dataset.severity) : state.severity.delete(box.dataset.severity);

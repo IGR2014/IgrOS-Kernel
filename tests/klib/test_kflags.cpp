@@ -19,14 +19,19 @@
 #include <tests/test.hpp>
 
 
-// Test flags
-enum class flags_t : std::uint32_t {
-	NONE	= 0x00,
-	A	= 0x01,
-	B	= 0x02,
-	C	= 0x04,
-	AB	= 0x03
-};
+// Anonymous namespace
+namespace {
+
+	// Test flags
+	enum class flags_t : std::uint32_t {
+		NONE	= 0x00,
+		A	= 0x01,
+		B	= 0x02,
+		C	= 0x04,
+		AB	= 0x03,
+	};
+
+}	// namespace
 
 
 int main() {

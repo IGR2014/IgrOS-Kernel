@@ -14,6 +14,7 @@
 // C++
 #include <cstdint>
 #include <cstring>
+#include <string_view>
 // IgrOS-Kernel memory
 #include <mem/direct.hpp>
 #include <mem/phys.hpp>
@@ -29,7 +30,7 @@
 // address), kernel end == kernel offset, so the kernel image reservation is empty
 // and only allocator logic is tested
 #define IGROS_STR2(x)	#x
-#define IGROS_STR(x)	IGROS_STR2(x)
+#define IGROS_STR(x)	IGROS_STR2(x)	// NOLINT(cppcoreguidelines-macro-usage): stringizes macro value
 #define IGROS_SYMBOL(name)	IGROS_STR(__USER_LABEL_PREFIX__) #name
 
 asm(
@@ -45,15 +46,27 @@ asm(
 using igros::mem::phys;
 
 
-// Raw multiboot memory map entry
+// Anonymous namespace
+namespace {
+
+	// Raw multiboot memory map entry
 #pragma pack(push, 1)
-struct rawEntry {
-	std::uint32_t	size;
-	std::uint64_t	address;
-	std::uint64_t	length;
-	std::uint32_t	type;
-};
+	struct rawEntry {
+		std::uint32_t	size;
+		std::uint64_t	address;
+		std::uint64_t	length;
+		std::uint32_t	type;
+	};
 #pragma pack(pop)
+
+}	// namespace
+
+
+// Copy string with terminator into test memory
+static void copyString(char* const dst, const std::string_view text) {
+	std::memcpy(dst, text.data(), text.size());
+	dst[text.size()] = '\0';
+}
 
 
 // Multiboot data must be reachable through 32-bit multiboot fields
@@ -101,11 +114,11 @@ static void testRanges() {
 static auto testInit() -> bool {
 
 	static rawEntry map[] {
-		{20, 0x0000000000000000ull, 0x000000000009FC00ull, 1},	// Low memory (always reserved)
-		{20, 0x000000000009FC00ull, 0x0000000000000400ull, 2},	// EBDA
-		{20, 0x0000000000100000ull, 0x0000000007EE0000ull, 1},	// 1 MB .. 127.9 MB
-		{20, 0x00000000FFFC0000ull, 0x0000000000040000ull, 2},	// BIOS ROM
-		{20, 0x0000000100000000ull, 0x0000000040000000ull, 1},	// Above 4 GB - not tracked
+		{.size = 20, .address = 0x0000000000000000ull, .length = 0x000000000009FC00ull, .type = 1},	// Low memory (always reserved)
+		{.size = 20, .address = 0x000000000009FC00ull, .length = 0x0000000000000400ull, .type = 2},	// EBDA
+		{.size = 20, .address = 0x0000000000100000ull, .length = 0x0000000007EE0000ull, .type = 1},	// 1 MB .. 127.9 MB
+		{.size = 20, .address = 0x00000000FFFC0000ull, .length = 0x0000000000040000ull, .type = 2},	// BIOS ROM
+		{.size = 20, .address = 0x0000000100000000ull, .length = 0x0000000040000000ull, .type = 1},	// Above 4 GB - not tracked
 	};
 	alignas(8) static std::uint8_t infoRaw[sizeof(igros::multiboot::info_t)] {};
 
@@ -161,8 +174,8 @@ static auto testInit() -> bool {
 
 	// Entry with zero size must not hang memory map iteration
 	static rawEntry broken[] {
-		{0,  0x100000, 0x1000, 1},
-		{20, 0x200000, 0x1000, 1}
+		{.size = 0,  .address = 0x100000, .length = 0x1000, .type = 1},
+		{.size = 20, .address = 0x200000, .length = 0x1000, .type = 1},
 	};
 	info.mmapAddr	= address32(broken);
 	info.mmapLength	= sizeof(broken);
@@ -204,15 +217,15 @@ static auto testBootData() -> bool {
 		return false;
 	}
 
-	std::strcpy(reinterpret_cast<char*>(block), "root=/dev/ram0");
-	std::strcpy(reinterpret_cast<char*>(block + PAGE), "GRUB");
-	std::strcpy(reinterpret_cast<char*>(block + (2 * PAGE) + 0x100), "initrd");
+	copyString(reinterpret_cast<char*>(block), "root=/dev/ram0");
+	copyString(reinterpret_cast<char*>(block + PAGE), "GRUB");
+	copyString(reinterpret_cast<char*>(block + (2 * PAGE) + 0x100), "initrd");
 	const igros::multiboot::moduleEntry modules[] {
-		{address32(block + (3 * PAGE)), address32(block + (4 * PAGE) + 0x100), address32(block + (2 * PAGE) + 0x100), 0},
-		{address32(block + (5 * PAGE)), address32(block + (5 * PAGE) + 0x10), 0, 0}
+		{.start = address32(block + (3 * PAGE)), .end = address32(block + (4 * PAGE) + 0x100), .name = address32(block + (2 * PAGE) + 0x100), .reserved = 0},
+		{.start = address32(block + (5 * PAGE)), .end = address32(block + (5 * PAGE) + 0x10), .name = 0, .reserved = 0},
 	};
 	std::memcpy(block + (2 * PAGE), modules, sizeof(modules));
-	const rawEntry available {20, base, 7 * PAGE, 1};
+	const rawEntry available {.size = 20, .address = base, .length = 7 * PAGE, .type = 1};
 	std::memcpy(block + PAGE + 0x100, &available, sizeof(available));
 
 	// Memory map, command line, modules, bootloader name

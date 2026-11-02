@@ -30,21 +30,34 @@
 #
 
 
-# Script mode (cmake -P, used by clang-tidy target): run ClangTidy over C++ sources
+# Script mode (cmake -P, used by clang-tidy targets): run ClangTidy over C++ sources
 # of the compile database and write its output to the report file
+# (FILES_REGEX / HEADER_FILTER: sources and headers to check, default all)
 if(CMAKE_SCRIPT_MODE_FILE)
+	if(NOT FILES_REGEX)
+		# Only C++: assembly sources are in compile database too
+		set(
+			FILES_REGEX
+			".*\\.cpp$"
+		)
+	endif()
+	if(NOT HEADER_FILTER)
+		set(
+			HEADER_FILTER
+			".*"
+		)
+	endif()
 	execute_process(
 		COMMAND "${RUN_CLANG_TIDY}"
 			# Same clang-tidy as the build pass (not another version from PATH)
 			-clang-tidy-binary "${CLANG_TIDY}"
 			-p "${BUILD_DIR}"
 			-quiet
-			-header-filter=.*
+			-header-filter=${HEADER_FILTER}
 			# GCC build: its own warning options aren't Clang ones
 			-extra-arg=-Wno-unknown-warning-option
 			-export-fixes "${FIXES_FILE}"
-			# Only C++: assembly sources are in compile database too
-			".*\\.cpp$"
+			"${FILES_REGEX}"
 		# Diagnostics and tool failures (crashes, bad flags) in one report
 		OUTPUT_FILE "${REPORT_FILE}"
 		ERROR_FILE "${REPORT_FILE}"

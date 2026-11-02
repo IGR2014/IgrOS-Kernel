@@ -28,7 +28,7 @@
 
 // Kernel symbol name (with platform label prefix) for inline assembly
 #define IGROS_TEST_STR2(x)		#x
-#define IGROS_TEST_STR(x)		IGROS_TEST_STR2(x)
+#define IGROS_TEST_STR(x)		IGROS_TEST_STR2(x)	// NOLINT(cppcoreguidelines-macro-usage): stringizes macro value
 #define IGROS_TEST_SYMBOL(name)		IGROS_TEST_STR(__USER_LABEL_PREFIX__) #name
 
 

@@ -29,8 +29,8 @@
 
 
 using namespace igros;
-using gdt = x86::native::gdt;
-using tss = x86::native::tss;
+using x86::native::gdt;
+using x86::native::tss;
 namespace hw = igros::test::hw;
 
 
@@ -69,7 +69,7 @@ static void testInit() {
 
 	IGROS_CHECK(nullptr != hw::gdtPointer);
 	const auto &pointer {loadedGdt()};
-	IGROS_CHECK(7 * sizeof(gdt::entry_t) - 1 == pointer.size);
+	IGROS_CHECK((7 * sizeof(gdt::entry_t)) - 1 == pointer.size);
 	const auto* const table {pointer.pointer};
 
 	// Null descriptor
@@ -105,11 +105,11 @@ static void testInit() {
 	IGROS_CHECK(std::bit_cast<std::uintptr_t>(&tss::doubleFault()) == base32(doubleFaultEntry));
 #elif	defined (IGROS_ARCH_x86_64)
 	// 16-byte descriptor: upper entry holds base bits 32..63
-	const auto &upper {table[gdt::TSS / sizeof(gdt::entry_t) + 1]};
+	const auto &upper {table[(gdt::TSS / sizeof(gdt::entry_t)) + 1]};
 	const auto base {
 		static_cast<std::uint64_t>(base32(tssEntry))		|
 		(static_cast<std::uint64_t>(upper.limitLow) << 32)	|
-		(static_cast<std::uint64_t>(upper.baseLow) << 48)
+		(static_cast<std::uint64_t>(upper.baseLow) << 48),
 	};
 	IGROS_CHECK(std::bit_cast<std::uintptr_t>(&tss::init()) == base);
 	IGROS_CHECK(0 == upper.baseMid);
