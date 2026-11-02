@@ -67,14 +67,14 @@ namespace igros::x86 {
 		irq::enable();
 
 		// Platform drivers (in init order)
-		constexpr std::array<drivers::driver_t, 4> DRIVERS {{
+		constexpr auto DRIVERS = std::to_array<drivers::driver_t>({
 			{.name = "VGA",		.init = arch::vmemInit},
 			{.name = "UART",	.init = arch::serialSetup},
 			{.name = "Keyboard",	.init = arch::keyboardSetup},
 			{.name = "RTC",		.init = arch::rtcSetup},
 			// PIT prints time every second, enable when needed
 			//{.name = "PIT",	.init = arch::pitSetup},
-		}};
+		});
 		// Setup drivers
 		drivers::init(DRIVERS);
 

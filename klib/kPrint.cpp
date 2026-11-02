@@ -44,7 +44,7 @@ namespace igros::klib {
 			WORD,		// h
 			DWORD,		// (none)
 			QUAD,		// ll (l on 64-bit)
-			SIZE		// z, t
+			SIZE,		// z, t
 		};
 
 		// Conversion specification

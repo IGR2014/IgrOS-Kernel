@@ -107,7 +107,7 @@ namespace igros::i386 {
 			.selector	= selector,
 			.reserved	= 0_u8,
 			.type		= type,
-			.offsetHigh	= static_cast<igros_word_t>((address >> std::numeric_limits<igros_word_t>::digits) & 0xFFFF_usize)
+			.offsetHigh	= static_cast<igros_word_t>((address >> std::numeric_limits<igros_word_t>::digits) & 0xFFFF_usize),
 		};
 	}
 

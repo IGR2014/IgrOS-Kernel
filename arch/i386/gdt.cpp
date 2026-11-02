@@ -78,7 +78,7 @@ namespace igros::i386 {
 		// Pointer to GDT
 		constinit static const gdt::pointer_t pointer {
 			.size		= gdt::calcSize(table),
-			.pointer	= table.data()
+			.pointer	= table.data(),
 		};
 
 		// Task state segments: kernel task and double fault task

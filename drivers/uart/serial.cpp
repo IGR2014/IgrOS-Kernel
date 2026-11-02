@@ -37,7 +37,7 @@ namespace igros::arch {
 		MCR		= 0x04_u16,	// Modem control
 		LSR		= 0x05_u16,	// Line status
 		MSR		= 0x06_u16,	// Modem status
-		SCRATCH		= 0x07_u16	// Scratch
+		SCRATCH		= 0x07_u16,	// Scratch
 	};
 
 	// Line status register bits
@@ -93,11 +93,11 @@ namespace igros::arch {
 		// Calculate BAUD rate divisor
 		const auto rate	{static_cast<igros_word_t>(115200_u32 / static_cast<igros_dword_t>(baudRate))};
 		// LCR value
-		const auto lcr	{static_cast<igros_byte_t>(
+		const auto lcr	= static_cast<igros_byte_t>(
 			(static_cast<igros_byte_t>(dataSize)	& 0x03_u8)		|
 			((static_cast<igros_byte_t>(stopBits)	& 0x01_u8) << 2)	|
 			((static_cast<igros_byte_t>(parity)	& 0x03_u8) << 3)
-		)};
+		);
 
 		// Let previous output finish (reprogramming would clobber byte being sent)
 		if (!serialWaitStatus(port, SERIAL_LSR::TX_IDLE)) [[unlikely]] {

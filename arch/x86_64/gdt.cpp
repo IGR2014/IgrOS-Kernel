@@ -79,7 +79,7 @@ namespace igros::x86_64 {
 		// Pointer to GDT
 		constinit static const gdt::pointer_t pointer {
 			.size		= gdt::calcSize(table),
-			.pointer	= table.data()
+			.pointer	= table.data(),
 		};
 
 		// Task state segment (interrupt stacks)

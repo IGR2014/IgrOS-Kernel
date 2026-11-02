@@ -56,7 +56,7 @@ namespace igros::arch {
 		LightRed	= 0x0C_u8,			// Light red VGA color
 		LightMagenta	= 0x0D_u8,			// Light magenta VGA color
 		Yellow		= 0x0E_u8,			// Yellow VGA color
-		White		= 0x0F_u8			// White VGA color
+		White		= 0x0F_u8,			// White VGA color
 	};
 
 	// VGA memory symbol representation

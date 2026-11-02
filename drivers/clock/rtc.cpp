@@ -39,7 +39,7 @@ namespace igros::arch {
 			.weekday	= rtcDateTime.weekday,
 			.hour		= rtcDateTime.time.hour,
 			.minute		= rtcDateTime.time.minute,
-			.second		= rtcDateTime.time.second
+			.second		= rtcDateTime.time.second,
 		};
 	}
 
@@ -80,7 +80,7 @@ namespace igros::arch {
 		return rtcDate_t {
 			.year	= rtcRead(RTC_YEAR),
 			.month	= rtcRead(RTC_MONTH),
-			.day	= rtcRead(RTC_DAY)
+			.day	= rtcRead(RTC_DAY),
 		};
 	}
 
@@ -90,7 +90,7 @@ namespace igros::arch {
 		return rtcTime_t {
 			.hour	= rtcRead(RTC_HOUR),
 			.minute	= rtcRead(RTC_MINUTE),
-			.second	= rtcRead(RTC_SECOND)
+			.second	= rtcRead(RTC_SECOND),
 		};
 	}
 
@@ -100,7 +100,7 @@ namespace igros::arch {
 		return rtcDateTime_t {
 			.date		= rtcReadDate(),
 			.weekday	= rtcRead(RTC_WEEKDAY),
-			.time		= rtcReadTime()
+			.time		= rtcReadTime(),
 		};
 	}
 

@@ -49,7 +49,7 @@ namespace igros::platform {
 			X86_64		= 0x00000002_u32,
 			ARM		= 0x00000004_u32,
 			ARM64		= 0x00000008_u32,
-			AVR		= 0x00000010_u32
+			AVR		= 0x00000010_u32,
 		};
 
 

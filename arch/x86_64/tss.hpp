@@ -44,7 +44,7 @@ namespace igros::x86_64 {
 			NONE		= 0_u8,
 			DOUBLE_FAULT	= 1_u8,		// #DF: kernel stack may be broken (overflow)
 			NMI		= 2_u8,		// NMI: may arrive at any instruction
-			MACHINE_CHECK	= 3_u8		// #MC: may arrive at any instruction
+			MACHINE_CHECK	= 3_u8,		// #MC: may arrive at any instruction
 		};
 
 		// Interrupt stack size

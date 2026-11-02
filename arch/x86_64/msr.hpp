@@ -31,7 +31,7 @@ namespace igros::x86_64 {
 		FMASK		= 0xC0000084_u32,		// SYSCALL RFLAGS mask
 		FS_BASE		= 0xC0000100_u32,		// FS segment base
 		GS_BASE		= 0xC0000101_u32,		// GS segment base
-		KERNEL_GS_BASE	= 0xC0000102_u32		// SWAPGS target
+		KERNEL_GS_BASE	= 0xC0000102_u32,		// SWAPGS target
 	};
 
 	// EFER register bits
@@ -39,7 +39,7 @@ namespace igros::x86_64 {
 		SCE		= 0x0000000000000001_u64,	// SYSCALL enable
 		LME		= 0x0000000000000100_u64,	// Long mode enable
 		LMA		= 0x0000000000000400_u64,	// Long mode active
-		NXE		= 0x0000000000000800_u64	// No-execute enable
+		NXE		= 0x0000000000000800_u64,	// No-execute enable
 	};
 
 

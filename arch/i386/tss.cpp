@@ -37,7 +37,7 @@ namespace igros::i386 {
 			.cr3 = 0_u32, .eip = 0_u32, .eflags = 0_u32,
 			.eax = 0_u32, .ecx = 0_u32, .edx = 0_u32, .ebx = 0_u32, .esp = 0_u32, .ebp = 0_u32, .esi = 0_u32, .edi = 0_u32,
 			.es = 0_u32, .cs = 0_u32, .ss = 0_u32, .ds = 0_u32, .fs = 0_u32, .gs = 0_u32, .ldt = 0_u32,
-			.trap = 0_u16, .iomapBase = static_cast<igros_word_t>(sizeof(tss::segment_t))
+			.trap = 0_u16, .iomapBase = static_cast<igros_word_t>(sizeof(tss::segment_t)),
 		};
 		// Kernel task
 		constinit tss::segment_t kernelSegment		{EMPTY_SEGMENT};

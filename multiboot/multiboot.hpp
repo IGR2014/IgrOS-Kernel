@@ -56,7 +56,7 @@ namespace igros::multiboot {
 		LOADER_NAME	= (1_u32 << 9),			// Bootloader name available
 		TABLE_APM	= (1_u32 << 10),		// APM table available
 		VBE		= (1_u32 << 11),		// VBE table available
-		FRAME_BUF	= (1_u32 << 12)			// Frame buffer info available
+		FRAME_BUF	= (1_u32 << 12),			// Frame buffer info available
 	};
 
 
@@ -307,7 +307,7 @@ namespace igros::multiboot {
 		RESERVED		= 2_u32,			// Memory reserved
 		ACPI			= 3_u32,			// Memory is ACPI reclaimable
 		NVS			= 4_u32,			// Memory is NVS
-		BAD			= 5_u32				// BAD memory
+		BAD			= 5_u32,				// BAD memory
 	};
 
 	// Multiboot 1 memory map entry

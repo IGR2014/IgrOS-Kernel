@@ -37,7 +37,7 @@ namespace igros::klib {
 		BIN	= 0x02_u8,			// (Base 2)	Binary integer format
 		OCT	= 0x08_u8,			// (Base 8)	Oct integer format
 		DEC	= 0x0A_u8,			// (Base 10)	Decimal integer format
-		HEX	= 0x10_u8			// (Base 16)	Hexidemical integer format
+		HEX	= 0x10_u8,			// (Base 16)	Hexidemical integer format
 	};
 
 

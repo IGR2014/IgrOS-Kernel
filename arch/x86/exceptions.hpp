@@ -93,7 +93,7 @@ namespace igros::x86 {
 			"RESERVED",				// 28
 			"RESERVED",				// 29
 			"RESERVED",				// 30
-			"RESERVED"				// 31
+			"RESERVED",				// 31
 		};
 
 		// Exceptions number enumeration
@@ -116,7 +116,7 @@ namespace igros::x86 {
 			UNKNOWN_IRQ			= 15_u32,
 			COPROCESSOR_FAULT		= 16_u32,
 			ALIGNMENT_CHECK			= 17_u32,
-			MACHINE_CHECK			= 18_u32
+			MACHINE_CHECK			= 18_u32,
 		};
 
 

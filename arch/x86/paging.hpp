@@ -62,9 +62,9 @@ namespace igros::x86 {
 			HUGE		= 0x080,			// Large page (directory levels)
 			GLOBAL		= 0x100,			// Not flushed on CR3 change
 #if	defined (IGROS_ARCH_x86_64)
-			NO_EXECUTE	= 0x8000000000000000		// Instruction fetch not allowed (EFER.NXE)
+			NO_EXECUTE	= 0x8000000000000000,	// Instruction fetch not allowed (EFER.NXE)
 #else
-			NO_EXECUTE	= 0x000				// No NX bit without PAE: ignored
+			NO_EXECUTE	= 0x000,				// No NX bit without PAE: ignored
 #endif
 		};
 

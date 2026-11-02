@@ -65,7 +65,7 @@ namespace igros::klib {
 			);
 			return divmod_t<igros_quad_t> {
 				.quotient	= (static_cast<igros_quad_t>(quotientHigh) << 32) | quotientLow,
-				.remainder	= remainder
+				.remainder	= remainder,
 			};
 		}
 #endif
@@ -105,7 +105,7 @@ namespace igros::klib {
 		if constexpr ((sizeof(T) <= sizeof(igros_usize_t)) && (sizeof(D) <= sizeof(igros_usize_t))) {
 			return divmod_t<T> {
 				static_cast<T>(dividend / divisor),
-				static_cast<T>(dividend % divisor)
+				static_cast<T>(dividend % divisor),
 			};
 
 		// Unsigned values wider than CPU word
@@ -113,7 +113,7 @@ namespace igros::klib {
 			const auto res {kudivmod64(dividend, divisor)};
 			return divmod_t<T> {
 				static_cast<T>(res.quotient),
-				static_cast<T>(res.remainder)
+				static_cast<T>(res.remainder),
 			};
 
 		// Signed values wider than CPU word: divide magnitudes
@@ -126,7 +126,7 @@ namespace igros::klib {
 			const auto remainder	{(dividend < 0) ? (0_u64 - res.remainder) : res.remainder};
 			return divmod_t<T> {
 				static_cast<T>(quotient),
-				static_cast<T>(remainder)
+				static_cast<T>(remainder),
 			};
 		}
 

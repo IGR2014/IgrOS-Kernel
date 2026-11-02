@@ -45,8 +45,8 @@ namespace igros::x86_64 {
 				.ist		= {},
 				.reserved2	= 0_u64,
 				.reserved3	= 0_u16,
-				.iomapBase	= static_cast<igros_word_t>(sizeof(segment_t))
-			}
+				.iomapBase	= static_cast<igros_word_t>(sizeof(segment_t)),
+			},
 		};
 		auto &segment {storage.segment};
 

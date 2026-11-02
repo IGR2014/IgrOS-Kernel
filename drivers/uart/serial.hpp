@@ -31,7 +31,7 @@ namespace igros::arch {
 		COM1		= 0x03F8_u16,
 		COM2		= 0x02F8_u16,
 		COM3		= 0x03E8_u16,
-		COM4		= 0x02E8_u16
+		COM4		= 0x02E8_u16,
 	};
 
 	// Baud rates
@@ -47,7 +47,7 @@ namespace igros::arch {
 		BAUD_19200	= 19200_u32,
 		BAUD_38400	= 38400_u32,
 		BAUD_57600	= 57600_u32,
-		BAUD_115200	= 115200_u32
+		BAUD_115200	= 115200_u32,
 	};
 
 	// Data size
@@ -55,14 +55,14 @@ namespace igros::arch {
 		CHAR_5		= 0x00,
 		CHAR_6		= 0x01,
 		CHAR_7		= 0x02,
-		CHAR_8		= 0x03
+		CHAR_8		= 0x03,
 	};
 
 	// Stop bits
 	enum class STOP_BITS : igros_byte_t {
 		STOP_1		= 0x00_u8,
 		STOP_1_5	= 0x01_u8,
-		STOP_2		= 0x03_u8
+		STOP_2		= 0x03_u8,
 	};
 
 	// Parity
@@ -71,7 +71,7 @@ namespace igros::arch {
 		ODD		= 0x01_u8,
 		EVEN		= 0x02_u8,
 		MARK		= 0x05_u8,
-		SPACE		= 0x07_u8
+		SPACE		= 0x07_u8,
 	};
 
 

@@ -74,7 +74,7 @@ namespace igros::x86 {
 		MOUSE		= 12_u32,
 		FPU		= 13_u32,
 		ATA_PRIMARY	= 14_u32,
-		ATA_SECONDARY	= 15_u32		// Slave PIC spurious
+		ATA_SECONDARY	= 15_u32,		// Slave PIC spurious
 	};
 
 	// Number of PIC interrupt lines

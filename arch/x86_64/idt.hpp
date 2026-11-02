@@ -110,7 +110,7 @@ namespace igros::x86_64 {
 			.type		= type,
 			.offsetMiddle	= static_cast<igros_word_t>((address & 0xFFFF0000_u64) >> 16),
 			.offsetHigh	= static_cast<igros_dword_t>((address & 0xFFFFFFFF00000000_u64) >> 32),
-			.reserved2	= 0_u32
+			.reserved2	= 0_u32,
 		};
 	}
 

@@ -30,7 +30,7 @@ namespace igros::x86_64 {
 		EXTENDED_FEATURES	= 0x00000007_u32,		// Structured extended features (subleaf 0)
 		EXTENDED_MAX		= 0x80000000_u32,		// Max extended leaf
 		EXTENDED_INFO		= 0x80000001_u32,		// Extended feature flags (long mode, NX, 1 GB pages)
-		ADDRESS_SIZES		= 0x80000008_u32		// Physical and linear address sizes
+		ADDRESS_SIZES		= 0x80000008_u32,		// Physical and linear address sizes
 	};
 
 	// CPUID result registers

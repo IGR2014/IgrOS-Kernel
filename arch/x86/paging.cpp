@@ -330,12 +330,11 @@ namespace igros::x86 {
 			mem::phys::free(phys);
 			return false;
 		}
-		auto passed {
+		auto passed =
 			(INVALID == paging::translate(virt))						&&
 			(INVALID == paging::translate(mem::virt_t {0}))					&&
 			paging::map(phys, virt, klib::make_kflags<FLAGS>(FLAGS::PRESENT, FLAGS::WRITABLE, FLAGS::NO_EXECUTE))	&&
-			(phys + 0x123_u64 == paging::translate(virt + 0x123))
-		};
+			(phys + 0x123_u64 == paging::translate(virt + 0x123));
 		if (passed) {
 			// Write through new mapping, read through direct map alias
 			static_cast<volatile igros_byte_t*>(page)[0x123] = 0x5A_u8;

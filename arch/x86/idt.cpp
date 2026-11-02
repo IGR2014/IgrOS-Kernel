@@ -114,7 +114,7 @@ namespace igros {
 		// Pointer to IDT
 		constinit static const idt::pointer_t pointer {
 			.size		= idt::calcSize(table),
-			.pointer	= table.data()
+			.pointer	= table.data(),
 		};
 
 		// Set IDT table

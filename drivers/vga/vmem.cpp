@@ -59,7 +59,7 @@ namespace igros::arch {
 	static auto vmemBlank() noexcept -> vmemSymbol {
 		return vmemSymbol {
 			.symbol	= ' ',
-			.color	= static_cast<igros_byte_t>(vmemBkgColor)
+			.color	= static_cast<igros_byte_t>(vmemBkgColor),
 		};
 	}
 
@@ -100,7 +100,7 @@ namespace igros::arch {
 		// Return cursor data
 		return vmemCursor {
 			.x = static_cast<igros_byte_t>(position % VIDEO_MEM_WIDTH),
-			.y = static_cast<igros_byte_t>(position / VIDEO_MEM_WIDTH)
+			.y = static_cast<igros_byte_t>(position / VIDEO_MEM_WIDTH),
 		};
 	}
 
@@ -161,7 +161,7 @@ namespace igros::arch {
 			// Write symbol to VGA console
 			vmemScreen()[(cursorPos.y * VIDEO_MEM_WIDTH) + cursorPos.x] = vmemSymbol {
 				.symbol	= symbol,
-				.color	= static_cast<igros_byte_t>(vmemBkgColor)
+				.color	= static_cast<igros_byte_t>(vmemBkgColor),
 			};
 			// Move cursor 1 symbol right
 			++cursorPos.x;

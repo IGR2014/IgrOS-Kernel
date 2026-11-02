@@ -169,7 +169,7 @@ namespace igros::x86_64 {
 			.baseMid	= static_cast<igros_byte_t>((BASE & 0xFF0000_u32) >> 16),
 			.access		= static_cast<igros_byte_t>(FLAGS & 0x00FF_u16),
 			.limitFlags	= static_cast<igros_byte_t>(((LIMIT & 0xF0000_u32) >> 16) | (static_cast<igros_word_t>(FLAGS & 0x0F00_u16) >> 4)),
-			.baseHigh	= static_cast<igros_byte_t>((BASE & 0xFF000000_u32) >> 24)
+			.baseHigh	= static_cast<igros_byte_t>((BASE & 0xFF000000_u32) >> 24),
 		};
 	}
 
@@ -185,7 +185,7 @@ namespace igros::x86_64 {
 				.baseMid	= static_cast<igros_byte_t>((base >> 16) & 0xFF_u64),
 				.access		= TSS_AVAILABLE,
 				.limitFlags	= static_cast<igros_byte_t>((limit >> 16) & 0x0F_u32),
-				.baseHigh	= static_cast<igros_byte_t>((base >> 24) & 0xFF_u64)
+				.baseHigh	= static_cast<igros_byte_t>((base >> 24) & 0xFF_u64),
 			},
 			// Upper half: base bits 32..63, rest reserved
 			entry_t {
@@ -194,8 +194,8 @@ namespace igros::x86_64 {
 				.baseMid	= 0_u8,
 				.access		= 0_u8,
 				.limitFlags	= 0_u8,
-				.baseHigh	= 0_u8
-			}
+				.baseHigh	= 0_u8,
+			},
 		};
 	}
 
