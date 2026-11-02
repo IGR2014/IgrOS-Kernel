@@ -1,0 +1,37 @@
+// Extensions recommended for IgrOS-Kernel ("Extensions: Show Recommended Extensions")
+{
+	"recommendations": [
+		// C++ IntelliSense, debugging (QEMU gdb stub) and clang-tidy analysis
+		"ms-vscode.cpptools",
+		// CMake presets, configure and build
+		"ms-vscode.cmake-tools",
+		// Dev Container from .devcontainer (Linux toolchain on any host)
+		"ms-vscode-remote.remote-containers",
+		// GNU assembler syntax for arch/*/boot/*.s
+		"basdp.language-gas-x86",
+		// Doxygen comment generation in the kernel's documentation style
+		"cschlosser.doxdocgen",
+		// Linker scripts in config/link
+		"zixuanwang.linkerscript",
+		// Dockerfile and docker-compose.yaml (dev and CI image)
+		"ms-azuretools.vscode-containers",
+		// GitHub Actions workflows
+		"github.vscode-github-actions",
+		// Schema checks for GitLab CI, Azure Pipelines, compose and .clangd
+		"redhat.vscode-yaml",
+		// Lint for shell scripts
+		"timonwong.shellcheck",
+		// Test coverage in the editor (gcovr --cobertura output)
+		"ryanluker.vscode-coverage-gutters",
+		// SonarCloud connected mode (sonarlint.* settings)
+		"sonarsource.sonarlint-vscode",
+		// File icons (workbench.iconTheme)
+		"vscode-icons-team.vscode-icons",
+		// Line history and blame
+		"eamodio.gitlens"
+	],
+	// cpptools provides IntelliSense here; clangd (.clangd) is for other editors and would clash
+	"unwantedRecommendations": [
+		"llvm-vs-code-extensions.vscode-clangd"
+	]
+}

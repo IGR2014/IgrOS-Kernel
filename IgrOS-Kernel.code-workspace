@@ -5,6 +5,9 @@
 		}
 	],
 	"settings": {
+		// Window settings (theme) are read from the workspace file, not folder settings
+		"workbench.colorTheme": "Dark 2026",
+		"workbench.iconTheme": "vscode-icons",
 		"files.associations": {
 			"algorithm": "cpp",
 			"array": "cpp",

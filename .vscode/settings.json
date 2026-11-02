@@ -1,4 +1,11 @@
 {
+	// Look: Dark 2026 color theme, vscode-icons file icons
+	"workbench.colorTheme": "Dark 2026",
+	"workbench.iconTheme": "vscode-icons",
+	// Kernel sources are indented with tabs
+	"editor.insertSpaces": false,
+	"editor.detectIndentation": false,
+	"editor.tabSize": 8,
 	"cmake.configureOnOpen": true,
 	"C_Cpp.codeAnalysis.clangTidy.path": "C:/Program Files/LLVM/bin/clang-tidy.exe",
 	// Windows IDE analysis: compiler cache and build output aren't sources; host tests are
