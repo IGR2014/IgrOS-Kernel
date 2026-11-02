@@ -46,8 +46,8 @@ namespace igros::x86_64 {
 	// Read MSR register (RDMSR returns EDX:EAX)
 	[[nodiscard]]
 	inline auto readMSR(const MSR reg) noexcept -> igros_quad_t {
-		auto low	{igros_dword_t {}};
-		auto high	{igros_dword_t {}};
+		auto low	{igros_dword_t {}};	// NOLINT(misc-const-correctness): written by RDMSR
+		auto high	{igros_dword_t {}};	// NOLINT(misc-const-correctness): written by RDMSR
 		asm volatile ("rdmsr" : "=a" (low), "=d" (high) : "c" (static_cast<igros_dword_t>(reg)));
 		return (static_cast<igros_quad_t>(high) << 32) | low;
 	}

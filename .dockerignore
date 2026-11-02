@@ -1,3 +1,6 @@
 # Image contains toolchain only, sources are mounted at runtime
 *
 !Dockerfile
+# LLVM apt repository setup (analysis image)
+!config/apt/llvm.asc
+!config/script/llvm-apt.sh

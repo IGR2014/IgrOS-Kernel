@@ -33,12 +33,17 @@ namespace igros::arch {
 	// (channels 1 and 2 - ports 0x41 and 0x42 - are not used)
 
 
-	// PIT driver state
-	struct pit_t {
-		igros_usize_t	ticks		{0_usize};	// IRQ ticks count
-		igros_word_t	frequency	{0_u16};	// Current frequency
-		igros_word_t	divisor		{1_u16};	// Current divisor
-	};
+	// Anonymous namespace
+	namespace {
+
+		// PIT driver state
+		struct pit_t {
+			igros_usize_t	ticks		{0_usize};	// IRQ ticks count
+			igros_word_t	frequency	{0_u16};	// Current frequency
+			igros_word_t	divisor		{1_u16};	// Current divisor
+		};
+
+	}	// namespace
 
 	// PIT state
 	constinit static pit_t pit {};

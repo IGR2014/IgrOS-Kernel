@@ -46,7 +46,7 @@ namespace igros::arch {
 #if	defined (IGROS_ARCH_i386) || defined (IGROS_ARCH_x86_64)
 
 	// CPU type
-	using cpu	= x86::cpu;
+	using x86::cpu;
 
 #endif
 

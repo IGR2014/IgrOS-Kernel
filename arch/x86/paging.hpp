@@ -60,12 +60,12 @@ namespace igros::x86 {
 			ACCESSED	= 0x020,			// Set by CPU on access
 			DIRTY		= 0x040,			// Set by CPU on write (pages)
 			HUGE		= 0x080,			// Large page (directory levels)
-			GLOBAL		= 0x100,			// Not flushed on CR3 change
 #if	defined (IGROS_ARCH_x86_64)
 			NO_EXECUTE	= 0x8000000000000000,	// Instruction fetch not allowed (EFER.NXE)
 #else
 			NO_EXECUTE	= 0x000,				// No NX bit without PAE: ignored
 #endif
+			GLOBAL		= 0x100,			// Not flushed on CR3 change
 		};
 
 		// Page size

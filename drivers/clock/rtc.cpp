@@ -58,11 +58,16 @@ namespace igros::arch {
 	constexpr auto RTC_REGISTER_A	{0x0A_u8};
 	constexpr auto RTC_REGISTER_B	{0x0B_u8};
 
-	// Register B bits
-	enum class RTC_B : igros_byte_t {
-		TIME_24		= 0x02_u8,	// 24-hour format (12-hour otherwise, bit 7 of hour - PM)
-		BINARY		= 0x04_u8,	// Binary values (BCD otherwise)
-	};
+	// Anonymous namespace
+	namespace {
+
+		// Register B bits
+		enum class RTC_B : igros_byte_t {
+			TIME_24		= 0x02_u8,	// 24-hour format (12-hour otherwise, bit 7 of hour - PM)
+			BINARY		= 0x04_u8,	// Binary values (BCD otherwise)
+		};
+
+	}	// namespace
 
 
 	// Read CMOS register

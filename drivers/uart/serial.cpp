@@ -28,24 +28,29 @@
 namespace igros::arch {
 
 
-	// Serial port registers (offsets from port base)
-	enum class SERIAL_REG : igros_word_t {
-		DATA		= 0x00_u16,	// Data (DLAB = 0) / divisor low byte (DLAB = 1)
-		IER		= 0x01_u16,	// Interrupt enable (DLAB = 0) / divisor high byte (DLAB = 1)
-		IIR		= 0x02_u16,	// Interrupt identification (read) / FIFO control (write)
-		LCR		= 0x03_u16,	// Line control
-		MCR		= 0x04_u16,	// Modem control
-		LSR		= 0x05_u16,	// Line status
-		MSR		= 0x06_u16,	// Modem status
-		SCRATCH		= 0x07_u16,	// Scratch
-	};
+	// Anonymous namespace
+	namespace {
 
-	// Line status register bits
-	enum class SERIAL_LSR : igros_byte_t {
-		DATA_READY	= 0x01_u8,	// Received byte available
-		THR_EMPTY	= 0x20_u8,	// Transmitter holding register empty
-		TX_IDLE		= 0x40_u8,	// Holding and shift registers empty
-	};
+		// Serial port registers (offsets from port base)
+		enum class SERIAL_REG : igros_word_t {
+			DATA		= 0x00_u16,	// Data (DLAB = 0) / divisor low byte (DLAB = 1)
+			IER		= 0x01_u16,	// Interrupt enable (DLAB = 0) / divisor high byte (DLAB = 1)
+			IIR		= 0x02_u16,	// Interrupt identification (read) / FIFO control (write)
+			LCR		= 0x03_u16,	// Line control
+			MCR		= 0x04_u16,	// Modem control
+			LSR		= 0x05_u16,	// Line status
+			MSR		= 0x06_u16,	// Modem status
+			SCRATCH		= 0x07_u16,	// Scratch
+		};
+
+		// Line status register bits
+		enum class SERIAL_LSR : igros_byte_t {
+			DATA_READY	= 0x01_u8,	// Received byte available
+			THR_EMPTY	= 0x20_u8,	// Transmitter holding register empty
+			TX_IDLE		= 0x40_u8,	// Holding and shift registers empty
+		};
+
+	}	// namespace
 
 	// Interrupt enable register bits
 	constexpr auto SERIAL_IER_RX		{0x01_u8};

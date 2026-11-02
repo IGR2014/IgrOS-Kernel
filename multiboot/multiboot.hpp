@@ -291,13 +291,13 @@ namespace igros::multiboot {
 	// Get multiboot command line (nullptr if not provided or not directly mapped)
 	[[nodiscard]]
 	inline auto info_t::commandLine() const noexcept -> const char* {
-		return (hasInfoCommandLine()) ? mem::direct::string(cmdLine) : nullptr;
+		return hasInfoCommandLine() ? mem::direct::string(cmdLine) : nullptr;
 	}
 
 	// Get multiboot bootloader name (nullptr if not provided or not directly mapped)
 	[[nodiscard]]
 	inline auto info_t::loaderName() const noexcept -> const char* {
-		return (hasInfoBootloaderName()) ? mem::direct::string(bootloaderName) : nullptr;
+		return hasInfoBootloaderName() ? mem::direct::string(bootloaderName) : nullptr;
 	}
 
 

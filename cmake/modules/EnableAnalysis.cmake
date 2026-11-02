@@ -35,6 +35,8 @@
 if(CMAKE_SCRIPT_MODE_FILE)
 	execute_process(
 		COMMAND "${RUN_CLANG_TIDY}"
+			# Same clang-tidy as the build pass (not another version from PATH)
+			-clang-tidy-binary "${CLANG_TIDY}"
 			-p "${BUILD_DIR}"
 			-quiet
 			-header-filter=.*
@@ -313,11 +315,12 @@ function(igros_enable_analysis TARGET)
 	endif()
 
 	# ClangTidy report over all kernel sources
-	if(IGROS_RUN_CLANG_TIDY_EXE)
+	if(IGROS_RUN_CLANG_TIDY_EXE AND IGROS_CLANG_TIDY_EXE)
 		add_custom_target(
 			clang-tidy
 			COMMAND ${CMAKE_COMMAND}
 				-DRUN_CLANG_TIDY=${IGROS_RUN_CLANG_TIDY_EXE}
+				-DCLANG_TIDY=${IGROS_CLANG_TIDY_EXE}
 				-DBUILD_DIR=${CMAKE_BINARY_DIR}
 				-DREPORT_FILE=${IGROS_REPORTS_DIR}/clang-tidy-report.txt
 				-DFIXES_FILE=${IGROS_REPORTS_DIR}/clang-tidy-fixes.yaml

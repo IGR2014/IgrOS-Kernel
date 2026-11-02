@@ -70,19 +70,28 @@ FROM toolchain AS analysis
 # Run as root
 USER root
 
-# Analysis tools
+# ClangTidy from apt.llvm.org: newer checks than Ubuntu archive has
+# (same version as in Analysis workflow)
+ARG LLVM_VERSION=23
+COPY config/apt/llvm.asc config/script/llvm-apt.sh /tmp/llvm/
+
+# Analysis tools (certificates first: LLVM repository is HTTPS)
 # hadolint ignore=DL3008
 RUN \
 	apt-get update && \
+	apt-get install -y --no-install-recommends ca-certificates && \
+	bash /tmp/llvm/llvm-apt.sh "${LLVM_VERSION}" /tmp/llvm/llvm.asc && \
+	apt-get update && \
 	apt-get install -y --no-install-recommends \
-		ca-certificates \
-		clang-tidy \
+		clang-tidy-${LLVM_VERSION} \
 		cppcheck \
 		gcovr \
 		python3 \
 		qemu-system-x86 && \
+	ln -s "/usr/bin/clang-tidy-${LLVM_VERSION}" /usr/local/bin/clang-tidy && \
+	ln -s "/usr/bin/run-clang-tidy-${LLVM_VERSION}" /usr/local/bin/run-clang-tidy && \
 	apt-get clean && \
-	rm -rf /var/lib/apt/lists/*
+	rm -rf /var/lib/apt/lists/* /tmp/llvm
 
 # CodeQL CLI with C/C++ query packs (unpacked bundle from codeql stage)
 COPY --from=codeql /opt/codeql /opt/codeql

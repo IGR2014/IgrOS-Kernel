@@ -89,7 +89,7 @@ namespace igros::x86 {
 	// Index of virtual address in table of given level (0 - page table)
 	[[nodiscard]]
 	auto paging::index(const mem::virt_t virt, const igros_usize_t level) noexcept -> igros_usize_t {
-		return (mem::address(virt) >> (PAGE_SHIFT + INDEX_BITS * level)) & (ENTRIES - 1_usize);
+		return (mem::address(virt) >> (PAGE_SHIFT + (INDEX_BITS * level))) & (ENTRIES - 1_usize);
 	}
 
 
@@ -206,7 +206,7 @@ namespace igros::x86 {
 			}
 			// Page (or large page) covering address
 			if ((0_usize == level) || hasFlag(current, FLAGS::HUGE)) {
-				const auto size {mem::phys_t {1} << (PAGE_SHIFT + INDEX_BITS * level)};
+				const auto size {mem::phys_t {1} << (PAGE_SHIFT + (INDEX_BITS * level))};
 				return (static_cast<mem::phys_t>(current & ADDRESS_MASK) & ~(size - 1_u64)) | (address & (size - 1_u64));
 			}
 			entries = paging::table(current & ADDRESS_MASK);

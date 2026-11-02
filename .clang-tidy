@@ -7,8 +7,12 @@
 #  - magic-numbers: hardware ports, registers, bit layouts and descriptor fields
 #  - avoid-pragma-once: project header guard convention
 #  - include-cleaner: no IWYU mapping for freestanding headers, types come from arch/types.hpp
-#  - pro-bounds-*, pro-type-vararg, cert-dcl50-cpp: no GSL in kernel, raw memory and
-#    descriptor tables are pointers; kprintf is printf-like (format checked by compiler)
+#  - pro-bounds-*, pro-type-vararg, cert-dcl50-cpp, avoid-variadic-functions: no GSL and
+#    no exceptions (no checked .at()) in kernel, raw memory and descriptor tables are
+#    pointers; kprintf is printf-like (format checked by compiler)
+#  - no-assembler: CPU registers, ports and descriptor tables need inline assembly
+#  - signed-bitwise: byte/word registers and masks are promoted to int by the language
+#    (non-negative values, a cast on every operand would only hide the expression)
 #  - avoid-non-const-global-variables: drivers and CPU tables are global state
 #  - dynamic-static-initializers: false positive on extern declarations (linker/assembly symbols)
 #  - bitwise-pointer-cast: std::bit_cast is the pointer cast here (no reinterpret_cast, Sonar S3630)
@@ -44,11 +48,15 @@ Checks: >
   -cppcoreguidelines-pro-bounds-pointer-arithmetic,
   -cppcoreguidelines-pro-bounds-constant-array-index,
   -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
+  -cppcoreguidelines-pro-bounds-avoid-unchecked-container-access,
   -cppcoreguidelines-pro-type-vararg,
   -cert-dcl50-cpp,
+  -modernize-avoid-variadic-functions,
+  -portability-no-assembler,
   -cppcoreguidelines-avoid-non-const-global-variables,
   -bugprone-dynamic-static-initializers,
   -bugprone-bitwise-pointer-cast,
+  -bugprone-signed-bitwise,
   -bugprone-easily-swappable-parameters,
   -performance-enum-size,
   -modernize-use-equals-delete,

@@ -27,12 +27,12 @@ namespace igros::arch {
 #if	defined (IGROS_ARCH_i386)
 
 	// Register type
-	using	register_t	= i386::register_t;
+	using	i386::register_t;
 
 #elif	defined (IGROS_ARCH_x86_64)
 
 	// Register type
-	using	register_t	= x86_64::register_t;
+	using	x86_64::register_t;
 
 #else
 

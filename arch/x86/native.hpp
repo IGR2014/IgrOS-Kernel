@@ -55,9 +55,9 @@ namespace igros::x86 {
 
 
 	// CPU of current architecture
-	using cpu		= native::cpu;
+	using native::cpu;
 	// Registers of current architecture
-	using register_t	= native::register_t;
+	using native::register_t;
 
 
 }	// namespace igros::x86

@@ -88,7 +88,7 @@ The image contains only the toolchain; sources are mounted from the host, so cod
 docker compose up kernel_x86_64_clang_build   # also: kernel_i386_clang_build, kernel_{i386,x86_64}_gcc_build
 ```
 
-The `analysis` image adds analyzers, gcovr, QEMU and CodeQL to the toolchain and runs [all analysis](#analysis) at once:
+The `analysis` image adds analyzers (ClangTidy from [apt.llvm.org](https://apt.llvm.org), newer than Ubuntu's, as in CI), gcovr, QEMU and CodeQL to the toolchain and runs [all analysis](#analysis) at once:
 
 ```sh
 docker compose run --rm kernel_analysis                  # all four configs

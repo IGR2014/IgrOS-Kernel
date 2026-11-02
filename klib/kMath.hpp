@@ -54,8 +54,8 @@ namespace igros::klib {
 			const auto high		{static_cast<igros_dword_t>(dividend >> 32)};
 			const auto low		{static_cast<igros_dword_t>(dividend)};
 			const auto quotientHigh	{high / divisor32};
-			auto remainder		{high % divisor32};
-			auto quotientLow	{igros_dword_t {}};
+			auto remainder		{high % divisor32};	// NOLINT(misc-const-correctness): written by DIV
+			auto quotientLow	{igros_dword_t {}};	// NOLINT(misc-const-correctness): written by DIV
 			// EDX:EAX / divisor (EDX < divisor, so quotient fits EAX)
 			asm (
 				"divl %[divisor]"

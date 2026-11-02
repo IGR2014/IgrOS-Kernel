@@ -52,11 +52,11 @@ namespace igros::arch {
 #if	defined (IGROS_ARCH_i386) || defined (IGROS_ARCH_x86_64)
 
 	// IRQ line type
-	using irq_t	= x86::irq_t;
+	using x86::irq_t;
 	// IRQ handler type
-	using isr_t	= x86::isr_t;
+	using x86::isr_t;
 	// IRQ type
-	using irq	= x86::irq;
+	using x86::irq;
 
 #endif
 

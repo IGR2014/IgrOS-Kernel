@@ -50,9 +50,9 @@ namespace igros::arch {
 #if	defined (IGROS_ARCH_i386) || defined (IGROS_ARCH_x86_64)
 
 	// I/O port address type
-	using port_t	= x86::port_t;
+	using x86::port_t;
 	// I/O type
-	using io	= x86::io;
+	using x86::io;
 
 #endif
 
