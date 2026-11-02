@@ -13,6 +13,7 @@
 // C++
 #include <algorithm>
 #include <iterator>
+#include <type_traits>
 // IgrOS-Kernel arch x86
 #include <arch/x86/exceptions.hpp>
 #include <arch/x86/irq.hpp>
@@ -83,7 +84,7 @@ namespace igros {
 		constinit static idt::table_t table {};
 
 		// Kernel interrupt gate for handler
-		const auto gate = [](const auto handler) noexcept {
+		const auto gate = [](const std::add_pointer_t<void () noexcept> handler) noexcept -> idt::entry_t {
 			return idt::setEntry(handler, KERNEL_CODE, INTERRUPT_GATE);
 		};
 		// Exceptions setup (vectors from 0)
@@ -93,7 +94,7 @@ namespace igros {
 
 		// Exceptions that can't trust current stack
 		using enum x86::except::NUMBER;
-		const auto vector = [](const x86::except::NUMBER number) noexcept {
+		const auto vector = [](const x86::except::NUMBER number) noexcept -> igros_usize_t {
 			return static_cast<igros_usize_t>(number);
 		};
 

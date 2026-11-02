@@ -32,7 +32,7 @@ constexpr auto KEYBOARD_STATUS	{std::uint16_t {0x64}};
 
 
 // Keyboard interrupt with given controller state
-static void keyboardIRQ(const std::uint8_t status, const std::uint8_t scanCode) {
+static void keyboardIRQ(const std::uint8_t status, const std::uint8_t scanCode) {	// NOLINT(bugprone-easily-swappable-parameters): test helper, arguments written in each call
 	hw::console.clear();
 	hw::portValue[KEYBOARD_STATUS]	= status;
 	hw::portValue[KEYBOARD_DATA]	= scanCode;
@@ -42,7 +42,7 @@ static void keyboardIRQ(const std::uint8_t status, const std::uint8_t scanCode) 
 }
 
 
-int main() {
+auto main() -> int {
 
 	// Setup unmasks IRQ 1
 	hw::reset();

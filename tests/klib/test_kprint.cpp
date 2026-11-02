@@ -39,7 +39,7 @@ static void checkFormat(const igros::igros_usize_t size, const char* const expec
 }
 
 
-int main() {
+auto main() -> int {
 
 	// Basic conversions
 	checkFormat(64, "hello 42", "hello %d", 42);
@@ -111,7 +111,7 @@ int main() {
 	IGROS_CHECK(0 == igros::klib::ksnprintf(lengthBuffer, 0, "%d", 1));
 
 	// Digits (also at compile time)
-	static_assert([] {
+	static_assert([]() -> bool {
 		std::array<char, 8> digits {};
 		return igros::klib::kdigits(digits, 0xBEEFu, igros::klib::radix_t::HEX, true) == "BEEF";
 	}());

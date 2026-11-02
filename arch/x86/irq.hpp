@@ -110,23 +110,21 @@ namespace igros::x86 {
 	/// @brief IRQ structure
 	class irq final {
 
-		/// @brief Copy c-tor
-		irq(const irq &other) = delete;
-		/// @brief Copy assignment
-		auto	operator=(const irq &other) -> irq& = delete;
-
-		/// @brief Move c-tor
-		irq(irq &&other) = delete;
-		/// @brief Move assignment
-		auto	operator=(irq &&other) -> irq& = delete;
-
-
 	public:
 
 		/// @brief Default c-tor
 		irq() noexcept = default;
 		/// @brief D-tor
 		~irq() noexcept = default;
+
+		/// @brief Copy c-tor
+		irq(const irq &other) = delete;
+		/// @brief Copy assignment
+		auto	operator=(const irq &other) -> irq& = delete;
+		/// @brief Move c-tor
+		irq(irq &&other) = delete;
+		/// @brief Move assignment
+		auto	operator=(irq &&other) -> irq& = delete;
 
 		/// @brief Init IRQ
 		static void	init() noexcept;
@@ -181,11 +179,6 @@ namespace igros::x86 {
 		/// @brief Saved flags (interrupts are disabled while saving)
 		igros_usize_t	mFlags	{::irqSave()};
 
-		/// @brief Copy c-tor
-		guard(const guard &other) = delete;
-		/// @brief Copy assignment
-		auto	operator=(const guard &other) -> guard& = delete;
-
 
 	public:
 
@@ -195,6 +188,11 @@ namespace igros::x86 {
 		~guard() noexcept {
 			::irqRestore(mFlags);
 		}
+
+		/// @brief Copy c-tor
+		guard(const guard &other) = delete;
+		/// @brief Copy assignment
+		auto	operator=(const guard &other) -> guard& = delete;
 
 
 	};

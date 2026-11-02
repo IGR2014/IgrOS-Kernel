@@ -97,7 +97,7 @@ namespace igros::arch {
 		// Choose cursor location low register
 		io::writePort8(VGA_CURSOR_CONTROL, 0x0F_u8);
 		// Write cursor position low byte
-		position = static_cast<igros_word_t>((position << 8) | io::readPort8(VGA_CURSOR_DATA));
+		position = static_cast<igros_word_t>((static_cast<igros_dword_t>(position) << 8) | io::readPort8(VGA_CURSOR_DATA));
 		// Return cursor data
 		return vmemCursor {
 			.x = static_cast<igros_byte_t>(position % VIDEO_MEM_WIDTH),
@@ -121,13 +121,13 @@ namespace igros::arch {
 		// Get current register value
 		const auto cursorStartReg {io::readPort8(VGA_CURSOR_DATA)};
 		// Send control word to disable cursor
-		io::writePort8(VGA_CURSOR_DATA, static_cast<igros_byte_t>(cursorStartReg & ~0x20_u8));
+		io::writePort8(VGA_CURSOR_DATA, static_cast<igros_byte_t>(static_cast<igros_dword_t>(cursorStartReg) & ~0x20_u32));
 	}
 
 	// Set VGA memory color
 	void vmemSetColor(const igros_byte_t background, const igros_byte_t foreground) noexcept {
 		// Background is first 4 bits and foreground is next 4
-		vmemBkgColor = static_cast<vmemColor>((background << 4) | foreground);
+		vmemBkgColor = static_cast<vmemColor>((static_cast<igros_dword_t>(background) << 4) | foreground);
 	}
 
 	// Write symbol to VGA memory

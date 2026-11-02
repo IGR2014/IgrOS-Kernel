@@ -19,12 +19,12 @@
 
 // Kernel implementations replace host ones in this test (built with -fno-builtin)
 extern "C" {
-	void*	memset(void* dst, int val, std::size_t size);
-	void*	memcpy(void* dst, const void* src, std::size_t size);
-	void*	memmove(void* dst, const void* src, std::size_t size);
-	int	memcmp(const void* lhs, const void* rhs, std::size_t size);
-	void*	memchr(const void* src, int val, std::size_t size);
-	std::size_t	strlen(const char* src);	// flawfinder: ignore (kernel strlen under test)
+	auto	memset(void* dst, int val, std::size_t size) -> void*;
+	auto	memcpy(void* dst, const void* src, std::size_t size) -> void*;
+	auto	memmove(void* dst, const void* src, std::size_t size) -> void*;
+	auto	memcmp(const void* lhs, const void* rhs, std::size_t size) -> int;
+	auto	memchr(const void* src, int val, std::size_t size) -> void*;
+	auto	strlen(const char* src) -> std::size_t;	// flawfinder: ignore (kernel strlen under test)
 }
 
 
@@ -40,7 +40,7 @@ static auto equals(const char* const buffer, const char* const text, const std::
 }
 
 
-int main() {
+auto main() -> int {
 
 	char buffer[16] {};
 

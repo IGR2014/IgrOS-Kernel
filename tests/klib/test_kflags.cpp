@@ -34,7 +34,7 @@ namespace {
 }	// namespace
 
 
-int main() {
+auto main() -> int {
 
 	using igros::klib::make_kflags;
 

@@ -78,7 +78,7 @@ namespace igros::x86 {
 		// Check if it's hardware interrupt
 		if (static_cast<igros_dword_t>(number) < 16_u32) [[likely]] {
 			// Set line bit in PIC mask
-			irq::setMask(static_cast<igros_word_t>(irq::getMask() | (1_u16 << static_cast<igros_dword_t>(number))));
+			irq::setMask(static_cast<igros_word_t>(static_cast<igros_dword_t>(irq::getMask()) | (1_u32 << static_cast<igros_dword_t>(number))));
 		}
 	}
 
@@ -87,28 +87,30 @@ namespace igros::x86 {
 		// Check if it's hardware interrupt
 		if (static_cast<igros_dword_t>(number) < 16_u32) [[likely]] {
 			// Clear line bit in PIC mask
-			irq::setMask(static_cast<igros_word_t>(irq::getMask() & ~(1_u16 << static_cast<igros_dword_t>(number))));
+			irq::setMask(static_cast<igros_word_t>(static_cast<igros_dword_t>(irq::getMask()) & ~(1_u32 << static_cast<igros_dword_t>(number))));
 		}
 	}
 
 
 	// Set interrupts mask
 	void irq::setMask(const igros_word_t mask) noexcept {
+		// Mask bits in 32-bit arithmetic (16-bit value would be promoted to int)
+		const auto bits {static_cast<igros_dword_t>(mask)};
 		// Set Master controller mask
-		::portWrite8(PIC_MASTER_DATA,	static_cast<igros_byte_t>(mask & 0x00FF_u16));
+		::portWrite8(PIC_MASTER_DATA,	static_cast<igros_byte_t>(bits & 0x00FF_u32));
 		// Set Slave controller mask
-		::portWrite8(PIC_SLAVE_DATA,	static_cast<igros_byte_t>((mask >> 8) & 0x00FF_u16));
+		::portWrite8(PIC_SLAVE_DATA,	static_cast<igros_byte_t>((bits >> 8) & 0x00FF_u32));
 	}
 
 	// Get interrupts mask
 	[[nodiscard]]
-	igros_word_t irq::getMask() noexcept {
+	auto irq::getMask() noexcept -> igros_word_t {
 		// Read slave PIC current mask
-		auto value	{static_cast<igros_word_t>(::portRead8(PIC_SLAVE_DATA)) << 8};
+		const auto high	{static_cast<igros_dword_t>(::portRead8(PIC_SLAVE_DATA))};
 		// Read master PIC current mask
-		value		|= ::portRead8(PIC_MASTER_DATA);
+		const auto low	{static_cast<igros_dword_t>(::portRead8(PIC_MASTER_DATA))};
 		// Return IRQ mask
-		return static_cast<igros_word_t>(value);
+		return static_cast<igros_word_t>((high << 8) | low);
 	}
 
 

@@ -193,7 +193,7 @@ static void testSetup() {
 }
 
 
-int main() {
+auto main() -> int {
 	testInit();
 	testInitFault();
 	testInitBusy();

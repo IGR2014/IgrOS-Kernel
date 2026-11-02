@@ -70,7 +70,7 @@ static void testNX() {
 #endif
 
 
-int main() {
+auto main() -> int {
 
 #if	defined (IGROS_ARCH_i386)
 	// No PAE page tables: never available

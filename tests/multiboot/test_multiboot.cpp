@@ -265,7 +265,7 @@ static void testNotMapped() {
 }
 
 
-int main() {
+auto main() -> int {
 	// Test data lies below 4 GB with no kernel offset: whole range is "directly mapped"
 	igros::mem::direct::setEnd(0x100000000ull);
 	testMagic();

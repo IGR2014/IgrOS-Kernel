@@ -46,18 +46,17 @@ namespace igros::x86 {
 	/// @brief Exceptions structure
 	class except final {
 
+	public:
+
 		/// @brief Copy c-tor
 		except(const except &other) = delete;
 		/// @brief Copy assignment
 		auto	operator=(const except &other) -> except& = delete;
-
 		/// @brief Move c-tor
 		except(except &&other) = delete;
 		/// @brief Move assignment
 		auto	operator=(except &&other) -> except& = delete;
 
-
-	public:
 
 		/// @brief Exceptions names
 		constexpr static std::array<const char* const, 32_usize> NAME {

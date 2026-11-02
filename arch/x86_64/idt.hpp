@@ -35,18 +35,18 @@ namespace igros::x86_64 {
 		/// @brief Number of IDT entries
 		constexpr static auto IDT_SIZE {256_usize};
 
+
+	public:
+
 		/// @brief Copy c-tor
 		idt(const idt &other) = delete;
 		/// @brief Copy assignment
 		auto	operator=(const idt &other) -> idt& = delete;
-
 		/// @brief Move c-tor
 		idt(idt &&other) = delete;
 		/// @brief Move assignment
 		auto	operator=(idt &&other) -> idt& = delete;
 
-
-	public:
 
 #pragma pack(push, 1)
 

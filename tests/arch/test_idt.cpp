@@ -121,7 +121,7 @@ static void testInit() {
 }
 
 
-int main() {
+auto main() -> int {
 
 	testInit();
 

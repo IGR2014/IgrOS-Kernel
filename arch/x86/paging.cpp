@@ -141,6 +141,7 @@ namespace igros::x86 {
 
 	// Map 4 KB page in given hierarchy
 	[[nodiscard]]
+	// NOLINTNEXTLINE(bugprone-easily-swappable-parameters): table hierarchy first, like every paging::entry() walk
 	auto paging::map(const mem::phys_t top, const mem::phys_t phys, const mem::virt_t virt, const klib::kFlags<FLAGS> flags) noexcept -> bool {
 		// Page aligned addresses only
 		if (!klib::kAlign::check<PAGE_SIZE>(phys) || !klib::kAlign::check<PAGE_SIZE>(mem::address(virt))) [[unlikely]] {
@@ -161,6 +162,7 @@ namespace igros::x86 {
 
 	// Map large page in given hierarchy (fresh directory entry only)
 	[[nodiscard]]
+	// NOLINTNEXTLINE(bugprone-easily-swappable-parameters): table hierarchy first, like every paging::entry() walk
 	auto paging::mapLarge(const mem::phys_t top, const mem::phys_t phys, const mem::virt_t virt, const klib::kFlags<FLAGS> flags) noexcept -> bool {
 		// Large page aligned addresses only, physical address must fit into entry
 		if (!klib::kAlign::check<LARGE_PAGE_SIZE>(phys) || !klib::kAlign::check<LARGE_PAGE_SIZE>(mem::address(virt)) ||

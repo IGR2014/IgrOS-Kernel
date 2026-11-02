@@ -72,7 +72,7 @@ CR2:		0x%08x
 
 
 	// Set up task state segments
-	void tss::init(const igros_word_t codeSelector, const igros_word_t dataSelector) noexcept {
+	void tss::init(const igros_word_t codeSelector, const igros_word_t dataSelector) noexcept {	// NOLINT(bugprone-easily-swappable-parameters): selectors in GDT order
 		// Kernel task: ring 0 stack is set when user mode appears
 		kernelSegment.ss0		= dataSelector;
 		// Double fault task: own stack, current (boot) page directory - never changed,

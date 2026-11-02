@@ -112,9 +112,9 @@ namespace igros::arch {
 		const auto rate	{static_cast<igros_word_t>(115200_u32 / static_cast<igros_dword_t>(baudRate))};
 		// LCR value
 		const auto lcr	= static_cast<igros_byte_t>(
-			(static_cast<igros_byte_t>(dataSize)	& 0x03_u8)		|
-			((static_cast<igros_byte_t>(stopBits)	& 0x01_u8) << 2)	|
-			((static_cast<igros_byte_t>(parity)	& 0x03_u8) << 3)
+			(static_cast<igros_dword_t>(dataSize)	& 0x03_u32)		|
+			((static_cast<igros_dword_t>(stopBits)	& 0x01_u32) << 2)	|
+			((static_cast<igros_dword_t>(parity)	& 0x03_u32) << 3)
 		);
 
 		// Let previous output finish (reprogramming would clobber byte being sent)
@@ -129,7 +129,7 @@ namespace igros::arch {
 		// Write BAUD rate divisor low byte
 		serialRegWrite(port, SERIAL_REG::DATA,	static_cast<igros_byte_t>(rate & 0x00FF_u16));
 		// Write BAUD rate divisor high byte
-		serialRegWrite(port, SERIAL_REG::IER,	static_cast<igros_byte_t>((rate >> 8) & 0x00FF_u16));
+		serialRegWrite(port, SERIAL_REG::IER,	static_cast<igros_byte_t>((static_cast<igros_dword_t>(rate) >> 8) & 0x00FF_u32));
 		// Write LCR params (also clears DLAB)
 		serialRegWrite(port, SERIAL_REG::LCR,	lcr);
 		// Enable FIFO, clear them with 14-byte threshold

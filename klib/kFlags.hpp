@@ -30,6 +30,8 @@ namespace igros::klib {
 
 		/// @brief Underlying type of flags
 		using U = std::underlying_type_t<T>;
+		/// @brief Type of bit operations (at least unsigned int: narrower types would be promoted to int)
+		using W = std::common_type_t<U, unsigned int>;
 
 		U	mValue;		///< Flags value
 
@@ -44,7 +46,7 @@ namespace igros::klib {
 		/// @param flags Further set flags
 		template<std::same_as<T> ...Args>
 		constexpr explicit kFlags(const T flag, const Args ...flags) noexcept :
-			mValue((static_cast<U>(flag) | ... | static_cast<U>(flags))) {}
+			mValue(static_cast<U>((static_cast<W>(flag) | ... | static_cast<W>(flags)))) {}
 
 		/// @brief From raw value (hardware register, table entry)
 		/// @param value Raw value (unknown bits are kept)
@@ -68,8 +70,8 @@ namespace igros::klib {
 		/// @return true if all bits of flag are set (false for empty flag)
 		[[nodiscard]]
 		constexpr auto	isSet(const T flag) const noexcept -> bool {
-			const auto bits {static_cast<U>(flag)};
-			return (static_cast<U>(0) != bits) && (bits == (mValue & bits));
+			const auto bits {static_cast<W>(flag)};
+			return (0U != bits) && (bits == (static_cast<W>(mValue) & bits));
 		}
 
 	};

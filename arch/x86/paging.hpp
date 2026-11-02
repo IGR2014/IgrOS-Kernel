@@ -36,16 +36,15 @@ namespace igros::x86 {
 	/// entries hold physical addresses.
 	class paging final {
 
-		/// @brief Copy c-tor
-		paging(const paging &other) = delete;
-		/// @brief Copy assignment
-		auto	operator=(const paging &other) -> paging& = delete;
-
-
 	public:
 
 		/// @brief D-tor
 		~paging() noexcept = default;
+
+		/// @brief Copy c-tor
+		paging(const paging &other) = delete;
+		/// @brief Copy assignment
+		auto	operator=(const paging &other) -> paging& = delete;
 
 		/// @brief Page table entry (register-wide)
 		using entry_t	= igros_usize_t;

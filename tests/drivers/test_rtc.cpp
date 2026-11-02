@@ -33,8 +33,8 @@ constexpr auto RTC_REGISTER_B	{0x0B};
 constexpr auto RTC_CENTURY	{0x32};
 
 // Register B flags
-constexpr auto RTC_IS_TIME_24	{0x02};
-constexpr auto RTC_IS_BINARY	{0x04};
+constexpr auto RTC_IS_TIME_24	{0x02u};
+constexpr auto RTC_IS_BINARY	{0x04u};
 
 
 // CMOS model: registers selected by command port
@@ -63,7 +63,7 @@ static auto cmosRead(const std::uint16_t port) -> std::uint32_t {
 }
 
 // Set clock registers: year month day weekday hour minute second
-static void setCMOS(const std::uint8_t flags, const std::uint8_t century, const std::array<std::uint8_t, 7> &values) {
+static void setCMOS(const std::uint8_t flags, const std::uint8_t century, const std::array<std::uint8_t, 7> &values) {	// NOLINT(bugprone-easily-swappable-parameters): test helper, arguments written in each call
 	hw::reset();
 	hw::portReadHook	= cmosRead;
 	updating		= 0;
@@ -152,7 +152,7 @@ static void testSetup() {
 }
 
 
-int main() {
+auto main() -> int {
 	testBCD();
 	testRead();
 	testBCD24();

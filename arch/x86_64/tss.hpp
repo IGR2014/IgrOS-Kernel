@@ -28,16 +28,15 @@ namespace igros::x86_64 {
 	/// changes (RSP0..2) and interrupt stack table (IST1..7)
 	class tss final {
 
-		/// @brief Copy c-tor
-		tss(const tss &other) = delete;
-		/// @brief Copy assignment
-		auto	operator=(const tss &other) -> tss& = delete;
-
-
 	public:
 
 		/// @brief D-tor
 		~tss() noexcept = default;
+
+		/// @brief Copy c-tor
+		tss(const tss &other) = delete;
+		/// @brief Copy assignment
+		auto	operator=(const tss &other) -> tss& = delete;
 
 		/// @brief Interrupt stack table index (0 - no stack switch)
 		enum class IST : igros_byte_t {

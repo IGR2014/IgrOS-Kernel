@@ -112,7 +112,7 @@ static void testEnable() {
 }
 
 
-int main() {
+auto main() -> int {
 	testVectors();
 	testInit();
 	testMask();

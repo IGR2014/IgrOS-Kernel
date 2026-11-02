@@ -66,7 +66,7 @@ namespace igros::arch {
 		io::writePort8(PIT_CONTROL,	0x34_u8);
 		// Set divisor (LOW first, then HIGH)
 		io::writePort8(PIT_CHANNEL_0,	static_cast<igros_byte_t>(pit.divisor & 0x00FF_u16));
-		io::writePort8(PIT_CHANNEL_0,	static_cast<igros_byte_t>((pit.divisor >> 8) & 0x00FF_u16));
+		io::writePort8(PIT_CHANNEL_0,	static_cast<igros_byte_t>((static_cast<igros_dword_t>(pit.divisor) >> 8) & 0x00FF_u32));
 
 		// Print
 		klib::kprintf(
@@ -85,7 +85,7 @@ namespace igros::arch {
 		// Get current counter value (counts down from divisor)
 		const auto loByte	{io::readPort8(PIT_CHANNEL_0)};
 		const auto hiByte	{io::readPort8(PIT_CHANNEL_0)};
-		const auto counter	{static_cast<igros_word_t>((hiByte << 8) | loByte)};
+		const auto counter	{static_cast<igros_word_t>((static_cast<igros_dword_t>(hiByte) << 8) | loByte)};
 		// Total elapsed ticks value since IRQ
 		const auto elapsed	{static_cast<igros_word_t>(pit.divisor - counter)};
 		// Return full expired ticks count

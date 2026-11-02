@@ -28,16 +28,15 @@ namespace igros::i386 {
 	/// even if kernel stack overflowed)
 	class tss final {
 
-		/// @brief Copy c-tor
-		tss(const tss &other) = delete;
-		/// @brief Copy assignment
-		auto	operator=(const tss &other) -> tss& = delete;
-
-
 	public:
 
 		/// @brief D-tor
 		~tss() noexcept = default;
+
+		/// @brief Copy c-tor
+		tss(const tss &other) = delete;
+		/// @brief Copy assignment
+		auto	operator=(const tss &other) -> tss& = delete;
 
 		/// @brief Double fault task stack size
 		constexpr static auto	STACK_SIZE	{0x4000_usize};

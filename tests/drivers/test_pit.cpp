@@ -112,7 +112,7 @@ static void testSetup() {
 }
 
 
-int main() {
+auto main() -> int {
 	testFrequency();
 	testTicks();
 	testSetup();

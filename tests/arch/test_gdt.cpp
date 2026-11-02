@@ -53,7 +53,7 @@ static auto limit20(const gdt::entry_t &entry) -> std::uint32_t {
 }
 
 // Flat 4 GB segment with given access byte and flags nibble
-static void checkFlat(const gdt::entry_t &entry, const std::uint8_t access, const std::uint8_t flags) {
+static void checkFlat(const gdt::entry_t &entry, const std::uint8_t access, const std::uint8_t flags) {	// NOLINT(bugprone-easily-swappable-parameters): test helper, arguments written in each call
 	IGROS_CHECK(0 == base32(entry));
 	IGROS_CHECK(0xFFFFF == limit20(entry));
 	IGROS_CHECK(access == entry.access);
@@ -190,7 +190,7 @@ static void testTaskStateSegment() {
 	IGROS_CHECK(segment.ist[1] != segment.ist[2]);
 	IGROS_CHECK(segment.ist[0] != segment.ist[2]);
 	// Stacks don't overlap
-	const auto distance = [](const std::uint64_t a, const std::uint64_t b) {
+	const auto distance = [](const std::uint64_t a, const std::uint64_t b) -> std::uint64_t {
 		return (a > b) ? (a - b) : (b - a);
 	};
 	IGROS_CHECK(distance(segment.ist[0], segment.ist[1]) >= tss::STACK_SIZE);
@@ -211,7 +211,7 @@ static void testTaskStateSegment() {
 #endif
 
 
-int main() {
+auto main() -> int {
 
 	testInit();
 #if	defined (IGROS_ARCH_i386)

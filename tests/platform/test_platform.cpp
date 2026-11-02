@@ -38,7 +38,7 @@ asm(
 static auto calls {std::string {}};
 
 
-int main() {
+auto main() -> int {
 
 	// Kernel image
 	IGROS_CHECK(0x40000000 == Platform::kernelOffset());
@@ -57,12 +57,12 @@ int main() {
 	// Hooks are called in order
 	const Platform platform {
 		"hooks",
-		[] { calls += 'i'; },
-		[] { calls += 'f'; },
-		[] { calls += 's'; },
-		[] { calls += 'r'; },
-		[] { calls += 'u'; },
-		[] { calls += 'w'; }
+		[]() -> void { calls += 'i'; },
+		[]() -> void { calls += 'f'; },
+		[]() -> void { calls += 's'; },
+		[]() -> void { calls += 'r'; },
+		[]() -> void { calls += 'u'; },
+		[]() -> void { calls += 'w'; }
 	};
 	IGROS_CHECK(0 == std::strcmp("hooks", platform.name()));
 	platform.initialize();

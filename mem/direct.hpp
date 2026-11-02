@@ -37,16 +37,16 @@ namespace igros::mem {
 		/// @brief End of directly mapped physical memory
 		static inline constinit phys_t	mEnd	{LOW_MEMORY_LIMIT};
 
-		/// @brief Copy c-tor
-		direct(const direct &other) = delete;
-		/// @brief Copy assignment
-		auto	operator=(const direct &other) -> direct& = delete;
-
 
 	public:
 
 		/// @brief D-tor
 		~direct() noexcept = default;
+
+		/// @brief Copy c-tor
+		direct(const direct &other) = delete;
+		/// @brief Copy assignment
+		auto	operator=(const direct &other) -> direct& = delete;
 
 		/// @brief End of directly mapped physical memory
 		/// @return Physical address where direct map ends

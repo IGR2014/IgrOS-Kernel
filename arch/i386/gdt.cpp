@@ -63,18 +63,18 @@ namespace igros::i386 {
 		// Global descriptors table (GDT)
 		constinit static gdt::table_t table {
 			// Empty entry (should be there!)
-			gdt::setEntry<0x00000000, 0x00000000, GDT_ENTRY_EMPTY>(),
+			gdt::setEntry(0x00000000, 0x00000000, GDT_ENTRY_EMPTY),
 			// Kernel code
-			gdt::setEntry<0x00000000, 0xFFFFFFFF, GDT_ENTRY_CODE_RING0>(),
+			gdt::setEntry(0x00000000, 0xFFFFFFFF, GDT_ENTRY_CODE_RING0),
 			// Kernel data
-			gdt::setEntry<0x00000000, 0xFFFFFFFF, GDT_ENTRY_DATA_RING0>(),
+			gdt::setEntry(0x00000000, 0xFFFFFFFF, GDT_ENTRY_DATA_RING0),
 			// User code
-			gdt::setEntry<0x00000000, 0xFFFFFFFF, GDT_ENTRY_CODE_RING3>(),
+			gdt::setEntry(0x00000000, 0xFFFFFFFF, GDT_ENTRY_CODE_RING3),
 			// User data
-			gdt::setEntry<0x00000000, 0xFFFFFFFF, GDT_ENTRY_DATA_RING3>(),
+			gdt::setEntry(0x00000000, 0xFFFFFFFF, GDT_ENTRY_DATA_RING3),
 			// Task state segments (filled below: bases are known at run time only)
-			gdt::setEntry<0x00000000, 0x00000000, GDT_ENTRY_EMPTY>(),
-			gdt::setEntry<0x00000000, 0x00000000, GDT_ENTRY_EMPTY>(),
+			gdt::setEntry(0x00000000, 0x00000000, GDT_ENTRY_EMPTY),
+			gdt::setEntry(0x00000000, 0x00000000, GDT_ENTRY_EMPTY),
 		};
 
 		// Pointer to GDT
@@ -85,7 +85,7 @@ namespace igros::i386 {
 
 		// Task state segments: kernel task and double fault task
 		tss::init(KERNEL_CODE, KERNEL_DATA);
-		const auto entry = [](const tss::segment_t &segment) noexcept {
+		const auto entry = [](const tss::segment_t &segment) noexcept -> entry_t {
 			return gdt::tssEntry(static_cast<igros_dword_t>(std::bit_cast<igros_usize_t>(&segment)), static_cast<igros_dword_t>(sizeof(segment) - 1_usize));
 		};
 		table[TSS / sizeof(entry_t)]			= entry(tss::kernel());

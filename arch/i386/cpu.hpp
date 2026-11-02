@@ -46,23 +46,21 @@ namespace igros::i386 {
 	/// @brief CPU representation
 	class cpu final {
 
-		/// @brief Copy c-tor
-		cpu(const cpu &other) = delete;
-		/// @brief Copy assignment
-		cpu& operator=(const cpu &other) = delete;
-
-		/// @brief Move c-tor
-		cpu(cpu &&other) = delete;
-		/// @brief Move assignment
-		cpu& operator=(cpu &&other) = delete;
-
-
 	public:
 
 		/// @brief Default c-tor
 		cpu() noexcept = default;
 		/// @brief D-tor
 		~cpu() noexcept = default;
+
+		/// @brief Copy c-tor
+		cpu(const cpu &other) = delete;
+		/// @brief Copy assignment
+		auto	operator=(const cpu &other) -> cpu& = delete;
+		/// @brief Move c-tor
+		cpu(cpu &&other) = delete;
+		/// @brief Move assignment
+		auto	operator=(cpu &&other) -> cpu& = delete;
 
 		/// @brief Halt CPU
 		[[noreturn]]

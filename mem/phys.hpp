@@ -51,16 +51,15 @@ namespace igros::mem {
 	/// so free memory doesn't have to be mapped)
 	class phys final {
 
-		/// @brief Copy c-tor
-		phys(const phys &other) = delete;
-		/// @brief Copy assignment
-		auto	operator=(const phys &other) -> phys& = delete;
-
-
 	public:
 
 		/// @brief D-tor
 		~phys() noexcept = default;
+
+		/// @brief Copy c-tor
+		phys(const phys &other) = delete;
+		/// @brief Copy assignment
+		auto	operator=(const phys &other) -> phys& = delete;
 
 		/// @brief Physical memory tracked by allocator (bitmap of 128 KB)
 		constexpr static auto	MEMORY_LIMIT	{0x100000000_u64};

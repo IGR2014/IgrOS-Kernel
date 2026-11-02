@@ -17,7 +17,6 @@
 #include <array>
 #include <bit>
 #include <cstdint>
-#include <limits>
 #include <type_traits>
 // IgrOS-Kernel arch
 #include <arch/types.hpp>
@@ -36,18 +35,18 @@ namespace igros::i386 {
 		/// @brief Number of IDT entries
 		constexpr static auto IDT_SIZE {256_usize};
 
+
+	public:
+
 		/// @brief Copy c-tor
 		idt(const idt &other) = delete;
 		/// @brief Copy assignment
 		auto	operator=(const idt &other) -> idt& = delete;
-
 		/// @brief Move c-tor
 		idt(idt &&other) = delete;
 		/// @brief Move assignment
 		auto	operator=(idt &&other) -> idt& = delete;
 
-
-	public:
 
 #pragma pack(push, 1)
 
@@ -115,7 +114,7 @@ namespace igros::i386 {
 			.selector	= selector,
 			.reserved	= 0_u8,
 			.type		= type,
-			.offsetHigh	= static_cast<igros_word_t>((address >> std::numeric_limits<igros_word_t>::digits) & 0xFFFF_usize),
+			.offsetHigh	= static_cast<igros_word_t>((address >> 16) & 0xFFFF_usize),
 		};
 	}
 

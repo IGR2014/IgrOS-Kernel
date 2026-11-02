@@ -44,7 +44,7 @@ extern "C" {
 
 	// Kernel main function
 	[[noreturn]]
-	void kmain(const igros::igros_usize_t multibootAddress, const igros::igros_dword_t magic) noexcept {
+	void kmain(const igros::igros_usize_t multibootAddress, const igros::igros_dword_t magic) noexcept {	// NOLINT(bugprone-easily-swappable-parameters): order set by boot.s
 
 		// Run global constructors (dynamic initialization of global objects)
 		for (const auto ctor : std::span {_SECTION_INIT_ARRAY_START_, _SECTION_INIT_ARRAY_END_}) {

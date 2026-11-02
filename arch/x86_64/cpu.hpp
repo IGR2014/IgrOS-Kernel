@@ -46,23 +46,21 @@ namespace igros::x86_64 {
 	/// @brief CPU representation
 	class cpu final {
 
-		/// @brief Copy c-tor
-		cpu(const cpu &other) = delete;
-		/// @brief Copy assignment
-		cpu& operator=(const cpu &other) = delete;
-
-		/// @brief Move c-tor
-		cpu(cpu &&other) = delete;
-		/// @brief Move assignment
-		cpu& operator=(cpu &&other) = delete;
-
-
 	public:
 
 		/// @brief Default c-tor
 		cpu() noexcept = default;
 		/// @brief D-tor
 		~cpu() noexcept = default;
+
+		/// @brief Copy c-tor
+		cpu(const cpu &other) = delete;
+		/// @brief Copy assignment
+		auto	operator=(const cpu &other) -> cpu& = delete;
+		/// @brief Move c-tor
+		cpu(cpu &&other) = delete;
+		/// @brief Move assignment
+		auto	operator=(cpu &&other) -> cpu& = delete;
 
 		/// @brief Halt CPU
 		[[noreturn]]
@@ -86,7 +84,7 @@ namespace igros::x86_64 {
 	/// @brief Dump registers
 	inline void cpu::dumpRegisters(const register_t* const regs) noexcept {
 		// 64-bit register value as format "%llx" argument
-		constexpr auto r = [](const igros_quad_t value) constexpr noexcept {
+		constexpr auto r = [](const igros_quad_t value) constexpr noexcept -> unsigned long long {
 			return static_cast<unsigned long long>(value);
 		};
 		// Print regs

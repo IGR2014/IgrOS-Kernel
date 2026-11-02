@@ -35,7 +35,7 @@ static void checkDivision(const A dividend, const B divisor) {
 }
 
 
-int main() {
+auto main() -> int {
 
 	// Unsigned 64-bit by 32-bit and 64-bit divisors
 	const std::uint64_t dividends[] {

@@ -79,23 +79,21 @@ namespace igros::x86 {
 	/// @brief I/O structure
 	class io final {
 
-		/// @brief Copy c-tor
-		io(const io &other) = delete;
-		/// @brief Copy assignment
-		io& operator=(const io &other) = delete;
-
-		/// @brief Move c-tor
-		io(io &&other) = delete;
-		/// @brief Move assignment
-		io& operator=(io &&other) = delete;
-
-
 	public:
 
 		/// @brief Default c-tor
 		io() noexcept = default;
 		/// @brief D-tor
 		~io() noexcept = default;
+
+		/// @brief Copy c-tor
+		io(const io &other) = delete;
+		/// @brief Copy assignment
+		auto	operator=(const io &other) -> io& = delete;
+		/// @brief Move c-tor
+		io(io &&other) = delete;
+		/// @brief Move assignment
+		auto	operator=(io &&other) -> io& = delete;
 
 		/// @brief Read byte from port
 		/// @param addr Port

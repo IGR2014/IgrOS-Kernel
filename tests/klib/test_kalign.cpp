@@ -44,7 +44,7 @@ static_assert(0x100002000ull == kAlign::up<0x1000>(0x100001001ull));
 static_assert(0x100001000ull == kAlign::down<0x1000>(0x100001FFFull));
 
 
-int main() {
+auto main() -> int {
 
 	// Pointers: explicit and natural (pointed type) alignment
 	const auto* const ptr {reinterpret_cast<const std::uint32_t*>(0x1006)};

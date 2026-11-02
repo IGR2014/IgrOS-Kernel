@@ -28,12 +28,12 @@ extern "C" {
 
 
 	// Declarations (<cstring> isn't freestanding)
-	void*	memset(void* dst, int val, std::size_t size);
-	void*	memcpy(void* dst, const void* src, std::size_t size);
-	void*	memmove(void* dst, const void* src, std::size_t size);
-	int	memcmp(const void* lhs, const void* rhs, std::size_t size);
-	void*	memchr(const void* src, int val, std::size_t size);
-	std::size_t	strlen(const char* src);	// flawfinder: ignore (implements strlen)
+	auto	memset(void* dst, int val, std::size_t size) -> void*;
+	auto	memcpy(void* dst, const void* src, std::size_t size) -> void*;
+	auto	memmove(void* dst, const void* src, std::size_t size) -> void*;
+	auto	memcmp(const void* lhs, const void* rhs, std::size_t size) -> int;
+	auto	memchr(const void* src, int val, std::size_t size) -> void*;
+	auto	strlen(const char* src) -> std::size_t;	// flawfinder: ignore (implements strlen)
 
 
 	/// @brief Fill memory with byte value
@@ -42,7 +42,7 @@ extern "C" {
 	/// @param size Number of bytes
 	/// @return dst
 	IGROS_NO_LIBCALLS
-	void* memset(void* dst, int val, std::size_t size) {
+	auto memset(void* dst, int val, std::size_t size) -> void* {
 		auto* d {static_cast<unsigned char*>(dst)};
 		for (auto i {static_cast<std::size_t>(0)}; i < size; ++i) {
 			d[i] = static_cast<unsigned char>(val);
@@ -56,7 +56,7 @@ extern "C" {
 	/// @param size Number of bytes
 	/// @return dst
 	IGROS_NO_LIBCALLS
-	void* memcpy(void* dst, const void* src, std::size_t size) {
+	auto memcpy(void* dst, const void* src, std::size_t size) -> void* {
 		auto* d {static_cast<unsigned char*>(dst)};
 		const auto* s {static_cast<const unsigned char*>(src)};
 		for (auto i {static_cast<std::size_t>(0)}; i < size; ++i) {
@@ -71,7 +71,7 @@ extern "C" {
 	/// @param size Number of bytes
 	/// @return dst
 	IGROS_NO_LIBCALLS
-	void* memmove(void* dst, const void* src, std::size_t size) {
+	auto memmove(void* dst, const void* src, std::size_t size) -> void* {
 		auto* d {static_cast<unsigned char*>(dst)};
 		if (const auto* s {static_cast<const unsigned char*>(src)}; d < s) {
 			for (auto i {static_cast<std::size_t>(0)}; i < size; ++i) {
@@ -91,7 +91,7 @@ extern "C" {
 	/// @param size Number of bytes
 	/// @return Negative, zero or positive: first differing byte (unsigned) of lhs is less, equal or greater
 	IGROS_NO_LIBCALLS
-	int memcmp(const void* lhs, const void* rhs, std::size_t size) {
+	auto memcmp(const void* lhs, const void* rhs, std::size_t size) -> int {
 		const auto* l {static_cast<const unsigned char*>(lhs)};
 		const auto* r {static_cast<const unsigned char*>(rhs)};
 		for (auto i {static_cast<std::size_t>(0)}; i < size; ++i) {
@@ -108,7 +108,7 @@ extern "C" {
 	/// @param size Number of bytes
 	/// @return Pointer to first matching byte, nullptr if not found
 	IGROS_NO_LIBCALLS
-	void* memchr(const void* src, int val, std::size_t size) {
+	auto memchr(const void* src, int val, std::size_t size) -> void* {
 		const auto* s {static_cast<const unsigned char*>(src)};
 		for (auto i {static_cast<std::size_t>(0)}; i < size; ++i) {
 			if (static_cast<unsigned char>(val) == s[i]) {
@@ -124,7 +124,7 @@ extern "C" {
 	/// @param src Null-terminated string
 	/// @return Number of characters before terminator
 	IGROS_NO_LIBCALLS
-	std::size_t strlen(const char* src) {	// flawfinder: ignore (implements strlen)
+	auto strlen(const char* src) -> std::size_t {	// flawfinder: ignore (implements strlen)
 		auto size {static_cast<std::size_t>(0)};
 		while ('\0' != src[size]) {
 			++size;

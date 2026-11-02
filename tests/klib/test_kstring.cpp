@@ -20,7 +20,7 @@
 using namespace igros::klib;
 
 
-int main() {
+auto main() -> int {
 
 	// View (also at compile time), null pointer is empty string
 	static_assert("abcd" == kstrview("abcd"));

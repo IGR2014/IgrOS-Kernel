@@ -34,7 +34,7 @@ namespace igros::multiboot {
 
 
 		/// @brief Build year (__DATE__ is "Mmm dd yyyy")
-		constexpr auto BUILD_YEAR = []() consteval noexcept {
+		constexpr auto BUILD_YEAR = []() consteval noexcept -> igros_dword_t {
 			auto year {0_u32};
 			for (const auto digit : std::string_view {__DATE__}.substr(7)) {
 				year = (year * 10_u32) + static_cast<igros_dword_t>(digit - '0');
@@ -203,7 +203,7 @@ VBE:
 R"multiboot(
 VBE:
 	Signature:	%c%c%c%c
-	Version:	%d.%d
+	Version:	%u.%u
 	OEM:		"%s"
 	Vendor name:	"%s"
 	Card name:	"%s"
@@ -215,8 +215,8 @@ VBE:
 				config->signature[1],
 				config->signature[2],
 				config->signature[3],
-				(config->version >> 8) & 0x00FF_u16,
-				(config->version & 0x00FF_u16),
+				(static_cast<igros_dword_t>(config->version) >> 8) & 0x00FF_u32,
+				static_cast<igros_dword_t>(config->version) & 0x00FF_u32,
 				(nullptr != oem)	? oem		: "<none>",
 				(nullptr != vendor)	? vendor	: "<none>",
 				(nullptr != product)	? product	: "<none>",

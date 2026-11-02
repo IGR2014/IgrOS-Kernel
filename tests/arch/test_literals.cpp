@@ -67,7 +67,7 @@ static_assert(0x7FFFFFFFFFFFFFFF_i64 == std::numeric_limits<std::int64_t>::max()
 static_assert(-127_i8 == -127);
 
 
-int main() {
+auto main() -> int {
 	// Everything is checked at compile time
 	return igros::test::result();
 }

@@ -128,7 +128,7 @@ static void testDefaultHandlers() {
 }
 
 
-int main() {
+auto main() -> int {
 	testException();
 	testIRQ();
 	testSpurious();

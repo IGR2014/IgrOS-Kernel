@@ -201,7 +201,7 @@ namespace igros::platform {
 	/// @brief C-tor
 	constexpr Platform::Platform(
 		const char* const	name,
-		const init_t		initFunc,
+		const init_t		initFunc,	// NOLINT(bugprone-easily-swappable-parameters): platform callbacks in fixed order
 		const finalize_t	finalizeFunc,
 		const shutdown_t	shutdownFunc,
 		const reboot_t		rebootFunc,

@@ -267,7 +267,7 @@ static void testMemoryFallback() {
 }
 
 
-int main() {
+auto main() -> int {
 
 	// Kernel image reservation must be empty for these tests
 	if (0 != (reinterpret_cast<std::uintptr_t>(&_SECTION_KERNEL_END_) - igros::platform::Platform::kernelOffset())) {

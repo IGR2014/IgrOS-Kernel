@@ -84,11 +84,11 @@ namespace igros::klib {
 		}
 
 		// Shift-subtract long division: align divisor highest bit with dividend highest bit
-		const auto shift	{std::countl_zero(divisor) - std::countl_zero(dividend)};
+		const auto shift	{static_cast<igros_dword_t>(std::countl_zero(divisor) - std::countl_zero(dividend))};
 		auto aligned		{divisor << shift};
 		auto res		{divmod_t<igros_quad_t> {.quotient = 0_u64, .remainder = dividend}};
 		// One quotient bit per shift
-		for (auto bit {0}; bit <= shift; ++bit) {
+		for (auto bit {0_u32}; bit <= shift; ++bit) {
 			res.quotient <<= 1;
 			if (res.remainder >= aligned) {
 				res.remainder	-= aligned;

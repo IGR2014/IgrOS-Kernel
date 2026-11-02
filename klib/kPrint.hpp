@@ -63,7 +63,7 @@ namespace igros::klib {
 
 		// Power of two radix: shifts and masks (no division)
 		if (radix_t::DEC != radix) {
-			const auto shift	{std::countr_zero(static_cast<igros_dword_t>(radix))};
+			const auto shift	{static_cast<igros_dword_t>(std::countr_zero(static_cast<igros_dword_t>(radix)))};
 			const auto mask		{static_cast<U>(static_cast<U>(radix) - 1U)};
 			do {
 				*--pos	= digits[static_cast<igros_usize_t>(value & mask)];

@@ -108,7 +108,7 @@ static auto table(const igros::mem::phys_t address) -> paging::entry_t* {
 
 // Entry for virtual address at given level (tables must exist)
 [[nodiscard]]
-static auto entryAt(const std::uintptr_t virt, const igros::igros_usize_t level) -> paging::entry_t& {
+static auto entryAt(const std::uintptr_t virt, const igros::igros_usize_t level) -> paging::entry_t& {	// NOLINT(bugprone-easily-swappable-parameters): test helper, arguments written in each call
 	auto* entries {table(paging::root())};
 	for (auto current {paging::LEVELS - 1}; ; --current) {
 		auto &entry {entries[(virt >> (paging::PAGE_SHIFT + (paging::INDEX_BITS * current))) & (paging::ENTRIES - 1)]};
@@ -342,7 +342,7 @@ static void testFaultHandler() {
 }
 
 
-int main() {
+auto main() -> int {
 	if (!setupMemory()) {
 		std::printf("can't map physical memory at 0x%lx\n", static_cast<unsigned long>(KERNEL_OFFSET));
 		return igros::test::SKIPPED;

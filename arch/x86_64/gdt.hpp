@@ -17,6 +17,8 @@
 #include <array>
 // IgrOS-Kernel arch
 #include <arch/types.hpp>
+// IgrOS-Kernel library
+#include <klib/kFlags.hpp>
 
 
 // x86_64 namespace
@@ -26,82 +28,55 @@ namespace igros::x86_64 {
 	/// @brief GDT structure
 	class gdt final {
 
-		/// @brief GDT flags enum
-		enum flags_t : igros_word_t {	// NOLINT(cppcoreguidelines-use-enum-class): bit flags, combined and masked as integers
-			/// @brief GDT empty segment
-			GDT_SEG_EMPTY		= 0x0000_u16,
-			/// @brief GDT access page
-			GDT_SEG_TYPE_ACCESS	= 0x0001_u16,
-			/// @brief GDT page types
-			GDT_SEG_TYPE_RODATA	= GDT_SEG_EMPTY,
-			GDT_SEG_TYPE_DATA	= 0x0002_u16,
-			GDT_SEG_TYPE_ROSTACK	= 0x0004_u16,
-			GDT_SEG_TYPE_STACK	= 0x0006_u16,
-			GDT_SEG_TYPE_EXCODE	= 0x0008_u16,
-			GDT_SEG_TYPE_CODE	= 0x000A_u16,
-			GDT_SEG_TYPE_EXCONF	= 0x000C_u16,
-			GDT_SEG_TYPE_CONF	= 0x000E_u16,
-			/// @brief GDT rings
-			GDT_SEG_RING0		= 0x0010_u16,
-			GDT_SEG_RING1		= 0x0030_u16,
-			GDT_SEG_RING2		= 0x0050_u16,
-			GDT_SEG_RING3		= 0x0070_u16,
-			/// @brief GDT use ring number
-			GDT_SEG_RING_USE	= 0x0080_u16,
-			/// @brief GDT types
-			GDT_SEG_L		= 0x0200_u16,
-			GDT_SEG_SZ		= 0x0400_u16,
-			GDT_SEG_G		= 0x0800_u16,
-			/// @brief GDT entries
-			GDT_SEG_RING0_CODE	= GDT_SEG_G		|
-						  GDT_SEG_L		|
-						  GDT_SEG_RING_USE	|
-						  GDT_SEG_RING0		|
-						  GDT_SEG_TYPE_CODE,
-			GDT_SEG_RING0_DATA	= GDT_SEG_G		|
-						  GDT_SEG_L		|
-						  GDT_SEG_RING_USE	|
-						  GDT_SEG_RING0		|
-						  GDT_SEG_TYPE_DATA,
-			GDT_SEG_RING3_CODE	= GDT_SEG_G		|
-						  GDT_SEG_L		|
-						  GDT_SEG_RING_USE	|
-						  GDT_SEG_RING3		|
-						  GDT_SEG_TYPE_CODE,
-			GDT_SEG_RING3_DATA	= GDT_SEG_G		|
-						  GDT_SEG_L		|
-						  GDT_SEG_RING_USE	|
-						  GDT_SEG_RING3		|
-						  GDT_SEG_TYPE_DATA,
+		/// @brief GDT entry flags: access byte (bits 0..7) and flags nibble (bits 8..11)
+		enum class FLAGS : igros_word_t {
+			EMPTY		= 0x0000_u16,		///< No flags (null descriptor)
+			TYPE_ACCESS	= 0x0001_u16,		///< Segment accessed
+			TYPE_RODATA	= 0x0000_u16,		///< Read-only data
+			TYPE_DATA	= 0x0002_u16,		///< Read/write data
+			TYPE_ROSTACK	= 0x0004_u16,		///< Read-only expand-down data
+			TYPE_STACK	= 0x0006_u16,		///< Read/write expand-down data
+			TYPE_EXCODE	= 0x0008_u16,		///< Execute-only code
+			TYPE_CODE	= 0x000A_u16,		///< Execute/read code
+			TYPE_EXCONF	= 0x000C_u16,		///< Execute-only conforming code
+			TYPE_CONF	= 0x000E_u16,		///< Execute/read conforming code
+			RING0		= 0x0010_u16,		///< Code/data segment, privilege level 0
+			RING1		= 0x0030_u16,		///< Code/data segment, privilege level 1
+			RING2		= 0x0050_u16,		///< Code/data segment, privilege level 2
+			RING3		= 0x0070_u16,		///< Code/data segment, privilege level 3
+			RING_USE	= 0x0080_u16,		///< Segment present
+			L		= 0x0200_u16,		///< 64-bit code segment
+			SZ		= 0x0400_u16,		///< 32-bit segment
+			G		= 0x0800_u16,		///< Limit in 4 KB units
 		};
 
 
 		/// @brief Empty GDT entry (the first one)
-		constexpr static auto	GDT_ENTRY_EMPTY			{flags_t::GDT_SEG_EMPTY};
-		/// @brief Kernel code page (4 Mb page, ring 0, code)
-		constexpr static auto	GDT_ENTRY_CODE_RING0		{flags_t::GDT_SEG_RING0_CODE};
-		/// @brief Kernel data page (4 Mb page, ring 0, data)
-		constexpr static auto	GDT_ENTRY_DATA_RING0		{flags_t::GDT_SEG_RING0_DATA};
-		/// @brief User code page (4 Mb page, ring 3, code)
-		constexpr static auto	GDT_ENTRY_CODE_RING3		{flags_t::GDT_SEG_RING3_CODE};
-		/// @brief User data page (4 Mb page, ring 3, data)
-		constexpr static auto	GDT_ENTRY_DATA_RING3		{flags_t::GDT_SEG_RING3_DATA};
+		constexpr static auto	GDT_ENTRY_EMPTY			{klib::kFlags<FLAGS> {}};
+		/// @brief Kernel code segment (ring 0, code)
+		constexpr static auto	GDT_ENTRY_CODE_RING0		{klib::make_kflags<FLAGS>(FLAGS::G, FLAGS::L, FLAGS::RING_USE, FLAGS::RING0, FLAGS::TYPE_CODE)};
+		/// @brief Kernel data segment (ring 0, data)
+		constexpr static auto	GDT_ENTRY_DATA_RING0		{klib::make_kflags<FLAGS>(FLAGS::G, FLAGS::L, FLAGS::RING_USE, FLAGS::RING0, FLAGS::TYPE_DATA)};
+		/// @brief User code segment (ring 3, code)
+		constexpr static auto	GDT_ENTRY_CODE_RING3		{klib::make_kflags<FLAGS>(FLAGS::G, FLAGS::L, FLAGS::RING_USE, FLAGS::RING3, FLAGS::TYPE_CODE)};
+		/// @brief User data segment (ring 3, data)
+		constexpr static auto	GDT_ENTRY_DATA_RING3		{klib::make_kflags<FLAGS>(FLAGS::G, FLAGS::L, FLAGS::RING_USE, FLAGS::RING3, FLAGS::TYPE_DATA)};
 
 		/// @brief Number of GDT entries
 		constexpr static auto	GDT_SIZE			{7_usize};
+
+
+	public:
 
 		/// @brief Copy c-tor
 		gdt(const gdt &other) = delete;
 		/// @brief Copy assignment
 		auto	operator=(const gdt &other) -> gdt& = delete;
-
 		/// @brief Move c-tor
 		gdt(gdt &&other) = delete;
 		/// @brief Move assignment
 		auto	operator=(gdt &&other) -> gdt& = delete;
 
-
-	public:
 
 #pragma pack(push, 1)
 
@@ -146,13 +121,12 @@ namespace igros::x86_64 {
 		constexpr static auto	tssEntry(const igros_quad_t base, const igros_dword_t limit) noexcept -> std::array<entry_t, 2>;
 
 		/// @brief Set GDT entry
-		/// @tparam BASE Segment base
-		/// @tparam LIMIT Segment limit (20 bits used)
-		/// @tparam FLAGS Access byte and flags
+		/// @param base Segment base
+		/// @param limit Segment limit (20 bits used)
+		/// @param flags Access byte and flags
 		/// @return GDT entry
-		template<igros_dword_t BASE, igros_dword_t LIMIT, flags_t FLAGS>
 		[[nodiscard]]
-		constexpr static auto	setEntry() noexcept -> entry_t;
+		constexpr static auto	setEntry(const igros_dword_t base, const igros_dword_t limit, const klib::kFlags<FLAGS> flags) noexcept -> entry_t;
 		/// @brief Calc GDT size
 		/// @param table GDT
 		/// @return GDT size in bytes - 1 (GDT pointer limit)
@@ -171,16 +145,17 @@ namespace igros::x86_64 {
 
 
 	/// @brief Set GDT entry
-	template<igros_dword_t BASE, igros_dword_t LIMIT, gdt::flags_t FLAGS>
 	[[nodiscard]]
-	constexpr auto gdt::setEntry() noexcept -> entry_t {
+	constexpr auto gdt::setEntry(const igros_dword_t base, const igros_dword_t limit, const klib::kFlags<FLAGS> flags) noexcept -> entry_t {
+		// Flags in 32-bit arithmetic (16-bit operands would be promoted to int)
+		const auto bits {static_cast<igros_dword_t>(flags.value())};
 		return entry_t {
-			.limitLow	= static_cast<igros_word_t>(LIMIT & 0xFFFF_u32),
-			.baseLow	= static_cast<igros_word_t>(BASE & 0xFFFF_u32),
-			.baseMid	= static_cast<igros_byte_t>((BASE & 0xFF0000_u32) >> 16),
-			.access		= static_cast<igros_byte_t>(FLAGS & 0x00FF_u16),
-			.limitFlags	= static_cast<igros_byte_t>(((LIMIT & 0xF0000_u32) >> 16) | (static_cast<igros_word_t>(FLAGS & 0x0F00_u16) >> 4)),
-			.baseHigh	= static_cast<igros_byte_t>((BASE & 0xFF000000_u32) >> 24),
+			.limitLow	= static_cast<igros_word_t>(limit & 0xFFFF_u32),
+			.baseLow	= static_cast<igros_word_t>(base & 0xFFFF_u32),
+			.baseMid	= static_cast<igros_byte_t>((base & 0xFF0000_u32) >> 16),
+			.access		= static_cast<igros_byte_t>(bits & 0x00FF_u32),
+			.limitFlags	= static_cast<igros_byte_t>(((limit & 0xF0000_u32) >> 16) | ((bits & 0x0F00_u32) >> 4)),
+			.baseHigh	= static_cast<igros_byte_t>((base & 0xFF000000_u32) >> 24),
 		};
 	}
 

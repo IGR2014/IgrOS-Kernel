@@ -165,7 +165,7 @@ static void testCursor() {
 }
 
 
-int main() {
+auto main() -> int {
 	testInit();
 	testWrite();
 	testScroll();

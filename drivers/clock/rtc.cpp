@@ -117,7 +117,8 @@ namespace igros::arch {
 	// Convert BCD to binary
 	[[nodiscard]]
 	auto rtcFromBCD(const igros_byte_t bcd) noexcept -> igros_byte_t {
-		return static_cast<igros_byte_t>((bcd & 0x0F_u8) + (((bcd >> 4) & 0x0F_u8) * 10_u8));
+		const auto value {static_cast<igros_dword_t>(bcd)};
+		return static_cast<igros_byte_t>((value & 0x0F_u32) + (((value >> 4) & 0x0F_u32) * 10_u32));
 	}
 
 	// Convert BCD date to binary
@@ -143,7 +144,7 @@ namespace igros::arch {
 	// Get current date/time
 	auto clockGetCurrentDateTime() noexcept -> clockDateTime_t {
 		// Read CMOS date/time (once no update is in progress)
-		const auto readStable = []() noexcept {
+		const auto readStable = []() noexcept -> rtcDateTime_t {
 			while (klib::kFlags<RTC_A>::from(rtcRead(RTC_REGISTER_A)).isSet(RTC_A::UPDATING)) {
 				// Wait for update end
 			}

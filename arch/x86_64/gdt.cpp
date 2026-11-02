@@ -64,18 +64,18 @@ namespace igros::x86_64 {
 		// Global descriptors table (GDT)
 		constinit static gdt::table_t table {
 			// Empty entry (should be there!)
-			gdt::setEntry<0x00000000, 0x00000000, GDT_ENTRY_EMPTY>(),
+			gdt::setEntry(0x00000000, 0x00000000, GDT_ENTRY_EMPTY),
 			// Kernel code
-			gdt::setEntry<0x00000000, 0xFFFFFFFF, GDT_ENTRY_CODE_RING0>(),
+			gdt::setEntry(0x00000000, 0xFFFFFFFF, GDT_ENTRY_CODE_RING0),
 			// Kernel data
-			gdt::setEntry<0x00000000, 0xFFFFFFFF, GDT_ENTRY_DATA_RING0>(),
+			gdt::setEntry(0x00000000, 0xFFFFFFFF, GDT_ENTRY_DATA_RING0),
 			// User code
-			gdt::setEntry<0x00000000, 0xFFFFFFFF, GDT_ENTRY_CODE_RING3>(),
+			gdt::setEntry(0x00000000, 0xFFFFFFFF, GDT_ENTRY_CODE_RING3),
 			// User data
-			gdt::setEntry<0x00000000, 0xFFFFFFFF, GDT_ENTRY_DATA_RING3>(),
+			gdt::setEntry(0x00000000, 0xFFFFFFFF, GDT_ENTRY_DATA_RING3),
 			// Task state segment (16-byte descriptor, filled below: base is known at run time only)
-			gdt::setEntry<0x00000000, 0x00000000, GDT_ENTRY_EMPTY>(),
-			gdt::setEntry<0x00000000, 0x00000000, GDT_ENTRY_EMPTY>(),
+			gdt::setEntry(0x00000000, 0x00000000, GDT_ENTRY_EMPTY),
+			gdt::setEntry(0x00000000, 0x00000000, GDT_ENTRY_EMPTY),
 		};
 
 		// Pointer to GDT
