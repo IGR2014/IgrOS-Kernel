@@ -21,7 +21,6 @@
 // IgrOS-Kernel drivers
 #include <drivers/vga/vmem.hpp>
 // IgrOS-Kernel library
-#include <klib/kMemory.hpp>
 #include <klib/kString.hpp>
 // IgrOS-Kernel platform
 #include <platform/platform.hpp>
@@ -182,7 +181,7 @@ namespace igros::arch {
 			const auto screen {vmemScreen()};
 			std::shift_left(screen.begin(), screen.end(), VIDEO_MEM_WIDTH);	// NOLINT(modernize-use-ranges): std::ranges::shift_left is C++23
 			// Clear bottom line
-			klib::kmemset(screen.last<VIDEO_MEM_WIDTH>(), vmemBlank());
+			std::ranges::fill(screen.last<VIDEO_MEM_WIDTH>(), vmemBlank());
 		}
 		// Set new cursor position
 		vmemCursorSet(cursorPos.x, cursorPos.y);
@@ -191,7 +190,7 @@ namespace igros::arch {
 	// Write string to VGA memory
 	void vmemWrite(const char* const message) noexcept {
 		// Write symbols one by one
-		vmemWrite(std::string_view {message, klib::kstrlen(message)});
+		vmemWrite(klib::kstrview(message));
 	}
 
 	// Write fixed-width string to VGA memory
@@ -206,7 +205,7 @@ namespace igros::arch {
 	// Clear VGA memory
 	void vmemClear() noexcept {
 		// Set whole screen with whitespace with default background
-		klib::kmemset(vmemScreen(), vmemBlank());
+		std::ranges::fill(vmemScreen(), vmemBlank());
 	}
 
 

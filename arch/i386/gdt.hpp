@@ -18,8 +18,6 @@
 #include <array>
 // IgrOS-Kernel arch
 #include <arch/types.hpp>
-// IgrOS-Kernel library
-#include <klib/kFlags.hpp>
 
 
 // i386 namespace

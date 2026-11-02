@@ -272,7 +272,7 @@ namespace igros::klib {
 				// String (null prints nothing)
 				case 's': {
 					const auto* const str {va_arg(args, const char*)};
-					out.padded({}, std::string_view {str, kstrlen(str)}, spec);
+					out.padded({}, kstrview(str), spec);
 				} break;
 				// Signed decimal
 				case 'd':

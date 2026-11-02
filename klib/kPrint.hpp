@@ -15,17 +15,13 @@
 
 
 // C++
-#include <algorithm>
-#include <array>
 #include <bit>
 #include <concepts>
 #include <cstdarg>
-#include <cstdint>
 #include <limits>
 #include <span>
 #include <string_view>
 #include <type_traits>
-#include <utility>
 // IgrOS-Kernel arch
 #include <arch/types.hpp>
 // IgrOS-Kernel library
@@ -95,47 +91,6 @@ namespace igros::klib {
 		} while (0U != rest);
 		return std::string_view {pos, buffer.end()};
 
-	}
-
-
-	// Kernel integer to string function (sign only for decimal; written only if it fits buffer, no terminator)
-	template<std::integral T>
-	[[maybe_unused]]
-	constexpr auto kitoa(const std::span<char> buffer, const T value, const radix_t radix = radix_t::DEC) noexcept -> char* {
-
-		// Unsigned type of the same size
-		using U = std::make_unsigned_t<T>;
-
-		// Is value printed as negative decimal
-		const auto isNegative	{std::cmp_less(value, static_cast<T>(0)) && (radix_t::DEC == radix)};
-		// Magnitude for negative decimals, bit pattern otherwise
-		const auto magnitude	{isNegative ? static_cast<U>(static_cast<U>(0) - static_cast<U>(value)) : static_cast<U>(value)};
-
-		// Temporary buffer for value text representation (sign + all bits)
-		auto temp		{std::array<char, std::numeric_limits<U>::digits + 1_usize> {}};
-		const auto digits	{kdigits(std::span {temp}.template subspan<1_usize>(), magnitude, radix)};
-		// Text start (sign right before digits)
-		auto first		{temp.size() - digits.size()};
-		if (isNegative) [[unlikely]] {
-			temp[--first] = '-';
-		}
-
-		// Copy only if it fits whole
-		if (const auto text {std::span {temp}.subspan(first)}; text.size() <= buffer.size()) [[likely]] {
-			std::ranges::copy(text, buffer.begin());
-		}
-
-		// Return pointer to buffer
-		return buffer.data();
-
-	}
-
-
-	// Kernel pointer to string function
-	[[maybe_unused]]
-	constexpr auto kptoa(const std::span<char> buffer, const igros_pointer_t value) noexcept -> char* {
-		// Cast pointer value to size type
-		return kitoa(buffer, std::bit_cast<igros_usize_t>(value), radix_t::HEX);
 	}
 
 

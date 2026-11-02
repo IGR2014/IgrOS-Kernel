@@ -19,6 +19,7 @@
 // IgrOS-Kernel drivers
 #include <drivers/uart/serial.hpp>
 // IgrOS-Kernel library
+#include <klib/kFlags.hpp>
 #include <klib/kPrint.hpp>
 #include <klib/kString.hpp>
 
@@ -40,9 +41,11 @@ namespace igros::arch {
 	};
 
 	// Line status register bits
-	constexpr auto SERIAL_LSR_DATA_READY	{0x01_u8};
-	constexpr auto SERIAL_LSR_THR_EMPTY	{0x20_u8};
-	constexpr auto SERIAL_LSR_TX_IDLE	{0x40_u8};	// Holding and shift registers empty
+	enum class SERIAL_LSR : igros_byte_t {
+		DATA_READY	= 0x01_u8,	// Received byte available
+		THR_EMPTY	= 0x20_u8,	// Transmitter holding register empty
+		TX_IDLE		= 0x40_u8,	// Holding and shift registers empty
+	};
 
 	// Interrupt enable register bits
 	constexpr auto SERIAL_IER_RX		{0x01_u8};
@@ -65,11 +68,17 @@ namespace igros::arch {
 		return io::readPort8(serialRegister(port, reg));
 	}
 
-	// Wait until any of line status bits is set (bounded, so missing UART can't hang the kernel)
+	// Read line status register
 	[[nodiscard]]
-	static auto serialWaitStatus(const SERIAL_PORT port, const igros_byte_t bits) noexcept -> bool {
+	static auto serialStatus(const SERIAL_PORT port) noexcept -> klib::kFlags<SERIAL_LSR> {
+		return klib::kFlags<SERIAL_LSR>::from(serialRegRead(port, SERIAL_REG::LSR));
+	}
+
+	// Wait until line status bit is set (bounded, so missing UART can't hang the kernel)
+	[[nodiscard]]
+	static auto serialWaitStatus(const SERIAL_PORT port, const SERIAL_LSR status) noexcept -> bool {
 		for (auto spin {0_usize}; spin < 100000_usize; ++spin) {
-			if (0x00_u8 != (serialRegRead(port, SERIAL_REG::LSR) & bits)) [[likely]] {
+			if (serialStatus(port).isSet(status)) [[likely]] {
 				return true;
 			}
 		}
@@ -91,7 +100,7 @@ namespace igros::arch {
 		)};
 
 		// Let previous output finish (reprogramming would clobber byte being sent)
-		if (!serialWaitStatus(port, SERIAL_LSR_TX_IDLE)) [[unlikely]] {
+		if (!serialWaitStatus(port, SERIAL_LSR::TX_IDLE)) [[unlikely]] {
 			return false;
 		}
 
@@ -115,7 +124,7 @@ namespace igros::arch {
 		serialRegWrite(port, SERIAL_REG::DATA,	0xA5_u8);
 
 		// Check loopback (byte comes back once shifted out: one character time)
-		if (!serialWaitStatus(port, SERIAL_LSR_DATA_READY) || (0xA5_u8 != serialRegRead(port, SERIAL_REG::DATA))) {
+		if (!serialWaitStatus(port, SERIAL_LSR::DATA_READY) || (0xA5_u8 != serialRegRead(port, SERIAL_REG::DATA))) {
 			// Could not setup serial port
 			return false;
 		}
@@ -142,19 +151,19 @@ namespace igros::arch {
 	// Is write ready? (LSR bit 5 - transmitter holding register empty)
 	[[nodiscard]]
 	auto serialReadyWrite(const SERIAL_PORT port) noexcept -> bool {
-		return 0x00_u8 != (serialRegRead(port, SERIAL_REG::LSR) & SERIAL_LSR_THR_EMPTY);
+		return serialStatus(port).isSet(SERIAL_LSR::THR_EMPTY);
 	}
 
 	// Is read ready? (LSR bit 0 - data ready)
 	[[nodiscard]]
 	auto serialReadyRead(const SERIAL_PORT port) noexcept -> bool {
-		return 0x00_u8 != (serialRegRead(port, SERIAL_REG::LSR) & SERIAL_LSR_DATA_READY);
+		return serialStatus(port).isSet(SERIAL_LSR::DATA_READY);
 	}
 
 	// Wait until write ready
 	[[nodiscard]]
 	static auto serialWaitWrite(const SERIAL_PORT port) noexcept -> bool {
-		return serialWaitStatus(port, SERIAL_LSR_THR_EMPTY);
+		return serialWaitStatus(port, SERIAL_LSR::THR_EMPTY);
 	}
 
 
@@ -223,7 +232,7 @@ namespace igros::arch {
 	// Serial write to COM1 (kernel console)
 	[[maybe_unused]]
 	auto serialWrite(const char* const src) noexcept -> igros_usize_t {
-		return serialWrite(SERIAL_PORT::COM1, std::string_view {src, klib::kstrlen(src)});
+		return serialWrite(SERIAL_PORT::COM1, klib::kstrview(src));
 	}
 
 

@@ -24,6 +24,7 @@ extern "C" {
 	void*	memmove(void* dst, const void* src, std::size_t size);
 	int	memcmp(const void* lhs, const void* rhs, std::size_t size);
 	void*	memchr(const void* src, int val, std::size_t size);
+	std::size_t	strlen(const char* src);
 }
 
 
@@ -86,6 +87,11 @@ int main() {
 	IGROS_CHECK(nullptr == memchr(text, 'c', 2));
 	IGROS_CHECK(nullptr == memchr(text, 'z', sizeof(text)));
 	IGROS_CHECK(nullptr == memchr(text, 'a', empty));
+
+	// strlen: characters before null terminator
+	IGROS_CHECK(0 == strlen(""));
+	IGROS_CHECK(7 == strlen(text));
+	IGROS_CHECK(3 == strlen("abc\0def"));
 
 	return igros::test::result();
 

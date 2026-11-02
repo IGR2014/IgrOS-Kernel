@@ -79,7 +79,7 @@ namespace igros::mem {
 		// Mark boot string as used (only first byte if string is not directly mapped)
 		void markUsedString(const phys_t address) noexcept {
 			const auto* const text {direct::string(address)};
-			phys::markUsed(address, address + ((nullptr != text) ? klib::kstrlen(text) : 0_usize) + 1_u64);
+			phys::markUsed(address, address + klib::kstrview(text).size() + 1_u64);
 		}
 
 		// Mark modules list, modules and their names as used

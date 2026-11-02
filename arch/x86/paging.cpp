@@ -3,7 +3,7 @@
 //	Paging (i386 2-level and x86_64 4-level page tables)
 //
 //	File:	paging.cpp
-//	Date:	30 Oct 2026
+//	Date:	02 Nov 2026
 //
 //	Copyright (c) 2017 - 2026, Igor Baklykov
 //	All rights reserved.
@@ -24,7 +24,6 @@
 #include <arch/x86/paging.hpp>
 // IgrOS-Kernel library
 #include <klib/kAlign.hpp>
-#include <klib/kMemory.hpp>
 #include <klib/kPrint.hpp>
 // IgrOS-Kernel memory
 #include <mem/direct.hpp>
@@ -63,6 +62,12 @@ namespace igros::x86 {
 		return static_cast<paging::entry_t>(value);
 	}
 
+	// Is flag set in entry
+	[[nodiscard]]
+	constexpr static auto hasFlag(const paging::entry_t entry, const paging::FLAGS value) noexcept -> bool {
+		return klib::kFlags<paging::FLAGS>::from(entry).isSet(value);
+	}
+
 
 	// Table at physical address (through direct map)
 	[[nodiscard]]
@@ -76,7 +81,7 @@ namespace igros::x86 {
 	auto paging::allocTable() noexcept -> mem::phys_t {
 		const auto page {mem::phys::alloc(mem::direct::end())};
 		if (0_u64 != page) [[likely]] {
-			klib::kmemset(std::span {paging::table(page), ENTRIES}, entry_t {0});
+			std::ranges::fill(std::span {paging::table(page), ENTRIES}, entry_t {0});
 		}
 		return page;
 	}
@@ -99,7 +104,7 @@ namespace igros::x86 {
 				return nullptr;
 			}
 			auto &next {entries[paging::index(virt, current)]};
-			if (0_usize == (next & flag(FLAGS::PRESENT))) {
+			if (!hasFlag(next, FLAGS::PRESENT)) {
 				// Missing table
 				if (!create) {
 					return nullptr;
@@ -110,7 +115,7 @@ namespace igros::x86 {
 				}
 				// Access rights are checked on every level: keep upper levels permissive
 				next = static_cast<entry_t>(page) | flag(FLAGS::PRESENT) | flag(FLAGS::WRITABLE) | (user ? flag(FLAGS::USER) : 0_usize);
-			} else if (0_usize != (next & flag(FLAGS::HUGE))) {
+			} else if (hasFlag(next, FLAGS::HUGE)) {
 				// Address belongs to large page
 				return nullptr;
 			} else if (user) {
@@ -159,7 +164,7 @@ namespace igros::x86 {
 		}
 		auto* const large {paging::entry(top, virt, true, flags.isSet(FLAGS::USER), 1_usize)};
 		// Don't replace page table (its pages would leak)
-		if ((nullptr == large) || (0_usize != (*large & flag(FLAGS::PRESENT)) && (0_usize == (*large & flag(FLAGS::HUGE))))) [[unlikely]] {
+		if ((nullptr == large) || (hasFlag(*large, FLAGS::PRESENT) && !hasFlag(*large, FLAGS::HUGE))) [[unlikely]] {
 			return false;
 		}
 		*large = paging::makeEntry(phys, flags) | flag(FLAGS::HUGE);
@@ -196,11 +201,11 @@ namespace igros::x86 {
 				return INVALID;
 			}
 			const auto current {entries[paging::index(virt, level)]};
-			if (0_usize == (current & flag(FLAGS::PRESENT))) {
+			if (!hasFlag(current, FLAGS::PRESENT)) {
 				return INVALID;
 			}
 			// Page (or large page) covering address
-			if ((0_usize == level) || (0_usize != (current & flag(FLAGS::HUGE)))) {
+			if ((0_usize == level) || hasFlag(current, FLAGS::HUGE)) {
 				const auto size {mem::phys_t {1} << (PAGE_SHIFT + INDEX_BITS * level)};
 				return (static_cast<mem::phys_t>(current & ADDRESS_MASK) & ~(size - 1_u64)) | (address & (size - 1_u64));
 			}

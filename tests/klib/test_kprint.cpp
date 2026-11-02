@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////
 //
-//	kvsnprintf / kitoa tests
+//	kvsnprintf / kdigits tests
 //
 //	File:	test_kprint.cpp
 //	Date:	11 Oct 2026
@@ -12,9 +12,9 @@
 
 
 // C++
+#include <array>
 #include <cstdint>
 #include <cstring>
-#include <span>
 // IgrOS-Kernel library
 #include <klib/kPrint.hpp>
 // Tests
@@ -110,14 +110,7 @@ int main() {
 	IGROS_CHECK(7 == igros::klib::ksnprintf(lengthBuffer, sizeof(lengthBuffer), "%s", "1234567890"));
 	IGROS_CHECK(0 == igros::klib::ksnprintf(lengthBuffer, 0, "%d", 1));
 
-	// Integer to text: sign for decimal only, written only if it fits, no terminator
-	char number[8] {'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'};
-	igros::klib::kitoa(number, -123);
-	IGROS_CHECK(0 == std::memcmp(number, "-123XXXX", 8));
-	igros::klib::kitoa(number, static_cast<std::int8_t>(-1), igros::klib::radix_t::HEX);
-	IGROS_CHECK(0 == std::memcmp(number, "ff23XXXX", 8));
-	igros::klib::kitoa(std::span {number}.first(3), 12345);
-	IGROS_CHECK(0 == std::memcmp(number, "ff23XXXX", 8));
+	// Digits (also at compile time)
 	static_assert([] {
 		std::array<char, 8> digits {};
 		return igros::klib::kdigits(digits, 0xBEEFu, igros::klib::radix_t::HEX, true) == "BEEF";

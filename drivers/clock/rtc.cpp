@@ -3,7 +3,7 @@
 //	RTC clock driver
 //
 //	File:	rtc.cpp
-//	Date:	30 Oct 2026
+//	Date:	02 Nov 2026
 //
 //	Copyright (c) 2017 - 2026, Igor Baklykov
 //	All rights reserved.
@@ -16,6 +16,7 @@
 // IgrOS-Kernel drivers
 #include <drivers/clock/rtc.hpp>
 // IgrOS-Kernel library
+#include <klib/kFlags.hpp>
 #include <klib/kPrint.hpp>
 
 
@@ -57,8 +58,11 @@ namespace igros::arch {
 	constexpr auto RTC_REGISTER_A	{0x0A_u8};
 	constexpr auto RTC_REGISTER_B	{0x0B_u8};
 
-	constexpr auto RTC_IS_TIME_24	{0x02_u8};
-	constexpr auto RTC_IS_BINARY	{0x04_u8};
+	// Register B bits
+	enum class RTC_B : igros_byte_t {
+		TIME_24		= 0x02_u8,	// 24-hour format (12-hour otherwise, bit 7 of hour - PM)
+		BINARY		= 0x04_u8,	// Binary values (BCD otherwise)
+	};
 
 
 	// Read CMOS register
@@ -144,11 +148,11 @@ namespace igros::arch {
 			rtcDateTime	= readStable();
 		}
 		// Get RTC flags
-		const auto flags	{rtcRead(RTC_REGISTER_B)};
+		const auto flags	{klib::kFlags<RTC_B>::from(rtcRead(RTC_REGISTER_B))};
 		// Get RTC century
 		auto century		{rtcRead(RTC_CENTURY)};
 		// Check data format
-		if (0_u8 == (flags & RTC_IS_BINARY)) {
+		if (!flags.isSet(RTC_B::BINARY)) {
 			// Chech hours format
 			const auto hourModeBit {static_cast<igros_byte_t>(rtcDateTime.time.hour & 0x80_u8)};
 			// Drop highest bit from hours
@@ -161,7 +165,7 @@ namespace igros::arch {
 			century = rtcFromBCD(century);
 		}
 		// Check 12-hours format (1..12, bit 7 - PM)
-		if (0x00_u8 == (flags & RTC_IS_TIME_24)) {
+		if (!flags.isSet(RTC_B::TIME_24)) {
 			const auto isPM {0x00_u8 != (0x80_u8 & rtcDateTime.time.hour)};
 			// 12 AM -> 0, 12 PM -> 12
 			rtcDateTime.time.hour = static_cast<igros_byte_t>(((rtcDateTime.time.hour & 0x7F_u8) % 12_u8) + (isPM ? 12_u8 : 0_u8));
@@ -175,7 +179,7 @@ namespace igros::arch {
 	[[nodiscard]]
 	auto rtcSetup() noexcept -> bool {
 		// Get current date/time
-		auto dateTime {clockGetCurrentDateTime()};
+		const auto dateTime {clockGetCurrentDateTime()};
 		// Print result
 		klib::kprintf(
 			"RTC date/time:\t%02d.%02d.%04d %02d:%02d:%02d",

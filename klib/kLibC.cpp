@@ -34,6 +34,7 @@ extern "C" {
 	void*	memmove(void* dst, const void* src, std::size_t size);
 	int	memcmp(const void* lhs, const void* rhs, std::size_t size);
 	void*	memchr(const void* src, int val, std::size_t size);
+	std::size_t	strlen(const char* src);
 
 
 	// Fill memory with byte value
@@ -98,6 +99,16 @@ extern "C" {
 			}
 		}
 		return nullptr;
+	}
+
+	// String length (std::string_view length of C string)
+	IGROS_NO_LIBCALLS
+	std::size_t strlen(const char* src) {
+		auto size {static_cast<std::size_t>(0)};
+		while ('\0' != src[size]) {
+			++size;
+		}
+		return size;
 	}
 
 
