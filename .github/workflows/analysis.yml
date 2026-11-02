@@ -1,9 +1,9 @@
 # Name
 name: 'Analysis'
 
-# Every analysis tool over every toolchain (config/script/analysis.sh), report on GitHub Pages:
-# master at the site root, pull requests under pr/<number>/ (removed when the PR is closed).
-# Pages serves the gh-pages branch (Settings -> Pages -> Deploy from a branch: gh-pages, root).
+# Every analysis tool over every toolchain (config/script/analysis.sh): master report deployed
+# to GitHub Pages (Settings -> Pages -> Source: GitHub Actions), pull request report uploaded
+# as workflow artifact (linked in the PR comment, expires on its own).
 # CodeQL isn't run here: codeql.yml uploads it to code scanning.
 on:
   push:
@@ -18,11 +18,10 @@ on:
       - '*.kateproject'
   pull_request:
     branches: [ 'master' ]
-    types: [ opened, synchronize, reopened, closed ]
     paths-ignore: *docs
   workflow_dispatch:
 
-# A newer push to the same branch/PR (or closing the PR) cancels the run still in progress
+# A newer push to the same branch/PR cancels the run still in progress
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -34,27 +33,30 @@ permissions:
 # Project jobs
 jobs:
 
-  # Analyze, publish report, fail on broken build/boot
+  # Analyze, upload report, fail on broken build/boot
   Analysis:
 
     # Name
     name: 'Analysis report'
-    if: github.event.action != 'closed'
     # OS
     runs-on: ubuntu-26.04
     # Four builds, boot tests and host tests take a few minutes; a hang must not take hours
     timeout-minutes: 30
-    # Push to gh-pages, pull request comment
+    # Pull request comment
     permissions:
-      contents: write
+      contents: read
       pull-requests: write
+    # Pages artifact uploaded (Deploy job runs even if findings fail this job)
+    outputs:
+      pages: ${{ steps.pages.outcome == 'success' }}
 
     # Environment variables
     env:
       IGROS_ANALYSIS_CODEQL: "none"
-      # Fork PR token is read-only: report is in the job summary only
-      PUBLISH: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
-      SITE_DIR: ${{ github.event_name == 'pull_request' && format('pr/{0}', github.event.number) || '.' }}
+      # Pages serve master only (github-pages environment allows the default branch)
+      PAGES: ${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
+      # Fork PR token is read-only: no PR comment, report is in job summary and artifact
+      COMMENT: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository }}
 
     # Job steps
     steps:
@@ -88,38 +90,34 @@ jobs:
       run: |
         bash config/script/analysis.sh
 
-    # Report page: gh-pages branch, own directory only (other PRs publish in parallel)
-    - name: 'Publish Report'
-      if: env.PUBLISH == 'true'
+    # Report site: page, its data file and the coverage report it links to (not build directories)
+    - name: 'Collect Report'
+      if: success() || failure()
       shell: bash
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        url="https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-        if git ls-remote --exit-code --heads "${url}" gh-pages > /dev/null; then
-          git clone --quiet --filter=blob:none --branch gh-pages "${url}" site
-        else
-          git init --quiet -b gh-pages site
-          git -C site remote add origin "${url}"
-          # Plain files, no Jekyll processing
-          touch site/.nojekyll
-        fi
-        # Page, live data file and coverage report it links to (not the build directories)
-        rm -rf "site/${SITE_DIR}/index.html" "site/${SITE_DIR}/index.data.js" "site/${SITE_DIR}/tests"
-        mkdir -p "site/${SITE_DIR}/tests/reports"
-        cp build/analysis/index.html build/analysis/index.data.js "site/${SITE_DIR}/"
-        cp -r build/analysis/tests/reports/coverage "site/${SITE_DIR}/tests/reports/"
-        cd site
-        git config user.name "github-actions[bot]"
-        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        git add -A
-        git commit --quiet -m "Analysis report: ${SITE_DIR} (${GITHUB_SHA::7})" || exit 0
-        # Another job may have pushed meanwhile: it touched another directory, rebase is clean
-        for attempt in 1 2 3 4 5; do
-          git push --quiet origin gh-pages && exit 0
-          git pull --quiet --rebase origin gh-pages
-        done
-        exit 1
+        [[ -f build/analysis/index.html ]] || exit 0
+        mkdir -p site/tests/reports
+        cp build/analysis/index.html build/analysis/index.data.js site/
+        [[ -d build/analysis/tests/reports/coverage ]] && cp -r build/analysis/tests/reports/coverage site/tests/reports/
+        exit 0
+
+    # Master: Pages artifact (Deploy job publishes it)
+    - name: 'Upload Pages Report'
+      id: pages
+      if: (success() || failure()) && env.PAGES == 'true' && hashFiles('site/index.html') != ''
+      uses: actions/upload-pages-artifact@v5
+      with:
+        path: site
+
+    # Other branches and pull requests: report as workflow artifact (download, open index.html)
+    - name: 'Upload Report'
+      id: artifact
+      if: (success() || failure()) && env.PAGES != 'true' && hashFiles('site/index.html') != ''
+      uses: actions/upload-artifact@v7
+      with:
+        name: analysis-report
+        path: site
+        retention-days: 14
 
     # Summary with report link: job summary, pull request comment (updated in place)
     - name: 'Report Summary'
@@ -128,25 +126,24 @@ jobs:
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         PR: ${{ github.event.number }}
+        ARTIFACT_URL: ${{ steps.artifact.outputs.artifact-url }}
       run: |
         [[ -f build/analysis/summary.md ]] || exit 0
         owner="${GITHUB_REPOSITORY_OWNER,,}"
-        page="https://${owner}.github.io/${GITHUB_REPOSITORY#*/}/"
-        [[ "${SITE_DIR}" == "." ]] || page="${page}${SITE_DIR}/"
         {
           echo "<!-- igros-analysis -->"
           echo "### Kernel analysis"
           echo
           cat build/analysis/summary.md
           echo
-          if [[ "${PUBLISH}" == "true" ]]; then
-            echo "[Full report](${page}) (findings with source, coverage) for ${GITHUB_SHA::7}"
-          else
-            echo "_Fork pull request: report page isn't published, run config/script/analysis.sh locally_"
+          if [[ "${PAGES}" == "true" ]]; then
+            echo "[Full report](https://${owner}.github.io/${GITHUB_REPOSITORY#*/}/) (findings with source, coverage) for ${GITHUB_SHA::7}"
+          elif [[ -n "${ARTIFACT_URL}" ]]; then
+            echo "[Full report](${ARTIFACT_URL}) for ${GITHUB_SHA::7}: download, open \`index.html\` (findings with source, coverage)"
           fi
         } > build/analysis/comment.md
         cat build/analysis/comment.md >> "${GITHUB_STEP_SUMMARY}"
-        if [[ -n "${PR}" && "${PUBLISH}" == "true" ]]; then
+        if [[ -n "${PR}" && "${COMMENT}" == "true" ]]; then
           comment="$(gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments" --paginate \
             -q '.[] | select(.body | startswith("<!-- igros-analysis -->")) | .id' | head -n 1)"
           if [[ -n "${comment}" ]]; then
@@ -173,38 +170,30 @@ jobs:
           exit 1
         fi
 
-  # Closed pull request: remove its report
-  Cleanup:
+  # Master report to GitHub Pages (also when findings failed the Analysis job: the page shows them)
+  Deploy:
 
     # Name
-    name: 'Remove PR report'
-    if: github.event.action == 'closed' && github.event.pull_request.head.repo.full_name == github.repository
+    name: 'Deploy report'
+    needs: Analysis
+    if: ${{ !cancelled() && needs.Analysis.outputs.pages == 'true' }}
     # OS
     runs-on: ubuntu-26.04
-    timeout-minutes: 5
-    # Push to gh-pages
+    timeout-minutes: 10
+    # Pages deployment (OIDC token proves deployment comes from this workflow)
     permissions:
-      contents: write
+      pages: write
+      id-token: write
+    # One deployment at a time, the newest wins
+    concurrency:
+      group: pages
+      cancel-in-progress: true
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     # Job steps
     steps:
-    - name: 'Remove Report'
-      shell: bash
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        PR: ${{ github.event.number }}
-      run: |
-        url="https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-        git ls-remote --exit-code --heads "${url}" gh-pages > /dev/null || exit 0
-        git clone --quiet --filter=blob:none --branch gh-pages "${url}" site
-        cd site
-        [[ -d "pr/${PR}" ]] || exit 0
-        git config user.name "github-actions[bot]"
-        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        git rm -r --quiet "pr/${PR}"
-        git commit --quiet -m "Analysis report: remove pr/${PR}"
-        for attempt in 1 2 3 4 5; do
-          git push --quiet origin gh-pages && exit 0
-          git pull --quiet --rebase origin gh-pages
-        done
-        exit 1
+    - name: 'Deploy Pages'
+      id: deployment
+      uses: actions/deploy-pages@v5
