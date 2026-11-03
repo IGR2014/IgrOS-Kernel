@@ -22,6 +22,8 @@
 #include <multiboot/multiboot.hpp>
 // IgrOS-Kernel platform
 #include <platform/platform.hpp>
+// IgrOS-Kernel
+#include <kmain.hpp>
 
 
 #ifdef __cplusplus
@@ -35,12 +37,6 @@ extern "C" {
 	extern const std::add_pointer_t<void()> _SECTION_INIT_ARRAY_START_[]; ///< First global constructor
 	extern const std::add_pointer_t<void()> _SECTION_INIT_ARRAY_END_[];   ///< Global constructors end
 
-
-	/// @brief Kernel main function (called from boot.s)
-	/// @param multibootAddress Physical address of multiboot information
-	/// @param magic Bootloader magic (multiboot check)
-	[[noreturn]]
-	void kmain(const igros::igros_usize_t multibootAddress, const igros::igros_dword_t magic) noexcept;
 
 	// Kernel main function
 	[[noreturn]]
