@@ -24,14 +24,16 @@ using igros::platform::Platform;
 
 
 // Kernel image symbols: 12 KB kernel at 1 MB above 1 GB kernel offset
+// clang-format off
 asm(
 	".globl " IGROS_TEST_SYMBOL(KERNEL_OFFSET_VIRT) "; "
-							".set " IGROS_TEST_SYMBOL(KERNEL_OFFSET_VIRT) ", 0x40000000; "
-												      ".globl " IGROS_TEST_SYMBOL(_SECTION_KERNEL_START_) "; "
-																			  ".set " IGROS_TEST_SYMBOL(_SECTION_KERNEL_START_) ", 0x40100000; "
-																									    ".globl " IGROS_TEST_SYMBOL(_SECTION_KERNEL_END_) "; "
-																															      ".set " IGROS_TEST_SYMBOL(_SECTION_KERNEL_END_) ", 0x40103000"
+	".set " IGROS_TEST_SYMBOL(KERNEL_OFFSET_VIRT) ", 0x40000000; "
+	".globl " IGROS_TEST_SYMBOL(_SECTION_KERNEL_START_) "; "
+	".set " IGROS_TEST_SYMBOL(_SECTION_KERNEL_START_) ", 0x40100000; "
+	".globl " IGROS_TEST_SYMBOL(_SECTION_KERNEL_END_) "; "
+	".set " IGROS_TEST_SYMBOL(_SECTION_KERNEL_END_) ", 0x40103000"
 );
+// clang-format on
 
 
 // Called platform hooks

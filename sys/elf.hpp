@@ -35,20 +35,20 @@ namespace igros::sys {
 	enum class ELF_CLASS : igros_byte_t {
 		NONE	= 0x00_u8, ///< Unknown
 		CLASS32 = 0x01_u8, ///< 32-bit
-		CLASS64 = 0x02_u8  ///< 64-bit
+		CLASS64 = 0x02_u8, ///< 64-bit
 	};
 
 	/// @brief ELF data type
 	enum class ELF_DATA : igros_byte_t {
 		NONE = 0x00_u8, ///< Unknown
 		LSB  = 0x01_u8, ///< LSB order
-		MSB  = 0x02_u8	///< MSB order
+		MSB  = 0x02_u8, ///< MSB order
 	};
 
 	/// @brief ELF version
 	enum class ELF_VERSION : igros_byte_t {
 		NONE	= 0x00_u8, ///< Unknown version
-		CURRENT = 0x01_u8  ///< Current version
+		CURRENT = 0x01_u8, ///< Current version
 	};
 
 	/// @brief ELF OS ABI
@@ -70,7 +70,7 @@ namespace igros::sys {
 		AROS	= 0x0F_u8, ///< AROS
 		FENIX	= 0x10_u8, ///< Fenix OS
 		CLOUD	= 0x11_u8, ///< Cloud ABI
-		VOS	= 0x12_u8  ///< OpenVOS
+		VOS	= 0x12_u8, ///< OpenVOS
 	};
 
 
@@ -98,7 +98,7 @@ namespace igros::sys {
 		LOOS   = 0xFE00_u16, ///< OS-specific
 		HIOS   = 0xFEFF_u16, ///< --- // ---
 		LOPROC = 0xFF00_u16, ///< Processor-specific
-		HIPROC = 0xFFFF_u16  ///< --- // ---
+		HIPROC = 0xFFFF_u16, ///< --- // ---
 	};
 
 
@@ -119,7 +119,7 @@ namespace igros::sys {
 		IA_64	= 0x32_u16, ///< Intel 64
 		X86_64	= 0x3E_u16, ///< AMD/Intel x86-64
 		AARCH64 = 0xB7_u16, ///< AArch64
-		RISC_V	= 0xF3_u16  ///< RISC-V
+		RISC_V	= 0xF3_u16, ///< RISC-V
 	};
 
 	/// @brief ELF file header
@@ -155,7 +155,7 @@ namespace igros::sys {
 		LOOS	= 0x60000000_u32, ///< Inclusive reserved ranges for OS/Proc semantic
 		HIOS	= 0x6FFFFFFF_u32, ///< --- // ---
 		LOPROC	= 0x70000000_u32, ///< --- // ---
-		HIPROC	= 0x7FFFFFFF_u32  ///< --- // ---
+		HIPROC	= 0x7FFFFFFF_u32, ///< --- // ---
 	};
 
 	/// @brief ELF program header

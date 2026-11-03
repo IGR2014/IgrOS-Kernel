@@ -64,8 +64,7 @@ namespace igros::multiboot {
 		// Check multiboot magic
 		if (!multiboot::check(magic)) [[unlikely]] {
 			// Write Multiboot magic error message message
-			klib::kprintf(
-				R"multiboot(
+			klib::kprintf(R"multiboot(
 BAD MULTIBOOT MAGIC!!!
 	Magic:		0x%08x
 	Address:	0x%p
@@ -82,8 +81,7 @@ BAD MULTIBOOT MAGIC!!!
 	// Print multiboot flags
 	void info_t::printFlags() const noexcept {
 		// Print header
-		klib::kprintf(
-			R"multiboot(
+		klib::kprintf(R"multiboot(
 MULTIBOOT header:
 	Flags:			0x%08x
 	BIOS memory map:	[ %c ]
@@ -119,8 +117,7 @@ MULTIBOOT header:
 	void info_t::printMemInfo() const noexcept {
 		// Check if memory info exists
 		if (info_t::hasInfoMemory()) [[likely]] {
-			klib::kprintf(
-				R"multiboot(
+			klib::kprintf(R"multiboot(
 MEMORY INFO:
 	Low:	%d Kb.
 	High:	%d Kb.
@@ -129,8 +126,7 @@ MEMORY INFO:
 				memHigh
 			);
 		} else {
-			klib::kprintf(
-				R"multiboot(
+			klib::kprintf(R"multiboot(
 MEMORY INFO:
 	No memory info provided...
 )multiboot"
@@ -142,8 +138,7 @@ MEMORY INFO:
 	void info_t::printMemMap() const noexcept {
 		// Check if memory map exists
 		if (info_t::hasInfoMemoryMap()) [[likely]] {
-			klib::kprintf(
-				R"multiboot(
+			klib::kprintf(R"multiboot(
 MEMORY MAP:
 	Size:	%u bytes
 	Addr:	0x%08x
@@ -162,8 +157,7 @@ MEMORY MAP:
 			}
 			klib::kprintf("\n");
 		} else {
-			klib::kprintf(
-				R"multiboot(
+			klib::kprintf(R"multiboot(
 MEMORY MAP:
 	No memory map provided...
 )multiboot"
@@ -182,8 +176,7 @@ MEMORY MAP:
 			const auto* const mode {mem::direct::pointer<const multiboot::vbeMode>(vbeModeInfo)};
 			// Check if VBE info is reachable
 			if ((nullptr == config) || (nullptr == mode)) [[unlikely]] {
-				klib::kprintf(
-					R"multiboot(
+				klib::kprintf(R"multiboot(
 VBE:
 	VBE info is not directly mapped...
 )multiboot"
@@ -199,8 +192,7 @@ VBE:
 			// Get revision string
 			const auto* const revision {vbeString(config->productRev)};
 			// Dump VBE
-			klib::kprintf(
-				R"multiboot(
+			klib::kprintf(R"multiboot(
 VBE:
 	Signature:	%c%c%c%c
 	Version:	%u.%u
@@ -229,8 +221,7 @@ VBE:
 				static_cast<igros_dword_t>(config->memory) * 64_u32
 			);
 		} else {
-			klib::kprintf(
-				R"multiboot(
+			klib::kprintf(R"multiboot(
 VBE:
 	No VBE info provided...
 )multiboot"
@@ -260,8 +251,7 @@ VBE:
 					break;
 			}
 			// Dump FB
-			klib::kprintf(
-				R"multiboot(
+			klib::kprintf(R"multiboot(
 FrameBuffer:
 	Current mode:	(%dx%d, %dbpp, %d, %s)
 	Address:	0x%016llx
@@ -277,8 +267,7 @@ FrameBuffer:
 				fbPitch * fbHeight
 			);
 		} else {
-			klib::kprintf(
-				R"multiboot(
+			klib::kprintf(R"multiboot(
 FrameBuffer:
 	No FrameBuffer info provided...
 )multiboot"
@@ -290,8 +279,7 @@ FrameBuffer:
 	// Print kernel header
 	void info_t::printHeader() const noexcept {
 		// Write kernel info
-		klib::kprintf(
-			R"info(
+		klib::kprintf(R"info(
 Kernel info:
 	Arch:		%s
 	Start addr:	0x%p
