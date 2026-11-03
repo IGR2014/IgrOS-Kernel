@@ -2,7 +2,7 @@
 ///
 ///	@file
 ///	@brief		Freestanding C runtime functions required by GCC/Clang
-///	@date		30 Oct 2026
+///	@date		03 Nov 2026
 ///
 ///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
 ///			All rights reserved.
@@ -16,10 +16,10 @@
 
 
 // Compiler may turn copy/fill loops back into libc calls (infinite recursion)
-#if	defined (__GNUC__) && !defined (__clang__)
-	#define IGROS_NO_LIBCALLS	__attribute__((optimize("no-tree-loop-distribute-patterns")))
+#if defined(__GNUC__) && !defined(__clang__)
+#define IGROS_NO_LIBCALLS __attribute__((optimize("no-tree-loop-distribute-patterns")))
 #else
-	#define IGROS_NO_LIBCALLS
+#define IGROS_NO_LIBCALLS
 #endif
 
 
@@ -28,12 +28,12 @@ extern "C" {
 
 
 	// Declarations (<cstring> isn't freestanding)
-	auto	memset(void* dst, int val, std::size_t size) -> void*;
-	auto	memcpy(void* dst, const void* src, std::size_t size) -> void*;
-	auto	memmove(void* dst, const void* src, std::size_t size) -> void*;
-	auto	memcmp(const void* lhs, const void* rhs, std::size_t size) -> int;
-	auto	memchr(const void* src, int val, std::size_t size) -> void*;
-	auto	strlen(const char* src) -> std::size_t;	// flawfinder: ignore (implements strlen)
+	auto memset(void* dst, int val, std::size_t size) -> void*;
+	auto memcpy(void* dst, const void* src, std::size_t size) -> void*;
+	auto memmove(void* dst, const void* src, std::size_t size) -> void*;
+	auto memcmp(const void* lhs, const void* rhs, std::size_t size) -> int;
+	auto memchr(const void* src, int val, std::size_t size) -> void*;
+	auto strlen(const char* src) -> std::size_t; // flawfinder: ignore (implements strlen)
 
 
 	/// @brief Fill memory with byte value
@@ -57,7 +57,7 @@ extern "C" {
 	/// @return dst
 	IGROS_NO_LIBCALLS
 	auto memcpy(void* dst, const void* src, std::size_t size) -> void* {
-		auto* d {static_cast<unsigned char*>(dst)};
+		auto*	    d {static_cast<unsigned char*>(dst)};
 		const auto* s {static_cast<const unsigned char*>(src)};
 		for (auto i {static_cast<std::size_t>(0)}; i < size; ++i) {
 			d[i] = s[i];
@@ -124,7 +124,7 @@ extern "C" {
 	/// @param src Null-terminated string
 	/// @return Number of characters before terminator
 	IGROS_NO_LIBCALLS
-	auto strlen(const char* src) -> std::size_t {	// flawfinder: ignore (implements strlen)
+	auto strlen(const char* src) -> std::size_t { // flawfinder: ignore (implements strlen)
 		auto size {static_cast<std::size_t>(0)};
 		while ('\0' != src[size]) {
 			++size;
@@ -133,4 +133,4 @@ extern "C" {
 	}
 
 
-}	// extern "C"
+} // extern "C"

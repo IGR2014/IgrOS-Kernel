@@ -2,7 +2,7 @@
 ///
 ///	@file
 ///	@brief		Physical memory allocator
-///	@date		30 Oct 2026
+///	@date		03 Nov 2026
 ///
 ///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
 ///			All rights reserved.
@@ -41,20 +41,20 @@ namespace igros::mem {
 		using word_t = igros_dword_t;
 
 		/// @brief Pages per bitmap word
-		constexpr auto WORD_BITS	{static_cast<igros_usize_t>(std::numeric_limits<word_t>::digits)};
+		constexpr auto WORD_BITS {static_cast<igros_usize_t>(std::numeric_limits<word_t>::digits)};
 		/// @brief Number of tracked pages
-		constexpr auto PAGES		{static_cast<igros_usize_t>(phys::MEMORY_LIMIT >> PAGE_SHIFT)};
+		constexpr auto PAGES {static_cast<igros_usize_t>(phys::MEMORY_LIMIT >> PAGE_SHIFT)};
 
 		/// @brief Free pages bitmap (bit set - page is free)
 		///
 		/// Zero-initialized (.bss): all memory is used until init
-		constinit std::array<word_t, PAGES / WORD_BITS>	freeMap		{};
+		constinit std::array<word_t, PAGES / WORD_BITS> freeMap {};
 		/// @brief Number of free pages
-		constinit igros_usize_t				freeCount	{0_usize};
+		constinit igros_usize_t				freeCount {0_usize};
 		/// @brief No free pages in words below this one
-		constinit igros_usize_t				searchHint	{0_usize};
+		constinit igros_usize_t				searchHint {0_usize};
 		/// @brief End of highest memory marked free
-		constinit phys_t				memoryTop	{0_u64};
+		constinit phys_t				memoryTop {0_u64};
 
 
 		/// @brief Check if page is free
@@ -109,7 +109,7 @@ namespace igros::mem {
 		}
 
 
-	}	// namespace
+	} // namespace
 
 
 	// Initialize from bootloader memory map (reserves kernel and boot data)
@@ -117,9 +117,9 @@ namespace igros::mem {
 
 		// Start from scratch: all memory is used
 		freeMap.fill(0_u32);
-		freeCount	= 0_usize;
-		searchHint	= freeMap.size();
-		memoryTop	= 0_u64;
+		freeCount  = 0_usize;
+		searchHint = freeMap.size();
+		memoryTop  = 0_u64;
 
 		// Available memory from bootloader memory map
 		auto hasAvailable {false};
@@ -154,7 +154,6 @@ namespace igros::mem {
 		}
 		// Modules list, modules and their names
 		markUsedModules(info);
-
 	}
 
 
@@ -162,8 +161,8 @@ namespace igros::mem {
 	[[nodiscard]]
 	auto phys::alloc(const phys_t limit) noexcept -> phys_t {
 		// Pages below limit
-		const auto limitPages	{static_cast<igros_usize_t>(std::min(limit, MEMORY_LIMIT) >> PAGE_SHIFT)};
-		const auto limitWords	{(limitPages + WORD_BITS - 1_usize) / WORD_BITS};
+		const auto limitPages {static_cast<igros_usize_t>(std::min(limit, MEMORY_LIMIT) >> PAGE_SHIFT)};
+		const auto limitWords {(limitPages + WORD_BITS - 1_usize) / WORD_BITS};
 		// Find first word with free page
 		for (auto word {searchHint}; word < limitWords; ++word) {
 			if (0_u32 != freeMap[word]) {
@@ -215,11 +214,11 @@ namespace igros::mem {
 	// Mark physical memory range [start, end) as free (only whole pages)
 	void phys::markFree(const phys_t start, const phys_t end) noexcept {
 		// Clamp to tracked memory
-		const auto from	{std::min(start, MEMORY_LIMIT)};
-		const auto to	{std::min(end, MEMORY_LIMIT)};
+		const auto from {std::min(start, MEMORY_LIMIT)};
+		const auto to {std::min(end, MEMORY_LIMIT)};
 		// Whole pages inside range
-		const auto first	{static_cast<igros_usize_t>(klib::kAlign::up<PAGE_SIZE>(from) >> PAGE_SHIFT)};
-		const auto last		{static_cast<igros_usize_t>(to >> PAGE_SHIFT)};
+		const auto first {static_cast<igros_usize_t>(klib::kAlign::up<PAGE_SIZE>(from) >> PAGE_SHIFT)};
+		const auto last {static_cast<igros_usize_t>(to >> PAGE_SHIFT)};
 		// Top of usable memory (whole pages only)
 		if (first < last) {
 			memoryTop = std::max(memoryTop, static_cast<phys_t>(last) << PAGE_SHIFT);
@@ -234,11 +233,11 @@ namespace igros::mem {
 	// Mark physical memory range [start, end) as used (every touched page)
 	void phys::markUsed(const phys_t start, const phys_t end) noexcept {
 		// Clamp to tracked memory
-		const auto from	{std::min(start, MEMORY_LIMIT)};
-		const auto to	{std::min(end, MEMORY_LIMIT)};
+		const auto from {std::min(start, MEMORY_LIMIT)};
+		const auto to {std::min(end, MEMORY_LIMIT)};
 		// Every page touched by range
-		const auto first	{static_cast<igros_usize_t>(from >> PAGE_SHIFT)};
-		const auto last		{static_cast<igros_usize_t>(klib::kAlign::up<PAGE_SIZE>(to) >> PAGE_SHIFT)};
+		const auto first {static_cast<igros_usize_t>(from >> PAGE_SHIFT)};
+		const auto last {static_cast<igros_usize_t>(klib::kAlign::up<PAGE_SIZE>(to) >> PAGE_SHIFT)};
 		for (auto page {first}; page < last; ++page) {
 			if (isFree(page)) {
 				setUsed(page);
@@ -247,5 +246,5 @@ namespace igros::mem {
 	}
 
 
-}	// namespace igros::mem
+} // namespace igros::mem
 

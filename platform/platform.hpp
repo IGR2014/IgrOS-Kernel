@@ -2,7 +2,7 @@
 ///
 ///	@file
 ///	@brief		IgrOS platform description
-///	@date		16 Dec 2022
+///	@date		03 Nov 2026
 ///
 ///	@copyright	Copyright (c) 2017 - 2022, Igor Baklykov
 ///			All rights reserved.
@@ -14,8 +14,8 @@
 
 // C++
 #include <bit>
-#include <type_traits>
 #include <string_view>
+#include <type_traits>
 // IgrOS-Kernel arch
 #include <arch/types.hpp>
 
@@ -25,9 +25,9 @@ extern const igros::igros_byte_t _SECTION_KERNEL_START_;
 /// @brief Kernel end
 extern const igros::igros_byte_t _SECTION_KERNEL_END_;
 // Kernel sections start (from linker script, page aligned)
-extern const igros::igros_byte_t _SECTION_TEXT_START_;	///< Code section start
-extern const igros::igros_byte_t _SECTION_RODATA_START_;	///< Read-only data section start
-extern const igros::igros_byte_t _SECTION_DATA_START_;	///< Writable data section start
+extern const igros::igros_byte_t _SECTION_TEXT_START_;	 ///< Code section start
+extern const igros::igros_byte_t _SECTION_RODATA_START_; ///< Read-only data section start
+extern const igros::igros_byte_t _SECTION_DATA_START_;	 ///< Writable data section start
 /// @brief Boot stack guard page (from boot.s, page aligned)
 extern const igros::igros_byte_t _KERNEL_STACK_GUARD_;
 /// @brief Kernel virtual memory offset (absolute symbol, its address is the offset value)
@@ -43,59 +43,59 @@ namespace igros::platform {
 
 		/// @brief Platform name ID
 		enum class ARCH_NAME : igros_dword_t {
-			UNKNOWN		= 0x00000000_u32,
-			I386		= 0x00000001_u32,
-			X86_64		= 0x00000002_u32,
-			ARM		= 0x00000004_u32,
-			ARM64		= 0x00000008_u32,
-			AVR		= 0x00000010_u32,
+			UNKNOWN = 0x00000000_u32,
+			I386	= 0x00000001_u32,
+			X86_64	= 0x00000002_u32,
+			ARM	= 0x00000004_u32,
+			ARM64	= 0x00000008_u32,
+			AVR	= 0x00000010_u32,
 		};
 
 
-#if	defined (IGROS_ARCH_i386)
+#if defined(IGROS_ARCH_i386)
 
 		/// @brief i386 platform
-		constexpr static auto PLATFORM_NAME	{ARCH_NAME::I386};
+		constexpr static auto PLATFORM_NAME {ARCH_NAME::I386};
 
-#elif	defined (IGROS_ARCH_x86_64)
+#elif defined(IGROS_ARCH_x86_64)
 
 		/// @brief x86_64 platform
-		constexpr static auto PLATFORM_NAME	{ARCH_NAME::X86_64};
+		constexpr static auto PLATFORM_NAME {ARCH_NAME::X86_64};
 
 #else
 
 		/// @brief Unknown platform
-		constexpr static auto PLATFORM_NAME	{ARCH_NAME::UNKNOWN};
+		constexpr static auto PLATFORM_NAME {ARCH_NAME::UNKNOWN};
 
 #endif
 
 
 		/// @brief Platform init function pointer type
-		using init_t		= std::add_pointer_t<void ()>;
+		using init_t = std::add_pointer_t<void()>;
 		/// @brief Platform finalize function pointer type
-		using finalize_t	= std::add_pointer_t<void ()>;
+		using finalize_t = std::add_pointer_t<void()>;
 
 		/// @brief Platform shutdown function pointer type
-		using shutdown_t	= std::add_pointer_t<void ()>;
+		using shutdown_t = std::add_pointer_t<void()>;
 		/// @brief Platform reboot function pointer type
-		using reboot_t		= std::add_pointer_t<void ()>;
+		using reboot_t = std::add_pointer_t<void()>;
 
 		/// @brief Platform suspend function pointer type
-		using suspend_t		= std::add_pointer_t<void ()>;
+		using suspend_t = std::add_pointer_t<void()>;
 		/// @brief Platform wakeup function pointer type
-		using wakeup_t		= std::add_pointer_t<void ()>;
+		using wakeup_t = std::add_pointer_t<void()>;
 
 
-		const char* const	mName		{nullptr};		///< Platform name
+		const char* const mName {nullptr}; ///< Platform name
 
-		init_t			mInit		{nullptr};		///< Init function
-		finalize_t		mFinalize	{nullptr};		///< Finalize function
+		init_t	   mInit {nullptr};	///< Init function
+		finalize_t mFinalize {nullptr}; ///< Finalize function
 
-		shutdown_t		mShutdown	{nullptr};		///< Shutdown function
-		reboot_t		mReboot		{nullptr};		///< Reboot function
+		shutdown_t mShutdown {nullptr}; ///< Shutdown function
+		reboot_t   mReboot {nullptr};	///< Reboot function
 
-		suspend_t		mSuspend	{nullptr};		///< Suspend platform
-		wakeup_t		mWakeup		{nullptr};		///< Wakeup platform
+		suspend_t mSuspend {nullptr}; ///< Suspend platform
+		wakeup_t  mWakeup {nullptr};  ///< Wakeup platform
 
 
 	public:
@@ -111,110 +111,108 @@ namespace igros::platform {
 		/// @param suspendFunc Suspend function
 		/// @param wakeupFunc Wakeup function
 		constexpr Platform(
-			const char* const	name,
-			const init_t		initFunc,
-			const finalize_t	finalizeFunc,
-			const shutdown_t	shutdownFunc,
-			const reboot_t		rebootFunc,
-			const suspend_t		suspendFunc,
-			const wakeup_t		wakeupFunc
+			const char* const name,
+			const init_t	  initFunc,
+			const finalize_t  finalizeFunc,
+			const shutdown_t  shutdownFunc,
+			const reboot_t	  rebootFunc,
+			const suspend_t	  suspendFunc,
+			const wakeup_t	  wakeupFunc
 		) noexcept;
 
 		/// @brief Get platform name
 		/// @return Platform name
 		[[nodiscard]]
-		auto	name() const noexcept -> const char*;
+		auto name() const noexcept -> const char*;
 
 		/// @brief Initialize platform
-		void	initialize() const noexcept;
+		void initialize() const noexcept;
 		/// @brief Finalize platform
-		void	finalize() const noexcept;
+		void finalize() const noexcept;
 
 		/// @brief Shutdown platform
-		void	shutdown() const noexcept;
+		void shutdown() const noexcept;
 		/// @brief Reboot platform
-		void	reboot() const noexcept;
+		void reboot() const noexcept;
 
 		/// @brief Suspend platform
-		void	suspend() const noexcept;
+		void suspend() const noexcept;
 		/// @brief Wakeup platform
-		void	wakeup() const noexcept;
+		void wakeup() const noexcept;
 
 		/// @brief Get kernel start address
 		/// @return Kernel start address
 		[[nodiscard]]
-		constexpr static auto	kernelStart() noexcept -> const igros_byte_t*;
+		constexpr static auto kernelStart() noexcept -> const igros_byte_t*;
 		/// @brief Get kernel end address
 		/// @return Kernel end address
 		[[nodiscard]]
-		constexpr static auto	kernelEnd() noexcept -> const igros_byte_t*;
+		constexpr static auto kernelEnd() noexcept -> const igros_byte_t*;
 		/// @brief Get kernel size
 		/// @return Kernel size in bytes
 		[[nodiscard]]
-		static auto		kernelSize() noexcept -> igros_usize_t;
+		static auto kernelSize() noexcept -> igros_usize_t;
 		/// @brief Get kernel code start (code: [textStart, rodataStart))
 		[[nodiscard]]
-		constexpr static auto	textStart() noexcept -> const igros_byte_t*;
+		constexpr static auto textStart() noexcept -> const igros_byte_t*;
 		/// @brief Get kernel read-only data start (read-only data: [rodataStart, dataStart))
 		[[nodiscard]]
-		constexpr static auto	rodataStart() noexcept -> const igros_byte_t*;
+		constexpr static auto rodataStart() noexcept -> const igros_byte_t*;
 		/// @brief Get kernel writable data start (data and bss: [dataStart, kernelEnd))
 		[[nodiscard]]
-		constexpr static auto	dataStart() noexcept -> const igros_byte_t*;
+		constexpr static auto dataStart() noexcept -> const igros_byte_t*;
 		/// @brief Get boot stack guard page (one page right below boot stack, never mapped)
 		[[nodiscard]]
-		constexpr static auto	stackGuard() noexcept -> const igros_byte_t*;
+		constexpr static auto stackGuard() noexcept -> const igros_byte_t*;
 		/// @brief Get kernel virtual memory offset (kernel virtual address = physical address + offset)
 		[[nodiscard]]
-		static auto		kernelOffset() noexcept -> igros_usize_t;
+		static auto kernelOffset() noexcept -> igros_usize_t;
 
 		/// @brief Check if i386
 		/// @return true if kernel is built for i386
 		[[nodiscard]]
-		constexpr static auto	isI386() noexcept -> bool;
+		constexpr static auto isI386() noexcept -> bool;
 		/// @brief Check if x86_64
 		/// @return true if kernel is built for x86_64
 		[[nodiscard]]
-		constexpr static auto	isX86_64() noexcept -> bool;
+		constexpr static auto isX86_64() noexcept -> bool;
 		/// @brief Check if arm32
 		/// @return true if kernel is built for ARM32
 		[[nodiscard]]
-		constexpr static auto	isARM32() noexcept -> bool;
+		constexpr static auto isARM32() noexcept -> bool;
 		/// @brief Check if arm64
 		/// @return true if kernel is built for ARM64
 		[[nodiscard]]
-		constexpr static auto	isARM64() noexcept -> bool;
+		constexpr static auto isARM64() noexcept -> bool;
 		/// @brief Check if avr
 		/// @return true if kernel is built for AVR
 		[[nodiscard]]
-		constexpr static auto	isAVR() noexcept -> bool;
+		constexpr static auto isAVR() noexcept -> bool;
 
 		/// @brief Get kernel current platform (implemented in corresponding platform file)
 		/// @return Platform the kernel runs on
 		[[nodiscard]]
-		static auto	current() noexcept -> const Platform&;
-
-
+		static auto current() noexcept -> const Platform &;
 	};
 
 
 	/// @brief C-tor
 	constexpr Platform::Platform(
-		const char* const	name,
-		const init_t		initFunc,	// NOLINT(bugprone-easily-swappable-parameters): platform callbacks in fixed order
-		const finalize_t	finalizeFunc,
-		const shutdown_t	shutdownFunc,
-		const reboot_t		rebootFunc,
-		const suspend_t		suspendFunc,
-		const wakeup_t		wakeupFunc
+		const char* const name,
+		const init_t	  initFunc, // NOLINT(bugprone-easily-swappable-parameters): platform callbacks in fixed order
+		const finalize_t  finalizeFunc,
+		const shutdown_t  shutdownFunc,
+		const reboot_t	  rebootFunc,
+		const suspend_t	  suspendFunc,
+		const wakeup_t	  wakeupFunc
 	) noexcept :
-		mName		(name),
-		mInit		(initFunc),
-		mFinalize	(finalizeFunc),
-		mShutdown	(shutdownFunc),
-		mReboot		(rebootFunc),
-		mSuspend	(suspendFunc),
-		mWakeup		(wakeupFunc) {}
+		mName(name),
+		mInit(initFunc),
+		mFinalize(finalizeFunc),
+		mShutdown(shutdownFunc),
+		mReboot(rebootFunc),
+		mSuspend(suspendFunc),
+		mWakeup(wakeupFunc) {}
 
 
 	/// @brief Get platform name
@@ -387,5 +385,5 @@ namespace igros::platform {
 	}
 
 
-}       // namespace igros::platform
+} // namespace igros::platform
 

@@ -2,7 +2,7 @@
 ///
 ///	@file
 ///	@brief		Interrupt descriptor table low-level operations
-///	@date		19 Dec 2023
+///	@date		03 Nov 2026
 ///
 ///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
 ///			All rights reserved.
@@ -19,13 +19,13 @@
 #include <arch/x86/irq.hpp>
 #include <arch/x86/native.hpp>
 
-#if	defined (IGROS_ARCH_i386)
+#if defined(IGROS_ARCH_i386)
 
 // IgrOS-Kernel arch i386
 #include <arch/i386/gdt.hpp>
 #include <arch/i386/idt.hpp>
 
-#elif	defined (IGROS_ARCH_x86_64)
+#elif defined(IGROS_ARCH_x86_64)
 
 // IgrOS-Kernel arch x86_64
 #include <arch/x86_64/gdt.hpp>
@@ -35,26 +35,25 @@
 #endif
 
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 
 extern "C" {
 
-#endif	// __cplusplus
+#endif // __cplusplus
 
 
 	/// @brief Load IDT
 	/// @param idtPtr IDT pointer (size and address)
-	void	idtLoad(const igros::x86::native::idt::pointer_t* const idtPtr) noexcept;
+	void idtLoad(const igros::x86::native::idt::pointer_t* const idtPtr) noexcept;
 	/// @brief Store IDT
 	/// @param idtPtr Stored IDT pointer
-	void	idtStore(igros::x86::native::idt::pointer_t* const idtPtr) noexcept;
+	void idtStore(igros::x86::native::idt::pointer_t* const idtPtr) noexcept;
 
 
-#ifdef	__cplusplus
-
+#ifdef __cplusplus
 }
 
-#endif	// __cplusplus
+#endif // __cplusplus
 
 
 // OS namespace (members of native idt are defined in namespace enclosing it)
@@ -72,9 +71,9 @@ namespace igros {
 	void x86::native::idt::init() noexcept {
 
 		// Kernel code segment selector
-		constexpr auto KERNEL_CODE	{x86::native::gdt::KERNEL_CODE};
+		constexpr auto KERNEL_CODE {x86::native::gdt::KERNEL_CODE};
 		// Present, ring 0, interrupt gate
-		constexpr auto INTERRUPT_GATE	{0x8E_u8};
+		constexpr auto INTERRUPT_GATE {0x8E_u8};
 
 		// Every exception and IRQ vector must fit into IDT
 		static_assert(std::size(::irqHandlerTable) == x86::IRQ_LINES);
@@ -84,7 +83,7 @@ namespace igros {
 		constinit static idt::table_t table {};
 
 		// Kernel interrupt gate for handler
-		const auto gate = [](const std::add_pointer_t<void () noexcept> handler) noexcept {
+		const auto gate = [](const std::add_pointer_t<void() noexcept> handler) noexcept {
 			return idt::setEntry(handler, KERNEL_CODE, INTERRUPT_GATE);
 		};
 		// Exceptions setup (vectors from 0)
@@ -98,32 +97,31 @@ namespace igros {
 			return static_cast<igros_usize_t>(number);
 		};
 
-#if	defined (IGROS_ARCH_i386)
+#if defined(IGROS_ARCH_i386)
 
 		// Double fault: task gate to double fault task (own stack and page directory)
-		constexpr auto TASK_GATE	{0x85_u8};
-		table[vector(DOUBLE_FAULT)]	= idt::setEntry(nullptr, x86::native::gdt::TSS_DOUBLE_FAULT, TASK_GATE);
+		constexpr auto TASK_GATE {0x85_u8};
+		table[vector(DOUBLE_FAULT)] = idt::setEntry(nullptr, x86::native::gdt::TSS_DOUBLE_FAULT, TASK_GATE);
 
-#elif	defined (IGROS_ARCH_x86_64)
+#elif defined(IGROS_ARCH_x86_64)
 
 		// Double fault, NMI and machine check: own interrupt stacks (TSS IST)
-		table[vector(DOUBLE_FAULT)].ist		= static_cast<igros_byte_t>(x86::native::tss::IST::DOUBLE_FAULT);
-		table[vector(NON_MASKABLE_IRQ)].ist	= static_cast<igros_byte_t>(x86::native::tss::IST::NMI);
-		table[vector(MACHINE_CHECK)].ist	= static_cast<igros_byte_t>(x86::native::tss::IST::MACHINE_CHECK);
+		table[vector(DOUBLE_FAULT)].ist	    = static_cast<igros_byte_t>(x86::native::tss::IST::DOUBLE_FAULT);
+		table[vector(NON_MASKABLE_IRQ)].ist = static_cast<igros_byte_t>(x86::native::tss::IST::NMI);
+		table[vector(MACHINE_CHECK)].ist    = static_cast<igros_byte_t>(x86::native::tss::IST::MACHINE_CHECK);
 
 #endif
 
 		// Pointer to IDT
 		constinit static const idt::pointer_t pointer {
-			.size		= idt::calcSize(table),
-			.pointer	= table.data(),
+			.size	 = idt::calcSize(table),
+			.pointer = table.data(),
 		};
 
 		// Set IDT table
 		idt::setPointer(pointer);
-
 	}
 
 
-}	// namespace igros
+} // namespace igros
 

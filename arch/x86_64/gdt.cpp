@@ -2,7 +2,7 @@
 ///
 ///	@file
 ///	@brief		Global descriptor table low-level operations
-///	@date		22 Oct 2026
+///	@date		03 Nov 2026
 ///
 ///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
 ///			All rights reserved.
@@ -18,33 +18,32 @@
 #include <arch/x86_64/tss.hpp>
 
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 
 extern "C" {
 
-#endif	// __cplusplus
+#endif // __cplusplus
 
 
 	/// @brief Reset segments to apply new GDT
-	void	gdtResetSegments() noexcept;
+	void gdtResetSegments() noexcept;
 
 	/// @brief Load GDT
 	/// @param gdtPtr GDT pointer (size and address)
-	void	gdtLoad(const igros::x86_64::gdt::pointer_t* gdtPtr) noexcept;
+	void gdtLoad(const igros::x86_64::gdt::pointer_t* gdtPtr) noexcept;
 	/// @brief Store GDT
 	/// @param gdtPtr Stored GDT pointer
-	void	gdtStore(igros::x86_64::gdt::pointer_t* const gdtPtr) noexcept;
+	void gdtStore(igros::x86_64::gdt::pointer_t* const gdtPtr) noexcept;
 
 	/// @brief Load task register
 	/// @param selector TSS selector
-	void	tssLoad(const igros::igros_word_t selector) noexcept;
+	void tssLoad(const igros::igros_word_t selector) noexcept;
 
 
-#ifdef	__cplusplus
-
+#ifdef __cplusplus
 }
 
-#endif	// __cplusplus
+#endif // __cplusplus
 
 
 // x86_64 namespace
@@ -80,22 +79,21 @@ namespace igros::x86_64 {
 
 		// Pointer to GDT
 		constinit static const gdt::pointer_t pointer {
-			.size		= gdt::calcSize(table),
-			.pointer	= table.data(),
+			.size	 = gdt::calcSize(table),
+			.pointer = table.data(),
 		};
 
 		// Task state segment (interrupt stacks)
-		const auto &segment	{tss::init()};
-		const auto descriptor	{gdt::tssEntry(static_cast<igros_quad_t>(std::bit_cast<igros_usize_t>(&segment)), static_cast<igros_dword_t>(sizeof(segment) - 1_usize))};
+		const auto &segment {tss::init()};
+		const auto  descriptor {gdt::tssEntry(static_cast<igros_quad_t>(std::bit_cast<igros_usize_t>(&segment)), static_cast<igros_dword_t>(sizeof(segment) - 1_usize))};
 		std::ranges::copy(descriptor, table.begin() + (TSS / sizeof(entry_t)));
 
 		// Load new GDT
 		gdt::setPointer(pointer);
 		// Load task register (CPU marks TSS descriptor busy: GDT must stay writable)
 		::tssLoad(TSS);
-
 	}
 
 
-}	// namespace igros::x86_64
+} // namespace igros::x86_64
 

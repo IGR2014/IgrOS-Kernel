@@ -3,7 +3,7 @@
 //	Kernel alignment helpers tests
 //
 //	File:	test_kalign.cpp
-//	Date:	19 Oct 2026
+//	Date:	03 Nov 2026
 //
 //	Copyright (c) 2017 - 2026, Igor Baklykov
 //	All rights reserved.
@@ -58,6 +58,5 @@ auto main() -> int {
 	IGROS_CHECK(!kAlign::check<0x1000>(reinterpret_cast<const void*>(0x5800)));
 
 	return igros::test::result();
-
 }
 

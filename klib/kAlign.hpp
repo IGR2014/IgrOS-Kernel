@@ -2,7 +2,7 @@
 ///
 ///	@file
 ///	@brief		Kernel alignment functions definitions
-///	@date		21 Mar 2023
+///	@date		03 Nov 2026
 ///
 ///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
 ///			All rights reserved.
@@ -45,7 +45,7 @@ namespace igros::klib {
 		/// @return Alignment in bytes (1 for integers without requested alignment)
 		template<igros_usize_t ALIGN, kalignable T>
 		[[nodiscard]]
-		consteval static auto	alignment() noexcept -> igros_usize_t;
+		consteval static auto alignment() noexcept -> igros_usize_t;
 
 		/// @brief Alignment mask
 		/// @tparam ALIGN Requested alignment in bytes (0 - natural alignment)
@@ -53,7 +53,7 @@ namespace igros::klib {
 		/// @return Mask of low bits that must be zero in aligned value
 		template<igros_usize_t ALIGN, kalignable T>
 		[[nodiscard]]
-		consteval static auto	mask() noexcept -> kalign_int_t<T>;
+		consteval static auto mask() noexcept -> kalign_int_t<T>;
 
 		/// @brief Value as integer
 		/// @tparam T Alignable type
@@ -61,7 +61,7 @@ namespace igros::klib {
 		/// @return Integer value (address for pointers)
 		template<kalignable T>
 		[[nodiscard]]
-		constexpr static auto	integer(const T value) noexcept -> kalign_int_t<T>;
+		constexpr static auto integer(const T value) noexcept -> kalign_int_t<T>;
 
 		/// @brief Integer as value
 		/// @tparam T Alignable type
@@ -69,7 +69,7 @@ namespace igros::klib {
 		/// @return Value of type T
 		template<kalignable T>
 		[[nodiscard]]
-		constexpr static auto	from(const kalign_int_t<T> value) noexcept -> T;
+		constexpr static auto from(const kalign_int_t<T> value) noexcept -> T;
 
 
 	public:
@@ -82,7 +82,7 @@ namespace igros::klib {
 		template<igros_usize_t ALIGN = 0_usize, kalignable T>
 		requires (std::has_single_bit(ALIGN) || (0_usize == ALIGN))
 		[[nodiscard]]
-		constexpr static auto	check(const T value) noexcept -> bool;
+		constexpr static auto check(const T value) noexcept -> bool;
 
 		/// @brief Align up
 		/// @tparam ALIGN Alignment in bytes, power of two (0 - natural alignment of pointed type)
@@ -92,7 +92,7 @@ namespace igros::klib {
 		template<igros_usize_t ALIGN = 0_usize, kalignable T>
 		requires (std::has_single_bit(ALIGN) || (0_usize == ALIGN))
 		[[nodiscard]]
-		constexpr static auto	up(const T value) noexcept -> T;
+		constexpr static auto up(const T value) noexcept -> T;
 		/// @brief Align down
 		/// @tparam ALIGN Alignment in bytes, power of two (0 - natural alignment of pointed type)
 		/// @tparam T Integer or pointer type
@@ -101,9 +101,7 @@ namespace igros::klib {
 		template<igros_usize_t ALIGN = 0_usize, kalignable T>
 		requires (std::has_single_bit(ALIGN) || (0_usize == ALIGN))
 		[[nodiscard]]
-		constexpr static auto	down(const T value) noexcept -> T;
-
-
+		constexpr static auto down(const T value) noexcept -> T;
 	};
 
 
@@ -177,5 +175,5 @@ namespace igros::klib {
 	}
 
 
-}	// namespace igros::klib
+} // namespace igros::klib
 

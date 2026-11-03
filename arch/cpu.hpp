@@ -2,7 +2,7 @@
 ///
 ///	@file
 ///	@brief		CPU operations
-///	@date		21 Mar 2023
+///	@date		03 Nov 2026
 ///
 ///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
 ///			All rights reserved.
@@ -16,7 +16,7 @@
 // IgrOS-Kernel arch
 #include <arch/register.hpp>
 
-#if	defined (IGROS_ARCH_i386) || defined (IGROS_ARCH_x86_64)
+#if defined(IGROS_ARCH_i386) || defined(IGROS_ARCH_x86_64)
 
 // IgrOS-Kernel arch x86
 #include <arch/x86/native.hpp>
@@ -42,7 +42,7 @@ namespace igros::arch {
 	};
 
 
-#if	defined (IGROS_ARCH_i386) || defined (IGROS_ARCH_x86_64)
+#if defined(IGROS_ARCH_i386) || defined(IGROS_ARCH_x86_64)
 
 	/// @brief CPU type
 	using x86::cpu;
@@ -53,5 +53,5 @@ namespace igros::arch {
 	static_assert(Cpu<cpu>, "Architecture CPU doesn't provide CPU interface!");
 
 
-}	// namespace igros::arch
+} // namespace igros::arch
 

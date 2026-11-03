@@ -3,7 +3,7 @@
 //	Global descriptor table and task state segment tests
 //
 //	File:	test_gdt.cpp
-//	Date:	29 Oct 2026
+//	Date:	03 Nov 2026
 //
 //	Copyright (c) 2017 - 2026, Igor Baklykov
 //	All rights reserved.
@@ -17,10 +17,10 @@
 #include <cstdint>
 // IgrOS-Kernel arch
 #include <arch/x86/native.hpp>
-#if	defined (IGROS_ARCH_i386)
+#if defined(IGROS_ARCH_i386)
 #include <arch/i386/gdt.hpp>
 #include <arch/i386/tss.hpp>
-#elif	defined (IGROS_ARCH_x86_64)
+#elif defined(IGROS_ARCH_x86_64)
 #include <arch/x86_64/gdt.hpp>
 #include <arch/x86_64/tss.hpp>
 #endif
@@ -36,7 +36,7 @@ namespace hw = igros::test::hw;
 
 // GDT handed to CPU by lgdt
 [[nodiscard]]
-static auto loadedGdt() -> const gdt::pointer_t& {
+static auto loadedGdt() -> const gdt::pointer_t & {
 	return *static_cast<const gdt::pointer_t*>(hw::gdtPointer);
 }
 
@@ -53,7 +53,7 @@ static auto limit20(const gdt::entry_t &entry) -> std::uint32_t {
 }
 
 // Flat 4 GB segment with given access byte and flags nibble
-static void checkFlat(const gdt::entry_t &entry, const std::uint8_t access, const std::uint8_t flags) {	// NOLINT(bugprone-easily-swappable-parameters): test helper, arguments written in each call
+static void checkFlat(const gdt::entry_t &entry, const std::uint8_t access, const std::uint8_t flags) { // NOLINT(bugprone-easily-swappable-parameters): test helper, arguments written in each call
 	IGROS_CHECK(0 == base32(entry));
 	IGROS_CHECK(0xFFFFF == limit20(entry));
 	IGROS_CHECK(access == entry.access);
@@ -77,10 +77,10 @@ static void testInit() {
 	IGROS_CHECK(0 == limit20(table[0]));
 	IGROS_CHECK(0 == table[0].access);
 
-#if	defined (IGROS_ARCH_i386)
+#if defined(IGROS_ARCH_i386)
 	// 4 KB granularity, 32-bit segments
 	constexpr auto FLAGS {std::uint8_t {0x0C}};
-#elif	defined (IGROS_ARCH_x86_64)
+#elif defined(IGROS_ARCH_x86_64)
 	// 4 KB granularity, long mode segments
 	constexpr auto FLAGS {std::uint8_t {0x0A}};
 #endif
@@ -96,20 +96,20 @@ static void testInit() {
 	IGROS_CHECK(0 == (tssEntry.limitFlags >> 4));
 	IGROS_CHECK(sizeof(tss::segment_t) - 1 == limit20(tssEntry));
 
-#if	defined (IGROS_ARCH_i386)
+#if defined(IGROS_ARCH_i386)
 	IGROS_CHECK(std::bit_cast<std::uintptr_t>(&tss::kernel()) == base32(tssEntry));
 	// Double fault task descriptor
 	const auto &doubleFaultEntry {table[gdt::TSS_DOUBLE_FAULT / sizeof(gdt::entry_t)]};
 	IGROS_CHECK(0x89 == doubleFaultEntry.access);
 	IGROS_CHECK(sizeof(tss::segment_t) - 1 == limit20(doubleFaultEntry));
 	IGROS_CHECK(std::bit_cast<std::uintptr_t>(&tss::doubleFault()) == base32(doubleFaultEntry));
-#elif	defined (IGROS_ARCH_x86_64)
+#elif defined(IGROS_ARCH_x86_64)
 	// 16-byte descriptor: upper entry holds base bits 32..63
 	const auto &upper {table[(gdt::TSS / sizeof(gdt::entry_t)) + 1]};
-	const auto base {
-		static_cast<std::uint64_t>(base32(tssEntry))		|
-		(static_cast<std::uint64_t>(upper.limitLow) << 32)	|
-		(static_cast<std::uint64_t>(upper.baseLow) << 48),
+	const auto  base {
+		static_cast<std::uint64_t>(base32(tssEntry)) |
+			(static_cast<std::uint64_t>(upper.limitLow) << 32) |
+			(static_cast<std::uint64_t>(upper.baseLow) << 48),
 	};
 	IGROS_CHECK(std::bit_cast<std::uintptr_t>(&tss::init()) == base);
 	IGROS_CHECK(0 == upper.baseMid);
@@ -123,7 +123,7 @@ static void testInit() {
 }
 
 
-#if	defined (IGROS_ARCH_i386)
+#if defined(IGROS_ARCH_i386)
 
 // Task state segments: kernel task and double fault task
 static void testTaskStateSegments() {
@@ -161,9 +161,9 @@ static void testDoubleFaultTask() {
 	hw::cr2 = 0xDEADB000;
 	tss::init(gdt::KERNEL_CODE, gdt::KERNEL_DATA);
 	auto &kernel {tss::kernel()};
-	kernel.eip	= 0xC0101234;
-	kernel.esp	= 0xC0200FF0;
-	kernel.ebp	= 0xC0200FF8;
+	kernel.eip = 0xC0101234;
+	kernel.esp = 0xC0200FF0;
+	kernel.ebp = 0xC0200FF8;
 
 	const auto task {std::bit_cast<void (*)()>(static_cast<std::uintptr_t>(tss::doubleFault().eip))};
 	IGROS_CHECK_HALTS(task());
@@ -174,7 +174,7 @@ static void testDoubleFaultTask() {
 	IGROS_CHECK(hw::printed("0xdeadb000"));
 }
 
-#elif	defined (IGROS_ARCH_x86_64)
+#elif defined(IGROS_ARCH_x86_64)
 
 // Task state segment: three distinct aligned interrupt stacks, no ring stacks, no I/O bitmap
 static void testTaskStateSegment() {
@@ -214,13 +214,12 @@ static void testTaskStateSegment() {
 auto main() -> int {
 
 	testInit();
-#if	defined (IGROS_ARCH_i386)
+#if defined(IGROS_ARCH_i386)
 	testTaskStateSegments();
 	testDoubleFaultTask();
-#elif	defined (IGROS_ARCH_x86_64)
+#elif defined(IGROS_ARCH_x86_64)
 	testTaskStateSegment();
 #endif
 
 	return igros::test::result();
-
 }

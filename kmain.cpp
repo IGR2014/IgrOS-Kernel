@@ -2,7 +2,7 @@
 ///
 ///	@file
 ///	@brief		Boot low-level main setup function
-///	@date		30 Oct 2026
+///	@date		03 Nov 2026
 ///
 ///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
 ///			All rights reserved.
@@ -24,16 +24,16 @@
 #include <platform/platform.hpp>
 
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 
 extern "C" {
 
-#endif	// __cplusplus
+#endif // __cplusplus
 
 
 	// Global constructors (from linker script)
-	extern const std::add_pointer_t<void ()>	_SECTION_INIT_ARRAY_START_[];	///< First global constructor
-	extern const std::add_pointer_t<void ()>	_SECTION_INIT_ARRAY_END_[];	///< Global constructors end
+	extern const std::add_pointer_t<void()> _SECTION_INIT_ARRAY_START_[]; ///< First global constructor
+	extern const std::add_pointer_t<void()> _SECTION_INIT_ARRAY_END_[];   ///< Global constructors end
 
 
 	/// @brief Kernel main function (called from boot.s)
@@ -44,7 +44,7 @@ extern "C" {
 
 	// Kernel main function
 	[[noreturn]]
-	void kmain(const igros::igros_usize_t multibootAddress, const igros::igros_dword_t magic) noexcept {	// NOLINT(bugprone-easily-swappable-parameters): order set by boot.s
+	void kmain(const igros::igros_usize_t multibootAddress, const igros::igros_dword_t magic) noexcept { // NOLINT(bugprone-easily-swappable-parameters): order set by boot.s
 
 		// Run global constructors (dynamic initialization of global objects)
 		for (const auto ctor : std::span {_SECTION_INIT_ARRAY_START_, _SECTION_INIT_ARRAY_END_}) {
@@ -89,13 +89,12 @@ extern "C" {
 
 		// Halt CPU
 		igros::arch::cpu::halt();
-
 	}
 
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 
-}	// extern "C"
+} // extern "C"
 
-#endif	// __cplusplus
+#endif // __cplusplus
 

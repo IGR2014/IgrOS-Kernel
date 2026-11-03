@@ -3,7 +3,7 @@
 //	Physical page allocator and multiboot memory map tests
 //
 //	File:	test_phys.cpp
-//	Date:	11 Oct 2026
+//	Date:	03 Nov 2026
 //
 //	Copyright (c) 2017 - 2026, Igor Baklykov
 //	All rights reserved.
@@ -29,17 +29,17 @@
 // Linker script symbols at 0: no kernel offset (test data address is its physical
 // address), kernel end == kernel offset, so the kernel image reservation is empty
 // and only allocator logic is tested
-#define IGROS_STR2(x)	#x
-#define IGROS_STR(x)	IGROS_STR2(x)	// NOLINT(cppcoreguidelines-macro-usage): stringizes macro value
-#define IGROS_SYMBOL(name)	IGROS_STR(__USER_LABEL_PREFIX__) #name
+#define IGROS_STR2(x) #x
+#define IGROS_STR(x) IGROS_STR2(x) // NOLINT(cppcoreguidelines-macro-usage): stringizes macro value
+#define IGROS_SYMBOL(name) IGROS_STR(__USER_LABEL_PREFIX__) #name
 
 asm(
 	".globl " IGROS_SYMBOL(KERNEL_OFFSET_VIRT) "; "
-	".set " IGROS_SYMBOL(KERNEL_OFFSET_VIRT) ", 0; "
-	".globl " IGROS_SYMBOL(_SECTION_KERNEL_START_) "; "
-	".set " IGROS_SYMBOL(_SECTION_KERNEL_START_) ", 0; "
-	".globl " IGROS_SYMBOL(_SECTION_KERNEL_END_) "; "
-	".set " IGROS_SYMBOL(_SECTION_KERNEL_END_) ", 0"
+						   ".set " IGROS_SYMBOL(KERNEL_OFFSET_VIRT) ", 0; "
+											    ".globl " IGROS_SYMBOL(_SECTION_KERNEL_START_) "; "
+																	   ".set " IGROS_SYMBOL(_SECTION_KERNEL_START_) ", 0; "
+																							".globl " IGROS_SYMBOL(_SECTION_KERNEL_END_) "; "
+																												     ".set " IGROS_SYMBOL(_SECTION_KERNEL_END_) ", 0"
 );
 
 
@@ -52,14 +52,14 @@ namespace {
 	// Raw multiboot memory map entry
 #pragma pack(push, 1)
 	struct rawEntry {
-		std::uint32_t	size;
-		std::uint64_t	address;
-		std::uint64_t	length;
-		std::uint32_t	type;
+		std::uint32_t size;
+		std::uint64_t address;
+		std::uint64_t length;
+		std::uint32_t type;
 	};
 #pragma pack(pop)
 
-}	// namespace
+} // namespace
 
 
 // Copy string with terminator into test memory
@@ -114,11 +114,11 @@ static void testRanges() {
 static auto testInit() -> bool {
 
 	static rawEntry map[] {
-		{.size = 20, .address = 0x0000000000000000ull, .length = 0x000000000009FC00ull, .type = 1},	// Low memory (always reserved)
-		{.size = 20, .address = 0x000000000009FC00ull, .length = 0x0000000000000400ull, .type = 2},	// EBDA
-		{.size = 20, .address = 0x0000000000100000ull, .length = 0x0000000007EE0000ull, .type = 1},	// 1 MB .. 127.9 MB
-		{.size = 20, .address = 0x00000000FFFC0000ull, .length = 0x0000000000040000ull, .type = 2},	// BIOS ROM
-		{.size = 20, .address = 0x0000000100000000ull, .length = 0x0000000040000000ull, .type = 1},	// Above 4 GB - not tracked
+		{.size = 20, .address = 0x0000000000000000ull, .length = 0x000000000009FC00ull, .type = 1}, // Low memory (always reserved)
+		{.size = 20, .address = 0x000000000009FC00ull, .length = 0x0000000000000400ull, .type = 2}, // EBDA
+		{.size = 20, .address = 0x0000000000100000ull, .length = 0x0000000007EE0000ull, .type = 1}, // 1 MB .. 127.9 MB
+		{.size = 20, .address = 0x00000000FFFC0000ull, .length = 0x0000000000040000ull, .type = 2}, // BIOS ROM
+		{.size = 20, .address = 0x0000000100000000ull, .length = 0x0000000040000000ull, .type = 1}, // Above 4 GB - not tracked
 	};
 	alignas(8) static std::uint8_t infoRaw[sizeof(igros::multiboot::info_t)] {};
 
@@ -127,16 +127,16 @@ static auto testInit() -> bool {
 		return false;
 	}
 
-	auto &info {*reinterpret_cast<igros::multiboot::info_t*>(infoRaw)};
+	auto		   &info {*reinterpret_cast<igros::multiboot::info_t*>(infoRaw)};
 	// Memory info + memory map flags
 	const std::uint32_t flags {(1u << 0) | (1u << 6)};
 	std::memcpy(infoRaw, &flags, sizeof(flags));
 	info.mmapAddr	= address32(map);
-	info.mmapLength	= sizeof(map);
+	info.mmapLength = sizeof(map);
 
 	// Memory map view visits every entry
-	auto entries	{0};
-	auto last	{std::uint64_t {0}};
+	auto entries {0};
+	auto last {std::uint64_t {0}};
 	for (const auto &entry : info.memoryMap()) {
 		++entries;
 		last = entry.address;
@@ -150,8 +150,8 @@ static auto testInit() -> bool {
 	IGROS_CHECK(0x7FE0000 == phys::top());
 
 	// Available 1 MB .. 0x7FE0000 minus pages holding test multiboot data
-	const auto available	{std::size_t {0x7EE0000 >> 12}};
-	auto reserved		{std::size_t {0}};
+	const auto available {std::size_t {0x7EE0000 >> 12}};
+	auto	   reserved {std::size_t {0}};
 	for (const auto address : {reinterpret_cast<std::uintptr_t>(map), reinterpret_cast<std::uintptr_t>(infoRaw)}) {
 		reserved += ((address >= 0x100000) && (address < 0x7FE0000)) ? 1 : 0;
 	}
@@ -160,11 +160,11 @@ static auto testInit() -> bool {
 	// Low memory is never given out
 	IGROS_CHECK(0 == phys::alloc(0x100000));
 	// Allocate everything: aligned, ascending, inside available range
-	auto count	{std::size_t {0}};
-	auto previous	{std::uint64_t {0}};
-	auto valid	{true};
+	auto count {std::size_t {0}};
+	auto previous {std::uint64_t {0}};
+	auto valid {true};
 	for (auto page {phys::alloc()}; 0 != page; page = phys::alloc()) {
-		valid = valid && (page > previous) && (page >= 0x100000) && (page < 0x7FE0000) && (0 == (page & 0xFFF));
+		valid	 = valid && (page > previous) && (page >= 0x100000) && (page < 0x7FE0000) && (0 == (page & 0xFFF));
 		previous = page;
 		++count;
 	}
@@ -174,12 +174,12 @@ static auto testInit() -> bool {
 
 	// Entry with zero size must not hang memory map iteration
 	static rawEntry broken[] {
-		{.size = 0,  .address = 0x100000, .length = 0x1000, .type = 1},
+		{.size = 0, .address = 0x100000, .length = 0x1000, .type = 1},
 		{.size = 20, .address = 0x200000, .length = 0x1000, .type = 1},
 	};
 	info.mmapAddr	= address32(broken);
-	info.mmapLength	= sizeof(broken);
-	entries = 0;
+	info.mmapLength = sizeof(broken);
+	entries		= 0;
 	for ([[maybe_unused]] const auto &entry : info.memoryMap()) {
 		if (++entries > 10) {
 			break;
@@ -188,13 +188,12 @@ static auto testInit() -> bool {
 	IGROS_CHECK(2 == entries);
 
 	return true;
-
 }
 
 
 // Multiboot info with given flags (flags field is the first dword)
 [[nodiscard]]
-static auto makeInfo(std::uint8_t* const raw, const std::uint32_t flags) noexcept -> igros::multiboot::info_t& {
+static auto makeInfo(std::uint8_t* const raw, const std::uint32_t flags) noexcept -> igros::multiboot::info_t & {
 	std::memset(raw, 0, sizeof(igros::multiboot::info_t));
 	std::memcpy(raw, &flags, sizeof(flags));
 	return *reinterpret_cast<igros::multiboot::info_t*>(raw);
@@ -204,12 +203,12 @@ static auto makeInfo(std::uint8_t* const raw, const std::uint32_t flags) noexcep
 // Boot data reservation: command line, bootloader name, modules list, modules and their names
 static auto testBootData() -> bool {
 
-	constexpr auto PAGE {std::size_t {0x1000}};
+	constexpr auto			    PAGE {std::size_t {0x1000}};
 	// Page 0: command line, 1: bootloader name and memory map, 2: modules list and module
 	// name, 3..4: named module, 5: unnamed module, 6: free, 7: outside available memory
 	// (memory map is read through direct map too: it must lie below modules list)
 	alignas(0x1000) static std::uint8_t block[8 * PAGE] {};
-	alignas(8) static std::uint8_t infoRaw[sizeof(igros::multiboot::info_t)] {};
+	alignas(8) static std::uint8_t	    infoRaw[sizeof(igros::multiboot::info_t)] {};
 
 	const auto base {reinterpret_cast<std::uintptr_t>(block)};
 	if ((base < igros::mem::LOW_MEMORY_RESERVED) || ((base + sizeof(block)) > 0xFFFFFFFFu)) {
@@ -230,12 +229,12 @@ static auto testBootData() -> bool {
 
 	// Memory map, command line, modules, bootloader name
 	auto &info {makeInfo(infoRaw, (1u << 2) | (1u << 3) | (1u << 6) | (1u << 9))};
-	info.mmapAddr		= address32(block + PAGE + 0x100);
-	info.mmapLength		= sizeof(available);
-	info.cmdLine		= address32(block);
-	info.bootloaderName	= address32(block + PAGE);
-	info.modulesAddr	= address32(block + (2 * PAGE));
-	info.modulesCount	= 2;
+	info.mmapAddr	    = address32(block + PAGE + 0x100);
+	info.mmapLength	    = sizeof(available);
+	info.cmdLine	    = address32(block);
+	info.bootloaderName = address32(block + PAGE);
+	info.modulesAddr    = address32(block + (2 * PAGE));
+	info.modulesCount   = 2;
 
 	// Only the page after boot data stays free
 	phys::init(info);
@@ -250,14 +249,13 @@ static auto testBootData() -> bool {
 	IGROS_CHECK((base + (3 * PAGE)) == phys::alloc());
 
 	return true;
-
 }
 
 
 // Basic memory info when there is no memory map: upper memory starts at 1 MB
 static void testMemoryFallback() {
 	alignas(8) static std::uint8_t infoRaw[sizeof(igros::multiboot::info_t)] {};
-	auto &info {makeInfo(infoRaw, 1u << 0)};
+	auto			      &info {makeInfo(infoRaw, 1u << 0)};
 	// 1 MB of upper memory (in KB)
 	info.memHigh = 1024;
 	phys::init(info);
@@ -285,6 +283,5 @@ auto main() -> int {
 	testMemoryFallback();
 
 	return igros::test::result();
-
 }
 

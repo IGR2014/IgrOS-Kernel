@@ -2,7 +2,7 @@
 ///
 ///	@file
 ///	@brief		Programmable interrupt timer
-///	@date		30 Oct 2026
+///	@date		03 Nov 2026
 ///
 ///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
 ///			All rights reserved.
@@ -27,8 +27,8 @@ namespace igros::arch {
 
 
 	// PIT ports
-	constexpr auto PIT_CONTROL	{static_cast<port_t>(0x0043_u16)};	///< Mode/command register
-	constexpr auto PIT_CHANNEL_0	{static_cast<port_t>(0x0040_u16)};	///< Channel 0 data port (system timer)
+	constexpr auto PIT_CONTROL {static_cast<port_t>(0x0043_u16)};	///< Mode/command register
+	constexpr auto PIT_CHANNEL_0 {static_cast<port_t>(0x0040_u16)}; ///< Channel 0 data port (system timer)
 	// (channels 1 and 2 - ports 0x41 and 0x42 - are not used)
 
 
@@ -37,12 +37,12 @@ namespace igros::arch {
 
 		/// @brief PIT driver state
 		struct pit_t {
-			igros_usize_t	ticks		{0_usize};	///< IRQ ticks count
-			igros_word_t	frequency	{0_u16};	///< Current frequency
-			igros_word_t	divisor		{1_u16};	///< Current divisor
+			igros_usize_t ticks {0_usize};	 ///< IRQ ticks count
+			igros_word_t  frequency {0_u16}; ///< Current frequency
+			igros_word_t  divisor {1_u16};	 ///< Current divisor
 		};
 
-	}	// namespace
+	} // namespace
 
 	/// @brief PIT state
 	constinit static pit_t pit {};
@@ -54,26 +54,25 @@ namespace igros::arch {
 		// Lowest frequency which divisor fits into 16 bits (~19 Hz)
 		constexpr auto PIT_MIN_FREQUENCY {static_cast<igros_word_t>((PIT_MAIN_FREQUENCY / 0xFFFF_u32) + 1_u32)};
 		// Clamp requested frequency (also prevents division by zero)
-		const auto requested {(frequency < PIT_MIN_FREQUENCY) ? PIT_MIN_FREQUENCY : frequency};
+		const auto     requested {(frequency < PIT_MIN_FREQUENCY) ? PIT_MIN_FREQUENCY : frequency};
 
 		// Calculate PIT divisor (Base PIT frequency / required frequency)
-		pit.divisor	= static_cast<igros_word_t>(PIT_MAIN_FREQUENCY / requested);
+		pit.divisor = static_cast<igros_word_t>(PIT_MAIN_FREQUENCY / requested);
 		// Save current real frequency value
-		pit.frequency	= static_cast<igros_word_t>(PIT_MAIN_FREQUENCY / pit.divisor);
+		pit.frequency = static_cast<igros_word_t>(PIT_MAIN_FREQUENCY / pit.divisor);
 
 		// Channel 0, low then high byte, mode 2 (rate generator: counter runs from divisor
 		// down to 1 once per period, so elapsed ticks are divisor - counter; mode 3 runs it twice)
-		io::writePort8(PIT_CONTROL,	0x34_u8);
+		io::writePort8(PIT_CONTROL, 0x34_u8);
 		// Set divisor (LOW first, then HIGH)
-		io::writePort8(PIT_CHANNEL_0,	static_cast<igros_byte_t>(pit.divisor & 0x00FF_u16));
-		io::writePort8(PIT_CHANNEL_0,	static_cast<igros_byte_t>((static_cast<igros_dword_t>(pit.divisor) >> 8) & 0x00FF_u32));
+		io::writePort8(PIT_CHANNEL_0, static_cast<igros_byte_t>(pit.divisor & 0x00FF_u16));
+		io::writePort8(PIT_CHANNEL_0, static_cast<igros_byte_t>((static_cast<igros_dword_t>(pit.divisor) >> 8) & 0x00FF_u32));
 
 		// Print
 		klib::kprintf(
 			"PIT frequency:\t%d Hz\n",
 			pit.frequency
 		);
-
 	}
 
 
@@ -83,11 +82,11 @@ namespace igros::arch {
 		// Send latch command for channel 0
 		io::writePort8(PIT_CONTROL, 0x00_u8);
 		// Get current counter value (counts down from divisor)
-		const auto loByte	{io::readPort8(PIT_CHANNEL_0)};
-		const auto hiByte	{io::readPort8(PIT_CHANNEL_0)};
-		const auto counter	{static_cast<igros_word_t>((static_cast<igros_dword_t>(hiByte) << 8) | loByte)};
+		const auto loByte {io::readPort8(PIT_CHANNEL_0)};
+		const auto hiByte {io::readPort8(PIT_CHANNEL_0)};
+		const auto counter {static_cast<igros_word_t>((static_cast<igros_dword_t>(hiByte) << 8) | loByte)};
 		// Total elapsed ticks value since IRQ
-		const auto elapsed	{static_cast<igros_word_t>(pit.divisor - counter)};
+		const auto elapsed {static_cast<igros_word_t>(pit.divisor - counter)};
 		// Return full expired ticks count
 		return (static_cast<igros_quad_t>(pit.ticks) * pit.divisor) + elapsed;
 	}
@@ -101,21 +100,21 @@ namespace igros::arch {
 		// Output every N-th tick were N = frequency
 		if ((0_u16 != pit.frequency) && (0_usize == (pit.ticks % pit.frequency))) [[unlikely]] {
 			// Current time to HH:MM:SS.zzz
-			const auto elapsed	{pitGetTicks()};
-			const auto res		{klib::kdivmod(elapsed, PIT_MAIN_FREQUENCY)};
+			const auto elapsed {pitGetTicks()};
+			const auto res {klib::kdivmod(elapsed, PIT_MAIN_FREQUENCY)};
 			// Remainder is in PIT ticks (< PIT_MAIN_FREQUENCY, so * 1000 fits 32 bits)
-			const auto milliseconds	{static_cast<igros_dword_t>(res.remainder) * 1000_u32 / PIT_MAIN_FREQUENCY};
-			const auto seconds	{static_cast<igros_dword_t>(res.quotient)};
-			const auto minutes	{seconds / 60_u32};
-			const auto hours	{minutes / 60_u32};
+			const auto milliseconds {static_cast<igros_dword_t>(res.remainder) * 1000_u32 / PIT_MAIN_FREQUENCY};
+			const auto seconds {static_cast<igros_dword_t>(res.quotient)};
+			const auto minutes {seconds / 60_u32};
+			const auto hours {minutes / 60_u32};
 			// Debug date/time
 			klib::kprintf(
 				"IRQ #%u\t[PIT]\n"
 				"Time:\t%02d:%02d:%02d.%03d (~1 sec.)\n",
 				static_cast<igros_dword_t>(irq_t::PIT),
-				hours	% 24_u32,
-				minutes	% 60_u32,
-				seconds	% 60_u32,
+				hours % 24_u32,
+				minutes % 60_u32,
+				seconds % 60_u32,
 				milliseconds
 			);
 		}
@@ -136,9 +135,8 @@ namespace igros::arch {
 
 		// Success
 		return true;
-
 	}
 
 
-}	// namespace igros::arch
+} // namespace igros::arch
 

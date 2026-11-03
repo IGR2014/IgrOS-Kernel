@@ -3,7 +3,7 @@
 //	VGA text mode driver tests
 //
 //	File:	test_vmem.cpp
-//	Date:	19 Oct 2026
+//	Date:	03 Nov 2026
 //
 //	Copyright (c) 2017 - 2026, Igor Baklykov
 //	All rights reserved.
@@ -30,18 +30,18 @@ extern "C" {
 
 asm(
 	".globl " IGROS_TEST_SYMBOL(KERNEL_OFFSET_VIRT) "; "
-	".set " IGROS_TEST_SYMBOL(KERNEL_OFFSET_VIRT) ", " IGROS_TEST_SYMBOL(vgaMemory) " - 0xB8000"
+							".set " IGROS_TEST_SYMBOL(KERNEL_OFFSET_VIRT) ", " IGROS_TEST_SYMBOL(vgaMemory) " - 0xB8000"
 );
 
 
 // Cursor ports
-constexpr auto VGA_CURSOR_CONTROL	{std::uint16_t {0x3D4}};
-constexpr auto VGA_CURSOR_DATA		{std::uint16_t {0x3D5}};
+constexpr auto VGA_CURSOR_CONTROL {std::uint16_t {0x3D4}};
+constexpr auto VGA_CURSOR_DATA {std::uint16_t {0x3D5}};
 
 
 // Symbol at screen position
 [[nodiscard]]
-static auto at(const igros::igros_usize_t x, const igros::igros_usize_t y) -> const vmemSymbol& {
+static auto at(const igros::igros_usize_t x, const igros::igros_usize_t y) -> const vmemSymbol & {
 	return vgaMemory[(y * VIDEO_MEM_WIDTH) + x];
 }
 
@@ -149,9 +149,9 @@ static void testCursor() {
 	IGROS_CHECK((3 * VIDEO_MEM_WIDTH) + 5 == cursorWritten());
 	// CRT controller model: data port returns selected register
 	auto registers {std::vector<std::uint8_t>(0x10, 0)};
-	registers[0x0A] = 0x2E;
-	registers[0x0E] = 0x01;
-	registers[0x0F] = 0x45;
+	registers[0x0A]	 = 0x2E;
+	registers[0x0E]	 = 0x01;
+	registers[0x0F]	 = 0x45;
 	hw::portReadHook = [&registers](const std::uint16_t port) -> std::uint32_t {
 		return (VGA_CURSOR_DATA == port) ? registers[hw::portValue[VGA_CURSOR_CONTROL]] : hw::portValue[port];
 	};

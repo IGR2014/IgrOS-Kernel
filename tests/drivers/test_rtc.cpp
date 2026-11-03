@@ -3,7 +3,7 @@
 //	CMOS real time clock driver tests
 //
 //	File:	test_rtc.cpp
-//	Date:	19 Oct 2026
+//	Date:	03 Nov 2026
 //
 //	Copyright (c) 2017 - 2026, Igor Baklykov
 //	All rights reserved.
@@ -25,24 +25,24 @@ namespace hw = igros::test::hw;
 
 
 // CMOS ports and registers
-constexpr auto CMOS_COMMAND	{std::uint16_t {0x70}};
-constexpr auto CMOS_DATA	{std::uint16_t {0x71}};
-constexpr auto RTC_SECOND	{0x00};
-constexpr auto RTC_REGISTER_A	{0x0A};
-constexpr auto RTC_REGISTER_B	{0x0B};
-constexpr auto RTC_CENTURY	{0x32};
+constexpr auto CMOS_COMMAND {std::uint16_t {0x70}};
+constexpr auto CMOS_DATA {std::uint16_t {0x71}};
+constexpr auto RTC_SECOND {0x00};
+constexpr auto RTC_REGISTER_A {0x0A};
+constexpr auto RTC_REGISTER_B {0x0B};
+constexpr auto RTC_CENTURY {0x32};
 
 // Register B flags
-constexpr auto RTC_IS_TIME_24	{0x02u};
-constexpr auto RTC_IS_BINARY	{0x04u};
+constexpr auto RTC_IS_TIME_24 {0x02u};
+constexpr auto RTC_IS_BINARY {0x04u};
 
 
 // CMOS model: registers selected by command port
-static auto	cmos		{std::array<std::uint8_t, 128> {}};
+static auto cmos {std::array<std::uint8_t, 128> {}};
 // Register A reads reporting update in progress
-static auto	updating	{0};
+static auto updating {0};
 // Seconds register reads before seconds tick
-static auto	secondsTick	{-1};
+static auto secondsTick {-1};
 
 static auto cmosRead(const std::uint16_t port) -> std::uint32_t {
 	if (CMOS_DATA != port) {
@@ -63,29 +63,29 @@ static auto cmosRead(const std::uint16_t port) -> std::uint32_t {
 }
 
 // Set clock registers: year month day weekday hour minute second
-static void setCMOS(const std::uint8_t flags, const std::uint8_t century, const std::array<std::uint8_t, 7> &values) {	// NOLINT(bugprone-easily-swappable-parameters): test helper, arguments written in each call
+static void setCMOS(const std::uint8_t flags, const std::uint8_t century, const std::array<std::uint8_t, 7> &values) { // NOLINT(bugprone-easily-swappable-parameters): test helper, arguments written in each call
 	hw::reset();
-	hw::portReadHook	= cmosRead;
-	updating		= 0;
-	secondsTick		= -1;
-	cmos			= {};
-	cmos[0x09]		= values[0];
-	cmos[0x08]		= values[1];
-	cmos[0x07]		= values[2];
-	cmos[0x06]		= values[3];
-	cmos[0x04]		= values[4];
-	cmos[0x02]		= values[5];
-	cmos[0x00]		= values[6];
-	cmos[RTC_REGISTER_B]	= flags;
-	cmos[RTC_CENTURY]	= century;
+	hw::portReadHook     = cmosRead;
+	updating	     = 0;
+	secondsTick	     = -1;
+	cmos		     = {};
+	cmos[0x09]	     = values[0];
+	cmos[0x08]	     = values[1];
+	cmos[0x07]	     = values[2];
+	cmos[0x06]	     = values[3];
+	cmos[0x04]	     = values[4];
+	cmos[0x02]	     = values[5];
+	cmos[0x00]	     = values[6];
+	cmos[RTC_REGISTER_B] = flags;
+	cmos[RTC_CENTURY]    = century;
 }
 
 // Compare date/time
 [[nodiscard]]
 static auto equals(const clockDateTime_t &value, const std::array<igros::igros_dword_t, 7> &expected) -> bool {
-	return	(expected[0] == value.year)	&& (expected[1] == value.month)		&& (expected[2] == value.day)	&&
-		(expected[3] == value.weekday)	&& (expected[4] == value.hour)		&&
-		(expected[5] == value.minute)	&& (expected[6] == value.second);
+	return (expected[0] == value.year) && (expected[1] == value.month) && (expected[2] == value.day) &&
+		(expected[3] == value.weekday) && (expected[4] == value.hour) &&
+		(expected[5] == value.minute) && (expected[6] == value.second);
 }
 
 
@@ -137,8 +137,8 @@ static void testBCD12() {
 // Waits for update to finish, rereads until two reads match
 static void testStableRead() {
 	setCMOS(RTC_IS_TIME_24 | RTC_IS_BINARY, 20, {26, 10, 19, 2, 10, 0, 30});
-	updating	= 3;
-	secondsTick	= 0;
+	updating    = 3;
+	secondsTick = 0;
 	IGROS_CHECK(equals(clockGetCurrentDateTime(), {2026, 10, 19, 2, 10, 0, 31}));
 	IGROS_CHECK(0 == updating);
 }

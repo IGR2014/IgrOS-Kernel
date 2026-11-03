@@ -2,7 +2,7 @@
 ///
 ///	@file
 ///	@brief		Kernel text print functions
-///	@date		22 Dec 2023
+///	@date		03 Nov 2026
 ///
 ///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
 ///			All rights reserved.
@@ -39,27 +39,27 @@ namespace igros::klib {
 
 		/// @brief Argument size (length modifier)
 		enum class argSize_t : igros_byte_t {
-			BYTE,		///< hh
-			WORD,		///< h
-			DWORD,		///< (none)
-			QUAD,		///< ll (l on 64-bit)
-			SIZE,		///< z, t
+			BYTE,  ///< hh
+			WORD,  ///< h
+			DWORD, ///< (none)
+			QUAD,  ///< ll (l on 64-bit)
+			SIZE,  ///< z, t
 		};
 
 		/// @brief Conversion specification
 		struct spec_t {
-			igros_usize_t	width	{0_usize};		///< Minimal field width
-			argSize_t	size	{argSize_t::DWORD};	///< Argument size
-			bool		zero	{false};		///< Pad numbers with '0' (after sign)
-			bool		left	{false};		///< Left-justify (pad with spaces after text)
+			igros_usize_t width {0_usize};	       ///< Minimal field width
+			argSize_t     size {argSize_t::DWORD}; ///< Argument size
+			bool	      zero {false};	       ///< Pad numbers with '0' (after sign)
+			bool	      left {false};	       ///< Left-justify (pad with spaces after text)
 		};
 
 
 		/// @brief Output buffer writer: never writes past last position (reserved for terminator)
 		class writer_t final {
 
-			char*		mPos;		///< Current position
-			char* const	mEnd;		///< Terminator position
+			char*	    mPos; ///< Current position
+			char* const mEnd; ///< Terminator position
 
 		public:
 
@@ -67,19 +67,19 @@ namespace igros::klib {
 			/// @param buffer Output buffer
 			/// @param size Buffer size
 			writer_t(char* const buffer, const igros_usize_t size) noexcept :
-				mPos	{buffer},
-				mEnd	{buffer + size - 1_usize} {}
+				mPos {buffer},
+				mEnd {buffer + size - 1_usize} {}
 
 			/// @brief No space left
 			/// @return true if only terminator position is left
 			[[nodiscard]]
-			auto	isFull() const noexcept -> bool {
+			auto isFull() const noexcept -> bool {
 				return mPos >= mEnd;
 			}
 
 			/// @brief Character
 			/// @param symbol Character
-			void	put(const char symbol) noexcept {
+			void put(const char symbol) noexcept {
 				if (!isFull()) [[likely]] {
 					*mPos++ = symbol;
 				}
@@ -87,14 +87,14 @@ namespace igros::klib {
 
 			/// @brief Text (clipped; no substr: it may throw)
 			/// @param text Text
-			void	put(const std::string_view text) noexcept {
+			void put(const std::string_view text) noexcept {
 				mPos = std::ranges::copy_n(text.data(), static_cast<std::ptrdiff_t>(std::min(text.size(), space())), mPos).out;
 			}
 
 			/// @brief Repeated character (clipped)
 			/// @param symbol Character
 			/// @param count Number of characters
-			void	fill(const char symbol, const igros_usize_t count) noexcept {
+			void fill(const char symbol, const igros_usize_t count) noexcept {
 				mPos = std::ranges::fill_n(mPos, static_cast<std::ptrdiff_t>(std::min(count, space())), symbol);
 			}
 
@@ -102,9 +102,9 @@ namespace igros::klib {
 			/// @param prefix Prefix (sign), before zero padding
 			/// @param text Text
 			/// @param spec Field width and padding flags
-			void	padded(const std::string_view prefix, const std::string_view text, const spec_t &spec) noexcept {
-				const auto length	{prefix.size() + text.size()};
-				const auto padding	{(spec.width > length) ? (spec.width - length) : 0_usize};
+			void padded(const std::string_view prefix, const std::string_view text, const spec_t &spec) noexcept {
+				const auto length {prefix.size() + text.size()};
+				const auto padding {(spec.width > length) ? (spec.width - length) : 0_usize};
 				if (spec.left) {
 					put(prefix);
 					put(text);
@@ -123,7 +123,7 @@ namespace igros::klib {
 			/// @brief Terminate, return written length
 			/// @param buffer Output buffer start
 			/// @return Written length without terminator
-			auto	finish(const char* const buffer) noexcept -> igros_usize_t {
+			auto finish(const char* const buffer) noexcept -> igros_usize_t {
 				*mPos = '\0';
 				return static_cast<igros_usize_t>(mPos - buffer);
 			}
@@ -133,10 +133,9 @@ namespace igros::klib {
 			/// @brief Space left
 			/// @return Number of characters that still fit
 			[[nodiscard]]
-			auto	space() const noexcept -> igros_usize_t {
+			auto space() const noexcept -> igros_usize_t {
 				return static_cast<igros_usize_t>(mEnd - mPos);
 			}
-
 		};
 
 
@@ -151,11 +150,11 @@ namespace igros::klib {
 		void putInteger(writer_t &out, const T value, const radix_t radix, const spec_t &spec, const bool upper = false) noexcept {
 			using U = std::make_unsigned_t<T>;
 			// Sign (compile time views: no strlen at run time)
-			constexpr auto MINUS	{std::string_view {"-"}};
-			constexpr auto NONE	{std::string_view {}};
-			const auto isNegative	{std::cmp_less(value, static_cast<T>(0))};
-			const auto magnitude	{isNegative ? static_cast<U>(static_cast<U>(0) - static_cast<U>(value)) : static_cast<U>(value)};
-			auto digits		{std::array<char, std::numeric_limits<U>::digits> {}};
+			constexpr auto MINUS {std::string_view {"-"}};
+			constexpr auto NONE {std::string_view {}};
+			const auto     isNegative {std::cmp_less(value, static_cast<T>(0))};
+			const auto     magnitude {isNegative ? static_cast<U>(static_cast<U>(0) - static_cast<U>(value)) : static_cast<U>(value)};
+			auto	       digits {std::array<char, std::numeric_limits<U>::digits> {}};
 			out.padded(isNegative ? MINUS : NONE, kdigits(digits, magnitude, radix, upper), spec);
 		}
 
@@ -184,7 +183,7 @@ namespace igros::klib {
 						putInteger(out, va_arg(list, igros_sdword_t), radix, spec, upper) :
 						putInteger(out, va_arg(list, igros_dword_t), radix, spec, upper);
 					break;
-				case argSize_t::QUAD:	// NOLINT(bugprone-branch-clone): same as SIZE on 64-bit only
+				case argSize_t::QUAD: // NOLINT(bugprone-branch-clone): same as SIZE on 64-bit only
 					isSigned ?
 						putInteger(out, va_arg(list, igros_squad_t), radix, spec, upper) :
 						putInteger(out, va_arg(list, igros_quad_t), radix, spec, upper);
@@ -205,7 +204,7 @@ namespace igros::klib {
 		/// @param fmt Format position (advanced past parsed characters)
 		/// @return Parsed specification
 		[[nodiscard]]
-		auto parseSpec(const char* &fmt) noexcept -> spec_t {
+		auto parseSpec(const char*&fmt) noexcept -> spec_t {
 
 			auto spec {spec_t {}};
 
@@ -246,11 +245,10 @@ namespace igros::klib {
 			}
 
 			return spec;
-
 		}
 
 
-	}	// namespace
+	} // namespace
 
 
 	// Kernel vsnprintf function
@@ -262,7 +260,7 @@ namespace igros::klib {
 		}
 
 		// Output
-		auto out {writer_t {buffer, size}};
+		auto	     out {writer_t {buffer, size}};
 		// Local copy of arguments (parameter may be decayed array, it can't be passed by reference)
 		std::va_list args {};
 		va_copy(args, list);
@@ -333,14 +331,12 @@ namespace igros::klib {
 			}
 			// Next format character
 			++fmt;
-
 		}
 
 		// Done with arguments
 		va_end(args);
 		// Insert null terminator
 		return out.finish(buffer);
-
 	}
 
 
@@ -361,13 +357,13 @@ namespace igros::klib {
 	// Kernel printf function
 	void kprintf(const char* const format, ...) noexcept {
 		// Line end (compile time: no strlen at run time)
-		constexpr auto NEWLINE {std::string_view {"\n"}};
+		constexpr auto	       NEWLINE {std::string_view {"\n"}};
 		// Shared buffer and output must not be interrupted by IRQ handler printing too
 		const arch::irq::guard noInterrupts {};
 		// Text buffer
-		constinit static auto buffer {std::array<char, 1024_usize> {}};
+		constinit static auto  buffer {std::array<char, 1024_usize> {}};
 		// Kernel variadic argument list
-		std::va_list list {};
+		std::va_list	       list {};
 		// Initialize variadic arguments list
 		va_start(list, format);
 		// Format string
@@ -382,5 +378,5 @@ namespace igros::klib {
 	}
 
 
-}	// namespace igros::klib
+} // namespace igros::klib
 

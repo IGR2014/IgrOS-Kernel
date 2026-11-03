@@ -2,7 +2,7 @@
 ///
 ///	@file
 ///	@brief		Interrupts low-level operations
-///	@date		30 Oct 2026
+///	@date		03 Nov 2026
 ///
 ///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
 ///			All rights reserved.
@@ -20,30 +20,30 @@
 #include <arch/x86/isr.hpp>
 
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 
 extern "C" {
 
-#endif	// __cplusplus
+#endif // __cplusplus
 
 
 	/// @brief IRQ handlers addresses, indexed by IRQ line (irq.s)
-	extern const std::add_pointer_t<void () noexcept>	irqHandlerTable[16];
+	extern const std::add_pointer_t<void() noexcept> irqHandlerTable[16];
 
 	/// @brief Save flags and disable interrupts
 	/// @return Saved flags register
 	[[nodiscard]]
-	auto	irqSave() noexcept -> igros::igros_usize_t;
+	auto irqSave() noexcept -> igros::igros_usize_t;
 	/// @brief Restore flags (interrupts state)
 	/// @param flags Flags register saved by irqSave()
-	void	irqRestore(const igros::igros_usize_t flags) noexcept;
+	void irqRestore(const igros::igros_usize_t flags) noexcept;
 
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 
-}	// extern "C"
+} // extern "C"
 
-#endif	// __cplusplus
+#endif // __cplusplus
 
 
 // x86 namespace
@@ -51,35 +51,35 @@ namespace igros::x86 {
 
 
 	// Master PIC ports
-	constexpr auto PIC_MASTER_CONTROL	{static_cast<port_t>(0x0020_u16)};	///< Master PIC command port
-	constexpr auto PIC_MASTER_DATA		{static_cast<port_t>(PIC_MASTER_CONTROL + 1_u16)};	///< Master PIC data (mask) port
+	constexpr auto PIC_MASTER_CONTROL {static_cast<port_t>(0x0020_u16)};		  ///< Master PIC command port
+	constexpr auto PIC_MASTER_DATA {static_cast<port_t>(PIC_MASTER_CONTROL + 1_u16)}; ///< Master PIC data (mask) port
 	// Slave PIC ports
-	constexpr auto PIC_SLAVE_CONTROL	{static_cast<port_t>(0x00A0_u16)};	///< Slave PIC command port
-	constexpr auto PIC_SLAVE_DATA		{static_cast<port_t>(PIC_SLAVE_CONTROL + 1_u16)};	///< Slave PIC data (mask) port
+	constexpr auto PIC_SLAVE_CONTROL {static_cast<port_t>(0x00A0_u16)};		///< Slave PIC command port
+	constexpr auto PIC_SLAVE_DATA {static_cast<port_t>(PIC_SLAVE_CONTROL + 1_u16)}; ///< Slave PIC data (mask) port
 
 
 	/// @brief Interrupts number enumeration (PIC lines)
 	enum class irq_t : igros_dword_t {
-		PIT		= 0_u32,
-		KEYBOARD	= 1_u32,
-		CASCADE		= 2_u32,		///< Slave PIC
-		UART2		= 3_u32,
-		UART1		= 4_u32,
-		LPT2		= 5_u32,
-		FLOPPY		= 6_u32,
-		LPT1		= 7_u32,		///< Master PIC spurious
-		RTC		= 8_u32,
-		ACPI		= 9_u32,
-		FREE_10		= 10_u32,
-		FREE_11		= 11_u32,
-		MOUSE		= 12_u32,
-		FPU		= 13_u32,
-		ATA_PRIMARY	= 14_u32,
-		ATA_SECONDARY	= 15_u32,		///< Slave PIC spurious
+		PIT	      = 0_u32,
+		KEYBOARD      = 1_u32,
+		CASCADE	      = 2_u32, ///< Slave PIC
+		UART2	      = 3_u32,
+		UART1	      = 4_u32,
+		LPT2	      = 5_u32,
+		FLOPPY	      = 6_u32,
+		LPT1	      = 7_u32, ///< Master PIC spurious
+		RTC	      = 8_u32,
+		ACPI	      = 9_u32,
+		FREE_10	      = 10_u32,
+		FREE_11	      = 11_u32,
+		MOUSE	      = 12_u32,
+		FPU	      = 13_u32,
+		ATA_PRIMARY   = 14_u32,
+		ATA_SECONDARY = 15_u32, ///< Slave PIC spurious
 	};
 
 	/// @brief Number of PIC interrupt lines
-	constexpr auto IRQ_LINES	{16_usize};
+	constexpr auto IRQ_LINES {16_usize};
 
 
 	/// @brief Interrupt vector of IRQ line
@@ -120,56 +120,54 @@ namespace igros::x86 {
 		/// @brief Copy c-tor
 		irq(const irq &other) = delete;
 		/// @brief Copy assignment
-		auto	operator=(const irq &other) -> irq& = delete;
+		auto operator=(const irq &other) -> irq & = delete;
 		/// @brief Move c-tor
 		irq(irq &&other) = delete;
 		/// @brief Move assignment
-		auto	operator=(irq &&other) -> irq& = delete;
+		auto operator=(irq &&other) -> irq & = delete;
 
 		/// @brief Init IRQ
-		static void	init() noexcept;
+		static void init() noexcept;
 
 		/// @brief Enable interrupts
-		static void	enable() noexcept;
+		static void enable() noexcept;
 		/// @brief Disable interrupts
-		static void	disable() noexcept;
+		static void disable() noexcept;
 
 		/// @brief Mask interrupt
 		/// @param number IRQ line (lines past 15 are ignored)
-		static void	mask(const irq_t number) noexcept;
+		static void mask(const irq_t number) noexcept;
 		/// @brief Unmask interrupt
 		/// @param number IRQ line (lines past 15 are ignored)
-		static void	unmask(const irq_t number) noexcept;
+		static void unmask(const irq_t number) noexcept;
 
 		/// @brief Set interrupts mask
 		/// @param mask Mask of both PICs (bit set - line masked)
-		static void	setMask(const igros_word_t mask = 0xFFFF_u16) noexcept;
+		static void setMask(const igros_word_t mask = 0xFFFF_u16) noexcept;
 		/// @brief Get interrupts mask
 		/// @return Mask of both PICs (bit set - line masked)
 		[[nodiscard]]
-		static auto	getMask() noexcept -> igros_word_t;
+		static auto getMask() noexcept -> igros_word_t;
 
 		/// @brief Install IRQ handler
 		template<irq_t N, isr_t HANDLE>
-		static void	install() noexcept;
+		static void install() noexcept;
 		/// @brief Uninstall IRQ handler
 		template<irq_t N>
-		static void	uninstall() noexcept;
+		static void uninstall() noexcept;
 
 		/// @brief Send EOI (IRQ done)
 		/// @param number Handled IRQ line
-		static void	eoi(const irq_t number) noexcept;
+		static void eoi(const irq_t number) noexcept;
 
 		/// @brief Check if IRQ is spurious (only lines 7 and 15 can be)
 		/// @param number IRQ line
 		/// @return true if PIC raised the line without a request
 		[[nodiscard]]
-		static auto	isSpurious(const irq_t number) noexcept -> bool;
+		static auto isSpurious(const irq_t number) noexcept -> bool;
 
 		/// @brief Disable interrupts in scope (restores previous state on exit)
 		class guard;
-
-
 	};
 
 
@@ -177,7 +175,7 @@ namespace igros::x86 {
 	class [[nodiscard("Unnamed guard re-enables IRQs immediately")]] irq::guard final {
 
 		/// @brief Saved flags (interrupts are disabled while saving)
-		igros_usize_t	mFlags	{::irqSave()};
+		igros_usize_t mFlags {::irqSave()};
 
 
 	public:
@@ -192,9 +190,7 @@ namespace igros::x86 {
 		/// @brief Copy c-tor
 		guard(const guard &other) = delete;
 		/// @brief Copy assignment
-		auto	operator=(const guard &other) -> guard& = delete;
-
-
+		auto operator=(const guard &other) -> guard & = delete;
 	};
 
 
@@ -213,5 +209,5 @@ namespace igros::x86 {
 	}
 
 
-}	// namespace igros::x86
+} // namespace igros::x86
 

@@ -2,7 +2,7 @@
 ///
 ///	@file
 ///	@brief		VGA memory low-level operations
-///	@date		16 Dec 2022
+///	@date		03 Nov 2026
 ///
 ///	@copyright	Copyright (c) 2017 - 2022, Igor Baklykov
 ///			All rights reserved.
@@ -30,12 +30,12 @@ namespace igros::arch {
 
 
 	// VGA cursor control ports
-	constexpr auto VGA_CURSOR_CONTROL	{static_cast<port_t>(0x03D4_u16)};	///< CRT controller register select port
-	constexpr auto VGA_CURSOR_DATA		{static_cast<port_t>(VGA_CURSOR_CONTROL + 1_u16)};	///< CRT controller data port
+	constexpr auto VGA_CURSOR_CONTROL {static_cast<port_t>(0x03D4_u16)};		  ///< CRT controller register select port
+	constexpr auto VGA_CURSOR_DATA {static_cast<port_t>(VGA_CURSOR_CONTROL + 1_u16)}; ///< CRT controller data port
 
 
 	/// @brief VGA text buffer physical address
-	constexpr auto VIDEO_MEM_PHYS	{0x000B8000_usize};
+	constexpr auto VIDEO_MEM_PHYS {0x000B8000_usize};
 
 	/// @brief VGA text buffer (low memory is mapped at kernel virtual offset)
 	/// @return Text mode cells
@@ -48,7 +48,7 @@ namespace igros::arch {
 	}
 
 	/// @brief VGA memory background symbol
-	constinit static auto vmemBkgColor	{vmemColor::Green};
+	constinit static auto vmemBkgColor {vmemColor::Green};
 
 	/// @brief Current cursor coordinates
 	constinit static vmemCursor cursorPos {};
@@ -59,7 +59,7 @@ namespace igros::arch {
 	[[nodiscard]]
 	static auto vmemBlank() noexcept -> vmemSymbol {
 		return vmemSymbol {
-			.symbol	= ' ',
+			.symbol = ' ',
 			.color	= static_cast<igros_byte_t>(vmemBkgColor),
 		};
 	}
@@ -70,13 +70,13 @@ namespace igros::arch {
 		// Calculate VGA console offset
 		const auto position {(y * VIDEO_MEM_WIDTH) + x};
 		// Choose cursor location high register
-		io::writePort8(VGA_CURSOR_CONTROL,	0x0E_u8);
+		io::writePort8(VGA_CURSOR_CONTROL, 0x0E_u8);
 		// Write cursor position high byte
-		io::writePort8(VGA_CURSOR_DATA,		((position & 0xFF00_u16) >> 8));
+		io::writePort8(VGA_CURSOR_DATA, ((position & 0xFF00_u16) >> 8));
 		// Choose cursor location low register
-		io::writePort8(VGA_CURSOR_CONTROL,	0x0F_u8);
+		io::writePort8(VGA_CURSOR_CONTROL, 0x0F_u8);
 		// Write cursor position low byte
-		io::writePort8(VGA_CURSOR_DATA,		(position & 0x00FF_u16));
+		io::writePort8(VGA_CURSOR_DATA, (position & 0x00FF_u16));
 		// Save cursor data
 		cursorPos.x = x;
 		cursorPos.y = y;
@@ -109,9 +109,9 @@ namespace igros::arch {
 	// Disable VGA memory cursor
 	void vmemCursorDisable() noexcept {
 		// Choose cursor start register
-		io::writePort8(VGA_CURSOR_CONTROL,	0x0A_u8);
+		io::writePort8(VGA_CURSOR_CONTROL, 0x0A_u8);
 		// Send control word to disable cursor
-		io::writePort8(VGA_CURSOR_DATA,		0x20_u8);
+		io::writePort8(VGA_CURSOR_DATA, 0x20_u8);
 	}
 
 	// Enable VGA memory cursor
@@ -143,25 +143,25 @@ namespace igros::arch {
 				// Move 1 line up
 				--cursorPos.y;
 			}
-		// Tabulation symbol
+			// Tabulation symbol
 		} else if (symbol == '\t') {
 			// calculate new tab offset
 			cursorPos.x = static_cast<igros_byte_t>((cursorPos.x + VIDEO_MEM_TAB_SIZE) & ~(VIDEO_MEM_TAB_SIZE - 1_usize));
-		// Carret return
+			// Carret return
 		} else if (symbol == '\r') {
 			// Move to start of the row
 			cursorPos.x = 0_u8;
-		// Carret new line
+			// Carret new line
 		} else if (symbol == '\n') {
 			// Move to start of the row
 			cursorPos.x = 0_u8;
 			// Move to next row
 			++cursorPos.y;
-		// If non-control (printable) character
+			// If non-control (printable) character
 		} else if (symbol >= ' ') {
 			// Write symbol to VGA console
 			vmemScreen()[(cursorPos.y * VIDEO_MEM_WIDTH) + cursorPos.x] = vmemSymbol {
-				.symbol	= symbol,
+				.symbol = symbol,
 				.color	= static_cast<igros_byte_t>(vmemBkgColor),
 			};
 			// Move cursor 1 symbol right
@@ -180,7 +180,7 @@ namespace igros::arch {
 			cursorPos.y = VIDEO_MEM_HEIGHT - 1_u16;
 			// Move screen 1 line up
 			const auto screen {vmemScreen()};
-			std::shift_left(screen.begin(), screen.end(), VIDEO_MEM_WIDTH);	// NOLINT(modernize-use-ranges): std::ranges::shift_left is C++23
+			std::shift_left(screen.begin(), screen.end(), VIDEO_MEM_WIDTH); // NOLINT(modernize-use-ranges): std::ranges::shift_left is C++23
 			// Clear bottom line
 			std::ranges::fill(screen.last<VIDEO_MEM_WIDTH>(), vmemBlank());
 		}
@@ -224,5 +224,5 @@ namespace igros::arch {
 	}
 
 
-}	// namespace igros::arch
+} // namespace igros::arch
 

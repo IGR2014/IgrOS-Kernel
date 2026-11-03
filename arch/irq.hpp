@@ -2,7 +2,7 @@
 ///
 ///	@file
 ///	@brief		Architecture interrupts type deduction
-///	@date		21 Mar 2023
+///	@date		03 Nov 2026
 ///
 ///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
 ///			All rights reserved.
@@ -18,7 +18,7 @@
 // IgrOS-Kernel arch
 #include <arch/register.hpp>
 
-#if	defined (IGROS_ARCH_i386) || defined (IGROS_ARCH_x86_64)
+#if defined(IGROS_ARCH_i386) || defined(IGROS_ARCH_x86_64)
 
 // IgrOS-Kernel arch x86
 #include <arch/x86/irq.hpp>
@@ -39,17 +39,17 @@ namespace igros::arch {
 	/// (plus "install<line, handler>()" / "uninstall<line>()" templates)
 	template<class T, class L>
 	concept Interrupts = requires(const L line) {
-		{ T::enable() }		-> std::same_as<void>;
-		{ T::disable() }	-> std::same_as<void>;
-		{ T::mask(line) }	-> std::same_as<void>;
-		{ T::unmask(line) }	-> std::same_as<void>;
-		{ T::eoi(line) }	-> std::same_as<void>;
+		{ T::enable() } -> std::same_as<void>;
+		{ T::disable() } -> std::same_as<void>;
+		{ T::mask(line) } -> std::same_as<void>;
+		{ T::unmask(line) } -> std::same_as<void>;
+		{ T::eoi(line) } -> std::same_as<void>;
 		// Disables interrupts in scope, restores previous state on exit
 		typename T::guard;
 	};
 
 
-#if	defined (IGROS_ARCH_i386) || defined (IGROS_ARCH_x86_64)
+#if defined(IGROS_ARCH_i386) || defined(IGROS_ARCH_x86_64)
 
 	/// @brief IRQ line type
 	using x86::irq_t;
@@ -64,5 +64,5 @@ namespace igros::arch {
 	static_assert(Interrupts<irq, irq_t>, "Architecture IRQ doesn't provide interrupts interface!");
 
 
-}	// namespace igros::arch
+} // namespace igros::arch
 

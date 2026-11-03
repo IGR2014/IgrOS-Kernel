@@ -4,7 +4,7 @@
 //	through include order, types come from the real header
 //
 //	File:	msr.hpp
-//	Date:	29 Oct 2026
+//	Date:	03 Nov 2026
 //
 //	Copyright (c) 2017 - 2026, Igor Baklykov
 //	All rights reserved.
@@ -16,8 +16,8 @@
 
 
 // Real header: types and enums (instruction wrappers renamed, unused)
-#define readMSR		igros_test_real_readMSR
-#define writeMSR	igros_test_real_writeMSR
+#define readMSR igros_test_real_readMSR
+#define writeMSR igros_test_real_writeMSR
 #include "../../../../arch/x86_64/msr.hpp"
 #undef readMSR
 #undef writeMSR
@@ -41,4 +41,4 @@ namespace igros::x86_64 {
 	}
 
 
-}	// namespace igros::x86_64
+} // namespace igros::x86_64

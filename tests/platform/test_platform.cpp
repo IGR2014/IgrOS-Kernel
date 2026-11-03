@@ -3,7 +3,7 @@
 //	Platform description tests
 //
 //	File:	test_platform.cpp
-//	Date:	19 Oct 2026
+//	Date:	03 Nov 2026
 //
 //	Copyright (c) 2017 - 2026, Igor Baklykov
 //	All rights reserved.
@@ -26,11 +26,11 @@ using igros::platform::Platform;
 // Kernel image symbols: 12 KB kernel at 1 MB above 1 GB kernel offset
 asm(
 	".globl " IGROS_TEST_SYMBOL(KERNEL_OFFSET_VIRT) "; "
-	".set " IGROS_TEST_SYMBOL(KERNEL_OFFSET_VIRT) ", 0x40000000; "
-	".globl " IGROS_TEST_SYMBOL(_SECTION_KERNEL_START_) "; "
-	".set " IGROS_TEST_SYMBOL(_SECTION_KERNEL_START_) ", 0x40100000; "
-	".globl " IGROS_TEST_SYMBOL(_SECTION_KERNEL_END_) "; "
-	".set " IGROS_TEST_SYMBOL(_SECTION_KERNEL_END_) ", 0x40103000"
+							".set " IGROS_TEST_SYMBOL(KERNEL_OFFSET_VIRT) ", 0x40000000; "
+												      ".globl " IGROS_TEST_SYMBOL(_SECTION_KERNEL_START_) "; "
+																			  ".set " IGROS_TEST_SYMBOL(_SECTION_KERNEL_START_) ", 0x40100000; "
+																									    ".globl " IGROS_TEST_SYMBOL(_SECTION_KERNEL_END_) "; "
+																															      ".set " IGROS_TEST_SYMBOL(_SECTION_KERNEL_END_) ", 0x40103000"
 );
 
 
@@ -47,7 +47,7 @@ auto main() -> int {
 	IGROS_CHECK(0x3000 == Platform::kernelSize());
 
 	// Architecture
-#if	defined (IGROS_ARCH_i386)
+#if defined(IGROS_ARCH_i386)
 	IGROS_CHECK(Platform::isI386() && !Platform::isX86_64());
 #else
 	IGROS_CHECK(!Platform::isI386() && Platform::isX86_64());
@@ -85,6 +85,5 @@ auto main() -> int {
 	IGROS_CHECK("iuwfrs" == calls);
 
 	return igros::test::result();
-
 }
 

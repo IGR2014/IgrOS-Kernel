@@ -3,7 +3,7 @@
 //	Paging (page tables) tests
 //
 //	File:	test_paging.cpp
-//	Date:	19 Oct 2026
+//	Date:	03 Nov 2026
 //
 //	Copyright (c) 2017 - 2026, Igor Baklykov
 //	All rights reserved.
@@ -24,57 +24,57 @@
 #include <tests/hw.hpp>
 
 
-using igros::x86::paging;
 using igros::mem::phys;
+using igros::x86::paging;
 namespace hw = igros::test::hw;
 
 
 // Low physical memory (page tables live there) is a shared memory file mapped
 // at kernel offset, so other virtual pages can alias it like with real MMU
-#define IGROS_TEST_KERNEL_OFFSET	0x20000000	// NOLINT(cppcoreguidelines-macro-usage,cppcoreguidelines-macro-to-enum,modernize-macro-to-enum): stringized into assembly below
-constexpr auto KERNEL_OFFSET	{std::uintptr_t {IGROS_TEST_KERNEL_OFFSET}};
-constexpr auto LOW_MEMORY	{static_cast<std::size_t>(igros::mem::LOW_MEMORY_LIMIT)};
+#define IGROS_TEST_KERNEL_OFFSET 0x20000000 // NOLINT(cppcoreguidelines-macro-usage,cppcoreguidelines-macro-to-enum,modernize-macro-to-enum): stringized into assembly below
+constexpr auto KERNEL_OFFSET {std::uintptr_t {IGROS_TEST_KERNEL_OFFSET}};
+constexpr auto LOW_MEMORY {static_cast<std::size_t>(igros::mem::LOW_MEMORY_LIMIT)};
 
 asm(
 	".globl " IGROS_TEST_SYMBOL(KERNEL_OFFSET_VIRT) "; "
-	".set " IGROS_TEST_SYMBOL(KERNEL_OFFSET_VIRT) ", " IGROS_TEST_STR(IGROS_TEST_KERNEL_OFFSET) "; "
-	".globl " IGROS_TEST_SYMBOL(_SECTION_KERNEL_START_) "; "
-	".set " IGROS_TEST_SYMBOL(_SECTION_KERNEL_START_) ", " IGROS_TEST_STR(IGROS_TEST_KERNEL_OFFSET) " + 0x100000; "
-	".globl " IGROS_TEST_SYMBOL(_SECTION_TEXT_START_) "; "
-	".set " IGROS_TEST_SYMBOL(_SECTION_TEXT_START_) ", " IGROS_TEST_STR(IGROS_TEST_KERNEL_OFFSET) " + 0x100000; "
-	".globl " IGROS_TEST_SYMBOL(_SECTION_RODATA_START_) "; "
-	".set " IGROS_TEST_SYMBOL(_SECTION_RODATA_START_) ", " IGROS_TEST_STR(IGROS_TEST_KERNEL_OFFSET) " + 0x103000; "
-	".globl " IGROS_TEST_SYMBOL(_SECTION_DATA_START_) "; "
-	".set " IGROS_TEST_SYMBOL(_SECTION_DATA_START_) ", " IGROS_TEST_STR(IGROS_TEST_KERNEL_OFFSET) " + 0x105000; "
-	".globl " IGROS_TEST_SYMBOL(_KERNEL_STACK_GUARD_) "; "
-	".set " IGROS_TEST_SYMBOL(_KERNEL_STACK_GUARD_) ", " IGROS_TEST_STR(IGROS_TEST_KERNEL_OFFSET) " + 0x106000; "
-	".globl " IGROS_TEST_SYMBOL(_SECTION_KERNEL_END_) "; "
-	".set " IGROS_TEST_SYMBOL(_SECTION_KERNEL_END_) ", " IGROS_TEST_STR(IGROS_TEST_KERNEL_OFFSET) " + 0x108000"
+							".set " IGROS_TEST_SYMBOL(KERNEL_OFFSET_VIRT) ", " IGROS_TEST_STR(IGROS_TEST_KERNEL_OFFSET) "; "
+																		    ".globl " IGROS_TEST_SYMBOL(_SECTION_KERNEL_START_) "; "
+																									".set " IGROS_TEST_SYMBOL(_SECTION_KERNEL_START_) ", " IGROS_TEST_STR(IGROS_TEST_KERNEL_OFFSET) " + 0x100000; "
+																																					".globl " IGROS_TEST_SYMBOL(_SECTION_TEXT_START_) "; "
+																																											  ".set " IGROS_TEST_SYMBOL(_SECTION_TEXT_START_) ", " IGROS_TEST_STR(IGROS_TEST_KERNEL_OFFSET) " + 0x100000; "
+																																																							".globl " IGROS_TEST_SYMBOL(_SECTION_RODATA_START_) "; "
+																																																													    ".set " IGROS_TEST_SYMBOL(_SECTION_RODATA_START_) ", " IGROS_TEST_STR(IGROS_TEST_KERNEL_OFFSET) " + 0x103000; "
+																																																																									    ".globl " IGROS_TEST_SYMBOL(_SECTION_DATA_START_) "; "
+																																																																															      ".set " IGROS_TEST_SYMBOL(_SECTION_DATA_START_) ", " IGROS_TEST_STR(IGROS_TEST_KERNEL_OFFSET) " + 0x105000; "
+																																																																																											    ".globl " IGROS_TEST_SYMBOL(_KERNEL_STACK_GUARD_) "; "
+																																																																																																	      ".set " IGROS_TEST_SYMBOL(_KERNEL_STACK_GUARD_) ", " IGROS_TEST_STR(IGROS_TEST_KERNEL_OFFSET) " + 0x106000; "
+																																																																																																													    ".globl " IGROS_TEST_SYMBOL(_SECTION_KERNEL_END_) "; "
+																																																																																																																			      ".set " IGROS_TEST_SYMBOL(_SECTION_KERNEL_END_) ", " IGROS_TEST_STR(IGROS_TEST_KERNEL_OFFSET) " + 0x108000"
 );
 
 // Fake kernel image layout (physical): code, read-only data, data + bss
-constexpr auto KERNEL_TEXT	{std::uintptr_t {0x100000}};
-constexpr auto KERNEL_RODATA	{std::uintptr_t {0x103000}};
-constexpr auto KERNEL_DATA	{std::uintptr_t {0x105000}};
-constexpr auto KERNEL_END	{std::uintptr_t {0x108000}};
+constexpr auto KERNEL_TEXT {std::uintptr_t {0x100000}};
+constexpr auto KERNEL_RODATA {std::uintptr_t {0x103000}};
+constexpr auto KERNEL_DATA {std::uintptr_t {0x105000}};
+constexpr auto KERNEL_END {std::uintptr_t {0x108000}};
 // Boot stack guard page (in bss)
-constexpr auto KERNEL_GUARD	{std::uintptr_t {0x106000}};
+constexpr auto KERNEL_GUARD {std::uintptr_t {0x106000}};
 
 // Entry bits
-constexpr auto WRITABLE		{static_cast<paging::entry_t>(paging::FLAGS::WRITABLE)};
-constexpr auto HUGE		{static_cast<paging::entry_t>(paging::FLAGS::HUGE)};
-constexpr auto NO_EXECUTE	{static_cast<paging::entry_t>(paging::FLAGS::NO_EXECUTE)};
+constexpr auto WRITABLE {static_cast<paging::entry_t>(paging::FLAGS::WRITABLE)};
+constexpr auto HUGE {static_cast<paging::entry_t>(paging::FLAGS::HUGE)};
+constexpr auto NO_EXECUTE {static_cast<paging::entry_t>(paging::FLAGS::NO_EXECUTE)};
 // CR0 write protection
-constexpr auto CR0_WP		{std::uintptr_t {0x00010000}};
+constexpr auto CR0_WP {std::uintptr_t {0x00010000}};
 
 
 // Physical memory file
 static auto memoryFile {-1};
 
 // Software MMU: map faulting page to physical page from page tables
-static void pageFault(const int signal, siginfo_t* const info, void* const /*context*/) {	// NOLINT(misc-const-correctness): sigaction handler signature
-	const auto page		{std::bit_cast<std::uintptr_t>(info->si_addr) & ~(paging::PAGE_SIZE - 1)};
-	const auto address	{paging::translate(static_cast<igros::mem::virt_t>(page))};
+static void pageFault(const int signal, siginfo_t* const info, void* const /*context*/) { // NOLINT(misc-const-correctness): sigaction handler signature
+	const auto page {std::bit_cast<std::uintptr_t>(info->si_addr) & ~(paging::PAGE_SIZE - 1)};
+	const auto address {paging::translate(static_cast<igros::mem::virt_t>(page))};
 	// (INVALID address is above low memory limit too)
 	if ((address >= igros::mem::LOW_MEMORY_LIMIT) ||
 		(MAP_FAILED == ::mmap(std::bit_cast<void*>(page), paging::PAGE_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_FIXED, memoryFile, static_cast<off_t>(address)))) {
@@ -94,8 +94,8 @@ static auto setupMemory() -> bool {
 		return false;
 	}
 	struct sigaction action {};
-	action.sa_sigaction	= pageFault;
-	action.sa_flags		= SA_SIGINFO;
+	action.sa_sigaction = pageFault;
+	action.sa_flags	    = SA_SIGINFO;
 	return 0 == ::sigaction(SIGSEGV, &action, nullptr);
 }
 
@@ -108,9 +108,9 @@ static auto table(const igros::mem::phys_t address) -> paging::entry_t* {
 
 // Entry for virtual address at given level (tables must exist)
 [[nodiscard]]
-static auto entryAt(const std::uintptr_t virt, const igros::igros_usize_t level) -> paging::entry_t& {	// NOLINT(bugprone-easily-swappable-parameters): test helper, arguments written in each call
+static auto entryAt(const std::uintptr_t virt, const igros::igros_usize_t level) -> paging::entry_t & { // NOLINT(bugprone-easily-swappable-parameters): test helper, arguments written in each call
 	auto* entries {table(paging::root())};
-	for (auto current {paging::LEVELS - 1}; ; --current) {
+	for (auto current {paging::LEVELS - 1};; --current) {
 		auto &entry {entries[(virt >> (paging::PAGE_SHIFT + (paging::INDEX_BITS * current))) & (paging::ENTRIES - 1)]};
 		if (current == level) {
 			return entry;
@@ -128,9 +128,9 @@ static auto newTable() -> igros::mem::phys_t {
 }
 
 // Map page with flags
-template<class ...Flags>
+template<class... Flags>
 [[nodiscard]]
-static auto map(const igros::mem::phys_t address, const std::uintptr_t virt, Flags ...flags) -> bool {
+static auto map(const igros::mem::phys_t address, const std::uintptr_t virt, Flags... flags) -> bool {
 	return paging::map(address, static_cast<igros::mem::virt_t>(virt), igros::klib::make_kflags<paging::FLAGS>(paging::FLAGS::PRESENT, flags...));
 }
 
@@ -189,9 +189,14 @@ static void testInit() {
 	IGROS_CHECK(KERNEL_GUARD + paging::PAGE_SIZE == translate(KERNEL_OFFSET + KERNEL_GUARD + paging::PAGE_SIZE));
 	// Data, low memory around kernel and identity mapping: read + write, no execute
 	for (const auto virt : {
-		KERNEL_OFFSET + KERNEL_DATA, KERNEL_OFFSET + KERNEL_END - paging::PAGE_SIZE, KERNEL_OFFSET + KERNEL_END,
-		KERNEL_OFFSET + 0xB8000, KERNEL_OFFSET + KERNEL_TEXT - paging::PAGE_SIZE, KERNEL_TEXT, std::uintptr_t {0x1000},
-	}) {
+		     KERNEL_OFFSET + KERNEL_DATA,
+		     KERNEL_OFFSET + KERNEL_END - paging::PAGE_SIZE,
+		     KERNEL_OFFSET + KERNEL_END,
+		     KERNEL_OFFSET + 0xB8000,
+		     KERNEL_OFFSET + KERNEL_TEXT - paging::PAGE_SIZE,
+		     KERNEL_TEXT,
+		     std::uintptr_t {0x1000},
+	     }) {
 		const auto entry {entryAt(virt, 0)};
 		IGROS_CHECK((WRITABLE == (entry & WRITABLE)) && (NO_EXECUTE == (entry & NO_EXECUTE)));
 	}
@@ -279,8 +284,8 @@ static void testMapInvalid() {
 static void testUser() {
 	hw::reset();
 	hw::cr3 = static_cast<std::uintptr_t>(newTable());
-	constexpr auto VIRT	{std::uintptr_t {0x00C00000}};
-	constexpr auto USER	{static_cast<paging::entry_t>(paging::FLAGS::USER)};
+	constexpr auto VIRT {std::uintptr_t {0x00C00000}};
+	constexpr auto USER {static_cast<paging::entry_t>(paging::FLAGS::USER)};
 	IGROS_CHECK(map(0x7000, VIRT, paging::FLAGS::WRITABLE));
 	IGROS_CHECK(0 == (entryAt(VIRT, paging::LEVELS - 1) & USER));
 	IGROS_CHECK(map(0x8000, VIRT + paging::PAGE_SIZE, paging::FLAGS::USER));
@@ -295,13 +300,13 @@ static void testUser() {
 static void testHuge() {
 	hw::reset();
 	hw::cr3 = static_cast<std::uintptr_t>(newTable());
-	constexpr auto VIRT	{std::uintptr_t {0x00C00000}};
-	const auto hugeSize	{paging::PAGE_SIZE << paging::INDEX_BITS};
+	constexpr auto VIRT {std::uintptr_t {0x00C00000}};
+	const auto     hugeSize {paging::PAGE_SIZE << paging::INDEX_BITS};
 	IGROS_CHECK(map(0x7000, VIRT));
 	// Neighbour large page in same directory
-	const auto hugeVirt	{(VIRT + hugeSize) & ~(hugeSize - 1)};
-	const auto hugePhys	{static_cast<paging::entry_t>(hugeSize) * 3};
-	entryAt(hugeVirt, 1)	= hugePhys | static_cast<paging::entry_t>(paging::FLAGS::HUGE) | static_cast<paging::entry_t>(paging::FLAGS::PRESENT);
+	const auto hugeVirt {(VIRT + hugeSize) & ~(hugeSize - 1)};
+	const auto hugePhys {static_cast<paging::entry_t>(hugeSize) * 3};
+	entryAt(hugeVirt, 1) = hugePhys | static_cast<paging::entry_t>(paging::FLAGS::HUGE) | static_cast<paging::entry_t>(paging::FLAGS::PRESENT);
 	IGROS_CHECK(hugePhys + 0x12345 == translate(hugeVirt + 0x12345));
 	IGROS_CHECK(!map(0x9000, hugeVirt + paging::PAGE_SIZE));
 	paging::unmap(static_cast<igros::mem::virt_t>(hugeVirt));
@@ -327,16 +332,16 @@ static void testNoMemory() {
 // Page fault handler reports reason and halts
 static void testFaultHandler() {
 	auto regs {igros::x86::register_t {}};
-	regs.number	= 14;
+	regs.number = 14;
 	hw::reset();
-	hw::cr2		= 0xDEAD000;
-	regs.param	= 0x02;
+	hw::cr2	   = 0xDEAD000;
+	regs.param = 0x02;
 	IGROS_CHECK_HALTS(paging::exHandler(&regs));
 	IGROS_CHECK(hw::printed("Name:\t\tPAGE FAULT"));
 	IGROS_CHECK(hw::printed("Address:\t0x000000000dead000"));
 	IGROS_CHECK(hw::printed("Reason:\t\tmissing page, write access, kernel mode\n"));
 	hw::reset();
-	regs.param	= 0x1D;
+	regs.param = 0x1D;
 	IGROS_CHECK_HALTS(paging::exHandler(&regs));
 	IGROS_CHECK(hw::printed("Reason:\t\tprotected page, read access, user mode, reserved bit set, instruction fetch"));
 }

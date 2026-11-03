@@ -2,7 +2,7 @@
 ///
 ///	@file
 ///	@brief		Kernel driver interface
-///	@date		28 Oct 2026
+///	@date		03 Nov 2026
 ///
 ///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
 ///			All rights reserved.
@@ -27,15 +27,14 @@ namespace igros::drivers {
 
 
 	/// @brief Driver init function (returns true on success)
-	using driverInit_t	= std::add_pointer_t<auto () noexcept -> bool>;
+	using driverInit_t = std::add_pointer_t<auto() noexcept -> bool>;
 
 
 	/// @brief Kernel driver description
 	struct driver_t {
 
-		const char*	name;		///< Driver name
-		driverInit_t	init;		///< Driver init function
-
+		const char*  name; ///< Driver name
+		driverInit_t init; ///< Driver init function
 	};
 
 
@@ -62,5 +61,5 @@ namespace igros::drivers {
 	}
 
 
-}	// namespace igros::drivers
+} // namespace igros::drivers
 

@@ -2,7 +2,7 @@
 ///
 ///	@file
 ///	@brief		IO low-level port operations
-///	@date		16 Dec 2022
+///	@date		03 Nov 2026
 ///
 ///	@copyright	Copyright (c) 2017 - 2022, Igor Baklykov
 ///			All rights reserved.
@@ -22,54 +22,54 @@ namespace igros::x86 {
 
 
 	/// @brief Define port data type which is 16bit word
-	using port_t	= igros_word_t;
+	using port_t = igros_word_t;
 
 
-}	// namespace igros::x86
+} // namespace igros::x86
 
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 
 extern "C" {
 
-#endif	// __cplusplus
+#endif // __cplusplus
 
 
 	/// @brief Read byte from port
 	/// @param addr Port
 	/// @return Read byte
 	[[nodiscard]]
-	auto	portRead8(const igros::x86::port_t addr) noexcept -> igros::igros_byte_t;
+	auto portRead8(const igros::x86::port_t addr) noexcept -> igros::igros_byte_t;
 	/// @brief Read word from port
 	/// @param addr Port
 	/// @return Read word
 	[[nodiscard]]
-	auto	portRead16(const igros::x86::port_t addr) noexcept -> igros::igros_word_t;
+	auto portRead16(const igros::x86::port_t addr) noexcept -> igros::igros_word_t;
 	/// @brief Read long from port
 	/// @param addr Port
 	/// @return Read long
 	[[nodiscard]]
-	auto	portRead32(const igros::x86::port_t addr) noexcept -> igros::igros_dword_t;
+	auto portRead32(const igros::x86::port_t addr) noexcept -> igros::igros_dword_t;
 
 	/// @brief Write byte to port
 	/// @param addr Port
 	/// @param value Written byte
-	void	portWrite8(const igros::x86::port_t addr, const igros::igros_byte_t value) noexcept;
+	void portWrite8(const igros::x86::port_t addr, const igros::igros_byte_t value) noexcept;
 	/// @brief Write word to port
 	/// @param addr Port
 	/// @param value Written word
-	void	portWrite16(const igros::x86::port_t addr, const igros::igros_word_t value) noexcept;
+	void portWrite16(const igros::x86::port_t addr, const igros::igros_word_t value) noexcept;
 	/// @brief Write long to port
 	/// @param addr Port
 	/// @param value Written long
-	void	portWrite32(const igros::x86::port_t addr, const igros::igros_dword_t value) noexcept;
+	void portWrite32(const igros::x86::port_t addr, const igros::igros_dword_t value) noexcept;
 
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 
-}	// extern "C"
+} // extern "C"
 
-#endif	// __cplusplus
+#endif // __cplusplus
 
 
 // x86 architecture namespace
@@ -89,71 +89,69 @@ namespace igros::x86 {
 		/// @brief Copy c-tor
 		io(const io &other) = delete;
 		/// @brief Copy assignment
-		auto	operator=(const io &other) -> io& = delete;
+		auto operator=(const io &other) -> io & = delete;
 		/// @brief Move c-tor
 		io(io &&other) = delete;
 		/// @brief Move assignment
-		auto	operator=(io &&other) -> io& = delete;
+		auto operator=(io &&other) -> io & = delete;
 
 		/// @brief Read byte from port
 		/// @param addr Port
 		/// @return Read byte
 		[[nodiscard]]
-		static auto	readPort8(const port_t addr) noexcept -> igros_byte_t;
+		static auto readPort8(const port_t addr) noexcept -> igros_byte_t;
 		/// @brief Read word from port
 		/// @param addr Port
 		/// @return Read word
 		[[nodiscard]]
-		static auto	readPort16(const port_t addr) noexcept -> igros_word_t;
+		static auto readPort16(const port_t addr) noexcept -> igros_word_t;
 		/// @brief Read long from port
 		/// @param addr Port
 		/// @return Read long
 		[[nodiscard]]
-		static auto	readPort32(const port_t addr) noexcept -> igros_dword_t;
+		static auto readPort32(const port_t addr) noexcept -> igros_dword_t;
 
 		/// @brief Write byte to port
 		/// @param addr Port
 		/// @param value Written byte
-		static void	writePort8(const port_t addr, const igros_byte_t value) noexcept;
+		static void writePort8(const port_t addr, const igros_byte_t value) noexcept;
 		/// @brief Write word to port
 		/// @param addr Port
 		/// @param value Written word
-		static void	writePort16(const port_t addr, const igros_word_t value) noexcept;
+		static void writePort16(const port_t addr, const igros_word_t value) noexcept;
 		/// @brief Write long to port
 		/// @param addr Port
 		/// @param value Written long
-		static void	writePort32(const port_t addr, const igros_dword_t value) noexcept;
+		static void writePort32(const port_t addr, const igros_dword_t value) noexcept;
 
 		/// @brief Read byte from memory
 		/// @param addr Memory address (volatile access)
 		/// @return Read byte
 		[[nodiscard]]
-		static auto	readMemory8(const igros_byte_t* const addr) noexcept -> igros_byte_t;
+		static auto readMemory8(const igros_byte_t* const addr) noexcept -> igros_byte_t;
 		/// @brief Read word from memory
 		/// @param addr Memory address (volatile access)
 		/// @return Read word
 		[[nodiscard]]
-		static auto	readMemory16(const igros_word_t* const addr) noexcept -> igros_word_t;
+		static auto readMemory16(const igros_word_t* const addr) noexcept -> igros_word_t;
 		/// @brief Read long from memory
 		/// @param addr Memory address (volatile access)
 		/// @return Read long
 		[[nodiscard]]
-		static auto	readMemory32(const igros_dword_t* const addr) noexcept -> igros_dword_t;
+		static auto readMemory32(const igros_dword_t* const addr) noexcept -> igros_dword_t;
 
 		/// @brief Write byte to memory
 		/// @param addr Memory address (volatile access)
 		/// @param value Written byte
-		static void	writeMemory8(igros_byte_t* const addr, const igros_byte_t value) noexcept;
+		static void writeMemory8(igros_byte_t* const addr, const igros_byte_t value) noexcept;
 		/// @brief Write word to memory
 		/// @param addr Memory address (volatile access)
 		/// @param value Written word
-		static void	writeMemory16(igros_word_t* const addr, const igros_word_t value) noexcept;
+		static void writeMemory16(igros_word_t* const addr, const igros_word_t value) noexcept;
 		/// @brief Write long to memory
 		/// @param addr Memory address (volatile access)
 		/// @param value Written long
-		static void	writeMemory32(igros_dword_t* const addr, const igros_dword_t value) noexcept;
-
-
+		static void writeMemory32(igros_dword_t* const addr, const igros_dword_t value) noexcept;
 	};
 
 
@@ -227,5 +225,5 @@ namespace igros::x86 {
 	}
 
 
-}	// namespace igros::x86
+} // namespace igros::x86
 

@@ -3,7 +3,7 @@
 //	Programmable interval timer (8253/8254 PIT) driver tests
 //
 //	File:	test_pit.cpp
-//	Date:	19 Oct 2026
+//	Date:	03 Nov 2026
 //
 //	Copyright (c) 2017 - 2026, Igor Baklykov
 //	All rights reserved.
@@ -31,8 +31,8 @@ namespace hw = igros::test::hw;
 
 
 // PIT ports
-constexpr auto PIT_CHANNEL_0	{std::uint16_t {0x40}};
-constexpr auto PIT_CONTROL	{std::uint16_t {0x43}};
+constexpr auto PIT_CHANNEL_0 {std::uint16_t {0x40}};
+constexpr auto PIT_CONTROL {std::uint16_t {0x43}};
 
 
 // Channel 0 counter reads (low byte, high byte)
@@ -92,8 +92,8 @@ static void testTicks() {
 // Setup: IRQ 0 unmasked, time printed once per second of ticks
 static void testSetup() {
 	resetPIT();
-	hw::portValue[igros::x86::PIC_MASTER_DATA]	= 0xFF;
-	hw::portValue[igros::x86::PIC_SLAVE_DATA]	= 0xFF;
+	hw::portValue[igros::x86::PIC_MASTER_DATA] = 0xFF;
+	hw::portValue[igros::x86::PIC_SLAVE_DATA]  = 0xFF;
 	IGROS_CHECK(pitSetup());
 	IGROS_CHECK(0xFE == hw::portValue[igros::x86::PIC_MASTER_DATA]);
 	IGROS_CHECK(hw::printed("PIT frequency:\t100 Hz"));

@@ -2,7 +2,7 @@
 ///
 ///	@file
 ///	@brief		Global descriptor table low-level operations
-///	@date		19 Dec 2023
+///	@date		03 Nov 2026
 ///
 ///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
 ///			All rights reserved.
@@ -17,33 +17,32 @@
 #include <arch/i386/tss.hpp>
 
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 
 extern "C" {
 
-#endif	// __cplusplus
+#endif // __cplusplus
 
 
 	/// @brief Reset segments to apply new GDT
-	void	gdtResetSegments() noexcept;
+	void gdtResetSegments() noexcept;
 
 	/// @brief Load GDT
 	/// @param gdtPtr GDT pointer (size and address)
-	void	gdtLoad(const igros::i386::gdt::pointer_t* const gdtPtr) noexcept;
+	void gdtLoad(const igros::i386::gdt::pointer_t* const gdtPtr) noexcept;
 	/// @brief Store GDT
 	/// @param gdtPtr Stored GDT pointer
-	void	gdtStore(igros::i386::gdt::pointer_t* const gdtPtr) noexcept;
+	void gdtStore(igros::i386::gdt::pointer_t* const gdtPtr) noexcept;
 
 	/// @brief Load task register
 	/// @param selector TSS selector
-	void	tssLoad(const igros::igros_word_t selector) noexcept;
-	
+	void tssLoad(const igros::igros_word_t selector) noexcept;
 
-#ifdef	__cplusplus
 
+#ifdef __cplusplus
 }
 
-#endif	// __cplusplus
+#endif // __cplusplus
 
 
 // i386 namespace
@@ -79,8 +78,8 @@ namespace igros::i386 {
 
 		// Pointer to GDT
 		constinit static const gdt::pointer_t pointer {
-			.size		= gdt::calcSize(table),
-			.pointer	= table.data(),
+			.size	 = gdt::calcSize(table),
+			.pointer = table.data(),
 		};
 
 		// Task state segments: kernel task and double fault task
@@ -88,16 +87,15 @@ namespace igros::i386 {
 		const auto entry = [](const tss::segment_t &segment) noexcept {
 			return gdt::tssEntry(static_cast<igros_dword_t>(std::bit_cast<igros_usize_t>(&segment)), static_cast<igros_dword_t>(sizeof(segment) - 1_usize));
 		};
-		table[TSS / sizeof(entry_t)]			= entry(tss::kernel());
-		table[TSS_DOUBLE_FAULT / sizeof(entry_t)]	= entry(tss::doubleFault());
+		table[TSS / sizeof(entry_t)]		  = entry(tss::kernel());
+		table[TSS_DOUBLE_FAULT / sizeof(entry_t)] = entry(tss::doubleFault());
 
 		// Load new GDT
 		gdt::setPointer(pointer);
 		// Load task register (CPU marks TSS descriptor busy: GDT must stay writable)
 		::tssLoad(TSS);
-
 	}
 
 
-}	// namespace igros::i386
+} // namespace igros::i386
 

@@ -2,7 +2,7 @@
 ///
 ///	@file
 ///	@brief		Platform description for x86 family (i386 and x86_64)
-///	@date		28 Oct 2026
+///	@date		03 Nov 2026
 ///
 ///	@copyright	Copyright (c) 2017 - 2022, Igor Baklykov
 ///			All rights reserved.
@@ -19,13 +19,13 @@
 #include <arch/x86/native.hpp>
 #include <arch/x86/paging.hpp>
 
-#if	defined (IGROS_ARCH_i386)
+#if defined(IGROS_ARCH_i386)
 
 // IgrOS-Kernel arch i386
 #include <arch/i386/gdt.hpp>
 #include <arch/i386/idt.hpp>
 
-#elif	defined (IGROS_ARCH_x86_64)
+#elif defined(IGROS_ARCH_x86_64)
 
 // IgrOS-Kernel arch x86_64
 #include <arch/x86_64/gdt.hpp>
@@ -67,10 +67,10 @@ namespace igros::x86 {
 
 		// Platform drivers (in init order)
 		constexpr auto DRIVERS = std::to_array<drivers::driver_t>({
-			{.name = "VGA",		.init = arch::vmemInit},
-			{.name = "UART",	.init = arch::serialSetup},
-			{.name = "Keyboard",	.init = arch::keyboardSetup},
-			{.name = "RTC",		.init = arch::rtcSetup},
+			{.name = "VGA", .init = arch::vmemInit},
+			{.name = "UART", .init = arch::serialSetup},
+			{.name = "Keyboard", .init = arch::keyboardSetup},
+			{.name = "RTC", .init = arch::rtcSetup},
 			// PIT prints time every second, enable when needed
 			//{.name = "PIT",	.init = arch::pitSetup},
 		});
@@ -85,7 +85,6 @@ namespace igros::x86 {
 			"[%s]\n",
 			std::source_location::current().function_name()
 		);
-
 	}
 
 	/// @brief Finalize x86
@@ -134,7 +133,7 @@ namespace igros::x86 {
 	}
 
 
-}	// namespace igros::x86
+} // namespace igros::x86
 
 
 // OS platform
@@ -143,7 +142,7 @@ namespace igros::platform {
 
 	// Get kernel current platform
 	[[nodiscard]]
-	auto Platform::current() noexcept -> const Platform& {
+	auto Platform::current() noexcept -> const Platform & {
 		// Current x86 platform (constant-initialized, no runtime init)
 		constinit static const Platform platform {
 			x86::ARCH_NAME,
@@ -159,5 +158,5 @@ namespace igros::platform {
 	}
 
 
-}	// namespace igros::platform
+} // namespace igros::platform
 

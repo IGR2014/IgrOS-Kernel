@@ -2,7 +2,7 @@
 ///
 ///	@file
 ///	@brief		Interrupt service routines low-level operations
-///	@date		19 Dec 2023
+///	@date		03 Nov 2026
 ///
 ///	@copyright	Copyright (c) 2017 - 2022, Igor Baklykov
 ///			All rights reserved.
@@ -40,14 +40,14 @@ namespace igros::x86 {
 	}
 
 
-}	// namespace igros::x86
+} // namespace igros::x86
 
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 
 extern "C" {
 
-#endif	// __cplusplus
+#endif // __cplusplus
 
 
 	/// @brief Interrupts handler function (called from isr.s)
@@ -81,7 +81,7 @@ extern "C" {
 			igros::x86::irq::disable();
 			// Debug
 			igros::klib::kprintf(
-R"unhandled(
+				R"unhandled(
 %s -> [#%d]
 	UNHANDLED! CPU halted!
 )unhandled",
@@ -96,9 +96,9 @@ R"unhandled(
 	}
 
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 
-}	// extern "C"
+} // extern "C"
 
-#endif	// __cplusplus
+#endif // __cplusplus
 

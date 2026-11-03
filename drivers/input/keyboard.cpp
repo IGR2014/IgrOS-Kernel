@@ -2,7 +2,7 @@
 ///
 ///	@file
 ///	@brief		Keyboard generic handling
-///	@date		12 Mar 2023
+///	@date		03 Nov 2026
 ///
 ///	@copyright	Copyright (c) 2017 - 2022, Igor Baklykov
 ///			All rights reserved.
@@ -26,8 +26,8 @@ namespace igros::arch {
 
 
 	// Keyboard ports
-	constexpr auto KEYBOARD_CONTROL	{static_cast<port_t>(0x0064_u16)};	///< Controller status/command port
-	constexpr auto KEYBOARD_DATA	{static_cast<port_t>(0x0060_u16)};	///< Data port
+	constexpr auto KEYBOARD_CONTROL {static_cast<port_t>(0x0064_u16)}; ///< Controller status/command port
+	constexpr auto KEYBOARD_DATA {static_cast<port_t>(0x0060_u16)};	   ///< Data port
 
 
 	/// @brief Keyboard interrupt (#1) handler
@@ -60,9 +60,8 @@ namespace igros::arch {
 
 		// Success
 		return true;
-
 	}
 
 
-}	// namespace igros::arch
+} // namespace igros::arch
 

@@ -2,7 +2,7 @@
 ///
 ///	@file
 ///	@brief		Exceptions low-level operations
-///	@date		16 Mar 2023
+///	@date		03 Nov 2026
 ///
 ///	@copyright	Copyright (c) 2017 - 2022, Igor Baklykov
 ///			All rights reserved.
@@ -27,25 +27,25 @@ namespace igros::x86 {
 		// Using enum
 		using enum except::NUMBER;
 		// Set default exception handlers
-		except::install<DIVIDE_BY_ZERO,			except::defaultHandler>();
-		except::install<DEBUG,				except::defaultHandler>();
-		except::install<NON_MASKABLE_IRQ,		except::defaultHandler>();
-		except::install<BREAKPOINT,			except::defaultHandler>();
-		except::install<INTO_DETECTED_OVERFLOW,		except::defaultHandler>();
-		except::install<BOUND_RANGE_EXCEEDED,		except::defaultHandler>();
-		except::install<INVALID_OPCODE,			except::defaultHandler>();
-		except::install<NO_COPROCESSOR,			except::defaultHandler>();
-		except::install<DOUBLE_FAULT,			except::defaultHandler>();
-		except::install<COPROCESSOR_SEGMENT_OVERRUN,	except::defaultHandler>();
-		except::install<INVALID_TSS,			except::defaultHandler>();
-		except::install<SEGMENT_NOT_PRESENT,		except::defaultHandler>();
-		except::install<STACK_FAULT,			except::defaultHandler>();
-		except::install<GENERAL_PROTECTION_FAULT,	except::defaultHandler>();
-		except::install<PAGE_FAULT,			except::defaultHandler>();
-		except::install<UNKNOWN_IRQ,			except::defaultHandler>();
-		except::install<COPROCESSOR_FAULT,		except::defaultHandler>();
-		except::install<ALIGNMENT_CHECK,		except::defaultHandler>();
-		except::install<MACHINE_CHECK,			except::defaultHandler>();
+		except::install<DIVIDE_BY_ZERO, except::defaultHandler>();
+		except::install<DEBUG, except::defaultHandler>();
+		except::install<NON_MASKABLE_IRQ, except::defaultHandler>();
+		except::install<BREAKPOINT, except::defaultHandler>();
+		except::install<INTO_DETECTED_OVERFLOW, except::defaultHandler>();
+		except::install<BOUND_RANGE_EXCEEDED, except::defaultHandler>();
+		except::install<INVALID_OPCODE, except::defaultHandler>();
+		except::install<NO_COPROCESSOR, except::defaultHandler>();
+		except::install<DOUBLE_FAULT, except::defaultHandler>();
+		except::install<COPROCESSOR_SEGMENT_OVERRUN, except::defaultHandler>();
+		except::install<INVALID_TSS, except::defaultHandler>();
+		except::install<SEGMENT_NOT_PRESENT, except::defaultHandler>();
+		except::install<STACK_FAULT, except::defaultHandler>();
+		except::install<GENERAL_PROTECTION_FAULT, except::defaultHandler>();
+		except::install<PAGE_FAULT, except::defaultHandler>();
+		except::install<UNKNOWN_IRQ, except::defaultHandler>();
+		except::install<COPROCESSOR_FAULT, except::defaultHandler>();
+		except::install<ALIGNMENT_CHECK, except::defaultHandler>();
+		except::install<MACHINE_CHECK, except::defaultHandler>();
 	}
 
 
@@ -66,5 +66,5 @@ namespace igros::x86 {
 	}
 
 
-}	// namespace igros::x86
+} // namespace igros::x86
 

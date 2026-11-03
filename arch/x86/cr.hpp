@@ -2,7 +2,7 @@
 ///
 ///	@file
 ///	@brief		CR0 - CR4 registers operations
-///	@date		16 Dec 2022
+///	@date		03 Nov 2026
 ///
 ///	@copyright	Copyright (c) 2017 - 2022, Igor Baklykov
 ///			All rights reserved.
@@ -17,48 +17,48 @@
 #include <arch/types.hpp>
 
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 
 extern "C" {
 
-#endif	// __cplusplus
+#endif // __cplusplus
 
 
 	/// @brief Read CR0 register
 	/// @return CR0 value
 	[[nodiscard]]
-	auto	readCR0() noexcept -> igros::igros_usize_t;
+	auto readCR0() noexcept -> igros::igros_usize_t;
 	/// @brief Read CR2 register
 	/// @return CR2 value
 	[[nodiscard]]
-	auto	readCR2() noexcept -> igros::igros_usize_t;
+	auto readCR2() noexcept -> igros::igros_usize_t;
 	/// @brief Read CR3 register
 	/// @return CR3 value
 	[[nodiscard]]
-	auto	readCR3() noexcept -> igros::igros_usize_t;
+	auto readCR3() noexcept -> igros::igros_usize_t;
 	/// @brief Read CR4 register
 	/// @return CR4 value
 	[[nodiscard]]
-	auto	readCR4() noexcept -> igros::igros_usize_t;
+	auto readCR4() noexcept -> igros::igros_usize_t;
 
 	/// @brief Write CR0 register
 	/// @param value New CR0 value
-	void	writeCR0(const igros::igros_usize_t value) noexcept;
+	void writeCR0(const igros::igros_usize_t value) noexcept;
 	/// @brief Write CR3 register
 	/// @param value New CR3 value
-	void	writeCR3(const igros::igros_usize_t value) noexcept;
+	void writeCR3(const igros::igros_usize_t value) noexcept;
 	/// @brief Write CR4 register
 	/// @param value New CR4 value
-	void	writeCR4(const igros::igros_usize_t value) noexcept;
+	void writeCR4(const igros::igros_usize_t value) noexcept;
 
 	/// @brief Invalidate TLB entry of page
 	/// @param page Virtual address inside the page
-	void	pageInvalidate(const void* const page) noexcept;
+	void pageInvalidate(const void* const page) noexcept;
 
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 
-}	// extern "C"
+} // extern "C"
 
-#endif	// __cplusplus
+#endif // __cplusplus
 

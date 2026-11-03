@@ -2,7 +2,7 @@
 ///
 ///	@file
 ///	@brief		Paging (i386 2-level and x86_64 4-level page tables)
-///	@date		02 Nov 2026
+///	@date		03 Nov 2026
 ///
 ///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
 ///			All rights reserved.
@@ -39,10 +39,10 @@ namespace igros::x86 {
 
 
 		/// @brief CR0 write protection bit (kernel can't write to read-only pages)
-		constexpr auto CR0_WP	{igros_usize_t {0x00010000}};
+		constexpr auto CR0_WP {igros_usize_t {0x00010000}};
 
 		/// @brief NX bit value if no-execute is enabled (else 0: NX can't be used)
-		constinit paging::entry_t	noExecute	{0};
+		constinit paging::entry_t noExecute {0};
 
 
 
@@ -53,7 +53,7 @@ namespace igros::x86 {
 		}
 
 
-	}	// namespace
+	} // namespace
 
 
 	/// @brief Entry flag value
@@ -199,8 +199,8 @@ namespace igros::x86 {
 	// Physical address of virtual address (INVALID if not mapped)
 	[[nodiscard]]
 	auto paging::translate(const mem::virt_t virt) noexcept -> mem::phys_t {
-		const auto address	{static_cast<mem::phys_t>(mem::address(virt))};
-		const auto* entries	{paging::table(paging::root())};
+		const auto  address {static_cast<mem::phys_t>(mem::address(virt))};
+		const auto* entries {paging::table(paging::root())};
 		for (auto step {0_usize}; step < LEVELS; ++step) {
 			const auto level {LEVELS - 1_usize - step};
 			// Check entries of current level
@@ -278,10 +278,10 @@ namespace igros::x86 {
 		// Low memory: at kernel offset with kernel section rights and identity (boot data);
 		// identity null page stays unmapped to catch null pointer dereference,
 		// boot stack guard page stays unmapped to catch kernel stack overflow
-		const auto data		{klib::make_kflags<FLAGS>(FLAGS::PRESENT, FLAGS::WRITABLE, FLAGS::NO_EXECUTE)};
-		const auto offset	{platform::Platform::kernelOffset()};
-		const auto guard	{static_cast<mem::phys_t>(std::bit_cast<igros_usize_t>(platform::Platform::stackGuard()) - offset)};
-		auto mapped		{true};
+		const auto data {klib::make_kflags<FLAGS>(FLAGS::PRESENT, FLAGS::WRITABLE, FLAGS::NO_EXECUTE)};
+		const auto offset {platform::Platform::kernelOffset()};
+		const auto guard {static_cast<mem::phys_t>(std::bit_cast<igros_usize_t>(platform::Platform::stackGuard()) - offset)};
+		auto	   mapped {true};
 		for (auto phys {0_u64}; phys < mem::LOW_MEMORY_LIMIT; phys += PAGE_SIZE) {
 			const auto page {static_cast<igros_usize_t>(phys)};
 			if (guard != phys) {
@@ -317,7 +317,6 @@ namespace igros::x86 {
 			static_cast<unsigned long long>(end >> 20),
 			(0_usize != noExecute) ? ", NX" : ""
 		);
-
 	}
 
 
@@ -325,9 +324,9 @@ namespace igros::x86 {
 	[[nodiscard]]
 	auto paging::selfTest() noexcept -> bool {
 		// Scratch page in dynamic mappings area (right above direct map)
-		auto* const page	{paging::dynamicStart()};
-		const auto virt	{mem::virtOf(page)};
-		const auto phys	{mem::phys::alloc(mem::direct::end())};
+		auto* const page {paging::dynamicStart()};
+		const auto  virt {mem::virtOf(page)};
+		const auto  phys {mem::phys::alloc(mem::direct::end())};
 		if (0_u64 == phys) [[unlikely]] {
 			return false;
 		}
@@ -338,16 +337,16 @@ namespace igros::x86 {
 			return false;
 		}
 		auto passed =
-			(INVALID == paging::translate(virt))						&&
-			(INVALID == paging::translate(mem::virt_t {0}))					&&
-			paging::map(phys, virt, klib::make_kflags<FLAGS>(FLAGS::PRESENT, FLAGS::WRITABLE, FLAGS::NO_EXECUTE))	&&
+			(INVALID == paging::translate(virt)) &&
+			(INVALID == paging::translate(mem::virt_t {0})) &&
+			paging::map(phys, virt, klib::make_kflags<FLAGS>(FLAGS::PRESENT, FLAGS::WRITABLE, FLAGS::NO_EXECUTE)) &&
 			(phys + 0x123_u64 == paging::translate(virt + 0x123));
 		if (passed) {
 			// Write through new mapping, read through direct map alias
 			static_cast<volatile igros_byte_t*>(page)[0x123] = 0x5A_u8;
-			passed = (0x5A_u8 == alias[0x123]);
-			alias[0x456] = 0xA5_u8;
-			passed = passed && (0xA5_u8 == static_cast<volatile igros_byte_t*>(page)[0x456]);
+			passed						 = (0x5A_u8 == alias[0x123]);
+			alias[0x456]					 = 0xA5_u8;
+			passed						 = passed && (0xA5_u8 == static_cast<volatile igros_byte_t*>(page)[0x456]);
 		}
 		paging::unmap(virt);
 		passed = passed && (INVALID == paging::translate(virt));
@@ -364,7 +363,7 @@ namespace igros::x86 {
 		// Error code bits
 		const auto error {static_cast<igros_usize_t>(regs->param)};
 		klib::kprintf(
-R"exception(
+			R"exception(
 EXCEPTION [#%zu]
 Name:		%s
 Address:	0x%016zx
@@ -373,11 +372,11 @@ Reason:		%s page, %s access, %s mode%s%s
 			regs->number,
 			except::NAME[regs->number],
 			::readCR2(),
-			(0_usize != (error & 0x01_usize)) ? "protected"	: "missing",
-			(0_usize != (error & 0x02_usize)) ? "write"	: "read",
-			(0_usize != (error & 0x04_usize)) ? "user"	: "kernel",
-			(0_usize != (error & 0x08_usize)) ? ", reserved bit set"	: "",
-			(0_usize != (error & 0x10_usize)) ? ", instruction fetch"	: ""
+			(0_usize != (error & 0x01_usize)) ? "protected" : "missing",
+			(0_usize != (error & 0x02_usize)) ? "write" : "read",
+			(0_usize != (error & 0x04_usize)) ? "user" : "kernel",
+			(0_usize != (error & 0x08_usize)) ? ", reserved bit set" : "",
+			(0_usize != (error & 0x10_usize)) ? ", instruction fetch" : ""
 		);
 		// Dump registers and hang CPU
 		cpu::dumpRegisters(regs);
@@ -385,5 +384,5 @@ Reason:		%s page, %s access, %s mode%s%s
 	}
 
 
-}	// namespace igros::x86
+} // namespace igros::x86
 

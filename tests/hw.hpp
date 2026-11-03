@@ -3,7 +3,7 @@
 //	Fake hardware state for host unit tests (see stubs/cpu.cpp)
 //
 //	File:	hw.hpp
-//	Date:	19 Oct 2026
+//	Date:	03 Nov 2026
 //
 //	Copyright (c) 2017 - 2026, Igor Baklykov
 //	All rights reserved.
@@ -27,9 +27,9 @@
 
 
 // Kernel symbol name (with platform label prefix) for inline assembly
-#define IGROS_TEST_STR2(x)		#x
-#define IGROS_TEST_STR(x)		IGROS_TEST_STR2(x)	// NOLINT(cppcoreguidelines-macro-usage): stringizes macro value
-#define IGROS_TEST_SYMBOL(name)		IGROS_TEST_STR(__USER_LABEL_PREFIX__) #name
+#define IGROS_TEST_STR2(x) #x
+#define IGROS_TEST_STR(x) IGROS_TEST_STR2(x) // NOLINT(cppcoreguidelines-macro-usage): stringizes macro value
+#define IGROS_TEST_SYMBOL(name) IGROS_TEST_STR(__USER_LABEL_PREFIX__) #name
 
 
 // Fake hardware namespace
@@ -38,70 +38,70 @@ namespace igros::test::hw {
 
 	// Port access record
 	struct portAccess {
-		std::uint16_t	port;		// Port address
-		std::uint32_t	value;		// Value read or written
-		bool		write;		// Write access
+		std::uint16_t port;  // Port address
+		std::uint32_t value; // Value read or written
+		bool	      write; // Write access
 	};
 
 	// All port accesses in order
-	inline std::vector<portAccess>				portLog;
+	inline std::vector<portAccess>			   portLog;
 	// Port values: reads return last written (or preset) value, like registers
-	inline std::map<std::uint16_t, std::uint32_t>		portValue;
+	inline std::map<std::uint16_t, std::uint32_t>	   portValue;
 	// Optional device model: overrides port reads
-	inline std::function<std::uint32_t (std::uint16_t)>	portReadHook;
+	inline std::function<std::uint32_t(std::uint16_t)> portReadHook;
 
 	// Interrupts flag
-	inline bool			irqEnabled	{false};
+	inline bool			irqEnabled {false};
 	// Control registers
-	inline std::uintptr_t		cr0		{0};
-	inline std::uintptr_t		cr2		{0};
-	inline std::uintptr_t		cr3		{0};
+	inline std::uintptr_t		cr0 {0};
+	inline std::uintptr_t		cr2 {0};
+	inline std::uintptr_t		cr3 {0};
 	// CPU supports no-execute pages (cpuEnableNoExecute result)
-	inline bool			noExecute	{false};
+	inline bool			noExecute {false};
 	// Invalidated TLB entries
-	inline std::vector<const void*>	invalidated;
+	inline std::vector<const void*> invalidated;
 
 	// Console output (kprintf through VGA stub)
-	inline std::string		console;
+	inline std::string console;
 
 	// Descriptor tables passed to CPU (lgdt/lidt operands) and task register (ltr)
-	inline const void*		gdtPointer	{nullptr};
-	inline const void*		idtPointer	{nullptr};
-	inline std::uint16_t		taskRegister	{0};
+	inline const void*   gdtPointer {nullptr};
+	inline const void*   idtPointer {nullptr};
+	inline std::uint16_t taskRegister {0};
 
 	// CPUID results by leaf (EAX, EBX, ECX, EDX; missing leaf reads zeros)
 	// cppcheck-suppress-begin unusedStructMember ; register set, tests read the registers they need
 	struct cpuidRegs {
-		std::uint32_t	eax;
-		std::uint32_t	ebx;
-		std::uint32_t	ecx;
-		std::uint32_t	edx;
+		std::uint32_t eax;
+		std::uint32_t ebx;
+		std::uint32_t ecx;
+		std::uint32_t edx;
 	};
 	// cppcheck-suppress-end unusedStructMember
-	inline std::map<std::uint32_t, cpuidRegs>	cpuid;
+	inline std::map<std::uint32_t, cpuidRegs>     cpuid;
 	// Model specific registers (missing register reads zero)
-	inline std::map<std::uint32_t, std::uint64_t>	msr;
+	inline std::map<std::uint32_t, std::uint64_t> msr;
 
 	// CPU halt jumps back to IGROS_CHECK_HALTS
-	inline std::jmp_buf		haltJump;
-	inline bool			haltArmed	{false};
+	inline std::jmp_buf haltJump;
+	inline bool	    haltArmed {false};
 
 
 	// Reset fake hardware
 	inline void reset() {
 		portLog.clear();
 		portValue.clear();
-		portReadHook	= nullptr;
-		irqEnabled	= false;
-		cr0		= 0;
-		cr2		= 0;
-		cr3		= 0;
-		noExecute	= false;
+		portReadHook = nullptr;
+		irqEnabled   = false;
+		cr0	     = 0;
+		cr2	     = 0;
+		cr3	     = 0;
+		noExecute    = false;
 		invalidated.clear();
 		console.clear();
-		gdtPointer	= nullptr;
-		idtPointer	= nullptr;
-		taskRegister	= 0;
+		gdtPointer   = nullptr;
+		idtPointer   = nullptr;
+		taskRegister = 0;
 		cpuid.clear();
 		msr.clear();
 	}
@@ -125,18 +125,18 @@ namespace igros::test::hw {
 	}
 
 
-}	// namespace igros::test::hw
+} // namespace igros::test::hw
 
 
 // Check statement halts CPU (cpuHalt), continue after it
-#define IGROS_CHECK_HALTS(statement)									\
-	do {												\
-		igros::test::hw::haltArmed = true;							\
-		if (0 == setjmp(igros::test::hw::haltJump)) {						\
-			statement;									\
-			++igros::test::failures;							\
-			std::printf("%s:%d: did not halt: %s\n", __FILE__, __LINE__, #statement);	\
-		}											\
-		igros::test::hw::haltArmed = false;							\
+#define IGROS_CHECK_HALTS(statement) \
+	do { \
+		igros::test::hw::haltArmed = true; \
+		if (0 == setjmp(igros::test::hw::haltJump)) { \
+			statement; \
+			++igros::test::failures; \
+			std::printf("%s:%d: did not halt: %s\n", __FILE__, __LINE__, #statement); \
+		} \
+		igros::test::hw::haltArmed = false; \
 	} while (false)
 
