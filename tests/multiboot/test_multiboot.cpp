@@ -33,14 +33,16 @@ namespace hw = igros::test::hw;
 
 
 // Kernel image symbols: 8 KB kernel at 1 MB, no kernel offset
+// clang-format off
 asm(
 	".globl " IGROS_TEST_SYMBOL(KERNEL_OFFSET_VIRT) "; "
-							".set " IGROS_TEST_SYMBOL(KERNEL_OFFSET_VIRT) ", 0; "
-												      ".globl " IGROS_TEST_SYMBOL(_SECTION_KERNEL_START_) "; "
-																			  ".set " IGROS_TEST_SYMBOL(_SECTION_KERNEL_START_) ", 0x100000; "
-																									    ".globl " IGROS_TEST_SYMBOL(_SECTION_KERNEL_END_) "; "
-																															      ".set " IGROS_TEST_SYMBOL(_SECTION_KERNEL_END_) ", 0x102000"
+	".set " IGROS_TEST_SYMBOL(KERNEL_OFFSET_VIRT) ", 0; "
+	".globl " IGROS_TEST_SYMBOL(_SECTION_KERNEL_START_) "; "
+	".set " IGROS_TEST_SYMBOL(_SECTION_KERNEL_START_) ", 0x100000; "
+	".globl " IGROS_TEST_SYMBOL(_SECTION_KERNEL_END_) "; "
+	".set " IGROS_TEST_SYMBOL(_SECTION_KERNEL_END_) ", 0x102000"
 );
+// clang-format on
 
 
 // Current platform (normally from platform-x86.cpp)

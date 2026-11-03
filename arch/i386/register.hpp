@@ -108,32 +108,33 @@ namespace igros::i386 {
 #pragma pack(push, 1)
 
 	/// @brief x86 task switch registers save
+	/// @details Stack layout, lowest address first:
+	/// - gs .. ds: segment registers pushed by isr.s
+	/// - edi .. eax: general registers pushed by pushal (isr.s)
+	/// - number: exception number pushed by entry stub
+	/// - param: error code pushed by processor (or 0x00 pushed by entry stub)
+	/// - eip .. ss: pushed by processor
 	struct register_t {
 
-		// Segment registers pushed by us
-		igros_dword_t gs; ///< Extra3 segment register
-		igros_dword_t fs; ///< Extra2 segment register
-		igros_dword_t es; ///< Extra segment register
-		igros_dword_t ds; ///< Data segment register
-		// "All" registers pushed by pushal instruction
-		igros_dword_t edi; ///< Destination index register
-		igros_dword_t esi; ///< Source index register
-		igros_dword_t ebp; ///< Stack base pointer register
-		igros_dword_t esp; ///< Stack pointer register
-		igros_dword_t ebx; ///< Base register
-		igros_dword_t edx; ///< Data register
-		igros_dword_t ecx; ///< Counter register
-		igros_dword_t eax; ///< Accumulator register
-		// Exception number pushed by us
-		igros_dword_t number; ///< Exception number
-		// Param pushed by processor or (0x00) by us
-		igros_dword_t param; ///< Exception param (or null if no param provided)
-		// This pushed to stack by processor
-		igros_dword_t eip;     ///< Instruction pointer register
-		igros_dword_t cs;      ///< Code segment register
-		igros_dword_t eflags;  ///< Flags register
-		igros_dword_t userEsp; ///< User stack pointer register
-		igros_dword_t ss;      ///< Stack segment register
+		igros_dword_t	gs;		///< Extra3 segment register
+		igros_dword_t	fs;		///< Extra2 segment register
+		igros_dword_t	es;		///< Extra segment register
+		igros_dword_t	ds;		///< Data segment register
+		igros_dword_t	edi;		///< Destination index register
+		igros_dword_t	esi;		///< Source index register
+		igros_dword_t	ebp;		///< Stack base pointer register
+		igros_dword_t	esp;		///< Stack pointer register
+		igros_dword_t	ebx;		///< Base register
+		igros_dword_t	edx;		///< Data register
+		igros_dword_t	ecx;		///< Counter register
+		igros_dword_t	eax;		///< Accumulator register
+		igros_dword_t	number;		///< Exception number
+		igros_dword_t	param;		///< Exception param (or null if no param provided)
+		igros_dword_t	eip;		///< Instruction pointer register
+		igros_dword_t	cs;		///< Code segment register
+		igros_dword_t	eflags;		///< Flags register
+		igros_dword_t	userEsp;	///< User stack pointer register
+		igros_dword_t	ss;		///< Stack segment register
 	};
 
 #pragma pack(pop)

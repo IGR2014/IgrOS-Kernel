@@ -80,8 +80,7 @@ extern "C" {
 			// Disable interrupts
 			igros::x86::irq::disable();
 			// Debug
-			igros::klib::kprintf(
-				R"unhandled(
+			igros::klib::kprintf(R"unhandled(
 %s -> [#%d]
 	UNHANDLED! CPU halted!
 )unhandled",

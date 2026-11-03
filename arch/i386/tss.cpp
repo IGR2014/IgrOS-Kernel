@@ -72,8 +72,7 @@ namespace igros::i386 {
 		[[noreturn]]
 		void doubleFaultTask() noexcept {
 			const auto &state {tss::kernel()};
-			klib::kprintf(
-				R"exception(
+			klib::kprintf(R"exception(
 EXCEPTION [#8]
 Name:		DOUBLE FAULT (double fault task)
 EIP:		0x%08x

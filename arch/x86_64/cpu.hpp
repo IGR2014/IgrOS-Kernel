@@ -86,8 +86,7 @@ namespace igros::x86_64 {
 			return static_cast<unsigned long long>(value);
 		};
 		// Print regs
-		klib::kprintf(
-			R"registers(
+		klib::kprintf(R"registers(
 Registers dump:
 RAX=[%016llx] RBX=[%016llx] RCX=[%016llx] RDX=[%016llx]
 R8 =[%016llx] R9 =[%016llx] R10=[%016llx] R11=[%016llx]

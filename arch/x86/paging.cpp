@@ -362,8 +362,7 @@ namespace igros::x86 {
 		irq::disable();
 		// Error code bits
 		const auto error {static_cast<igros_usize_t>(regs->param)};
-		klib::kprintf(
-			R"exception(
+		klib::kprintf(R"exception(
 EXCEPTION [#%zu]
 Name:		%s
 Address:	0x%016zx

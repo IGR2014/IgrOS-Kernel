@@ -35,22 +35,24 @@ namespace hw = igros::test::hw;
 constexpr auto KERNEL_OFFSET {std::uintptr_t {IGROS_TEST_KERNEL_OFFSET}};
 constexpr auto LOW_MEMORY {static_cast<std::size_t>(igros::mem::LOW_MEMORY_LIMIT)};
 
+// clang-format off
 asm(
 	".globl " IGROS_TEST_SYMBOL(KERNEL_OFFSET_VIRT) "; "
-							".set " IGROS_TEST_SYMBOL(KERNEL_OFFSET_VIRT) ", " IGROS_TEST_STR(IGROS_TEST_KERNEL_OFFSET) "; "
-																		    ".globl " IGROS_TEST_SYMBOL(_SECTION_KERNEL_START_) "; "
-																									".set " IGROS_TEST_SYMBOL(_SECTION_KERNEL_START_) ", " IGROS_TEST_STR(IGROS_TEST_KERNEL_OFFSET) " + 0x100000; "
-																																					".globl " IGROS_TEST_SYMBOL(_SECTION_TEXT_START_) "; "
-																																											  ".set " IGROS_TEST_SYMBOL(_SECTION_TEXT_START_) ", " IGROS_TEST_STR(IGROS_TEST_KERNEL_OFFSET) " + 0x100000; "
-																																																							".globl " IGROS_TEST_SYMBOL(_SECTION_RODATA_START_) "; "
-																																																													    ".set " IGROS_TEST_SYMBOL(_SECTION_RODATA_START_) ", " IGROS_TEST_STR(IGROS_TEST_KERNEL_OFFSET) " + 0x103000; "
-																																																																									    ".globl " IGROS_TEST_SYMBOL(_SECTION_DATA_START_) "; "
-																																																																															      ".set " IGROS_TEST_SYMBOL(_SECTION_DATA_START_) ", " IGROS_TEST_STR(IGROS_TEST_KERNEL_OFFSET) " + 0x105000; "
-																																																																																											    ".globl " IGROS_TEST_SYMBOL(_KERNEL_STACK_GUARD_) "; "
-																																																																																																	      ".set " IGROS_TEST_SYMBOL(_KERNEL_STACK_GUARD_) ", " IGROS_TEST_STR(IGROS_TEST_KERNEL_OFFSET) " + 0x106000; "
-																																																																																																													    ".globl " IGROS_TEST_SYMBOL(_SECTION_KERNEL_END_) "; "
-																																																																																																																			      ".set " IGROS_TEST_SYMBOL(_SECTION_KERNEL_END_) ", " IGROS_TEST_STR(IGROS_TEST_KERNEL_OFFSET) " + 0x108000"
+	".set " IGROS_TEST_SYMBOL(KERNEL_OFFSET_VIRT) ", " IGROS_TEST_STR(IGROS_TEST_KERNEL_OFFSET) "; "
+	".globl " IGROS_TEST_SYMBOL(_SECTION_KERNEL_START_) "; "
+	".set " IGROS_TEST_SYMBOL(_SECTION_KERNEL_START_) ", " IGROS_TEST_STR(IGROS_TEST_KERNEL_OFFSET) " + 0x100000; "
+	".globl " IGROS_TEST_SYMBOL(_SECTION_TEXT_START_) "; "
+	".set " IGROS_TEST_SYMBOL(_SECTION_TEXT_START_) ", " IGROS_TEST_STR(IGROS_TEST_KERNEL_OFFSET) " + 0x100000; "
+	".globl " IGROS_TEST_SYMBOL(_SECTION_RODATA_START_) "; "
+	".set " IGROS_TEST_SYMBOL(_SECTION_RODATA_START_) ", " IGROS_TEST_STR(IGROS_TEST_KERNEL_OFFSET) " + 0x103000; "
+	".globl " IGROS_TEST_SYMBOL(_SECTION_DATA_START_) "; "
+	".set " IGROS_TEST_SYMBOL(_SECTION_DATA_START_) ", " IGROS_TEST_STR(IGROS_TEST_KERNEL_OFFSET) " + 0x105000; "
+	".globl " IGROS_TEST_SYMBOL(_KERNEL_STACK_GUARD_) "; "
+	".set " IGROS_TEST_SYMBOL(_KERNEL_STACK_GUARD_) ", " IGROS_TEST_STR(IGROS_TEST_KERNEL_OFFSET) " + 0x106000; "
+	".globl " IGROS_TEST_SYMBOL(_SECTION_KERNEL_END_) "; "
+	".set " IGROS_TEST_SYMBOL(_SECTION_KERNEL_END_) ", " IGROS_TEST_STR(IGROS_TEST_KERNEL_OFFSET) " + 0x108000"
 );
+// clang-format on
 
 // Fake kernel image layout (physical): code, read-only data, data + bss
 constexpr auto KERNEL_TEXT {std::uintptr_t {0x100000}};

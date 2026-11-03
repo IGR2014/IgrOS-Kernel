@@ -82,8 +82,7 @@ namespace igros::i386 {
 	/// @brief Dump CPU registers
 	inline void cpu::dumpRegisters(const register_t* const regs) noexcept {
 		// Print regs (32-bit values)
-		klib::kprintf(
-			R"registers(Registers dump:
+		klib::kprintf(R"registers(Registers dump:
 	EAX=[%08x] EBX=[%08x] ECX=[%08x] EDX=[%08x]
 	ESI=[%08x] EDI=[%08x] ESP=[%08x] EBP=[%08x]
 	EIP=[%08x] EFLAGS=[%08x]

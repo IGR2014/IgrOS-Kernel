@@ -33,14 +33,16 @@
 #define IGROS_STR(x) IGROS_STR2(x) // NOLINT(cppcoreguidelines-macro-usage): stringizes macro value
 #define IGROS_SYMBOL(name) IGROS_STR(__USER_LABEL_PREFIX__) #name
 
+// clang-format off
 asm(
 	".globl " IGROS_SYMBOL(KERNEL_OFFSET_VIRT) "; "
-						   ".set " IGROS_SYMBOL(KERNEL_OFFSET_VIRT) ", 0; "
-											    ".globl " IGROS_SYMBOL(_SECTION_KERNEL_START_) "; "
-																	   ".set " IGROS_SYMBOL(_SECTION_KERNEL_START_) ", 0; "
-																							".globl " IGROS_SYMBOL(_SECTION_KERNEL_END_) "; "
-																												     ".set " IGROS_SYMBOL(_SECTION_KERNEL_END_) ", 0"
+	".set " IGROS_SYMBOL(KERNEL_OFFSET_VIRT) ", 0; "
+	".globl " IGROS_SYMBOL(_SECTION_KERNEL_START_) "; "
+	".set " IGROS_SYMBOL(_SECTION_KERNEL_START_) ", 0; "
+	".globl " IGROS_SYMBOL(_SECTION_KERNEL_END_) "; "
+	".set " IGROS_SYMBOL(_SECTION_KERNEL_END_) ", 0"
 );
+// clang-format on
 
 
 using igros::mem::phys;

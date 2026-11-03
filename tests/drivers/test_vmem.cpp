@@ -28,10 +28,12 @@ extern "C" {
 	alignas(16) vmemSymbol vgaMemory[VIDEO_MEM_SIZE];
 }
 
+// clang-format off
 asm(
 	".globl " IGROS_TEST_SYMBOL(KERNEL_OFFSET_VIRT) "; "
-							".set " IGROS_TEST_SYMBOL(KERNEL_OFFSET_VIRT) ", " IGROS_TEST_SYMBOL(vgaMemory) " - 0xB8000"
+	".set " IGROS_TEST_SYMBOL(KERNEL_OFFSET_VIRT) ", " IGROS_TEST_SYMBOL(vgaMemory) " - 0xB8000"
 );
+// clang-format on
 
 
 // Cursor ports
