@@ -2,7 +2,7 @@
 ///
 ///	@file
 ///	@brief		RTC clock driver
-///	@date		02 Nov 2026
+///	@date		03 Nov 2026
 ///
 ///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
 ///			All rights reserved.
@@ -24,54 +24,54 @@ namespace igros::arch {
 
 
 	// CMOS ports
-	constexpr auto CMOS_COMMAND	{static_cast<port_t>(0x0070_u16)};	///< Register select port
-	constexpr auto CMOS_DATA	{static_cast<port_t>(CMOS_COMMAND + 1_u16)};	///< Data port
+	constexpr auto CMOS_COMMAND {static_cast<port_t>(0x0070_u16)};	      ///< Register select port
+	constexpr auto CMOS_DATA {static_cast<port_t>(CMOS_COMMAND + 1_u16)}; ///< Data port
 
 
 	// Clock from RTC conversion
 	[[nodiscard]]
 	auto clockFromRTC(const rtcDateTime_t &rtcDateTime, const igros_dword_t century) noexcept -> clockDateTime_t {
 		return clockDateTime_t {
-			.year		= rtcDateTime.date.year + century,
-			.month		= rtcDateTime.date.month,
-			.day		= rtcDateTime.date.day,
-			.weekday	= rtcDateTime.weekday,
-			.hour		= rtcDateTime.time.hour,
-			.minute		= rtcDateTime.time.minute,
-			.second		= rtcDateTime.time.second,
+			.year	 = rtcDateTime.date.year + century,
+			.month	 = rtcDateTime.date.month,
+			.day	 = rtcDateTime.date.day,
+			.weekday = rtcDateTime.weekday,
+			.hour	 = rtcDateTime.time.hour,
+			.minute	 = rtcDateTime.time.minute,
+			.second	 = rtcDateTime.time.second,
 		};
 	}
 
 
 	// RTC date/time commands
-	constexpr auto RTC_YEAR		{0x09_u8};	///< Year register
-	constexpr auto RTC_MONTH	{0x08_u8};	///< Month register
-	constexpr auto RTC_DAY		{0x07_u8};	///< Day of month register
-	constexpr auto RTC_WEEKDAY	{0x06_u8};	///< Day of week register
-	constexpr auto RTC_HOUR		{0x04_u8};	///< Hour register
-	constexpr auto RTC_MINUTE	{0x02_u8};	///< Minute register
-	constexpr auto RTC_SECOND	{0x00_u8};	///< Second register
+	constexpr auto RTC_YEAR {0x09_u8};    ///< Year register
+	constexpr auto RTC_MONTH {0x08_u8};   ///< Month register
+	constexpr auto RTC_DAY {0x07_u8};     ///< Day of month register
+	constexpr auto RTC_WEEKDAY {0x06_u8}; ///< Day of week register
+	constexpr auto RTC_HOUR {0x04_u8};    ///< Hour register
+	constexpr auto RTC_MINUTE {0x02_u8};  ///< Minute register
+	constexpr auto RTC_SECOND {0x00_u8};  ///< Second register
 
-	constexpr auto RTC_CENTURY	{0x32_u8};	///< Century register (ACPI FADT default)
+	constexpr auto RTC_CENTURY {0x32_u8}; ///< Century register (ACPI FADT default)
 
-	constexpr auto RTC_REGISTER_A	{0x0A_u8};	///< Status register A
-	constexpr auto RTC_REGISTER_B	{0x0B_u8};	///< Status register B
+	constexpr auto RTC_REGISTER_A {0x0A_u8}; ///< Status register A
+	constexpr auto RTC_REGISTER_B {0x0B_u8}; ///< Status register B
 
 	/// @brief Anonymous namespace
 	namespace {
 
 		/// @brief Register A bits
 		enum class RTC_A : igros_byte_t {
-			UPDATING	= 0x80_u8,	///< Date/time update in progress (values unstable)
+			UPDATING = 0x80_u8, ///< Date/time update in progress (values unstable)
 		};
 
 		/// @brief Register B bits
 		enum class RTC_B : igros_byte_t {
-			TIME_24		= 0x02_u8,	///< 24-hour format (12-hour otherwise, bit 7 of hour - PM)
-			BINARY		= 0x04_u8,	///< Binary values (BCD otherwise)
+			TIME_24 = 0x02_u8, ///< 24-hour format (12-hour otherwise, bit 7 of hour - PM)
+			BINARY	= 0x04_u8, ///< Binary values (BCD otherwise)
 		};
 
-	}	// namespace
+	} // namespace
 
 
 	// Read CMOS register
@@ -87,9 +87,9 @@ namespace igros::arch {
 	[[nodiscard]]
 	auto rtcReadDate() noexcept -> rtcDate_t {
 		return rtcDate_t {
-			.year	= rtcRead(RTC_YEAR),
-			.month	= rtcRead(RTC_MONTH),
-			.day	= rtcRead(RTC_DAY),
+			.year  = rtcRead(RTC_YEAR),
+			.month = rtcRead(RTC_MONTH),
+			.day   = rtcRead(RTC_DAY),
 		};
 	}
 
@@ -98,8 +98,8 @@ namespace igros::arch {
 	auto rtcReadTime() noexcept -> rtcTime_t {
 		return rtcTime_t {
 			.hour	= rtcRead(RTC_HOUR),
-			.minute	= rtcRead(RTC_MINUTE),
-			.second	= rtcRead(RTC_SECOND),
+			.minute = rtcRead(RTC_MINUTE),
+			.second = rtcRead(RTC_SECOND),
 		};
 	}
 
@@ -107,9 +107,9 @@ namespace igros::arch {
 	[[nodiscard]]
 	auto rtcReadDateTime() noexcept -> rtcDateTime_t {
 		return rtcDateTime_t {
-			.date		= rtcReadDate(),
-			.weekday	= rtcRead(RTC_WEEKDAY),
-			.time		= rtcReadTime(),
+			.date	 = rtcReadDate(),
+			.weekday = rtcRead(RTC_WEEKDAY),
+			.time	 = rtcReadTime(),
 		};
 	}
 
@@ -123,16 +123,16 @@ namespace igros::arch {
 
 	// Convert BCD date to binary
 	void rtcDateFromBCD(rtcDate_t &date) noexcept {
-		date.year	= rtcFromBCD(date.year);
-		date.month	= rtcFromBCD(date.month);
-		date.day	= rtcFromBCD(date.day);
+		date.year  = rtcFromBCD(date.year);
+		date.month = rtcFromBCD(date.month);
+		date.day   = rtcFromBCD(date.day);
 	}
 
 	// Convert BCD time to binary
 	void rtcTimeFromBCD(rtcTime_t &time) noexcept {
-		time.hour	= rtcFromBCD(time.hour);
-		time.minute	= rtcFromBCD(time.minute);
-		time.second	= rtcFromBCD(time.second);
+		time.hour   = rtcFromBCD(time.hour);
+		time.minute = rtcFromBCD(time.minute);
+		time.second = rtcFromBCD(time.second);
 	}
 
 	// Convert BCD date/time to binary
@@ -150,17 +150,17 @@ namespace igros::arch {
 			}
 			return rtcReadDateTime();
 		};
-		auto rtcDateTime	{readStable()};
-		auto lastDateTime	{readStable()};
+		auto rtcDateTime {readStable()};
+		auto lastDateTime {readStable()};
 		// Re-read until two reads match (update could happen between registers reads)
 		while (lastDateTime != rtcDateTime) {
-			lastDateTime	= rtcDateTime;
-			rtcDateTime	= readStable();
+			lastDateTime = rtcDateTime;
+			rtcDateTime  = readStable();
 		}
 		// Get RTC flags
-		const auto flags	{klib::kFlags<RTC_B>::from(rtcRead(RTC_REGISTER_B))};
+		const auto flags {klib::kFlags<RTC_B>::from(rtcRead(RTC_REGISTER_B))};
 		// Get RTC century
-		auto century		{rtcRead(RTC_CENTURY)};
+		auto	   century {rtcRead(RTC_CENTURY)};
 		// Check data format
 		if (!flags.isSet(RTC_B::BINARY)) {
 			// Chech hours format
@@ -205,5 +205,5 @@ namespace igros::arch {
 	}
 
 
-}	// namespace igros::arch
+} // namespace igros::arch
 

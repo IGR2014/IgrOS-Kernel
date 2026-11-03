@@ -2,7 +2,7 @@
 ///
 ///	@file
 ///	@brief		x86 family current (native) architecture selection
-///	@date		09 Oct 2026
+///	@date		03 Nov 2026
 ///
 ///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
 ///			All rights reserved.
@@ -13,13 +13,13 @@
 #pragma once
 
 
-#if	defined (IGROS_ARCH_i386)
+#if defined(IGROS_ARCH_i386)
 
 // IgrOS-Kernel arch i386
 #include <arch/i386/cpu.hpp>
 #include <arch/i386/register.hpp>
 
-#elif	defined (IGROS_ARCH_x86_64)
+#elif defined(IGROS_ARCH_x86_64)
 
 // IgrOS-Kernel arch x86_64
 #include <arch/x86_64/cpu.hpp>
@@ -36,14 +36,14 @@
 namespace igros::x86 {
 
 
-#if	defined (IGROS_ARCH_i386)
+#if defined(IGROS_ARCH_i386)
 
 	/// @brief Current architecture
 	namespace native = igros::i386;
 	/// @brief Current architecture name
 	constexpr auto ARCH_NAME {"i386"};
 
-#elif	defined (IGROS_ARCH_x86_64)
+#elif defined(IGROS_ARCH_x86_64)
 
 	/// @brief Current architecture
 	namespace native = igros::x86_64;
@@ -59,5 +59,5 @@ namespace igros::x86 {
 	using native::register_t;
 
 
-}	// namespace igros::x86
+} // namespace igros::x86
 

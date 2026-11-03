@@ -4,7 +4,7 @@
 //	through include order, types come from the real header
 //
 //	File:	cpuid.hpp
-//	Date:	29 Oct 2026
+//	Date:	03 Nov 2026
 //
 //	Copyright (c) 2017 - 2026, Igor Baklykov
 //	All rights reserved.
@@ -16,8 +16,8 @@
 
 
 // Real header: types and enums (instruction wrappers renamed, unused)
-#define cpuid		igros_test_real_cpuid
-#define cpuidHasLeaf	igros_test_real_cpuidHasLeaf
+#define cpuid igros_test_real_cpuid
+#define cpuidHasLeaf igros_test_real_cpuidHasLeaf
 #include "../../../../arch/x86_64/cpuid.hpp"
 #undef cpuid
 #undef cpuidHasLeaf
@@ -42,10 +42,10 @@ namespace igros::x86_64 {
 	// Same logic as real header
 	[[nodiscard]]
 	inline auto cpuidHasLeaf(const CPUID leaf) noexcept -> bool {
-		const auto value	{static_cast<igros_dword_t>(leaf)};
-		const auto base		{value & 0x80000000_u32};
+		const auto value {static_cast<igros_dword_t>(leaf)};
+		const auto base {value & 0x80000000_u32};
 		return cpuid(static_cast<CPUID>(base)).eax >= value;
 	}
 
 
-}	// namespace igros::x86_64
+} // namespace igros::x86_64

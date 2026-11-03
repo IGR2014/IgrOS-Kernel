@@ -3,7 +3,7 @@
 //	Serial port (UART 16550) driver tests
 //
 //	File:	test_serial.cpp
-//	Date:	19 Oct 2026
+//	Date:	03 Nov 2026
 //
 //	Copyright (c) 2017 - 2026, Igor Baklykov
 //	All rights reserved.
@@ -34,24 +34,24 @@ namespace hw = igros::test::hw;
 
 
 // COM1 registers
-constexpr auto COM1_DATA	{std::uint16_t {0x3F8}};
-constexpr auto COM1_IER		{std::uint16_t {0x3F9}};
-constexpr auto COM1_FCR		{std::uint16_t {0x3FA}};
-constexpr auto COM1_LCR		{std::uint16_t {0x3FB}};
-constexpr auto COM1_MCR		{std::uint16_t {0x3FC}};
-constexpr auto COM1_LSR		{std::uint16_t {0x3FD}};
+constexpr auto COM1_DATA {std::uint16_t {0x3F8}};
+constexpr auto COM1_IER {std::uint16_t {0x3F9}};
+constexpr auto COM1_FCR {std::uint16_t {0x3FA}};
+constexpr auto COM1_LCR {std::uint16_t {0x3FB}};
+constexpr auto COM1_MCR {std::uint16_t {0x3FC}};
+constexpr auto COM1_LSR {std::uint16_t {0x3FD}};
 
 // Line status bits
-constexpr auto LSR_DATA_READY	{0x01u};
-constexpr auto LSR_THR_EMPTY	{0x20u};
-constexpr auto LSR_TX_IDLE	{0x40u};
+constexpr auto LSR_DATA_READY {0x01u};
+constexpr auto LSR_THR_EMPTY {0x20u};
+constexpr auto LSR_TX_IDLE {0x40u};
 // Modem control loopback bit
-constexpr auto MCR_LOOPBACK	{0x10u};
+constexpr auto MCR_LOOPBACK {0x10u};
 
 
 // UART model: transmitter state and receive queue
-static auto	txReady	{true};
-static auto	rxQueue	{std::deque<char> {}};
+static auto txReady {true};
+static auto rxQueue {std::deque<char> {}};
 
 static auto uart(const std::uint16_t port) -> std::uint32_t {
 	switch (port) {
@@ -74,8 +74,8 @@ static auto uart(const std::uint16_t port) -> std::uint32_t {
 
 static void resetUART() {
 	hw::reset();
-	hw::portReadHook	= uart;
-	txReady			= true;
+	hw::portReadHook = uart;
+	txReady		 = true;
 	rxQueue.clear();
 }
 
@@ -176,8 +176,8 @@ static void testRead() {
 // Setup: receive interrupt enabled, IRQ 4 unmasked, handler prints received data
 static void testSetup() {
 	resetUART();
-	hw::portValue[igros::x86::PIC_MASTER_DATA]	= 0xFF;
-	hw::portValue[igros::x86::PIC_SLAVE_DATA]	= 0xFF;
+	hw::portValue[igros::x86::PIC_MASTER_DATA] = 0xFF;
+	hw::portValue[igros::x86::PIC_SLAVE_DATA]  = 0xFF;
 	IGROS_CHECK(serialSetup());
 	IGROS_CHECK(0x01 == hw::portValue[COM1_IER]);
 	IGROS_CHECK(0xEF == hw::portValue[igros::x86::PIC_MASTER_DATA]);

@@ -2,7 +2,7 @@
 ///
 ///	@file
 ///	@brief		CPU operations
-///	@date		13 Mar 2023
+///	@date		03 Nov 2026
 ///
 ///	@copyright	Copyright (c) 2017 - 2022, Igor Baklykov
 ///			All rights reserved.
@@ -20,23 +20,23 @@
 #include <klib/kPrint.hpp>
 
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 
 extern "C" {
 
-#endif	// __cplusplus
+#endif // __cplusplus
 
 
 	/// @brief Halt CPU
 	[[noreturn]]
-	void	cpuHalt() noexcept;
+	void cpuHalt() noexcept;
 
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 
-}	// extern "C"
+} // extern "C"
 
-#endif	// __cplusplus
+#endif // __cplusplus
 
 
 // i386 platform namespace
@@ -56,21 +56,19 @@ namespace igros::i386 {
 		/// @brief Copy c-tor
 		cpu(const cpu &other) = delete;
 		/// @brief Copy assignment
-		auto	operator=(const cpu &other) -> cpu& = delete;
+		auto operator=(const cpu &other) -> cpu & = delete;
 		/// @brief Move c-tor
 		cpu(cpu &&other) = delete;
 		/// @brief Move assignment
-		auto	operator=(cpu &&other) -> cpu& = delete;
+		auto operator=(cpu &&other) -> cpu & = delete;
 
 		/// @brief Halt CPU
 		[[noreturn]]
-		static void	halt() noexcept;
+		static void halt() noexcept;
 
 		/// @brief Dump CPU registers
 		/// @param regs Registers saved on interrupt
-		static void	dumpRegisters(const register_t* const regs) noexcept;
-
-
+		static void dumpRegisters(const register_t* const regs) noexcept;
 	};
 
 
@@ -85,7 +83,7 @@ namespace igros::i386 {
 	inline void cpu::dumpRegisters(const register_t* const regs) noexcept {
 		// Print regs (32-bit values)
 		klib::kprintf(
-R"registers(Registers dump:
+			R"registers(Registers dump:
 	EAX=[%08x] EBX=[%08x] ECX=[%08x] EDX=[%08x]
 	ESI=[%08x] EDI=[%08x] ESP=[%08x] EBP=[%08x]
 	EIP=[%08x] EFLAGS=[%08x]
@@ -109,5 +107,5 @@ Segments:
 	}
 
 
-}	// namespace igros::i386
+} // namespace igros::i386
 

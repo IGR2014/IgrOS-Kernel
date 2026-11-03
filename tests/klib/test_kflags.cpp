@@ -3,7 +3,7 @@
 //	kFlags tests
 //
 //	File:	test_kflags.cpp
-//	Date:	11 Oct 2026
+//	Date:	03 Nov 2026
 //
 //	Copyright (c) 2017 - 2026, Igor Baklykov
 //	All rights reserved.
@@ -24,14 +24,14 @@ namespace {
 
 	// Test flags
 	enum class flags_t : std::uint32_t {
-		NONE	= 0x00,
-		A	= 0x01,
-		B	= 0x02,
-		C	= 0x04,
-		AB	= 0x03,
+		NONE = 0x00,
+		A    = 0x01,
+		B    = 0x02,
+		C    = 0x04,
+		AB   = 0x03,
 	};
 
-}	// namespace
+} // namespace
 
 
 auto main() -> int {
@@ -66,6 +66,5 @@ auto main() -> int {
 	static_assert(!make_kflags<flags_t>(flags_t::B).isSet(flags_t::AB));
 
 	return igros::test::result();
-
 }
 

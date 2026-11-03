@@ -2,7 +2,7 @@
 ///
 ///	@file
 ///	@brief		Interrupts low-level operations
-///	@date		19 Dec 2023
+///	@date		03 Nov 2026
 ///
 ///	@copyright	Copyright (c) 2017 - 2022, Igor Baklykov
 ///			All rights reserved.
@@ -27,22 +27,22 @@ namespace igros::x86 {
 
 
 	/// @brief IRQ offset in ISR list
-	constexpr auto IRQ_OFFSET	{32_usize};
+	constexpr auto IRQ_OFFSET {32_usize};
 	/// @brief ISR list size
-	constexpr auto ISR_SIZE		{256_usize};
+	constexpr auto ISR_SIZE {256_usize};
 
 	/// @brief Interrupt service routine handler type
-	using isr_t			= std::add_pointer_t<void (const register_t* const)>;
+	using isr_t = std::add_pointer_t<void(const register_t* const)>;
 
 	/// @brief Install interrupt service routine handler
 	/// @param number Interrupt vector
 	/// @param handle Handler
-	void	isrHandlerInstall(const igros_usize_t number, const isr_t handle) noexcept;
+	void isrHandlerInstall(const igros_usize_t number, const isr_t handle) noexcept;
 
 	/// @brief Uninstall interrupt service routine handler
 	/// @param number Interrupt vector
-	void	isrHandlerUninstall(const igros_usize_t number) noexcept;
+	void isrHandlerUninstall(const igros_usize_t number) noexcept;
 
 
-}	// namespace igros::x86
+} // namespace igros::x86
 

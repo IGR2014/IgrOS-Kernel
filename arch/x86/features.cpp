@@ -2,7 +2,7 @@
 ///
 ///	@file
 ///	@brief		CPU feature control
-///	@date		22 Oct 2026
+///	@date		03 Nov 2026
 ///
 ///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
 ///			All rights reserved.
@@ -13,7 +13,7 @@
 // IgrOS-Kernel arch x86
 #include <arch/x86/features.hpp>
 
-#if	defined (IGROS_ARCH_x86_64)
+#if defined(IGROS_ARCH_x86_64)
 
 // IgrOS-Kernel arch x86_64
 #include <arch/x86_64/cpuid.hpp>
@@ -22,18 +22,18 @@
 #endif
 
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 
 extern "C" {
 
-#endif	// __cplusplus
+#endif // __cplusplus
 
 
 	// Enable no-execute page protection if CPU supports it
 	[[nodiscard]]
 	auto cpuEnableNoExecute() noexcept -> bool {
 
-#if	defined (IGROS_ARCH_x86_64)
+#if defined(IGROS_ARCH_x86_64)
 
 		using namespace igros;
 		using namespace igros::x86_64;
@@ -49,17 +49,16 @@ extern "C" {
 
 #else
 
-		// No PAE page tables on i386 - no NX bit
-		return false;
+	// No PAE page tables on i386 - no NX bit
+	return false;
 
 #endif
-
 	}
 
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 
-}	// extern "C"
+} // extern "C"
 
-#endif	// __cplusplus
+#endif // __cplusplus
 

@@ -3,7 +3,7 @@
 //	Minimal host unit test helpers
 //
 //	File:	test.hpp
-//	Date:	11 Oct 2026
+//	Date:	03 Nov 2026
 //
 //	Copyright (c) 2017 - 2026, Igor Baklykov
 //	All rights reserved.
@@ -40,15 +40,15 @@ namespace igros::test {
 	}
 
 
-}	// namespace igros::test
+} // namespace igros::test
 
 
 // Check condition, report failure location and continue
-#define IGROS_CHECK(condition)										\
-	do {												\
-		if (!(condition)) {									\
-			++igros::test::failures;							\
-			std::printf("%s:%d: check failed: %s\n", __FILE__, __LINE__, #condition);	\
-		}											\
+#define IGROS_CHECK(condition) \
+	do { \
+		if (!(condition)) { \
+			++igros::test::failures; \
+			std::printf("%s:%d: check failed: %s\n", __FILE__, __LINE__, #condition); \
+		} \
 	} while (false)
 

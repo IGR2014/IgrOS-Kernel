@@ -2,7 +2,7 @@
 ///
 ///	@file
 ///	@brief		Architecture register type deduction
-///	@date		16 Dec 2022
+///	@date		03 Nov 2026
 ///
 ///	@copyright	Copyright (c) 2017 - 2022, Igor Baklykov
 ///			All rights reserved.
@@ -23,15 +23,15 @@
 namespace igros::arch {
 
 
-#if	defined (IGROS_ARCH_i386)
+#if defined(IGROS_ARCH_i386)
 
 	/// @brief Register type
-	using	i386::register_t;
+	using i386::register_t;
 
-#elif	defined (IGROS_ARCH_x86_64)
+#elif defined(IGROS_ARCH_x86_64)
 
 	/// @brief Register type
-	using	x86_64::register_t;
+	using x86_64::register_t;
 
 #else
 
@@ -40,5 +40,5 @@ namespace igros::arch {
 #endif
 
 
-}	// namespace igros::arch
+} // namespace igros::arch
 

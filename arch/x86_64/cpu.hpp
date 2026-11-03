@@ -2,7 +2,7 @@
 ///
 ///	@file
 ///	@brief		CPU operations
-///	@date		13 Mar 2023
+///	@date		03 Nov 2026
 ///
 ///	@copyright	Copyright (c) 2017 - 2022, Igor Baklykov
 ///			All rights reserved.
@@ -20,23 +20,23 @@
 #include <klib/kPrint.hpp>
 
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 
 extern "C" {
 
-#endif	// __cplusplus
+#endif // __cplusplus
 
 
 	/// @brief Halt CPU
 	[[noreturn]]
-	void	cpuHalt() noexcept;
+	void cpuHalt() noexcept;
 
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 
-}	// extern "C"
+} // extern "C"
 
-#endif	// __cplusplus
+#endif // __cplusplus
 
 
 // x86_64 namespace
@@ -56,21 +56,19 @@ namespace igros::x86_64 {
 		/// @brief Copy c-tor
 		cpu(const cpu &other) = delete;
 		/// @brief Copy assignment
-		auto	operator=(const cpu &other) -> cpu& = delete;
+		auto operator=(const cpu &other) -> cpu & = delete;
 		/// @brief Move c-tor
 		cpu(cpu &&other) = delete;
 		/// @brief Move assignment
-		auto	operator=(cpu &&other) -> cpu& = delete;
+		auto operator=(cpu &&other) -> cpu & = delete;
 
 		/// @brief Halt CPU
 		[[noreturn]]
-		static void	halt() noexcept;
+		static void halt() noexcept;
 
 		/// @brief Dump CPU registers
 		/// @param regs Registers saved on interrupt
-		static void	dumpRegisters(const register_t* const regs) noexcept;
-
-
+		static void dumpRegisters(const register_t* const regs) noexcept;
 	};
 
 
@@ -89,7 +87,7 @@ namespace igros::x86_64 {
 		};
 		// Print regs
 		klib::kprintf(
-R"registers(
+			R"registers(
 Registers dump:
 RAX=[%016llx] RBX=[%016llx] RCX=[%016llx] RDX=[%016llx]
 R8 =[%016llx] R9 =[%016llx] R10=[%016llx] R11=[%016llx]
@@ -125,14 +123,14 @@ GS=[%016llx]
 			r(regs->rip),
 			r(regs->rflags),
 			r(regs->cs),
-			r(0_u64),		//r(regs->ds),
+			r(0_u64), //r(regs->ds),
 			r(regs->ss),
-			r(0_u64),		//r(regs->es),
-			r(0_u64),		//r(regs->fs),
-			r(0_u64)		//r(regs->gs)
+			r(0_u64), //r(regs->es),
+			r(0_u64), //r(regs->fs),
+			r(0_u64)  //r(regs->gs)
 		);
 	}
 
 
-}	// namespace igros::x86_64
+} // namespace igros::x86_64
 

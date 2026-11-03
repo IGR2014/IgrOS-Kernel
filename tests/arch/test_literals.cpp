@@ -3,7 +3,7 @@
 //	Integer literals tests (values checked at compile time)
 //
 //	File:	test_literals.cpp
-//	Date:	30 Oct 2026
+//	Date:	03 Nov 2026
 //
 //	Copyright (c) 2017 - 2026, Igor Baklykov
 //	All rights reserved.
@@ -25,22 +25,22 @@ using namespace igros;
 
 
 // Out of range literal must not compile (built by literals_* tests, see CMakeLists.txt)
-#if	defined (IGROS_TEST_LITERAL)
+#if defined(IGROS_TEST_LITERAL)
 [[maybe_unused]] constexpr auto OUT_OF_RANGE {IGROS_TEST_LITERAL};
 #endif
 
 
 // Literal types
-static_assert(std::is_same_v<igros_byte_t,	decltype(0_u8)>);
-static_assert(std::is_same_v<igros_word_t,	decltype(0_u16)>);
-static_assert(std::is_same_v<igros_dword_t,	decltype(0_u32)>);
-static_assert(std::is_same_v<igros_quad_t,	decltype(0_u64)>);
-static_assert(std::is_same_v<igros_sbyte_t,	decltype(0_i8)>);
-static_assert(std::is_same_v<igros_sword_t,	decltype(0_i16)>);
-static_assert(std::is_same_v<igros_sdword_t,	decltype(0_i32)>);
-static_assert(std::is_same_v<igros_squad_t,	decltype(0_i64)>);
-static_assert(std::is_same_v<igros_usize_t,	decltype(0_usize)>);
-static_assert(std::is_same_v<igros_ssize_t,	decltype(0_ssize)>);
+static_assert(std::is_same_v<igros_byte_t, decltype(0_u8)>);
+static_assert(std::is_same_v<igros_word_t, decltype(0_u16)>);
+static_assert(std::is_same_v<igros_dword_t, decltype(0_u32)>);
+static_assert(std::is_same_v<igros_quad_t, decltype(0_u64)>);
+static_assert(std::is_same_v<igros_sbyte_t, decltype(0_i8)>);
+static_assert(std::is_same_v<igros_sword_t, decltype(0_i16)>);
+static_assert(std::is_same_v<igros_sdword_t, decltype(0_i32)>);
+static_assert(std::is_same_v<igros_squad_t, decltype(0_i64)>);
+static_assert(std::is_same_v<igros_usize_t, decltype(0_usize)>);
+static_assert(std::is_same_v<igros_ssize_t, decltype(0_ssize)>);
 
 // Bases and digit separators
 static_assert(0_u32 == 0u);

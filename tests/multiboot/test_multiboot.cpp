@@ -3,7 +3,7 @@
 //	Multiboot information output tests
 //
 //	File:	test_multiboot.cpp
-//	Date:	28 Oct 2026
+//	Date:	03 Nov 2026
 //
 //	Copyright (c) 2017 - 2026, Igor Baklykov
 //	All rights reserved.
@@ -35,16 +35,16 @@ namespace hw = igros::test::hw;
 // Kernel image symbols: 8 KB kernel at 1 MB, no kernel offset
 asm(
 	".globl " IGROS_TEST_SYMBOL(KERNEL_OFFSET_VIRT) "; "
-	".set " IGROS_TEST_SYMBOL(KERNEL_OFFSET_VIRT) ", 0; "
-	".globl " IGROS_TEST_SYMBOL(_SECTION_KERNEL_START_) "; "
-	".set " IGROS_TEST_SYMBOL(_SECTION_KERNEL_START_) ", 0x100000; "
-	".globl " IGROS_TEST_SYMBOL(_SECTION_KERNEL_END_) "; "
-	".set " IGROS_TEST_SYMBOL(_SECTION_KERNEL_END_) ", 0x102000"
+							".set " IGROS_TEST_SYMBOL(KERNEL_OFFSET_VIRT) ", 0; "
+												      ".globl " IGROS_TEST_SYMBOL(_SECTION_KERNEL_START_) "; "
+																			  ".set " IGROS_TEST_SYMBOL(_SECTION_KERNEL_START_) ", 0x100000; "
+																									    ".globl " IGROS_TEST_SYMBOL(_SECTION_KERNEL_END_) "; "
+																															      ".set " IGROS_TEST_SYMBOL(_SECTION_KERNEL_END_) ", 0x102000"
 );
 
 
 // Current platform (normally from platform-x86.cpp)
-auto igros::platform::Platform::current() noexcept -> const Platform& {
+auto igros::platform::Platform::current() noexcept -> const Platform & {
 	constinit static const Platform platform {"test", nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
 	return platform;
 }
@@ -67,7 +67,7 @@ static auto address32(const T* const object) noexcept -> std::uint32_t {
 
 // Multiboot info with given flags
 [[nodiscard]]
-static auto makeInfo(const std::uint32_t flags) -> info_t& {
+static auto makeInfo(const std::uint32_t flags) -> info_t & {
 	alignas(8) static std::uint8_t raw[sizeof(info_t)] {};
 	std::memset(raw, 0, sizeof(raw));
 	std::memcpy(raw, &flags, sizeof(flags));
@@ -116,14 +116,14 @@ static void testFlags() {
 
 // Memory info and memory map entries
 static void testMemory() {
-	#pragma pack(push, 1)
+#pragma pack(push, 1)
 	struct rawEntry {
-		std::uint32_t	size;
-		std::uint64_t	address;
-		std::uint64_t	length;
-		std::uint32_t	type;
+		std::uint32_t size;
+		std::uint64_t address;
+		std::uint64_t length;
+		std::uint32_t type;
 	};
-	#pragma pack(pop)
+#pragma pack(pop)
 	static const rawEntry map[] {
 		{.size = 20, .address = 0x0000000000000000ull, .length = 0x000000000009FC00ull, .type = 1},
 		{.size = 20, .address = 0x0000000000100000ull, .length = 0x0000000007EE0000ull, .type = 2},
@@ -132,7 +132,7 @@ static void testMemory() {
 	info.memLow	= 639;
 	info.memHigh	= 130048;
 	info.mmapAddr	= address32(map);
-	info.mmapLength	= sizeof(map);
+	info.mmapLength = sizeof(map);
 	info.printMemInfo();
 	info.printMemMap();
 	IGROS_CHECK(hw::printed("Low:\t639 Kb."));
@@ -145,19 +145,19 @@ static void testMemory() {
 
 // VBE info: strings are real mode segment:offset pointers (below 1 MB)
 static void testVBE() {
-	static igros::multiboot::vbeConfig	config {};
-	static igros::multiboot::vbeMode	mode {};
+	static igros::multiboot::vbeConfig config {};
+	static igros::multiboot::vbeMode   mode {};
 	std::copy_n("VESA", config.signature.size(), config.signature.begin());
-	config.version		= 0x0300;
-	config.memory		= 256;
-	mode.width		= 1024;
-	mode.height		= 768;
-	mode.bpp		= 32;
-	mode.physbase		= 0xFD000000;
+	config.version = 0x0300;
+	config.memory  = 256;
+	mode.width     = 1024;
+	mode.height    = 768;
+	mode.bpp       = 32;
+	mode.physbase  = 0xFD000000;
 	auto &info {makeInfo(1u << 11)};
-	info.vbeControlInfo	= address32(&config);
-	info.vbeModeInfo	= address32(&mode);
-	info.vbeModeCurrent	= 0x118;
+	info.vbeControlInfo = address32(&config);
+	info.vbeModeInfo    = address32(&mode);
+	info.vbeModeCurrent = 0x118;
 	// No strings
 	info.printVBEInfo();
 	IGROS_CHECK(hw::printed("Signature:\tVESA"));
@@ -175,10 +175,10 @@ static void testVBE() {
 	copyString(low + 0x10, "Vendor");
 	copyString(low + 0x20, "Card");
 	copyString(low + 0x30, "Rev");
-	config.oem		= 0x90001000;
-	config.vendor		= 0x90001010;
-	config.productName	= 0x90001020;
-	config.productRev	= 0x90001030;
+	config.oem	   = 0x90001000;
+	config.vendor	   = 0x90001010;
+	config.productName = 0x90001020;
+	config.productRev  = 0x90001030;
 	hw::console.clear();
 	info.printVBEInfo();
 	IGROS_CHECK(hw::printed("OEM:\t\t\"OEM\""));
@@ -192,22 +192,22 @@ static void testVBE() {
 // Framebuffer types
 static void testFrameBuffer() {
 	auto &info {makeInfo(1u << 12)};
-	info.fbAddress	= 0xFD000000;
-	info.fbPitch	= 4096;
-	info.fbWidth	= 1024;
-	info.fbHeight	= 768;
-	info.fbBpp	= 32;
-	info.fbType	= 1;
+	info.fbAddress = 0xFD000000;
+	info.fbPitch   = 4096;
+	info.fbWidth   = 1024;
+	info.fbHeight  = 768;
+	info.fbBpp     = 32;
+	info.fbType    = 1;
 	info.printFBInfo();
 	IGROS_CHECK(hw::printed("Current mode:\t(1024x768, 32bpp, 4096, RGB)"));
 	IGROS_CHECK(hw::printed("Address:\t0x00000000fd000000"));
 	IGROS_CHECK(hw::printed("Size:\t\t3145728 bytes"));
 	hw::console.clear();
-	info.fbType	= 0;
+	info.fbType = 0;
 	info.printFBInfo();
 	IGROS_CHECK(hw::printed(", Indexed)"));
 	hw::console.clear();
-	info.fbType	= 2;
+	info.fbType = 2;
 	info.printFBInfo();
 	IGROS_CHECK(hw::printed(", Text)"));
 }
@@ -215,11 +215,11 @@ static void testFrameBuffer() {
 
 // Kernel header: platform, image, version, loader and command line
 static void testHeader() {
-	static const char loader[]	{"GRUB 2.12"};
-	static const char cmdline[]	{"/boot/kernel.bin debug"};
-	auto &info {makeInfo((1u << 2) | (1u << 9))};
-	info.cmdLine		= address32(cmdline);
-	info.bootloaderName	= address32(loader);
+	static const char loader[] {"GRUB 2.12"};
+	static const char cmdline[] {"/boot/kernel.bin debug"};
+	auto		 &info {makeInfo((1u << 2) | (1u << 9))};
+	info.cmdLine	    = address32(cmdline);
+	info.bootloaderName = address32(loader);
 	info.printHeader();
 	IGROS_CHECK(hw::printed("Arch:\t\ttest"));
 	IGROS_CHECK(hw::printed("Size:\t\t8 Kb."));
@@ -237,14 +237,14 @@ static void testHeader() {
 
 // Data out of direct map is never dereferenced
 static void testNotMapped() {
-	static const char cmdline[]	{"/boot/kernel.bin"};
-	static igros::multiboot::vbeConfig	const config {};
-	auto &info {makeInfo((1u << 2) | (1u << 6) | (1u << 11))};
-	info.cmdLine		= address32(cmdline);
-	info.mmapAddr		= address32(cmdline);
-	info.mmapLength		= sizeof(cmdline);
-	info.vbeControlInfo	= address32(&config);
-	info.vbeModeInfo	= address32(&config);
+	static const char			 cmdline[] {"/boot/kernel.bin"};
+	static igros::multiboot::vbeConfig const config {};
+	auto					&info {makeInfo((1u << 2) | (1u << 6) | (1u << 11))};
+	info.cmdLine	    = address32(cmdline);
+	info.mmapAddr	    = address32(cmdline);
+	info.mmapLength	    = sizeof(cmdline);
+	info.vbeControlInfo = address32(&config);
+	info.vbeModeInfo    = address32(&config);
 	const auto end {igros::mem::direct::end()};
 	// String starts in direct map, but its terminator doesn't
 	igros::mem::direct::setEnd(info.cmdLine + 4);

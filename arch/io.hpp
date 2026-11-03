@@ -2,7 +2,7 @@
 ///
 ///	@file
 ///	@brief		I/O operations
-///	@date		21 Mar 2023
+///	@date		03 Nov 2026
 ///
 ///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
 ///			All rights reserved.
@@ -18,7 +18,7 @@
 // IgrOS-Kernel arch
 #include <arch/types.hpp>
 
-#if	defined (IGROS_ARCH_i386) || defined (IGROS_ARCH_x86_64)
+#if defined(IGROS_ARCH_i386) || defined(IGROS_ARCH_x86_64)
 
 // IgrOS-Kernel arch x86
 #include <arch/x86/io.hpp>
@@ -37,16 +37,16 @@ namespace igros::arch {
 	/// @brief Port I/O every architecture must provide
 	template<class T, class P>
 	concept PortIO = requires(const P port, const igros_byte_t byte, const igros_word_t word, const igros_dword_t dword) {
-		{ T::readPort8(port) }		-> std::same_as<igros_byte_t>;
-		{ T::readPort16(port) }		-> std::same_as<igros_word_t>;
-		{ T::readPort32(port) }		-> std::same_as<igros_dword_t>;
-		{ T::writePort8(port, byte) }	-> std::same_as<void>;
-		{ T::writePort16(port, word) }	-> std::same_as<void>;
-		{ T::writePort32(port, dword) }	-> std::same_as<void>;
+		{ T::readPort8(port) } -> std::same_as<igros_byte_t>;
+		{ T::readPort16(port) } -> std::same_as<igros_word_t>;
+		{ T::readPort32(port) } -> std::same_as<igros_dword_t>;
+		{ T::writePort8(port, byte) } -> std::same_as<void>;
+		{ T::writePort16(port, word) } -> std::same_as<void>;
+		{ T::writePort32(port, dword) } -> std::same_as<void>;
 	};
 
 
-#if	defined (IGROS_ARCH_i386) || defined (IGROS_ARCH_x86_64)
+#if defined(IGROS_ARCH_i386) || defined(IGROS_ARCH_x86_64)
 
 	/// @brief I/O port address type
 	using x86::port_t;
@@ -59,5 +59,5 @@ namespace igros::arch {
 	static_assert(PortIO<io, port_t>, "Architecture I/O doesn't provide port I/O interface!");
 
 
-}	// namespace igros::arch
+} // namespace igros::arch
 

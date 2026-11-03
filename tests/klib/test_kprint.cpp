@@ -3,7 +3,7 @@
 //	kvsnprintf / kdigits tests
 //
 //	File:	test_kprint.cpp
-//	Date:	11 Oct 2026
+//	Date:	03 Nov 2026
 //
 //	Copyright (c) 2017 - 2026, Igor Baklykov
 //	All rights reserved.
@@ -22,13 +22,13 @@
 
 
 // Format into buffer of given size, check result and that nothing was written past it
-template<class ...Args>
-static void checkFormat(const igros::igros_usize_t size, const char* const expected, const char* const format, Args ...args) {
+template<class... Args>
+static void checkFormat(const igros::igros_usize_t size, const char* const expected, const char* const format, Args... args) {
 	char buffer[128];
 	std::memset(buffer, 'X', sizeof(buffer));
 	igros::klib::ksnprintf(buffer, size, format, args...);
 	const auto matches {0 == std::strcmp(buffer, expected)};
-	auto untouched {true};
+	auto	   untouched {true};
 	for (auto i {size}; i < sizeof(buffer); ++i) {
 		untouched = untouched && ('X' == buffer[i]);
 	}
@@ -131,6 +131,5 @@ auto main() -> int {
 	IGROS_CHECK(igros::test::hw::irqEnabled);
 
 	return igros::test::result();
-
 }
 

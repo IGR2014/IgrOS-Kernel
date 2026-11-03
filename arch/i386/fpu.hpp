@@ -2,7 +2,7 @@
 ///
 ///	@file
 ///	@brief		FPU operations
-///	@date		16 Dec 2022
+///	@date		03 Nov 2026
 ///
 ///	@copyright	Copyright (c) 2017 - 2022, Igor Baklykov
 ///			All rights reserved.
@@ -19,24 +19,24 @@
 #include <klib/kPrint.hpp>
 
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 
 extern "C" {
 
-#endif	// __cplusplus
+#endif // __cplusplus
 
 
 	/// @brief Check FPU
 	/// @return true if FPU is present
 	[[nodiscard]]
-	auto	fpuCheck() noexcept -> bool;
+	auto fpuCheck() noexcept -> bool;
 
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 
-}	// extern "C"
+} // extern "C"
 
-#endif	// __cplusplus
+#endif // __cplusplus
 
 
 // i386 platform namespace
@@ -49,12 +49,12 @@ namespace igros::i386 {
 		/// @brief Copy c-tor
 		fpu(const fpu &other) = delete;
 		/// @brief Copy assignment
-		fpu& operator=(const fpu &other) = delete;
+		fpu &operator=(const fpu &other) = delete;
 
 		/// @brief Move c-tor
 		fpu(fpu &&other) = delete;
 		/// @brief Move assignment
-		fpu& operator=(fpu &&other) = delete;
+		fpu &operator=(fpu &&other) = delete;
 
 
 	public:
@@ -65,9 +65,7 @@ namespace igros::i386 {
 		/// @brief Check FPU
 		/// @return true if FPU is present
 		[[nodiscard]]
-		static auto	check() noexcept -> bool;
-
-
+		static auto check() noexcept -> bool;
 	};
 
 
@@ -78,5 +76,5 @@ namespace igros::i386 {
 	}
 
 
-}	// namespace igros::i386
+} // namespace igros::i386
 

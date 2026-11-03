@@ -1,0 +1,107 @@
+# clang-format configuration (https://clang.llvm.org/docs/ClangFormatStyleOptions.html)
+#
+# Tested with clang-format 23 (BreakBeforeCloseBracket*, EnumAssignments).
+# Project alignment is to 8-wide tab stops, clang-format aligns to exact columns
+# (tabs, then spaces for the rest).
+---
+Language: Cpp
+Standard: Latest
+BasedOnStyle: LLVM
+
+# Tabs (8 wide) for indentation and alignment, no line length limit
+UseTab: Always
+TabWidth: 8
+IndentWidth: 8
+ContinuationIndentWidth: 8
+ColumnLimit: 0
+
+# Namespaces, extern "C" blocks and access modifiers
+NamespaceIndentation: All
+IndentExternBlock: Indent
+AccessModifierOffset: -8
+FixNamespaceComments: true
+ShortNamespaceLines: 0
+
+# Blank lines are kept as written
+MaxEmptyLinesToKeep: 3
+KeepEmptyLines:
+  AtEndOfFile: true
+  AtStartOfBlock: true
+  AtStartOfFile: true
+EmptyLineBeforeAccessModifier: Leave
+EmptyLineAfterAccessModifier: Leave
+SeparateDefinitionBlocks: Leave
+
+# Braces and short statements
+BreakBeforeBraces: Attach
+AllowShortBlocksOnASingleLine: Empty
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+AllowShortLambdasOnASingleLine: All
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortEnumsOnASingleLine: true
+
+# Declarations: T* p, T &r
+PointerAlignment: Left
+ReferenceAlignment: Right
+DerivePointerAlignment: false
+QualifierAlignment: Leave
+BreakAfterAttributes: Leave
+BreakTemplateDeclarations: Yes
+RequiresClausePosition: OwnLine
+IndentRequiresClause: false
+SpaceAfterTemplateKeyword: false
+
+# Constructor initializers and inheritance lists after colon
+BreakConstructorInitializers: AfterColon
+PackConstructorInitializers: CurrentLine
+ConstructorInitializerIndentWidth: 8
+BreakInheritanceList: AfterColon
+
+# Braced initialization: std::span {a, b}
+Cpp11BracedListStyle: true
+SpaceBeforeCpp11BracedList: true
+BinPackLongBracedList: false
+
+# Line breaks are kept as written (closing brackets and ternaries too)
+BreakBeforeCloseBracketFunction: true
+BreakBeforeCloseBracketBracedList: true
+BreakBeforeTernaryOperators: false
+
+# Spaces: if (x), requires (x), f(x)
+SpaceBeforeParens: Custom
+SpaceBeforeParensOptions:
+  AfterControlStatements: true
+  AfterRequiresInClause: true
+  AfterPlacementOperator: true
+  BeforeNonEmptyParentheses: false
+
+# Alignment: enum values, assignments, declarations, trailing comments
+AlignAfterOpenBracket: DontAlign
+AlignOperands: DontAlign
+AlignEscapedNewlines: DontAlign
+AlignConsecutiveAssignments:
+  Enabled: true
+  EnumAssignments: true
+AlignConsecutiveDeclarations:
+  Enabled: true
+  AcrossComments: true
+AlignConsecutiveMacros: false
+AlignTrailingComments:
+  Kind: Always
+  OverEmptyLines: 0
+SpacesBeforeTrailingComments: 1
+
+# Comments are kept as written (Doxygen headers use tabs)
+ReflowComments: Never
+
+# Includes are grouped by comments, sorted within groups
+SortIncludes: CaseSensitive
+IncludeBlocks: Preserve
+
+# Preprocessor and case labels
+IndentPPDirectives: None
+IndentCaseLabels: true
+IndentCaseBlocks: false
+...

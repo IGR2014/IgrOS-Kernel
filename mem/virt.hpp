@@ -2,7 +2,7 @@
 ///
 ///	@file
 ///	@brief		Virtual address type
-///	@date		29 Oct 2026
+///	@date		03 Nov 2026
 ///
 ///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
 ///			All rights reserved.
@@ -58,4 +58,4 @@ namespace igros::mem {
 	}
 
 
-}	// namespace igros::mem
+} // namespace igros::mem

@@ -3,7 +3,7 @@
 //	8259 PIC (IRQ controller) tests
 //
 //	File:	test_irq.cpp
-//	Date:	19 Oct 2026
+//	Date:	03 Nov 2026
 //
 //	Copyright (c) 2017 - 2026, Igor Baklykov
 //	All rights reserved.
@@ -58,8 +58,8 @@ static void testMask() {
 	irq::mask(irq_t::KEYBOARD);
 	IGROS_CHECK(0xFEFF == irq::getMask());
 	// Lines past 15 are ignored
-	irq::mask(static_cast<irq_t>(16));	// NOLINT(clang-analyzer-optin.core.EnumCastOutOfRange): invalid line on purpose
-	irq::unmask(static_cast<irq_t>(16));	// NOLINT(clang-analyzer-optin.core.EnumCastOutOfRange): invalid line on purpose
+	irq::mask(static_cast<irq_t>(16));   // NOLINT(clang-analyzer-optin.core.EnumCastOutOfRange): invalid line on purpose
+	irq::unmask(static_cast<irq_t>(16)); // NOLINT(clang-analyzer-optin.core.EnumCastOutOfRange): invalid line on purpose
 	IGROS_CHECK(0xFEFF == irq::getMask());
 	irq::setMask(0x1234);
 	IGROS_CHECK(0x34 == hw::portValue[PIC_MASTER_DATA]);

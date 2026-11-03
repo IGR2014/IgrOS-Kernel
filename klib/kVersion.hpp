@@ -2,7 +2,7 @@
 ///
 ///	@file
 ///	@brief		IgrOS version info
-///	@date		21 Mar 2023
+///	@date		03 Nov 2026
 ///
 ///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
 ///			All rights reserved.
@@ -33,26 +33,24 @@ namespace igros::klib {
 	///
 	class kVersion final {
 
-		constexpr static auto VERSION_MAJOR	{static_cast<igros_byte_t>(IGROS_GIT_VERSION_MAJOR)};		///< Kernel version major
-		constexpr static auto VERSION_MINOR	{static_cast<igros_byte_t>(IGROS_GIT_VERSION_MINOR)};		///< Kernel version minor
-		constexpr static auto VERSION_PATCH	{static_cast<igros_word_t>(IGROS_GIT_VERSION_PATCH)};		///< Kernel version patch
-		constexpr static auto VERSION_BUILD	{static_cast<igros_dword_t>(IGROS_GIT_VERSION_BUILD)};		///< Kernel version build
+		constexpr static auto VERSION_MAJOR {static_cast<igros_byte_t>(IGROS_GIT_VERSION_MAJOR)};  ///< Kernel version major
+		constexpr static auto VERSION_MINOR {static_cast<igros_byte_t>(IGROS_GIT_VERSION_MINOR)};  ///< Kernel version minor
+		constexpr static auto VERSION_PATCH {static_cast<igros_word_t>(IGROS_GIT_VERSION_PATCH)};  ///< Kernel version patch
+		constexpr static auto VERSION_BUILD {static_cast<igros_dword_t>(IGROS_GIT_VERSION_BUILD)}; ///< Kernel version build
 
 		// cppcheck-suppress unusedStructMember ; release name, kept with version fields
-		constexpr static auto VERSION_NAME	{"BETA"};							///< Kernel version name
+		constexpr static auto VERSION_NAME {"BETA"}; ///< Kernel version name
 
 
 	public:
 
 		/// @brief Kernel version to integer
 		[[nodiscard]]
-		constexpr static auto	value() noexcept -> igros_quad_t;
+		constexpr static auto value() noexcept -> igros_quad_t;
 
 		/// @brief Kernel version to string
 		[[nodiscard]]
-		constexpr static auto	text() noexcept -> const char*;
-
-
+		constexpr static auto text() noexcept -> const char*;
 	};
 
 
@@ -65,11 +63,7 @@ namespace igros::klib {
 	[[nodiscard]]
 	constexpr auto kVersion::value() noexcept -> igros_quad_t {
 		// Layout from high to low bits: major (8 bits), minor (8 bits), patch (16 bits), build (32 bits)
-		return	static_cast<igros_quad_t>(VERSION_BUILD) | (
-				(static_cast<igros_quad_t>(VERSION_PATCH) <<  0_usize) |
-				(static_cast<igros_quad_t>(VERSION_MINOR) << 16_usize) |
-				(static_cast<igros_quad_t>(VERSION_MAJOR) << 24_usize)
-			) << 32_usize;
+		return static_cast<igros_quad_t>(VERSION_BUILD) | ((static_cast<igros_quad_t>(VERSION_PATCH) << 0_usize) | (static_cast<igros_quad_t>(VERSION_MINOR) << 16_usize) | (static_cast<igros_quad_t>(VERSION_MAJOR) << 24_usize)) << 32_usize;
 	}
 
 
@@ -84,5 +78,5 @@ namespace igros::klib {
 	}
 
 
-}	// namespace igros::klib
+} // namespace igros::klib
 

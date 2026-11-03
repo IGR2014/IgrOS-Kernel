@@ -3,7 +3,7 @@
 //	Host stub for VGA text output: console capture (see hw.hpp)
 //
 //	File:	vmem.cpp
-//	Date:	19 Oct 2026
+//	Date:	03 Nov 2026
 //
 //	Copyright (c) 2017 - 2026, Igor Baklykov
 //	All rights reserved.
@@ -33,5 +33,5 @@ namespace igros::arch {
 	}
 
 
-}	// namespace igros::arch
+} // namespace igros::arch
 

@@ -2,7 +2,7 @@
 ///
 ///	@file
 ///	@brief		Interrupts low-level operations
-///	@date		16 Dec 2022
+///	@date		03 Nov 2026
 ///
 ///	@copyright	Copyright (c) 2017 - 2022, Igor Baklykov
 ///			All rights reserved.
@@ -18,24 +18,24 @@
 #include <klib/kPrint.hpp>
 
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 
 extern "C" {
 
-#endif	// __cplusplus
+#endif // __cplusplus
 
 
 	/// @brief Enable interrupts
-	void	irqEnable() noexcept;
+	void irqEnable() noexcept;
 	/// @brief Disable interrupts
-	void	irqDisable() noexcept;
+	void irqDisable() noexcept;
 
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 
-}	// extern "C"
+} // extern "C"
 
-#endif	// __cplusplus
+#endif // __cplusplus
 
 
 // x86 namespace
@@ -45,17 +45,17 @@ namespace igros::x86 {
 	// Init IRQ
 	void irq::init() noexcept {
 		// Restart PIC`s
-		::portWrite8(PIC_MASTER_CONTROL,	0x11_u8);
-		::portWrite8(PIC_SLAVE_CONTROL,		0x11_u8);
+		::portWrite8(PIC_MASTER_CONTROL, 0x11_u8);
+		::portWrite8(PIC_SLAVE_CONTROL, 0x11_u8);
 		// Remap IRQ`s because of exceptions
-		::portWrite8(PIC_MASTER_DATA,		0x20_u8);
-		::portWrite8(PIC_SLAVE_DATA,		0x28_u8);
+		::portWrite8(PIC_MASTER_DATA, 0x20_u8);
+		::portWrite8(PIC_SLAVE_DATA, 0x28_u8);
 		// Setup PIC`s cascading
-		::portWrite8(PIC_MASTER_DATA,		0x04_u8);
-		::portWrite8(PIC_SLAVE_DATA,		0x02_u8);
+		::portWrite8(PIC_MASTER_DATA, 0x04_u8);
+		::portWrite8(PIC_SLAVE_DATA, 0x02_u8);
 		// Setup done
-		::portWrite8(PIC_MASTER_DATA,		0x01_u8);
-		::portWrite8(PIC_SLAVE_DATA,		0x01_u8);
+		::portWrite8(PIC_MASTER_DATA, 0x01_u8);
+		::portWrite8(PIC_SLAVE_DATA, 0x01_u8);
 		// Mask all interrupts (drivers unmask their own lines)
 		irq::setMask();
 	}
@@ -64,7 +64,6 @@ namespace igros::x86 {
 	// Enable interrupts
 	void irq::enable() noexcept {
 		::irqEnable();
-
 	}
 
 	// Disable interrupts
@@ -97,18 +96,18 @@ namespace igros::x86 {
 		// Mask bits in 32-bit arithmetic (16-bit value would be promoted to int)
 		const auto bits {static_cast<igros_dword_t>(mask)};
 		// Set Master controller mask
-		::portWrite8(PIC_MASTER_DATA,	static_cast<igros_byte_t>(bits & 0x00FF_u32));
+		::portWrite8(PIC_MASTER_DATA, static_cast<igros_byte_t>(bits & 0x00FF_u32));
 		// Set Slave controller mask
-		::portWrite8(PIC_SLAVE_DATA,	static_cast<igros_byte_t>((bits >> 8) & 0x00FF_u32));
+		::portWrite8(PIC_SLAVE_DATA, static_cast<igros_byte_t>((bits >> 8) & 0x00FF_u32));
 	}
 
 	// Get interrupts mask
 	[[nodiscard]]
 	auto irq::getMask() noexcept -> igros_word_t {
 		// Read slave PIC current mask
-		const auto high	{static_cast<igros_dword_t>(::portRead8(PIC_SLAVE_DATA))};
+		const auto high {static_cast<igros_dword_t>(::portRead8(PIC_SLAVE_DATA))};
 		// Read master PIC current mask
-		const auto low	{static_cast<igros_dword_t>(::portRead8(PIC_MASTER_DATA))};
+		const auto low {static_cast<igros_dword_t>(::portRead8(PIC_MASTER_DATA))};
 		// Return IRQ mask
 		return static_cast<igros_word_t>((high << 8) | low);
 	}
@@ -142,5 +141,5 @@ namespace igros::x86 {
 	}
 
 
-}	// namespace igros::x86
+} // namespace igros::x86
 

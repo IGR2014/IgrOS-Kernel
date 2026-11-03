@@ -2,7 +2,7 @@
 ///
 ///	@file
 ///	@brief		Keyboard generic handling
-///	@date		16 Dec 2022
+///	@date		03 Nov 2026
 ///
 ///	@copyright	Copyright (c) 2017 - 2022, Igor Baklykov
 ///			All rights reserved.
@@ -27,8 +27,8 @@ namespace igros::arch {
 	/// @brief Setup keyboard function
 	/// @return true if keyboard is set up
 	[[nodiscard]]
-	auto	keyboardSetup() noexcept -> bool;
+	auto keyboardSetup() noexcept -> bool;
 
 
-}	// namespace igros::arch
+} // namespace igros::arch
 

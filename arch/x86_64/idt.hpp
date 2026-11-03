@@ -2,7 +2,7 @@
 ///
 ///	@file
 ///	@brief		Interrupt descriptor table low-level operations
-///	@date		22 Dec 2023
+///	@date		03 Nov 2026
 ///
 ///	@copyright	Copyright (c) 2017 - 2022, Igor Baklykov
 ///			All rights reserved.
@@ -41,41 +41,41 @@ namespace igros::x86_64 {
 		/// @brief Copy c-tor
 		idt(const idt &other) = delete;
 		/// @brief Copy assignment
-		auto	operator=(const idt &other) -> idt& = delete;
+		auto operator=(const idt &other) -> idt & = delete;
 		/// @brief Move c-tor
 		idt(idt &&other) = delete;
 		/// @brief Move assignment
-		auto	operator=(idt &&other) -> idt& = delete;
+		auto operator=(idt &&other) -> idt & = delete;
 
 
 #pragma pack(push, 1)
 
 		/// @brief IDT table entry
 		struct entry_t {
-			igros_word_t	offsetLow;	///< Offset lower part (0..15)
-			igros_word_t	selector;	///< Selectod from GDT/LDT
-			igros_byte_t	ist;		///< Interrupt service table
-			igros_byte_t	type;		///< Type attributes
-			igros_word_t	offsetMiddle;	///< Offset middle part (16..31)
-			igros_dword_t	offsetHigh;	///< Offset higher part (32..63)
-			igros_dword_t	reserved2;	///< Must be zero
+			igros_word_t  offsetLow;    ///< Offset lower part (0..15)
+			igros_word_t  selector;	    ///< Selectod from GDT/LDT
+			igros_byte_t  ist;	    ///< Interrupt service table
+			igros_byte_t  type;	    ///< Type attributes
+			igros_word_t  offsetMiddle; ///< Offset middle part (16..31)
+			igros_dword_t offsetHigh;   ///< Offset higher part (32..63)
+			igros_dword_t reserved2;    ///< Must be zero
 		};
 
 		/// @brief IDT table pointer
 		// cppcheck-suppress-begin unusedStructMember ; fixed layout read by the CPU, not by C++ code
 		struct pointer_t {
-			igros_word_t	size;		///< IDT size
-			const entry_t*	pointer;	///< IDT pointer
+			igros_word_t   size;	///< IDT size
+			const entry_t* pointer; ///< IDT pointer
 		};
 		// cppcheck-suppress-end unusedStructMember
 
 #pragma pack(pop)
 
 		/// @brief IDT table type
-		using table_t	= std::array<entry_t, IDT_SIZE>;
+		using table_t = std::array<entry_t, IDT_SIZE>;
 
 		/// @brief IDT offset type
-		using offset_t	= std::add_pointer_t<void ()>;
+		using offset_t = std::add_pointer_t<void()>;
 
 		/// @brief Default c-tor
 		idt() noexcept = default;
@@ -88,21 +88,19 @@ namespace igros::x86_64 {
 		/// @param type Gate type and attributes
 		/// @return IDT entry
 		[[nodiscard]]
-		static auto	setEntry(const offset_t handle, const igros_word_t selector, const igros_byte_t type) noexcept -> entry_t;
+		static auto setEntry(const offset_t handle, const igros_word_t selector, const igros_byte_t type) noexcept -> entry_t;
 		/// @brief Calc IDT size
 		/// @param table IDT
 		/// @return IDT size in bytes - 1 (IDT pointer limit)
 		[[nodiscard]]
-		constexpr static auto	calcSize(const table_t &table) noexcept -> igros_word_t;
+		constexpr static auto calcSize(const table_t &table) noexcept -> igros_word_t;
 
 		/// @brief Set IDT pointer
 		/// @param pointer IDT pointer to load
-		static void		setPointer(const pointer_t &pointer) noexcept;
+		static void setPointer(const pointer_t &pointer) noexcept;
 
 		/// @brief Init IDT table
-		static void		init() noexcept;
-
-
+		static void init() noexcept;
 	};
 
 
@@ -112,13 +110,13 @@ namespace igros::x86_64 {
 		// Handler address
 		const auto address {std::bit_cast<igros_usize_t>(handle)};
 		return entry_t {
-			.offsetLow	= static_cast<igros_word_t>(address & 0xFFFF_u64),
-			.selector	= selector,
-			.ist		= 0_u8,
-			.type		= type,
-			.offsetMiddle	= static_cast<igros_word_t>((address & 0xFFFF0000_u64) >> 16),
-			.offsetHigh	= static_cast<igros_dword_t>((address & 0xFFFFFFFF00000000_u64) >> 32),
-			.reserved2	= 0_u32,
+			.offsetLow    = static_cast<igros_word_t>(address & 0xFFFF_u64),
+			.selector     = selector,
+			.ist	      = 0_u8,
+			.type	      = type,
+			.offsetMiddle = static_cast<igros_word_t>((address & 0xFFFF0000_u64) >> 16),
+			.offsetHigh   = static_cast<igros_dword_t>((address & 0xFFFFFFFF00000000_u64) >> 32),
+			.reserved2    = 0_u32,
 		};
 	}
 
@@ -129,5 +127,5 @@ namespace igros::x86_64 {
 	}
 
 
-}	// namespace igros::x86_64
+} // namespace igros::x86_64
 

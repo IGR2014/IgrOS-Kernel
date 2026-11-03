@@ -2,7 +2,7 @@
 ///
 ///	@file
 ///	@brief		Direct map of physical memory
-///	@date		30 Oct 2026
+///	@date		03 Nov 2026
 ///
 ///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
 ///			All rights reserved.
@@ -35,7 +35,7 @@ namespace igros::mem {
 	class direct final {
 
 		/// @brief End of directly mapped physical memory
-		static inline constinit phys_t	mEnd	{LOW_MEMORY_LIMIT};
+		static inline constinit phys_t mEnd {LOW_MEMORY_LIMIT};
 
 
 	public:
@@ -46,22 +46,22 @@ namespace igros::mem {
 		/// @brief Copy c-tor
 		direct(const direct &other) = delete;
 		/// @brief Copy assignment
-		auto	operator=(const direct &other) -> direct& = delete;
+		auto operator=(const direct &other) -> direct & = delete;
 
 		/// @brief End of directly mapped physical memory
 		/// @return Physical address where direct map ends
 		[[nodiscard]]
-		static auto	end() noexcept -> phys_t;
+		static auto end() noexcept -> phys_t;
 		/// @brief Set end of directly mapped physical memory (paging mapped more memory)
 		/// @param end Physical address where direct map ends
-		static void	setEnd(const phys_t end) noexcept;
+		static void setEnd(const phys_t end) noexcept;
 
 		/// @brief Check if whole physical range is directly mapped
 		/// @param phys Physical address
 		/// @param size Range size
 		/// @return true if range is directly mapped
 		[[nodiscard]]
-		static auto	isMapped(const phys_t phys, const phys_t size) noexcept -> bool;
+		static auto isMapped(const phys_t phys, const phys_t size) noexcept -> bool;
 
 		/// @brief Pointer to physical memory (nullptr if range is not directly mapped)
 		/// @tparam T Object type
@@ -70,12 +70,12 @@ namespace igros::mem {
 		/// @return Pointer, nullptr if not directly mapped
 		template<class T>
 		[[nodiscard]]
-		static auto	pointer(const phys_t phys, const phys_t size = sizeof(T)) noexcept -> T*;
+		static auto pointer(const phys_t phys, const phys_t size = sizeof(T)) noexcept -> T*;
 		/// @brief String at physical memory (nullptr if not directly mapped up to null terminator)
 		/// @param phys Physical address
 		/// @return String, nullptr if not directly mapped
 		[[nodiscard]]
-		static auto	string(const phys_t phys) noexcept -> const char*;
+		static auto string(const phys_t phys) noexcept -> const char*;
 
 		/// @brief Physical address of directly mapped object
 		/// @tparam T Object type
@@ -83,8 +83,7 @@ namespace igros::mem {
 		/// @return Physical address
 		template<class T>
 		[[nodiscard]]
-		static auto	physOf(const T* const object) noexcept -> phys_t;
-
+		static auto physOf(const T* const object) noexcept -> phys_t;
 	};
 
 
@@ -144,4 +143,4 @@ namespace igros::mem {
 	}
 
 
-}	// namespace igros::mem
+} // namespace igros::mem

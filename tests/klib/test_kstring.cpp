@@ -3,7 +3,7 @@
 //	Kernel string functions tests
 //
 //	File:	test_kstring.cpp
-//	Date:	11 Oct 2026
+//	Date:	03 Nov 2026
 //
 //	Copyright (c) 2017 - 2026, Igor Baklykov
 //	All rights reserved.
@@ -31,6 +31,5 @@ auto main() -> int {
 	IGROS_CHECK(text == kstrview(text).data());
 
 	return igros::test::result();
-
 }
 

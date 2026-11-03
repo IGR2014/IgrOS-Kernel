@@ -2,7 +2,7 @@
 ///
 ///	@file
 ///	@brief		Common C++ types redefinition
-///	@date		30 Oct 2026
+///	@date		03 Nov 2026
 ///
 ///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
 ///			All rights reserved.
@@ -32,27 +32,27 @@ namespace igros {
 	/// @{
 
 	// Signed integers
-	using	igros_sbyte_t		= std::int8_t;	///< 8-bit signed integer
-	using	igros_sword_t		= std::int16_t;	///< 16-bit signed integer
-	using	igros_sdword_t		= std::int32_t;	///< 32-bit signed integer
-	using	igros_squad_t		= std::int64_t;	///< 64-bit signed integer
+	using igros_sbyte_t  = std::int8_t;  ///< 8-bit signed integer
+	using igros_sword_t  = std::int16_t; ///< 16-bit signed integer
+	using igros_sdword_t = std::int32_t; ///< 32-bit signed integer
+	using igros_squad_t  = std::int64_t; ///< 64-bit signed integer
 
 	// Unsigned integers
-	using	igros_byte_t		= std::uint8_t;	///< 8-bit unsigned integer
-	using	igros_word_t		= std::uint16_t;	///< 16-bit unsigned integer
-	using	igros_dword_t		= std::uint32_t;	///< 32-bit unsigned integer
-	using	igros_quad_t		= std::uint64_t;	///< 64-bit unsigned integer
+	using igros_byte_t  = std::uint8_t;  ///< 8-bit unsigned integer
+	using igros_word_t  = std::uint16_t; ///< 16-bit unsigned integer
+	using igros_dword_t = std::uint32_t; ///< 32-bit unsigned integer
+	using igros_quad_t  = std::uint64_t; ///< 64-bit unsigned integer
 
 	// Floating-point reals
-	using	igros_real32_t		= float;	///< 32-bit floating point
-	using	igros_real64_t		= double;	///< 64-bit floating point
+	using igros_real32_t = float;  ///< 32-bit floating point
+	using igros_real64_t = double; ///< 64-bit floating point
 
 	// Size types
-	using	igros_usize_t		= std::size_t;	///< Unsigned size
-	using	igros_ssize_t		= std::ptrdiff_t;	///< Signed size (difference)
+	using igros_usize_t = std::size_t;    ///< Unsigned size
+	using igros_ssize_t = std::ptrdiff_t; ///< Signed size (difference)
 
 	/// @brief Common pointer type
-	using	igros_pointer_t		= std::add_pointer_t<void>;
+	using igros_pointer_t = std::add_pointer_t<void>;
 
 
 	/// @}
@@ -83,12 +83,12 @@ namespace igros {
 		[[nodiscard]]
 		consteval auto make(const unsigned long long value) noexcept -> T {
 			if (!std::in_range<T>(value)) {
-				std::abort();	// IgrOS: integer literal doesn't fit its type
+				std::abort(); // IgrOS: integer literal doesn't fit its type
 			}
 			return static_cast<T>(value);
 		}
 
-	}	// namespace literal
+	} // namespace literal
 
 	//////////////////////////////////////
 	///
@@ -280,5 +280,5 @@ namespace igros {
 	/// @}
 
 
-}	// namespace igros
+} // namespace igros
 

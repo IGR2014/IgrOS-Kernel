@@ -3,7 +3,7 @@
 //	Host stubs for kernel assembly functions (fake hardware, see hw.hpp)
 //
 //	File:	cpu.cpp
-//	Date:	19 Oct 2026
+//	Date:	03 Nov 2026
 //
 //	Copyright (c) 2017 - 2026, Igor Baklykov
 //	All rights reserved.
@@ -115,8 +115,7 @@ extern "C" {
 
 
 	// CPU features (weak: arch/x86/features.cpp replaces it when under test)
-	__attribute__((weak))
-	auto cpuEnableNoExecute() noexcept -> bool {
+	__attribute__((weak)) auto cpuEnableNoExecute() noexcept -> bool {
 		return hw::noExecute;
 	}
 	// Halt returns to IGROS_CHECK_HALTS (unexpected halt fails the test)
@@ -130,5 +129,5 @@ extern "C" {
 	}
 
 
-}	// extern "C"
+} // extern "C"
 

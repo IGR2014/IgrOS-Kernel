@@ -2,7 +2,7 @@
 ///
 ///	@file
 ///	@brief		UART driver
-///	@date		30 Oct 2026
+///	@date		03 Nov 2026
 ///
 ///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
 ///			All rights reserved.
@@ -32,27 +32,27 @@ namespace igros::arch {
 
 		/// @brief Serial port registers (offsets from port base)
 		enum class SERIAL_REG : igros_word_t {
-			DATA		= 0x00_u16,	///< Data (DLAB = 0) / divisor low byte (DLAB = 1)
-			IER		= 0x01_u16,	///< Interrupt enable (DLAB = 0) / divisor high byte (DLAB = 1)
-			IIR		= 0x02_u16,	///< Interrupt identification (read) / FIFO control (write)
-			LCR		= 0x03_u16,	///< Line control
-			MCR		= 0x04_u16,	///< Modem control
-			LSR		= 0x05_u16,	///< Line status
-			MSR		= 0x06_u16,	///< Modem status
-			SCRATCH		= 0x07_u16,	///< Scratch
+			DATA	= 0x00_u16, ///< Data (DLAB = 0) / divisor low byte (DLAB = 1)
+			IER	= 0x01_u16, ///< Interrupt enable (DLAB = 0) / divisor high byte (DLAB = 1)
+			IIR	= 0x02_u16, ///< Interrupt identification (read) / FIFO control (write)
+			LCR	= 0x03_u16, ///< Line control
+			MCR	= 0x04_u16, ///< Modem control
+			LSR	= 0x05_u16, ///< Line status
+			MSR	= 0x06_u16, ///< Modem status
+			SCRATCH = 0x07_u16, ///< Scratch
 		};
 
 		/// @brief Line status register bits
 		enum class SERIAL_LSR : igros_byte_t {
-			DATA_READY	= 0x01_u8,	///< Received byte available
-			THR_EMPTY	= 0x20_u8,	///< Transmitter holding register empty
-			TX_IDLE		= 0x40_u8,	///< Holding and shift registers empty
+			DATA_READY = 0x01_u8, ///< Received byte available
+			THR_EMPTY  = 0x20_u8, ///< Transmitter holding register empty
+			TX_IDLE	   = 0x40_u8, ///< Holding and shift registers empty
 		};
 
-	}	// namespace
+	} // namespace
 
 	/// @brief Interrupt enable register bits
-	constexpr auto SERIAL_IER_RX		{0x01_u8};
+	constexpr auto SERIAL_IER_RX {0x01_u8};
 
 
 	/// @brief Serial port register address
@@ -109,12 +109,12 @@ namespace igros::arch {
 	auto serialInit(const SERIAL_PORT port, const BAUD_RATE baudRate, const DATA_SIZE dataSize, const STOP_BITS stopBits, const PARITY parity) noexcept -> bool {
 
 		// Calculate BAUD rate divisor
-		const auto rate	{static_cast<igros_word_t>(115200_u32 / static_cast<igros_dword_t>(baudRate))};
+		const auto rate {static_cast<igros_word_t>(115200_u32 / static_cast<igros_dword_t>(baudRate))};
 		// LCR value
-		const auto lcr	= static_cast<igros_byte_t>(
-			(static_cast<igros_dword_t>(dataSize)	& 0x03_u32)		|
-			((static_cast<igros_dword_t>(stopBits)	& 0x01_u32) << 2)	|
-			((static_cast<igros_dword_t>(parity)	& 0x03_u32) << 3)
+		const auto lcr = static_cast<igros_byte_t>(
+			(static_cast<igros_dword_t>(dataSize) & 0x03_u32) |
+			((static_cast<igros_dword_t>(stopBits) & 0x01_u32) << 2) |
+			((static_cast<igros_dword_t>(parity) & 0x03_u32) << 3)
 		);
 
 		// Let previous output finish (reprogramming would clobber byte being sent)
@@ -123,23 +123,23 @@ namespace igros::arch {
 		}
 
 		// Disable SERIAL interrupts
-		serialRegWrite(port, SERIAL_REG::IER,	0x00_u8);
+		serialRegWrite(port, SERIAL_REG::IER, 0x00_u8);
 		// Set DLAB to access BAUD rate divisor
-		serialRegWrite(port, SERIAL_REG::LCR,	0x80_u8);
+		serialRegWrite(port, SERIAL_REG::LCR, 0x80_u8);
 		// Write BAUD rate divisor low byte
-		serialRegWrite(port, SERIAL_REG::DATA,	static_cast<igros_byte_t>(rate & 0x00FF_u16));
+		serialRegWrite(port, SERIAL_REG::DATA, static_cast<igros_byte_t>(rate & 0x00FF_u16));
 		// Write BAUD rate divisor high byte
-		serialRegWrite(port, SERIAL_REG::IER,	static_cast<igros_byte_t>((static_cast<igros_dword_t>(rate) >> 8) & 0x00FF_u32));
+		serialRegWrite(port, SERIAL_REG::IER, static_cast<igros_byte_t>((static_cast<igros_dword_t>(rate) >> 8) & 0x00FF_u32));
 		// Write LCR params (also clears DLAB)
-		serialRegWrite(port, SERIAL_REG::LCR,	lcr);
+		serialRegWrite(port, SERIAL_REG::LCR, lcr);
 		// Enable FIFO, clear them with 14-byte threshold
-		serialRegWrite(port, SERIAL_REG::IIR,	0xC7_u8);
+		serialRegWrite(port, SERIAL_REG::IIR, 0xC7_u8);
 		// IRQs enabled, RTS/DSR set
-		serialRegWrite(port, SERIAL_REG::MCR,	0x0B_u8);
+		serialRegWrite(port, SERIAL_REG::MCR, 0x0B_u8);
 		// Set loopback mode, test the serial chip
-		serialRegWrite(port, SERIAL_REG::MCR,	0x1E_u8);
+		serialRegWrite(port, SERIAL_REG::MCR, 0x1E_u8);
 		// Test port with 0xA5 byte
-		serialRegWrite(port, SERIAL_REG::DATA,	0xA5_u8);
+		serialRegWrite(port, SERIAL_REG::DATA, 0xA5_u8);
 
 		// Check loopback (byte comes back once shifted out: one character time)
 		if (!serialWaitStatus(port, SERIAL_LSR::DATA_READY) || (0xA5_u8 != serialRegRead(port, SERIAL_REG::DATA))) {
@@ -148,7 +148,7 @@ namespace igros::arch {
 		}
 
 		// Set normal mode (not-loopback with IRQs enabled and OUT#1 and OUT#2 bits enabled)
-		serialRegWrite(port, SERIAL_REG::MCR,	0x0F_u8);
+		serialRegWrite(port, SERIAL_REG::MCR, 0x0F_u8);
 
 		// Debug
 		klib::kprintf(
@@ -162,7 +162,6 @@ namespace igros::arch {
 
 		// Success
 		return true;
-
 	}
 
 
@@ -269,7 +268,7 @@ namespace igros::arch {
 	/// @param regs Registers saved on interrupt (unused)
 	static void serialInterruptHandler1([[maybe_unused]] const register_t* const regs) noexcept {
 		// Zero-initialized
-		auto data {std::array<char, 128_usize> {}};
+		auto	   data {std::array<char, 128_usize> {}};
 		// Read from COM1 (keep space for null terminator, reading also acknowledges interrupt)
 		const auto read {serialRead(SERIAL_PORT::COM1, std::span {data}.first(data.size() - 1_usize))};
 		// Debug data
@@ -302,9 +301,8 @@ namespace igros::arch {
 
 		// Success
 		return true;
-
 	}
 
 
-}	// namespace igros::arch
+} // namespace igros::arch
 

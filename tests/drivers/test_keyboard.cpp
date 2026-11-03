@@ -3,7 +3,7 @@
 //	PS/2 keyboard driver tests
 //
 //	File:	test_keyboard.cpp
-//	Date:	19 Oct 2026
+//	Date:	03 Nov 2026
 //
 //	Copyright (c) 2017 - 2026, Igor Baklykov
 //	All rights reserved.
@@ -27,15 +27,15 @@ namespace hw = igros::test::hw;
 
 
 // Keyboard controller ports
-constexpr auto KEYBOARD_DATA	{std::uint16_t {0x60}};
-constexpr auto KEYBOARD_STATUS	{std::uint16_t {0x64}};
+constexpr auto KEYBOARD_DATA {std::uint16_t {0x60}};
+constexpr auto KEYBOARD_STATUS {std::uint16_t {0x64}};
 
 
 // Keyboard interrupt with given controller state
-static void keyboardIRQ(const std::uint8_t status, const std::uint8_t scanCode) {	// NOLINT(bugprone-easily-swappable-parameters): test helper, arguments written in each call
+static void keyboardIRQ(const std::uint8_t status, const std::uint8_t scanCode) { // NOLINT(bugprone-easily-swappable-parameters): test helper, arguments written in each call
 	hw::console.clear();
-	hw::portValue[KEYBOARD_STATUS]	= status;
-	hw::portValue[KEYBOARD_DATA]	= scanCode;
+	hw::portValue[KEYBOARD_STATUS] = status;
+	hw::portValue[KEYBOARD_DATA]   = scanCode;
 	auto regs {igros::x86::register_t {}};
 	regs.number = static_cast<decltype(regs.number)>(igros::x86::irqVector(igros::x86::irq_t::KEYBOARD));
 	isrHandler(&regs);
@@ -46,8 +46,8 @@ auto main() -> int {
 
 	// Setup unmasks IRQ 1
 	hw::reset();
-	hw::portValue[igros::x86::PIC_MASTER_DATA]	= 0xFF;
-	hw::portValue[igros::x86::PIC_SLAVE_DATA]	= 0xFF;
+	hw::portValue[igros::x86::PIC_MASTER_DATA] = 0xFF;
+	hw::portValue[igros::x86::PIC_SLAVE_DATA]  = 0xFF;
 	IGROS_CHECK(igros::arch::keyboardSetup());
 	IGROS_CHECK(0xFD == hw::portValue[igros::x86::PIC_MASTER_DATA]);
 
@@ -65,6 +65,5 @@ auto main() -> int {
 	IGROS_CHECK(hw::console.empty());
 
 	return igros::test::result();
-
 }
 
