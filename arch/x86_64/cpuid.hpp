@@ -32,6 +32,13 @@ namespace igros::x86_64 {
 		ADDRESS_SIZES	  = 0x80000008_u32, ///< Physical and linear address sizes
 	};
 
+	/// @brief CPUID extended feature flags (leaf 80000001h, EDX)
+	enum class CPUID_EXT_EDX : igros_dword_t {
+		NX		= 0x00100000_u32,	///< No-execute page protection
+		PAGE_1GB	= 0x04000000_u32,	///< 1 GB pages
+		LONG_MODE	= 0x20000000_u32,	///< Long mode (64-bit)
+	};
+
 	/// @brief CPUID result registers
 	struct cpuidRegs_t {
 		igros_dword_t eax; ///< EAX register value

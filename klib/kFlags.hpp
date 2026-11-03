@@ -73,6 +73,14 @@ namespace igros::klib {
 			const auto bits {static_cast<W>(flag)};
 			return (0U != bits) && (bits == (static_cast<W>(mValue) & bits));
 		}
+
+		/// @brief Set flag (read-modify-write of hardware registers)
+		/// @param flag Set flag (may have several bits)
+		/// @return Flags with all bits of flag set (other bits are kept)
+		[[nodiscard]]
+		constexpr auto set(const T flag) const noexcept -> kFlags {
+			return kFlags::from(static_cast<U>(static_cast<W>(mValue) | static_cast<W>(flag)));
+		}
 	};
 
 

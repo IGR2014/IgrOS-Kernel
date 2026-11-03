@@ -61,6 +61,13 @@ auto main() -> int {
 	IGROS_CHECK(!raw.isSet(flags_t::C));
 	static_assert(igros::klib::kFlags<flags_t>::from(0x04).isSet(flags_t::C));
 
+	// Set flag (other bits kept, original unchanged)
+	const auto set {raw.set(flags_t::C)};
+	IGROS_CHECK(0x87 == set.value());
+	IGROS_CHECK(0x83 == raw.value());
+	IGROS_CHECK(raw.set(flags_t::A).value() == raw.value());
+	static_assert(make_kflags<flags_t>(flags_t::A).set(flags_t::B).isSet(flags_t::AB));
+
 	// Compile time
 	static_assert(make_kflags<flags_t>(flags_t::B).isSet(flags_t::B));
 	static_assert(!make_kflags<flags_t>(flags_t::B).isSet(flags_t::AB));

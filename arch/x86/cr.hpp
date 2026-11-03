@@ -17,6 +17,29 @@
 #include <arch/types.hpp>
 
 
+// x86 namespace
+namespace igros::x86 {
+
+
+	/// @brief CR0 register bits
+	enum class CR0 : igros_usize_t {
+		PE	= 0x00000001,	///< Protected mode enable
+		MP	= 0x00000002,	///< Monitor coprocessor
+		EM	= 0x00000004,	///< x87 emulation
+		TS	= 0x00000008,	///< Task switched
+		ET	= 0x00000010,	///< Extension type
+		NE	= 0x00000020,	///< Native x87 errors
+		WP	= 0x00010000,	///< Write protect (kernel can't write to read-only pages)
+		AM	= 0x00040000,	///< Alignment mask
+		NW	= 0x20000000,	///< Not write-through
+		CD	= 0x40000000,	///< Cache disable
+		PG	= 0x80000000,	///< Paging enable
+	};
+
+
+}	// namespace igros::x86
+
+
 #ifdef __cplusplus
 
 extern "C" {

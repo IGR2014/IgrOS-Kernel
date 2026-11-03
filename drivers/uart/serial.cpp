@@ -49,10 +49,21 @@ namespace igros::arch {
 			TX_IDLE	   = 0x40_u8, ///< Holding and shift registers empty
 		};
 
-	} // namespace
+		/// @brief Interrupt enable register bits
+		enum class SERIAL_IER : igros_byte_t {
+			RX_READY	= 0x01_u8,	///< Received data available
+		};
 
-	/// @brief Interrupt enable register bits
-	constexpr auto SERIAL_IER_RX {0x01_u8};
+		/// @brief Modem control register bits
+		enum class SERIAL_MCR : igros_byte_t {
+			DTR		= 0x01_u8,	///< Data terminal ready
+			RTS		= 0x02_u8,	///< Request to send
+			OUT1		= 0x04_u8,	///< Auxiliary output 1
+			OUT2		= 0x08_u8,	///< Auxiliary output 2 (IRQ line enable on PC)
+			LOOPBACK	= 0x10_u8,	///< Loopback test mode
+		};
+
+	} // namespace
 
 
 	/// @brief Serial port register address
@@ -134,10 +145,10 @@ namespace igros::arch {
 		serialRegWrite(port, SERIAL_REG::LCR, lcr);
 		// Enable FIFO, clear them with 14-byte threshold
 		serialRegWrite(port, SERIAL_REG::IIR, 0xC7_u8);
-		// IRQs enabled, RTS/DSR set
-		serialRegWrite(port, SERIAL_REG::MCR, 0x0B_u8);
+		// IRQs enabled, DTR/RTS set
+		serialRegWrite(port, SERIAL_REG::MCR, klib::make_kflags<SERIAL_MCR>(SERIAL_MCR::DTR, SERIAL_MCR::RTS, SERIAL_MCR::OUT2).value());
 		// Set loopback mode, test the serial chip
-		serialRegWrite(port, SERIAL_REG::MCR, 0x1E_u8);
+		serialRegWrite(port, SERIAL_REG::MCR, klib::make_kflags<SERIAL_MCR>(SERIAL_MCR::RTS, SERIAL_MCR::OUT1, SERIAL_MCR::OUT2, SERIAL_MCR::LOOPBACK).value());
 		// Test port with 0xA5 byte
 		serialRegWrite(port, SERIAL_REG::DATA, 0xA5_u8);
 
@@ -148,7 +159,7 @@ namespace igros::arch {
 		}
 
 		// Set normal mode (not-loopback with IRQs enabled and OUT#1 and OUT#2 bits enabled)
-		serialRegWrite(port, SERIAL_REG::MCR, 0x0F_u8);
+		serialRegWrite(port, SERIAL_REG::MCR, klib::make_kflags<SERIAL_MCR>(SERIAL_MCR::DTR, SERIAL_MCR::RTS, SERIAL_MCR::OUT1, SERIAL_MCR::OUT2).value());
 
 		// Debug
 		klib::kprintf(
@@ -295,7 +306,7 @@ namespace igros::arch {
 		// Install UART1 interrupt handler
 		irq::install<irq_t::UART1, serialInterruptHandler1>();
 		// Enable receive interrupt
-		serialRegWrite(SERIAL_PORT::COM1, SERIAL_REG::IER, SERIAL_IER_RX);
+		serialRegWrite(SERIAL_PORT::COM1, SERIAL_REG::IER, klib::make_kflags<SERIAL_IER>(SERIAL_IER::RX_READY).value());
 		// Unmask UART1 interrupts
 		irq::unmask(irq_t::UART1);
 
