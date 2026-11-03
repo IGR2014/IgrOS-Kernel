@@ -38,7 +38,7 @@ namespace igros::multiboot {
 	/// @param signature Bootloader magic
 	/// @return true if kernel was loaded by multiboot bootloader
 	[[nodiscard]]
-	inline static auto check(const igros_dword_t signature) noexcept -> bool {
+	inline auto check(const igros_dword_t signature) noexcept -> bool {
 		return (BOOTLOADER_MAGIC == signature);
 	}
 

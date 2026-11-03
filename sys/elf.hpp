@@ -15,7 +15,7 @@
 
 // C++
 #include <array>
-#include <cstdint>
+#include <cstddef>
 // IgrOS-Kernel arch
 #include <arch/types.hpp>
 
@@ -164,23 +164,23 @@ namespace igros::sys {
 
 		ELF_PROGRAM_TYPE type; ///< ELF Program table type
 
-#if (IGROS_ARCH == x86_64)
+#if defined(IGROS_ARCH_x86_64)
 
 		igros_dword_t flags; ///< ELF Program table 64-bit flags
 
-#endif // (IGROS_ARCH == x86_64)
+#endif // defined(IGROS_ARCH_x86_64)
 
 		igros_usize_t	offset;	    ///< ELF Program table segment offset
 		igros_pointer_t vaddr;	    ///< ELF Program table segment virtual address
 		igros_pointer_t paddr;	    ///< ELF Program table segment physical address
 		igros_usize_t	fileSize;   ///< ELF Program table segment in-file size
-		igros_usize_t	memorySyze; ///< ELF Program table segment in-memory size
+		igros_usize_t	memorySize; ///< ELF Program table segment in-memory size
 
-#if (IGROS_ARCH == i386)
+#if defined(IGROS_ARCH_i386)
 
 		igros_dword_t flags; ///< ELF Program table 32-bit flags
 
-#endif // (IGROS_ARCH == i386)
+#endif // defined(IGROS_ARCH_i386)
 
 		igros_pointer_t align; ///< ELF Program table segment alignment
 	};
