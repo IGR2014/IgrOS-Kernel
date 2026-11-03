@@ -21,10 +21,6 @@
 #include <tests/hw.hpp>
 
 
-// Common ISR entry (called by assembly stubs)
-extern "C" void isrHandler(const igros::x86::register_t* regs) noexcept;
-
-
 using namespace igros::x86;
 namespace hw = igros::test::hw;
 

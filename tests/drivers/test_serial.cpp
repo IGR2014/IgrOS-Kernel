@@ -19,14 +19,11 @@
 #include <vector>
 // IgrOS-Kernel arch
 #include <arch/x86/irq.hpp>
+#include <arch/x86/isr.hpp>
 // IgrOS-Kernel drivers
 #include <drivers/uart/serial.hpp>
 // Tests
 #include <tests/hw.hpp>
-
-
-// Common ISR entry (called by assembly stubs)
-extern "C" void isrHandler(const igros::x86::register_t* regs) noexcept;
 
 
 using namespace igros::arch;

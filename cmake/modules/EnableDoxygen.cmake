@@ -172,6 +172,7 @@ if(DOXYGEN_FOUND)
 		"${PROJECT_SOURCE_DIR}/multiboot"
 		"${PROJECT_SOURCE_DIR}/platform"
 		"${PROJECT_SOURCE_DIR}/sys"
+		"${PROJECT_SOURCE_DIR}/kmain.hpp"
 		"${PROJECT_SOURCE_DIR}/kmain.cpp"
 		WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
 		COMMENT "Generating documentation: ${CMAKE_BINARY_DIR}/docs/html/index.html"
