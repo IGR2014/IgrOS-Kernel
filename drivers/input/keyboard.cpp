@@ -18,6 +18,7 @@
 // IgrOS-Kernel drivers
 #include <drivers/input/keyboard.hpp>
 // IgrOS-Kernel library
+#include <klib/kFlags.hpp>
 #include <klib/kPrint.hpp>
 
 
@@ -29,12 +30,22 @@ namespace igros::arch {
 	constexpr auto KEYBOARD_CONTROL {static_cast<port_t>(0x0064_u16)}; ///< Controller status/command port
 	constexpr auto KEYBOARD_DATA {static_cast<port_t>(0x0060_u16)};	   ///< Data port
 
+	/// @brief Anonymous namespace
+	namespace {
+
+		/// @brief Controller status register bits
+		enum class KEYBOARD_STATUS : igros_byte_t {
+			OUTPUT_FULL	= 0x01_u8,	///< Output buffer full (data port has byte)
+		};
+
+	}	// namespace
+
 
 	/// @brief Keyboard interrupt (#1) handler
 	/// @param regs Registers saved on interrupt (unused)
 	static void keyboardInterruptHandler([[maybe_unused]] const register_t* regs) noexcept {
 		// Check keyboard data port
-		if (const auto status = io::readPort8(KEYBOARD_CONTROL); status & 0x01_u8) [[likely]] {
+		if (klib::kFlags<KEYBOARD_STATUS>::from(io::readPort8(KEYBOARD_CONTROL)).isSet(KEYBOARD_STATUS::OUTPUT_FULL)) [[likely]] {
 			// Read keyboard data
 			const auto keyCode = io::readPort8(KEYBOARD_DATA);
 			klib::kprintf(

@@ -151,6 +151,15 @@ namespace igros::x86 {
 
 	private:
 
+		/// @brief Page fault error code flags
+		enum class FAULT : igros_usize_t {
+			PROTECTED	= 0x01,	///< Protection violation (else page not present)
+			WRITE		= 0x02,	///< Write access (else read)
+			USER		= 0x04,	///< User mode access (else kernel)
+			RESERVED	= 0x08,	///< Reserved bit set in entry
+			FETCH		= 0x10,	///< Instruction fetch
+		};
+
 		/// @brief Table at physical address (through direct map)
 		/// @param phys Table physical address
 		/// @return Table entries (nullptr if not directly mapped)

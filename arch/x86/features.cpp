@@ -18,6 +18,8 @@
 // IgrOS-Kernel arch x86_64
 #include <arch/x86_64/cpuid.hpp>
 #include <arch/x86_64/msr.hpp>
+// IgrOS-Kernel library
+#include <klib/kFlags.hpp>
 
 #endif
 
@@ -39,12 +41,11 @@ extern "C" {
 		using namespace igros::x86_64;
 
 		// CPUID.80000001h:EDX.NX
-		constexpr auto CPUID_EDX_NX {1_u32 << 20};
-		if (!cpuidHasLeaf(CPUID::EXTENDED_INFO) || (0_u32 == (cpuid(CPUID::EXTENDED_INFO).edx & CPUID_EDX_NX))) [[unlikely]] {
+		if (!cpuidHasLeaf(CPUID::EXTENDED_INFO) || !klib::kFlags<CPUID_EXT_EDX>::from(cpuid(CPUID::EXTENDED_INFO).edx).isSet(CPUID_EXT_EDX::NX)) [[unlikely]] {
 			return false;
 		}
 		// Set EFER.NXE: NX bit in page tables is reserved (faults) until then
-		writeMSR(MSR::EFER, readMSR(MSR::EFER) | static_cast<igros_quad_t>(EFER::NXE));
+		writeMSR(MSR::EFER, klib::kFlags<EFER>::from(readMSR(MSR::EFER)).set(EFER::NXE).value());
 		return true;
 
 #else

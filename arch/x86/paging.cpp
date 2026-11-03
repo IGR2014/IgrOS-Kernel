@@ -38,9 +38,6 @@ namespace igros::x86 {
 	namespace {
 
 
-		/// @brief CR0 write protection bit (kernel can't write to read-only pages)
-		constexpr auto CR0_WP {igros_usize_t {0x00010000}};
-
 		/// @brief NX bit value if no-execute is enabled (else 0: NX can't be used)
 		constinit paging::entry_t noExecute {0};
 
@@ -306,7 +303,7 @@ namespace igros::x86 {
 		::writeCR3(static_cast<igros_usize_t>(top));
 		mem::direct::setEnd(end);
 		// Kernel can't write to read-only pages (code and read-only data)
-		::writeCR0(::readCR0() | CR0_WP);
+		::writeCR0(klib::kFlags<CR0>::from(::readCR0()).set(CR0::WP).value());
 
 		// Check mapping
 		klib::kprintf(
@@ -361,7 +358,7 @@ namespace igros::x86 {
 		// Disable interrupts
 		irq::disable();
 		// Error code bits
-		const auto error {static_cast<igros_usize_t>(regs->param)};
+		const auto error {klib::kFlags<FAULT>::from(static_cast<igros_usize_t>(regs->param))};
 		klib::kprintf(R"exception(
 EXCEPTION [#%zu]
 Name:		%s
@@ -371,11 +368,11 @@ Reason:		%s page, %s access, %s mode%s%s
 			regs->number,
 			except::NAME[regs->number],
 			::readCR2(),
-			(0_usize != (error & 0x01_usize)) ? "protected" : "missing",
-			(0_usize != (error & 0x02_usize)) ? "write" : "read",
-			(0_usize != (error & 0x04_usize)) ? "user" : "kernel",
-			(0_usize != (error & 0x08_usize)) ? ", reserved bit set" : "",
-			(0_usize != (error & 0x10_usize)) ? ", instruction fetch" : ""
+			error.isSet(FAULT::PROTECTED) ? "protected" : "missing",
+			error.isSet(FAULT::WRITE) ? "write" : "read",
+			error.isSet(FAULT::USER) ? "user" : "kernel",
+			error.isSet(FAULT::RESERVED) ? ", reserved bit set" : "",
+			error.isSet(FAULT::FETCH) ? ", instruction fetch" : ""
 		);
 		// Dump registers and hang CPU
 		cpu::dumpRegisters(regs);

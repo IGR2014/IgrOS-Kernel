@@ -19,6 +19,7 @@
 #include <cstring>
 #include <vector>
 // IgrOS-Kernel arch
+#include <arch/x86/cr.hpp>
 #include <arch/x86/paging.hpp>
 // Tests
 #include <tests/hw.hpp>
@@ -67,7 +68,7 @@ constexpr auto WRITABLE {static_cast<paging::entry_t>(paging::FLAGS::WRITABLE)};
 constexpr auto HUGE {static_cast<paging::entry_t>(paging::FLAGS::HUGE)};
 constexpr auto NO_EXECUTE {static_cast<paging::entry_t>(paging::FLAGS::NO_EXECUTE)};
 // CR0 write protection
-constexpr auto CR0_WP {std::uintptr_t {0x00010000}};
+constexpr auto CR0_WP {static_cast<std::uintptr_t>(igros::x86::CR0::WP)};
 
 
 // Physical memory file
