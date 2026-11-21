@@ -12,6 +12,7 @@
 
 // C++
 #include <array>
+#include <initializer_list>
 // IgrOS-Kernel arch
 #include <arch/io.hpp>
 #include <arch/irq.hpp>
@@ -275,43 +276,159 @@ namespace igros::arch {
 	}
 
 
-	/// @brief Serial #1 | #3 IRQ handler
-	/// @param regs Registers saved on interrupt (unused)
-	static void serialInterruptHandler1([[maybe_unused]] const register_t* const regs) noexcept {
-		// Zero-initialized
-		auto	   data {std::array<char, 128_usize> {}};
-		// Read from COM1 (keep space for null terminator, reading also acknowledges interrupt)
-		const auto read {serialRead(SERIAL_PORT::COM1, std::span {data}.first(data.size() - 1_usize))};
-		// Debug data
-		klib::kprintf(
-			"IRQ #%u\t[UART1]\n"
-			"Read:\t%05zu bytes = %s\n",
-			static_cast<igros_dword_t>(irq_t::UART1),
-			read,
-			data.data()
-		);
+	/// @brief Standard ports count
+	constexpr auto SERIAL_PORTS_COUNT {4_usize};
+
+	/// @brief Ports handling receive interrupt (index is COM number - 1)
+	constinit static auto serialActive {std::array<const serial::uart_t*, SERIAL_PORTS_COUNT> {}};
+
+	/// @brief Standard port index
+	/// @param port Serial port
+	/// @return Index in serialActive
+	[[nodiscard]]
+	constexpr static auto serialIndex(const SERIAL_PORT port) noexcept -> igros_usize_t {
+		switch (port) {
+			case SERIAL_PORT::COM2:
+				return 1_usize;
+			case SERIAL_PORT::COM3:
+				return 2_usize;
+			case SERIAL_PORT::COM4:
+				return 3_usize;
+			default:
+				return 0_usize;
+		}
+	}
+
+	/// @brief Port sharing IRQ line (COM1 and COM3, COM2 and COM4)
+	/// @param index Port index
+	/// @return Index of other port on same line
+	[[nodiscard]]
+	constexpr static auto serialPartner(const igros_usize_t index) noexcept -> igros_usize_t {
+		return index ^ 2_usize;
 	}
 
 
-	// Setup COM1 (115200 8N1) with receive interrupt
+	/// @brief Serial IRQ handler (both ports on line are checked)
+	/// @tparam LINE IRQ line (UART1 - COM1/COM3, UART2 - COM2/COM4)
+	/// @param regs Registers saved on interrupt (unused)
+	template<irq_t LINE>
+	static void serialInterruptHandler([[maybe_unused]] const register_t* const regs) noexcept {
+		constexpr auto FIRST {(irq_t::UART1 == LINE) ? 0_usize : 1_usize};
+		for (const auto index : {FIRST, serialPartner(FIRST)}) {
+			if (const auto* const port {serialActive[index]}; nullptr != port) {
+				port->interrupt();
+			}
+		}
+	}
+
+	/// @brief Install serial IRQ handler and unmask line
+	/// @tparam LINE IRQ line
+	template<irq_t LINE>
+	static void serialIRQEnable() noexcept {
+		irq::install<LINE, serialInterruptHandler<LINE>>();
+		irq::unmask(LINE);
+	}
+
+	/// @brief Mask line and uninstall serial IRQ handler
+	/// @tparam LINE IRQ line
+	template<irq_t LINE>
+	static void serialIRQDisable() noexcept {
+		irq::mask(LINE);
+		irq::uninstall<LINE>();
+	}
+
+
+	// Receive interrupt
+	void serial::uart_t::interrupt() const noexcept {
+		// Zero-initialized
+		auto	   data {std::array<char, 128_usize> {}};
+		// Read port (keep space for null terminator, reading also acknowledges interrupt)
+		const auto count {serialRead(mConfig.port, std::span {data}.first(data.size() - 1_usize))};
+		// Debug data (port without data didn't raise interrupt)
+		if (0_usize != count) {
+			const auto index {serialIndex(mConfig.port)};
+			klib::kprintf(
+				"IRQ #%u\t[COM%u]\n"
+				"Read:\t%05zu bytes = %s\n",
+				static_cast<igros_dword_t>((0_usize == (index & 1_usize)) ? irq_t::UART1 : irq_t::UART2),
+				static_cast<igros_dword_t>(index + 1_usize),
+				count,
+				data.data()
+			);
+		}
+	}
+
+
+	// Setup port with receive interrupt
 	[[nodiscard]]
-	auto serialSetup() noexcept -> bool {
+	auto serial::uart_t::init() noexcept -> bool {
 
 		// Init serial port
-		if (!serialInit(SERIAL_PORT::COM1, BAUD_RATE::BAUD_115200, DATA_SIZE::CHAR_8, STOP_BITS::STOP_1, PARITY::NONE)) {
+		if (!serialInit(mConfig.port, mConfig.baudRate, mConfig.dataSize, mConfig.stopBits, mConfig.parity)) {
 			// Fail
 			return false;
 		}
 
-		// Install UART1 interrupt handler
-		irq::install<irq_t::UART1, serialInterruptHandler1>();
+		// This port handles its interrupts
+		const auto index {serialIndex(mConfig.port)};
+		serialActive[index] = this;
+		// Install interrupt handler of port line
+		if (0_usize == (index & 1_usize)) {
+			serialIRQEnable<irq_t::UART1>();
+		} else {
+			serialIRQEnable<irq_t::UART2>();
+		}
 		// Enable receive interrupt
-		serialRegWrite(SERIAL_PORT::COM1, SERIAL_REG::IER, klib::make_kflags<SERIAL_IER>(SERIAL_IER::RX_READY).value());
-		// Unmask UART1 interrupts
-		irq::unmask(irq_t::UART1);
+		serialRegWrite(mConfig.port, SERIAL_REG::IER, klib::make_kflags<SERIAL_IER>(SERIAL_IER::RX_READY).value());
 
 		// Success
 		return true;
+	}
+
+	// Stop receive interrupt
+	void serial::uart_t::deinit() noexcept {
+		// Disable receive interrupt
+		serialRegWrite(mConfig.port, SERIAL_REG::IER, 0x00_u8);
+		// Port no longer handles interrupts
+		const auto index {serialIndex(mConfig.port)};
+		if (this == serialActive[index]) {
+			serialActive[index] = nullptr;
+		}
+		// Release line once other port on it is stopped too
+		if (nullptr != serialActive[serialPartner(index)]) {
+			return;
+		}
+		if (0_usize == (index & 1_usize)) {
+			serialIRQDisable<irq_t::UART1>();
+		} else {
+			serialIRQDisable<irq_t::UART2>();
+		}
+	}
+
+	// Read available bytes
+	[[nodiscard]]
+	auto serial::uart_t::read(const std::span<std::byte> buffer) const noexcept -> igros_usize_t {
+		// Read data one-by-one while available (never past buffer size)
+		auto count {0_usize};
+		auto symbol {'\0'};
+		while ((count < buffer.size()) && serialGetSymbol(mConfig.port, symbol)) {
+			buffer[count] = static_cast<std::byte>(symbol);
+			++count;
+		}
+		// Return read size
+		return count;
+	}
+
+	// Write bytes
+	[[nodiscard]]
+	auto serial::uart_t::write(const std::span<const std::byte> data) const noexcept -> igros_usize_t {
+		// Write data one-by-one until transmitter fails
+		auto written {0_usize};
+		while ((written < data.size()) && serialPutSymbol(mConfig.port, static_cast<char>(data[written]))) {
+			++written;
+		}
+		// Return written size
+		return written;
 	}
 
 

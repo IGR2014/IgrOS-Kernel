@@ -12,7 +12,10 @@
 
 
 // C++
+#include <algorithm>
 #include <array>
+#include <bit>
+#include <cstddef>
 #include <vector>
 // IgrOS-Kernel drivers
 #include <drivers/clock/rtc.hpp>
@@ -147,8 +150,28 @@ static void testStableRead() {
 // Setup prints current date/time
 static void testSetup() {
 	setCMOS(RTC_IS_TIME_24, 0x20, {0x26, 0x10, 0x19, 0x02, 0x09, 0x05, 0x07});
-	IGROS_CHECK(rtcSetup());
+	IGROS_CHECK(rtc::cmos.init());
 	IGROS_CHECK(hw::printed("RTC date/time:\t19.10.2026 09:05:07"));
+}
+
+
+// Read and control return current date/time
+static void testDriver() {
+	setCMOS(RTC_IS_TIME_24, 0x20, {0x26, 0x10, 0x19, 0x02, 0x09, 0x05, 0x07});
+	auto bytes {std::array<std::byte, sizeof(clockDateTime_t) + 1> {}};
+	IGROS_CHECK(sizeof(clockDateTime_t) == igros::drivers::read(rtc::DRIVER, bytes));
+	auto raw {std::array<std::byte, sizeof(clockDateTime_t)> {}};
+	std::copy_n(bytes.begin(), raw.size(), raw.begin());
+	IGROS_CHECK(equals(std::bit_cast<clockDateTime_t>(raw), {2026, 10, 19, 2, 9, 5, 7}));
+	// Too small buffer: nothing read
+	IGROS_CHECK(0 == igros::drivers::read(rtc::DRIVER, std::span {bytes}.first(sizeof(clockDateTime_t) - 1)));
+	auto dateTime {clockDateTime_t {}};
+	IGROS_CHECK(igros::drivers::ioctl(rtc::DRIVER, rtc::IOCTL::GET_DATETIME, &dateTime));
+	IGROS_CHECK(equals(dateTime, {2026, 10, 19, 2, 9, 5, 7}));
+	// No argument, unknown request, no write
+	IGROS_CHECK(!igros::drivers::ioctl(rtc::DRIVER, rtc::IOCTL::GET_DATETIME));
+	IGROS_CHECK(!rtc::DRIVER.ioctl(rtc::DRIVER.context, 0xFFu, &dateTime));
+	IGROS_CHECK(0 == igros::drivers::write(rtc::DRIVER, "time"));
 }
 
 
@@ -160,6 +183,7 @@ auto main() -> int {
 	testBCD12();
 	testStableRead();
 	testSetup();
+	testDriver();
 	return igros::test::result();
 }
 

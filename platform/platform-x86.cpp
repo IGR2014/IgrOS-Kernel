@@ -33,6 +33,8 @@
 
 #endif
 
+// IgrOS-Kernel dev
+#include <dev/device.hpp>
 // IgrOS-Kernel drivers
 #include <drivers/clock/pit.hpp>
 #include <drivers/clock/rtc.hpp>
@@ -67,15 +69,23 @@ namespace igros::x86 {
 
 		// Platform drivers (in init order)
 		constexpr auto DRIVERS = std::to_array<drivers::driver_t>({
-			{.name = "VGA", .init = arch::vmemInit},
-			{.name = "UART", .init = arch::serialSetup},
-			{.name = "Keyboard", .init = arch::keyboardSetup},
-			{.name = "RTC", .init = arch::rtcSetup},
+			arch::vga::DRIVER,
+			// Kernel console (other ports: arch::serial::COM2...COM4)
+			arch::serial::COM1,
+			arch::keyboard::DRIVER,
+			arch::rtc::DRIVER,
 			// PIT prints time every second, enable when needed
-			//{.name = "PIT",	.init = arch::pitSetup},
+			//arch::pit::DRIVER,
 		});
-		// Setup drivers
-		drivers::init(DRIVERS);
+		// Setup drivers, register devices that are set up
+		drivers::init(DRIVERS, [](const drivers::driver_t &driver) noexcept {
+			if (!sys::registerDevice(driver)) [[unlikely]] {
+				klib::kprintf(
+					"Device %s:\tnot registered",
+					driver.name
+				);
+			}
+		});
 
 		// Setup paging (kernel page tables, needs physical memory allocator)
 		paging::init();

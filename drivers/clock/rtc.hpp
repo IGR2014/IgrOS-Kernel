@@ -13,8 +13,13 @@
 #pragma once
 
 
+// C++
+#include <cstddef>
+#include <span>
 // IgrOS-Kernel arch
 #include <arch/types.hpp>
+// IgrOS-Kernel drivers
+#include <drivers/driver.hpp>
 
 
 // Arch-dependent code zone
@@ -112,10 +117,43 @@ namespace igros::arch {
 	/// @param dateTime Date/time (converted in place)
 	void rtcDateTimeFromBCD(rtcDateTime_t &dateTime) noexcept;
 
-	/// @brief Setup RTC function
-	/// @return true if RTC is set up
-	[[nodiscard]]
-	auto rtcSetup() noexcept -> bool;
+	/// @brief RTC driver
+	namespace rtc {
+
+		/// @brief RTC control requests
+		enum class IOCTL : igros_dword_t {
+			GET_DATETIME = 0x01_u32, ///< Get current date/time (arg: clockDateTime_t*)
+		};
+
+		/// @brief CMOS real time clock
+		class cmos_t final {
+
+		public:
+
+			/// @brief Setup RTC (prints current date/time)
+			/// @return true if RTC is set up
+			[[nodiscard]]
+			auto init() noexcept -> bool;
+			/// @brief Read current date/time
+			/// @param buffer Output buffer (receives clockDateTime_t)
+			/// @return sizeof(clockDateTime_t) or 0 if buffer is too small
+			[[nodiscard]]
+			auto read(const std::span<std::byte> buffer) noexcept -> igros_usize_t;
+			/// @brief RTC control
+			/// @param request Request (IOCTL)
+			/// @param arg Request argument
+			/// @return true if request succeeded
+			[[nodiscard]]
+			auto ioctl(const igros_dword_t request, const igros_pointer_t arg) noexcept -> bool;
+		};
+
+		/// @brief System clock
+		inline constinit cmos_t cmos {};
+
+		/// @brief System clock driver description
+		inline constexpr drivers::driver_t DRIVER {drivers::make("RTC", cmos)};
+
+	} // namespace rtc
 
 
 } // namespace igros::arch
