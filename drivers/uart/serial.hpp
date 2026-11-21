@@ -146,9 +146,9 @@ namespace igros::arch {
 			/// @brief Setup port with receive interrupt
 			/// @return true if port is set up
 			[[nodiscard]]
-			auto init() noexcept -> bool;
+			auto init() const noexcept -> bool;
 			/// @brief Stop receive interrupt (IRQ line is masked once both its ports are stopped)
-			void deinit() noexcept;
+			void deinit() const noexcept;
 			/// @brief Read available bytes
 			/// @param buffer Output buffer
 			/// @return Number of read bytes

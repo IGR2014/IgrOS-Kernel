@@ -361,7 +361,7 @@ namespace igros::arch {
 
 	// Setup port with receive interrupt
 	[[nodiscard]]
-	auto serial::uart_t::init() noexcept -> bool {
+	auto serial::uart_t::init() const noexcept -> bool {
 
 		// Init serial port
 		if (!serialInit(mConfig.port, mConfig.baudRate, mConfig.dataSize, mConfig.stopBits, mConfig.parity)) {
@@ -386,8 +386,7 @@ namespace igros::arch {
 	}
 
 	// Stop receive interrupt
-	// cppcheck-suppress functionConst ; changes device (hardware) state
-	void serial::uart_t::deinit() noexcept {
+	void serial::uart_t::deinit() const noexcept {
 		// Disable receive interrupt
 		serialRegWrite(mConfig.port, SERIAL_REG::IER, 0x00_u8);
 		// Port no longer handles interrupts

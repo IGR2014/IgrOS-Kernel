@@ -62,7 +62,7 @@ namespace igros::arch {
 
 	// Setup keyboard
 	[[nodiscard]]
-	auto keyboard::ps2_t::init() noexcept -> bool { // NOLINT(readability-convert-member-functions-to-static): device method (driver interface)
+	auto keyboard::ps2_t::init() const noexcept -> bool { // NOLINT(readability-convert-member-functions-to-static): device method (driver interface)
 
 		// Install keyboard interrupt handler
 		irq::install<irq_t::KEYBOARD, keyboardInterruptHandler>();
@@ -75,7 +75,7 @@ namespace igros::arch {
 
 	// Stop keyboard interrupts
 	// cppcheck-suppress functionStatic ; device method (driver interface)
-	void keyboard::ps2_t::deinit() noexcept { // NOLINT(readability-convert-member-functions-to-static): device method (driver interface)
+	void keyboard::ps2_t::deinit() const noexcept { // NOLINT(readability-convert-member-functions-to-static): device method (driver interface)
 		// Mask keyboard interrupts
 		irq::mask(irq_t::KEYBOARD);
 		// Uninstall keyboard interrupt handler
