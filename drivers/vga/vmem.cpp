@@ -47,26 +47,18 @@ namespace igros::arch {
 		};
 	}
 
-	/// @brief VGA memory background symbol
-	constinit static auto vmemBkgColor {vmemColor::Green};
-
-	/// @brief Current cursor coordinates
-	constinit static vmemCursor cursorPos {};
-
-
-	/// @brief Blank symbol (space with current background)
-	/// @return Space in current colors
+	// Blank symbol
 	[[nodiscard]]
-	static auto vmemBlank() noexcept -> vmemSymbol {
+	auto vga::console_t::blank() const noexcept -> vmemSymbol {
 		return vmemSymbol {
 			.symbol = ' ',
-			.color	= static_cast<igros_byte_t>(vmemBkgColor),
+			.color	= mColor,
 		};
 	}
 
 
 	// Set cursor position
-	void vmemCursorSet(const igros_byte_t x, const igros_byte_t y) noexcept {
+	void vga::console_t::cursorSet(const igros_byte_t x, const igros_byte_t y) noexcept {
 		// Calculate VGA console offset
 		const auto position {(y * VIDEO_MEM_WIDTH) + x};
 		// Choose cursor location high register
@@ -78,25 +70,25 @@ namespace igros::arch {
 		// Write cursor position low byte
 		io::writePort8(VGA_CURSOR_DATA, (position & 0x00FF_u16));
 		// Save cursor data
-		cursorPos.x = x;
-		cursorPos.y = y;
+		mCursor.x = x;
+		mCursor.y = y;
 	}
 
-	// Set VGA memory cursor position
-	void vmemCursorSet(const vmemCursor cursor) noexcept {
-		vmemCursorSet(cursor.x, cursor.y);
+	// Set cursor position
+	void vga::console_t::cursorSet(const vmemCursor cursor) noexcept {
+		cursorSet(cursor.x, cursor.y);
 	}
 
-	// Get VGA memory cursor position
+	// Get cursor position
 	[[nodiscard]]
-	auto vmemCursorGet() noexcept -> vmemCursor {
+	auto vga::console_t::cursorGet() const noexcept -> vmemCursor { // NOLINT(readability-convert-member-functions-to-static): console method (one console API)
 		// Choose cursor location high register
 		io::writePort8(VGA_CURSOR_CONTROL, 0x0E_u8);
-		// Write cursor position high byte
+		// Read cursor position high byte
 		auto position {static_cast<igros_word_t>(io::readPort8(VGA_CURSOR_DATA))};
 		// Choose cursor location low register
 		io::writePort8(VGA_CURSOR_CONTROL, 0x0F_u8);
-		// Write cursor position low byte
+		// Read cursor position low byte
 		position = static_cast<igros_word_t>((static_cast<igros_dword_t>(position) << 8) | io::readPort8(VGA_CURSOR_DATA));
 		// Return cursor data
 		return vmemCursor {
@@ -106,121 +98,183 @@ namespace igros::arch {
 	}
 
 
-	// Disable VGA memory cursor
-	void vmemCursorDisable() noexcept {
+	// Disable cursor
+	void vga::console_t::cursorDisable() noexcept { // NOLINT(readability-convert-member-functions-to-static): console method (one console API)
 		// Choose cursor start register
-		io::writePort8(VGA_CURSOR_CONTROL, 0x0A_u8);
+		io::writePort8(VGA_CURSOR_CONTROL, VIDEO_MEM_CURSOR_START);
 		// Send control word to disable cursor
 		io::writePort8(VGA_CURSOR_DATA, 0x20_u8);
 	}
 
-	// Enable VGA memory cursor
-	void vmemCursorEnable() noexcept {
+	// Enable cursor
+	void vga::console_t::cursorEnable() noexcept { // NOLINT(readability-convert-member-functions-to-static): console method (one console API)
 		// Choose cursor start register
-		io::writePort8(VGA_CURSOR_CONTROL, 0x0A_u8);
+		io::writePort8(VGA_CURSOR_CONTROL, VIDEO_MEM_CURSOR_START);
 		// Get current register value
 		const auto cursorStartReg {io::readPort8(VGA_CURSOR_DATA)};
-		// Send control word to disable cursor
+		// Clear cursor disable bit
 		io::writePort8(VGA_CURSOR_DATA, static_cast<igros_byte_t>(static_cast<igros_dword_t>(cursorStartReg) & ~0x20_u32));
 	}
 
-	// Set VGA memory color
-	void vmemSetColor(const igros_byte_t background, const igros_byte_t foreground) noexcept {
+	// Set text colors
+	void vga::console_t::setColor(const vmemColor background, const vmemColor foreground) noexcept {
 		// Background is first 4 bits and foreground is next 4
-		vmemBkgColor = static_cast<vmemColor>((static_cast<igros_dword_t>(background) << 4) | foreground);
+		mColor = static_cast<igros_byte_t>((static_cast<igros_dword_t>(background) << 4) | static_cast<igros_dword_t>(foreground));
 	}
 
-	// Write symbol to VGA memory
-	void vmemWrite(const char symbol) noexcept {
+
+	// Write symbol
+	void vga::console_t::write(const char symbol) noexcept {
 		// Backspace symbol
 		if (symbol == '\b') {
 			// If we are not at start
-			if (0_u8 != cursorPos.x) {
+			if (0_u8 != mCursor.x) {
 				// Move 1 symbol backward
-				--cursorPos.x;
+				--mCursor.x;
 			} else {
-				cursorPos.x = VIDEO_MEM_WIDTH - 1_u16;
+				mCursor.x = VIDEO_MEM_WIDTH - 1_u16;
 				// Move 1 line up
-				--cursorPos.y;
+				--mCursor.y;
 			}
 			// Tabulation symbol
 		} else if (symbol == '\t') {
 			// calculate new tab offset
-			cursorPos.x = static_cast<igros_byte_t>((cursorPos.x + VIDEO_MEM_TAB_SIZE) & ~(VIDEO_MEM_TAB_SIZE - 1_usize));
+			mCursor.x = static_cast<igros_byte_t>((mCursor.x + VIDEO_MEM_TAB_SIZE) & ~(VIDEO_MEM_TAB_SIZE - 1_usize));
 			// Carret return
 		} else if (symbol == '\r') {
 			// Move to start of the row
-			cursorPos.x = 0_u8;
+			mCursor.x = 0_u8;
 			// Carret new line
 		} else if (symbol == '\n') {
 			// Move to start of the row
-			cursorPos.x = 0_u8;
+			mCursor.x = 0_u8;
 			// Move to next row
-			++cursorPos.y;
+			++mCursor.y;
 			// If non-control (printable) character
 		} else if (symbol >= ' ') {
 			// Write symbol to VGA console
-			vmemScreen()[(cursorPos.y * VIDEO_MEM_WIDTH) + cursorPos.x] = vmemSymbol {
+			vmemScreen()[(mCursor.y * VIDEO_MEM_WIDTH) + mCursor.x] = vmemSymbol {
 				.symbol = symbol,
-				.color	= static_cast<igros_byte_t>(vmemBkgColor),
+				.color	= mColor,
 			};
 			// Move cursor 1 symbol right
-			++cursorPos.x;
+			++mCursor.x;
 		}
 		// Check if we are not out of columns
-		if (cursorPos.x >= VIDEO_MEM_WIDTH) {
+		if (mCursor.x >= VIDEO_MEM_WIDTH) {
 			// Move to start of the row
-			cursorPos.x = 0_u8;
+			mCursor.x = 0_u8;
 			// Move to next row
-			++cursorPos.y;
+			++mCursor.y;
 		}
 		// Chech if we are not out of rows
-		if (cursorPos.y >= VIDEO_MEM_HEIGHT) {
+		if (mCursor.y >= VIDEO_MEM_HEIGHT) {
 			// Move cursor to the last line
-			cursorPos.y = VIDEO_MEM_HEIGHT - 1_u16;
+			mCursor.y = VIDEO_MEM_HEIGHT - 1_u16;
 			// Move screen 1 line up
 			const auto screen {vmemScreen()};
 			std::shift_left(screen.begin(), screen.end(), VIDEO_MEM_WIDTH); // NOLINT(modernize-use-ranges): std::ranges::shift_left is C++23
 			// Clear bottom line
-			std::ranges::fill(screen.last<VIDEO_MEM_WIDTH>(), vmemBlank());
+			std::ranges::fill(screen.last<VIDEO_MEM_WIDTH>(), blank());
 		}
 		// Set new cursor position
-		vmemCursorSet(cursorPos.x, cursorPos.y);
+		cursorSet(mCursor.x, mCursor.y);
 	}
 
-	// Write string to VGA memory
-	void vmemWrite(const char* const message) noexcept {
-		// Write symbols one by one
-		vmemWrite(klib::kstrview(message));
+	// Write string
+	void vga::console_t::write(const char* const message) noexcept {
+		write(klib::kstrview(message));
 	}
 
-	// Write fixed-width string to VGA memory
-	void vmemWrite(const std::string_view message) noexcept {
+	// Write fixed-width string
+	void vga::console_t::write(const std::string_view message) noexcept {
 		// Write symbols one by one
 		for (const auto symbol : message) {
-			vmemWrite(symbol);
+			write(symbol);
+		}
+	}
+
+	// Clear console
+	void vga::console_t::clear() noexcept {
+		// Set whole screen with whitespace with current background
+		std::ranges::fill(vmemScreen(), blank());
+	}
+
+
+	// Init console
+	[[nodiscard]]
+	auto vga::console_t::init() noexcept -> bool {
+		// Clear screen
+		clear();
+		// Place cursor at (0, 0)
+		cursorSet(0_u8, 0_u8);
+		// Disable cursor
+		cursorDisable();
+		// Success
+		return true;
+	}
+
+	// Write text bytes
+	[[maybe_unused]]
+	auto vga::console_t::write(const std::span<const std::byte> data) noexcept -> igros_usize_t {
+		// Write symbols one by one (console always accepts output)
+		for (const auto symbol : data) {
+			write(static_cast<char>(symbol));
+		}
+		return data.size();
+	}
+
+	// Console control
+	[[nodiscard]]
+	auto vga::console_t::ioctl(const igros_dword_t request, const igros_pointer_t arg) noexcept -> bool {
+		switch (static_cast<IOCTL>(request)) {
+			case IOCTL::CLEAR:
+				clear();
+				return true;
+			case IOCTL::SET_COLOR:
+				if (nullptr == arg) [[unlikely]] {
+					return false;
+				}
+				setColor(static_cast<const colors_t*>(arg)->background, static_cast<const colors_t*>(arg)->foreground);
+				return true;
+			case IOCTL::SET_CURSOR:
+				if (nullptr == arg) [[unlikely]] {
+					return false;
+				}
+				cursorSet(*static_cast<const vmemCursor*>(arg));
+				return true;
+			case IOCTL::GET_CURSOR:
+				if (nullptr == arg) [[unlikely]] {
+					return false;
+				}
+				*static_cast<vmemCursor*>(arg) = cursorGet();
+				return true;
+			case IOCTL::SHOW_CURSOR:
+				cursorEnable();
+				return true;
+			case IOCTL::HIDE_CURSOR:
+				cursorDisable();
+				return true;
+			default:
+				// Unknown request
+				return false;
 		}
 	}
 
 
-	// Clear VGA memory
-	void vmemClear() noexcept {
-		// Set whole screen with whitespace with default background
-		std::ranges::fill(vmemScreen(), vmemBlank());
+	// Write symbol to kernel console
+	void vmemWrite(const char symbol) noexcept {
+		vga::console.write(symbol);
 	}
 
+	// Write string to kernel console
+	void vmemWrite(const char* const message) noexcept {
+		vga::console.write(message);
+	}
 
-	// Init VGA memory
-	[[nodiscard]]
-	auto vmemInit() noexcept -> bool {
-		// Clear screen
-		vmemClear();
-		// Place cursor at (0, 0)
-		vmemCursorSet(0_u8, 0_u8);
-		// Disable cursor
-		vmemCursorDisable();
-		// Success
-		return true;
+	// Write fixed-width string to kernel console
+	void vmemWrite(const std::string_view message) noexcept {
+		vga::console.write(message);
 	}
 
 

@@ -45,7 +45,7 @@ auto main() -> int {
 	hw::reset();
 	hw::portValue[igros::x86::PIC_MASTER_DATA] = 0xFF;
 	hw::portValue[igros::x86::PIC_SLAVE_DATA]  = 0xFF;
-	IGROS_CHECK(igros::arch::keyboardSetup());
+	IGROS_CHECK(igros::arch::keyboard::ps2.init());
 	IGROS_CHECK(0xFD == hw::portValue[igros::x86::PIC_MASTER_DATA]);
 
 	// Key press and release (bit 7) scan codes
@@ -60,6 +60,16 @@ auto main() -> int {
 	// Output buffer empty: nothing read
 	keyboardIRQ(0x00, 0x1E);
 	IGROS_CHECK(hw::console.empty());
+
+	// Driver description: lifecycle only
+	constexpr auto &DRIVER {igros::arch::keyboard::DRIVER};
+	IGROS_CHECK((nullptr != DRIVER.init) && (nullptr != DRIVER.deinit));
+	IGROS_CHECK((nullptr == DRIVER.read) && (nullptr == DRIVER.write) && (nullptr == DRIVER.ioctl));
+
+	// Deinit masks IRQ 1 and removes handler (interrupt is unhandled again)
+	igros::drivers::deinit(DRIVER);
+	IGROS_CHECK(0xFF == hw::portValue[igros::x86::PIC_MASTER_DATA]);
+	IGROS_CHECK_HALTS(keyboardIRQ(0x01, 0x1E));
 
 	return igros::test::result();
 }

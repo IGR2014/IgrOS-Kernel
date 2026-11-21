@@ -32,24 +32,12 @@ namespace igros::arch {
 	// (channels 1 and 2 - ports 0x41 and 0x42 - are not used)
 
 
-	/// @brief Anonymous namespace
-	namespace {
-
-		/// @brief PIT driver state
-		struct pit_t {
-			igros_usize_t ticks {0_usize};	 ///< IRQ ticks count
-			igros_word_t  frequency {0_u16}; ///< Current frequency
-			igros_word_t  divisor {1_u16};	 ///< Current divisor
-		};
-
-	} // namespace
-
-	/// @brief PIT state
-	constinit static pit_t pit {};
+	/// @brief Timer handling IRQ 0
+	constinit static pit::timer_t* pitActive {nullptr};
 
 
-	// Setup PIT frequency
-	void pitSetupFrequency(const igros_word_t frequency) noexcept {
+	// Setup timer frequency
+	void pit::timer_t::setFrequency(const igros_word_t frequency) noexcept {
 
 		// Lowest frequency which divisor fits into 16 bits (~19 Hz)
 		constexpr auto PIT_MIN_FREQUENCY {static_cast<igros_word_t>((PIT_MAIN_FREQUENCY / 0xFFFF_u32) + 1_u32)};
@@ -57,28 +45,33 @@ namespace igros::arch {
 		const auto     requested {(frequency < PIT_MIN_FREQUENCY) ? PIT_MIN_FREQUENCY : frequency};
 
 		// Calculate PIT divisor (Base PIT frequency / required frequency)
-		pit.divisor = static_cast<igros_word_t>(PIT_MAIN_FREQUENCY / requested);
+		mDivisor = static_cast<igros_word_t>(PIT_MAIN_FREQUENCY / requested);
 		// Save current real frequency value
-		pit.frequency = static_cast<igros_word_t>(PIT_MAIN_FREQUENCY / pit.divisor);
+		mFrequency = static_cast<igros_word_t>(PIT_MAIN_FREQUENCY / mDivisor);
 
 		// Channel 0, low then high byte, mode 2 (rate generator: counter runs from divisor
 		// down to 1 once per period, so elapsed ticks are divisor - counter; mode 3 runs it twice)
 		io::writePort8(PIT_CONTROL, 0x34_u8);
 		// Set divisor (LOW first, then HIGH)
-		io::writePort8(PIT_CHANNEL_0, static_cast<igros_byte_t>(pit.divisor & 0x00FF_u16));
-		io::writePort8(PIT_CHANNEL_0, static_cast<igros_byte_t>((static_cast<igros_dword_t>(pit.divisor) >> 8) & 0x00FF_u32));
+		io::writePort8(PIT_CHANNEL_0, static_cast<igros_byte_t>(mDivisor & 0x00FF_u16));
+		io::writePort8(PIT_CHANNEL_0, static_cast<igros_byte_t>((static_cast<igros_dword_t>(mDivisor) >> 8) & 0x00FF_u32));
 
 		// Print
 		klib::kprintf(
 			"PIT frequency:\t%d Hz\n",
-			pit.frequency
+			mFrequency
 		);
 	}
 
+	// Get real timer frequency
+	[[nodiscard]]
+	auto pit::timer_t::frequency() const noexcept -> igros_word_t {
+		return mFrequency;
+	}
 
 	// Get expired ticks
 	[[nodiscard]]
-	auto pitGetTicks() noexcept -> igros_quad_t {
+	auto pit::timer_t::ticks() const noexcept -> igros_quad_t {
 		// Send latch command for channel 0
 		io::writePort8(PIT_CONTROL, 0x00_u8);
 		// Get current counter value (counts down from divisor)
@@ -86,21 +79,20 @@ namespace igros::arch {
 		const auto hiByte {io::readPort8(PIT_CHANNEL_0)};
 		const auto counter {static_cast<igros_word_t>((static_cast<igros_dword_t>(hiByte) << 8) | loByte)};
 		// Total elapsed ticks value since IRQ
-		const auto elapsed {static_cast<igros_word_t>(pit.divisor - counter)};
+		const auto elapsed {static_cast<igros_word_t>(mDivisor - counter)};
 		// Return full expired ticks count
-		return (static_cast<igros_quad_t>(pit.ticks) * pit.divisor) + elapsed;
+		return (static_cast<igros_quad_t>(mPeriods) * mDivisor) + elapsed;
 	}
 
 
-	/// @brief PIT interrupt (#0) handler
-	/// @param regs Registers saved on interrupt (unused)
-	static void pitInterruptHandler([[maybe_unused]] const register_t* regs) noexcept {
-		// Count every tick (pitGetTicks() relies on it, regardless of output below)
-		++pit.ticks;
+	// Timer interrupt
+	void pit::timer_t::interrupt() noexcept {
+		// Count every period (ticks() relies on it, regardless of output below)
+		++mPeriods;
 		// Output every N-th tick were N = frequency
-		if ((0_u16 != pit.frequency) && (0_usize == (pit.ticks % pit.frequency))) [[unlikely]] {
+		if ((0_u16 != mFrequency) && (0_usize == (mPeriods % mFrequency))) [[unlikely]] {
 			// Current time to HH:MM:SS.zzz
-			const auto elapsed {pitGetTicks()};
+			const auto elapsed {ticks()};
 			const auto res {klib::kdivmod(elapsed, PIT_MAIN_FREQUENCY)};
 			// Remainder is in PIT ticks (< PIT_MAIN_FREQUENCY, so * 1000 fits 32 bits)
 			const auto milliseconds {static_cast<igros_dword_t>(res.remainder) * 1000_u32 / PIT_MAIN_FREQUENCY};
@@ -121,13 +113,24 @@ namespace igros::arch {
 	}
 
 
-	// Setup programmable interrupt timer
+	/// @brief PIT interrupt (#0) handler
+	/// @param regs Registers saved on interrupt (unused)
+	static void pitInterruptHandler([[maybe_unused]] const register_t* regs) noexcept {
+		if (nullptr != pitActive) [[likely]] {
+			pitActive->interrupt();
+		}
+	}
+
+
+	// Setup timer
 	[[nodiscard]]
-	auto pitSetup() noexcept -> bool {
+	auto pit::timer_t::init() noexcept -> bool {
 
 		// Setup PIT frequency to 100 HZ
-		pitSetupFrequency(PIT_DEFAULT_FREQUENCY);
+		setFrequency(PIT_DEFAULT_FREQUENCY);
 
+		// This timer handles interrupts
+		pitActive = this;
 		// Install PIT interrupt handler
 		irq::install<irq_t::PIT, pitInterruptHandler>();
 		// Unmask PIT interrupts
@@ -135,6 +138,41 @@ namespace igros::arch {
 
 		// Success
 		return true;
+	}
+
+	// Stop timer interrupts
+	void pit::timer_t::deinit() noexcept {
+		// Mask PIT interrupts
+		irq::mask(irq_t::PIT);
+		// Uninstall PIT interrupt handler
+		irq::uninstall<irq_t::PIT>();
+		// Timer no longer handles interrupts
+		if (this == pitActive) {
+			pitActive = nullptr;
+		}
+	}
+
+	// Timer control
+	[[nodiscard]]
+	auto pit::timer_t::ioctl(const igros_dword_t request, const igros_pointer_t arg) noexcept -> bool {
+		// Every request has an argument
+		if (nullptr == arg) [[unlikely]] {
+			return false;
+		}
+		switch (static_cast<IOCTL>(request)) {
+			case IOCTL::SET_FREQUENCY:
+				setFrequency(*static_cast<igros_word_t*>(arg));
+				return true;
+			case IOCTL::GET_FREQUENCY:
+				*static_cast<igros_word_t*>(arg) = frequency();
+				return true;
+			case IOCTL::GET_TICKS:
+				*static_cast<igros_quad_t*>(arg) = ticks();
+				return true;
+			default:
+				// Unknown request
+				return false;
+		}
 	}
 
 

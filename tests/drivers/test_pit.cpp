@@ -59,14 +59,16 @@ static void resetPIT() {
 // Frequency to divisor: mode 2 on channel 0, divisor low then high byte
 static void testFrequency() {
 	resetPIT();
-	pitSetupFrequency(1000);
+	auto timer {pit::timer_t {}};
+	timer.setFrequency(1000);
 	IGROS_CHECK((std::vector<std::uint32_t> {0x34}) == hw::writes(PIT_CONTROL));
 	// 1193181 / 1000 = 1193 = 0x04A9
 	IGROS_CHECK((std::vector<std::uint32_t> {0xA9, 0x04}) == hw::writes(PIT_CHANNEL_0));
 	IGROS_CHECK(hw::printed("PIT frequency:\t1000 Hz"));
+	IGROS_CHECK(1000 == timer.frequency());
 	// Too low frequency is clamped to divisor limit
 	resetPIT();
-	pitSetupFrequency(1);
+	timer.setFrequency(1);
 	IGROS_CHECK(hw::printed("PIT frequency:\t19 Hz"));
 	const auto divisor {hw::writes(PIT_CHANNEL_0)};
 	IGROS_CHECK((2 == divisor.size()) && ((divisor[1] << 8 | divisor[0]) <= 0xFFFF) && ((divisor[1] << 8 | divisor[0]) > 0xF000));
@@ -76,36 +78,87 @@ static void testFrequency() {
 // Ticks: elapsed counts in current period (counter runs down from divisor)
 static void testTicks() {
 	resetPIT();
-	pitSetupFrequency(1000);
+	auto timer {pit::timer_t {}};
+	timer.setFrequency(1000);
 	latchCounter(1193);
-	IGROS_CHECK(0 == pitGetTicks());
+	IGROS_CHECK(0 == timer.ticks());
 	latchCounter(193);
-	IGROS_CHECK(1000 == pitGetTicks());
+	IGROS_CHECK(1000 == timer.ticks());
 	// Latch command before reading
 	IGROS_CHECK((std::vector<std::uint32_t> {0x34, 0x00, 0x00}) == hw::writes(PIT_CONTROL));
+	// Each period adds divisor ticks
+	timer.interrupt();
+	latchCounter(1193);
+	IGROS_CHECK(1193 == timer.ticks());
 }
 
 
-// Setup: IRQ 0 unmasked, time printed once per second of ticks
+// Timer interrupt vector
+static void pitIRQ() {
+	auto regs {igros::x86::register_t {}};
+	regs.number = static_cast<decltype(regs.number)>(igros::x86::irqVector(igros::x86::irq_t::PIT));
+	isrHandler(&regs);
+}
+
+
+// Setup: IRQ 0 unmasked and handled by initialized timer, time printed once per second of ticks
 static void testSetup() {
 	resetPIT();
 	hw::portValue[igros::x86::PIC_MASTER_DATA] = 0xFF;
 	hw::portValue[igros::x86::PIC_SLAVE_DATA]  = 0xFF;
-	IGROS_CHECK(pitSetup());
+	auto timer {pit::timer_t {}};
+	IGROS_CHECK(timer.init());
 	IGROS_CHECK(0xFE == hw::portValue[igros::x86::PIC_MASTER_DATA]);
 	IGROS_CHECK(hw::printed("PIT frequency:\t100 Hz"));
-	auto regs {igros::x86::register_t {}};
-	regs.number = static_cast<decltype(regs.number)>(igros::x86::irqVector(igros::x86::irq_t::PIT));
 	hw::console.clear();
 	for (auto i {0}; i < 99; ++i) {
-		isrHandler(&regs);
+		pitIRQ();
 	}
 	IGROS_CHECK(hw::console.empty());
 	// 100th tick: counter just reloaded (full period left)
 	latchCounter(11931);
-	isrHandler(&regs);
+	pitIRQ();
 	IGROS_CHECK(hw::printed("[PIT]"));
 	IGROS_CHECK(hw::printed("Time:\t00:00:00.999 (~1 sec.)"));
+	timer.deinit();
+}
+
+
+// Control requests through driver interface
+static void testControl() {
+	resetPIT();
+	auto	   timer {pit::timer_t {}};
+	const auto driver {igros::drivers::make("timer", timer)};
+	auto	   frequency {igros::igros_word_t {1000}};
+	IGROS_CHECK(igros::drivers::ioctl(driver, pit::IOCTL::SET_FREQUENCY, &frequency));
+	IGROS_CHECK((std::vector<std::uint32_t> {0xA9, 0x04}) == hw::writes(PIT_CHANNEL_0));
+	// Real frequency: 1193181 / 1193 = 1000
+	frequency = 0;
+	IGROS_CHECK(igros::drivers::ioctl(driver, pit::IOCTL::GET_FREQUENCY, &frequency));
+	IGROS_CHECK(1000 == frequency);
+	latchCounter(193);
+	auto ticks {igros::igros_quad_t {0}};
+	IGROS_CHECK(igros::drivers::ioctl(driver, pit::IOCTL::GET_TICKS, &ticks));
+	IGROS_CHECK(1000 == ticks);
+	// No argument, unknown request
+	IGROS_CHECK(!igros::drivers::ioctl(driver, pit::IOCTL::GET_TICKS));
+	IGROS_CHECK(!driver.ioctl(driver.context, 0xFFu, &ticks));
+	// System timer: lifecycle and controls, no data stream
+	IGROS_CHECK(&pit::timer == pit::DRIVER.context);
+	IGROS_CHECK((nullptr != pit::DRIVER.init) && (nullptr != pit::DRIVER.deinit) && (nullptr != pit::DRIVER.ioctl));
+	IGROS_CHECK((nullptr == pit::DRIVER.read) && (nullptr == pit::DRIVER.write));
+}
+
+
+// Deinit masks IRQ 0 and removes handler
+static void testDeinit() {
+	resetPIT();
+	hw::portValue[igros::x86::PIC_MASTER_DATA] = 0xFF;
+	hw::portValue[igros::x86::PIC_SLAVE_DATA]  = 0xFF;
+	IGROS_CHECK(igros::drivers::init(pit::DRIVER));
+	igros::drivers::deinit(pit::DRIVER);
+	IGROS_CHECK(0xFF == hw::portValue[igros::x86::PIC_MASTER_DATA]);
+	IGROS_CHECK_HALTS(pitIRQ());
 }
 
 
@@ -113,6 +166,8 @@ auto main() -> int {
 	testFrequency();
 	testTicks();
 	testSetup();
+	testControl();
+	testDeinit();
 	return igros::test::result();
 }
 

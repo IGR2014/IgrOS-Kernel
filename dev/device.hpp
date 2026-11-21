@@ -1,10 +1,10 @@
 ////////////////////////////////////////////////////////////////
 ///
 ///	@file
-///	@brief		Device operations description
+///	@brief		Device registry
 ///	@date		03 Nov 2026
 ///
-///	@copyright	Copyright (c) 2017 - 2022, Igor Baklykov
+///	@copyright	Copyright (c) 2017 - 2026, Igor Baklykov
 ///			All rights reserved.
 ///	@author		Igor Baklykov
 ///
@@ -14,65 +14,41 @@
 
 
 // C++
-#include <array>
-#include <cstdint>
-#include <type_traits>
+#include <string_view>
 // IgrOS-Kernel arch
 #include <arch/types.hpp>
+// IgrOS-Kernel drivers
+#include <drivers/driver.hpp>
 
 
 // System code zone
 namespace igros::sys {
 
 
-	/// @brief Device init function pointer
-	using devFuncInit_t = std::add_pointer_t<auto()->igros_pointer_t>;
-	/// @brief Device deinit function pointer
-	using devFuncDeinit_t = std::add_pointer_t<void(igros_pointer_t)>;
-
-	/// @brief Device open function pointer
-	using devFuncOpen_t = std::add_pointer_t<auto(const char*, const igros_dword_t)->igros_pointer_t>;
-	/// @brief Device close function pointer
-	using devFuncClose_t = std::add_pointer_t<void(igros_pointer_t)>;
-
-	/// @brief Device write function pointer
-	using devFuncWrite_t = std::add_pointer_t<auto(const igros_pointer_t, const void* const, const igros_usize_t)->igros_usize_t>;
-	/// @brief Device read function pointer
-	using devFuncRead_t = std::add_pointer_t<auto(const igros_pointer_t, void* const, const igros_usize_t)->igros_usize_t>;
-
-	/// @brief Device IOCTL function pointer
-	using devFuncIOCTL_t = std::add_pointer_t<auto(const igros_pointer_t, const igros_dword_t, ...)->igros_usize_t>;
+	/// @brief Registered devices limit
+	constexpr auto DEVICES_MAX {16_usize};
 
 
-	/// @brief Device description structure
-	struct device_t {
-
-		std::array<const char, 64_usize> name; ///< Get device name
-
-		devFuncInit_t	init;	///< Init device
-		devFuncDeinit_t deinit; ///< Deinit device
-
-		devFuncOpen_t  open;  ///< Open device
-		devFuncClose_t close; ///< Close device
-
-		devFuncWrite_t write; ///< Write to device
-		devFuncRead_t  read;  ///< Read from device
-
-		devFuncIOCTL_t ioctl; ///< Device IOCTL
-	};
-
-
-	/// @brief Register device
-	/// @param dev Device
-	/// @return true if device is registered
+	/// @brief Register device (driver description is copied, devices are looked up by name)
+	/// @param driver Initialized driver instance
+	/// @return false if driver has no name, name is taken or registry is full
 	[[nodiscard]]
-	auto registerDevice(const device_t &dev) noexcept -> bool;
+	auto registerDevice(const drivers::driver_t &driver) noexcept -> bool;
 	/// @brief Unregister device
-	/// @param dev Device
+	/// @param name Device name
 	/// @return true if device was registered
 	[[nodiscard]]
-	auto unregisterDevice(const device_t &dev) noexcept -> bool;
+	auto unregisterDevice(const std::string_view name) noexcept -> bool;
+
+	/// @brief Find device
+	/// @param name Device name
+	/// @return Device driver or nullptr if not registered
+	[[nodiscard]]
+	auto findDevice(const std::string_view name) noexcept -> const drivers::driver_t*;
+	/// @brief Registered devices count
+	/// @return Number of registered devices
+	[[nodiscard]]
+	auto devicesCount() noexcept -> igros_usize_t;
 
 
 } // namespace igros::sys
-

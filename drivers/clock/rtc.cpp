@@ -10,6 +10,12 @@
 ///
 
 
+// C++
+#include <algorithm>
+#include <array>
+#include <bit>
+#include <cstddef>
+#include <span>
 // IgrOS-Kernel arch
 #include <arch/io.hpp>
 // IgrOS-Kernel drivers
@@ -185,9 +191,9 @@ namespace igros::arch {
 	}
 
 
-	// Setup RTC function
+	// Setup RTC
 	[[nodiscard]]
-	auto rtcSetup() noexcept -> bool {
+	auto rtc::cmos_t::init() noexcept -> bool { // NOLINT(readability-convert-member-functions-to-static): device method (driver interface)
 		// Get current date/time
 		const auto dateTime {clockGetCurrentDateTime()};
 		// Print result
@@ -201,6 +207,34 @@ namespace igros::arch {
 			dateTime.second
 		);
 		// Success
+		return true;
+	}
+
+	// Read current date/time
+	[[nodiscard]]
+	auto rtc::cmos_t::read(const std::span<std::byte> buffer) noexcept -> igros_usize_t { // NOLINT(readability-convert-member-functions-to-static): device method (driver interface)
+		// Whole date/time or nothing
+		constexpr auto SIZE {sizeof(clockDateTime_t)};
+		if (buffer.size() < SIZE) [[unlikely]] {
+			return 0_usize;
+		}
+		// Copy date/time representation
+		std::ranges::copy(std::bit_cast<std::array<std::byte, SIZE>>(clockGetCurrentDateTime()), buffer.begin());
+		return SIZE;
+	}
+
+	// RTC control
+	[[nodiscard]]
+	auto rtc::cmos_t::ioctl(const igros_dword_t request, const igros_pointer_t arg) noexcept -> bool { // NOLINT(readability-convert-member-functions-to-static): device method (driver interface)
+		// Every request has an argument
+		if (nullptr == arg) [[unlikely]] {
+			return false;
+		}
+		// Unknown request
+		if (IOCTL::GET_DATETIME != static_cast<IOCTL>(request)) [[unlikely]] {
+			return false;
+		}
+		*static_cast<clockDateTime_t*>(arg) = clockGetCurrentDateTime();
 		return true;
 	}
 

@@ -249,6 +249,8 @@ igros_test(serial	drivers/test_serial.cpp	drivers/uart/serial.cpp arch/x86/isr.c
 igros_test(keyboard	drivers/test_keyboard.cpp	drivers/input/keyboard.cpp arch/x86/isr.cpp arch/x86/irq.cpp klib/kPrint.cpp)
 igros_test(pit		drivers/test_pit.cpp	drivers/clock/pit.cpp arch/x86/isr.cpp arch/x86/irq.cpp klib/kPrint.cpp)
 igros_test(rtc		drivers/test_rtc.cpp	drivers/clock/rtc.cpp klib/kPrint.cpp)
+# Device registry
+igros_test(device	dev/test_device.cpp	dev/device.cpp)
 
 # Multiboot and platform
 igros_test(multiboot	multiboot/test_multiboot.cpp	multiboot/multiboot.cpp klib/kPrint.cpp)
