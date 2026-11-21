@@ -113,19 +113,19 @@ static void testRead() {
 
 // Date/time comparison: every field counts
 static void testCompare() {
-	constexpr auto DATE {rtcDate_t {26, 10, 19}};
-	constexpr auto TIME {rtcTime_t {23, 45, 7}};
-	IGROS_CHECK(!(DATE == rtcDate_t {25, 10, 19}));
-	IGROS_CHECK(!(DATE == rtcDate_t {26, 11, 19}));
-	IGROS_CHECK(!(DATE == rtcDate_t {26, 10, 20}));
-	IGROS_CHECK(!(TIME == rtcTime_t {22, 45, 7}));
-	IGROS_CHECK(!(TIME == rtcTime_t {23, 46, 7}));
-	IGROS_CHECK(!(TIME == rtcTime_t {23, 45, 8}));
-	const auto dateTime {rtcDateTime_t {DATE, 2, TIME}};
-	IGROS_CHECK(dateTime == (rtcDateTime_t {DATE, 2, TIME}));
-	IGROS_CHECK(!(dateTime == rtcDateTime_t {{25, 10, 19}, 2, TIME}));
-	IGROS_CHECK(!(dateTime == rtcDateTime_t {DATE, 3, TIME}));
-	IGROS_CHECK(!(dateTime == rtcDateTime_t {DATE, 2, {22, 45, 7}}));
+	constexpr auto DATE {rtcDate_t {.year = 26, .month = 10, .day = 19}};
+	constexpr auto TIME {rtcTime_t {.hour = 23, .minute = 45, .second = 7}};
+	IGROS_CHECK(!(DATE == rtcDate_t {.year = 25, .month = 10, .day = 19}));
+	IGROS_CHECK(!(DATE == rtcDate_t {.year = 26, .month = 11, .day = 19}));
+	IGROS_CHECK(!(DATE == rtcDate_t {.year = 26, .month = 10, .day = 20}));
+	IGROS_CHECK(!(TIME == rtcTime_t {.hour = 22, .minute = 45, .second = 7}));
+	IGROS_CHECK(!(TIME == rtcTime_t {.hour = 23, .minute = 46, .second = 7}));
+	IGROS_CHECK(!(TIME == rtcTime_t {.hour = 23, .minute = 45, .second = 8}));
+	const auto dateTime {rtcDateTime_t {.date = DATE, .weekday = 2, .time = TIME}};
+	IGROS_CHECK(dateTime == (rtcDateTime_t {.date = DATE, .weekday = 2, .time = TIME}));
+	IGROS_CHECK(!(dateTime == rtcDateTime_t {.date = {.year = 25, .month = 10, .day = 19}, .weekday = 2, .time = TIME}));
+	IGROS_CHECK(!(dateTime == rtcDateTime_t {.date = DATE, .weekday = 3, .time = TIME}));
+	IGROS_CHECK(!(dateTime == rtcDateTime_t {.date = DATE, .weekday = 2, .time = {.hour = 22, .minute = 45, .second = 7}}));
 }
 
 
