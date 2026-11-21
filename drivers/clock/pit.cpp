@@ -141,6 +141,7 @@ namespace igros::arch {
 	}
 
 	// Stop timer interrupts
+	// cppcheck-suppress functionConst ; changes device (hardware) state
 	void pit::timer_t::deinit() noexcept {
 		// Mask PIT interrupts
 		irq::mask(irq_t::PIT);

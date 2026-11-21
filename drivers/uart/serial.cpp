@@ -386,6 +386,7 @@ namespace igros::arch {
 	}
 
 	// Stop receive interrupt
+	// cppcheck-suppress functionConst ; changes device (hardware) state
 	void serial::uart_t::deinit() noexcept {
 		// Disable receive interrupt
 		serialRegWrite(mConfig.port, SERIAL_REG::IER, 0x00_u8);
@@ -407,7 +408,7 @@ namespace igros::arch {
 
 	// Read available bytes
 	[[nodiscard]]
-	auto serial::uart_t::read(const std::span<std::byte> buffer) const noexcept -> igros_usize_t {
+	auto serial::uart_t::read(const std::span<std::byte> buffer) const noexcept -> igros_usize_t { // flawfinder: ignore (device read, bounded by span size)
 		// Read data one-by-one while available (never past buffer size)
 		auto count {0_usize};
 		auto symbol {'\0'};

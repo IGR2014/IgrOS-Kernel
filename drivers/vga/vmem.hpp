@@ -79,10 +79,12 @@ namespace igros::arch {
 	namespace vga {
 
 		/// @brief VGA console colors (SET_COLOR argument)
+		// cppcheck-suppress-begin unusedStructMember ; read by console_t::ioctl through request argument pointer
 		struct colors_t {
 			vmemColor background; ///< Background color
 			vmemColor foreground; ///< Text color
 		};
+		// cppcheck-suppress-end unusedStructMember
 
 		/// @brief VGA console control requests
 		enum class IOCTL : igros_dword_t {

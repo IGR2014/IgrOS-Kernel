@@ -210,7 +210,7 @@ static void testDriver() {
 	IGROS_CHECK(!vga::DRIVER.ioctl(vga::DRIVER.context, 0xFFu, &cursor));
 	IGROS_CHECK(&vga::console == vga::DRIVER.context);
 	auto buffer {std::array<std::byte, 4> {}};
-	IGROS_CHECK(0 == igros::drivers::read(vga::DRIVER, buffer));
+	IGROS_CHECK(0 == igros::drivers::read(vga::DRIVER, buffer)); // flawfinder: ignore (device read, bounded by span size)
 }
 
 

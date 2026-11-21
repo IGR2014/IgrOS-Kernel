@@ -138,7 +138,7 @@ namespace igros::arch {
 			/// @param buffer Output buffer (receives clockDateTime_t)
 			/// @return sizeof(clockDateTime_t) or 0 if buffer is too small
 			[[nodiscard]]
-			auto read(const std::span<std::byte> buffer) noexcept -> igros_usize_t;
+			auto read(const std::span<std::byte> buffer) noexcept -> igros_usize_t; // flawfinder: ignore (device read, bounded by span size)
 			/// @brief RTC control
 			/// @param request Request (IOCTL)
 			/// @param arg Request argument

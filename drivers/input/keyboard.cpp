@@ -74,6 +74,7 @@ namespace igros::arch {
 	}
 
 	// Stop keyboard interrupts
+	// cppcheck-suppress functionStatic ; device method (driver interface)
 	void keyboard::ps2_t::deinit() noexcept { // NOLINT(readability-convert-member-functions-to-static): device method (driver interface)
 		// Mask keyboard interrupts
 		irq::mask(irq_t::KEYBOARD);

@@ -52,6 +52,7 @@ namespace igros::drivers {
 		driverContext_t context {nullptr}; ///< Instance context (passed to every operation)
 		driverInit_t	init {nullptr};	   ///< Initialize device
 		driverDeinit_t	deinit {nullptr};  ///< Release device
+		// flawfinder: ignore (device read, bounded by span size)
 		driverRead_t	read {nullptr};	   ///< Read from device
 		driverWrite_t	write {nullptr};   ///< Write to device
 		driverIOCTL_t	ioctl {nullptr};   ///< Device control
@@ -192,7 +193,7 @@ namespace igros::drivers {
 	/// @param buffer Output buffer
 	/// @return Number of bytes read (0 if driver can't read)
 	[[nodiscard]]
-	inline auto read(const driver_t &driver, const std::span<std::byte> buffer) noexcept -> igros_usize_t {
+	inline auto read(const driver_t &driver, const std::span<std::byte> buffer) noexcept -> igros_usize_t { // flawfinder: ignore (device read, bounded by span size)
 		return (nullptr != driver.read) ? driver.read(driver.context, buffer) : 0_usize;
 	}
 

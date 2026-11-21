@@ -62,7 +62,7 @@ auto main() -> int {
 	IGROS_CHECK(hw::console.empty());
 
 	// Driver description: lifecycle only
-	constexpr auto &DRIVER {igros::arch::keyboard::DRIVER};
+	const auto &DRIVER {igros::arch::keyboard::DRIVER};
 	IGROS_CHECK((nullptr != DRIVER.init) && (nullptr != DRIVER.deinit));
 	IGROS_CHECK((nullptr == DRIVER.read) && (nullptr == DRIVER.write) && (nullptr == DRIVER.ioctl));
 

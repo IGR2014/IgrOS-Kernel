@@ -27,29 +27,33 @@ namespace hw = igros::test::hw;
 
 using context_t = igros::drivers::driverContext_t;
 
-// Device class: lifecycle and writes only
-class counter_t final {
-public:
-	auto init() noexcept -> bool {
-		mReady = true;
-		return true;
-	}
-	void deinit() noexcept {
-		mReady = false;
-	}
-	auto write(const std::span<const std::byte> data) noexcept -> igros::igros_usize_t {
-		mWritten += data.size();
-		return mReady ? data.size() : 0;
-	}
-	[[nodiscard]]
-	auto written() const noexcept -> igros::igros_usize_t {
-		return mWritten;
-	}
+namespace {
 
-private:
-	bool		     mReady {false};
-	igros::igros_usize_t mWritten {0};
-};
+	// Device class: lifecycle and writes only
+	class counter_t final {
+	public:
+		auto init() noexcept -> bool {
+			mReady = true;
+			return true;
+		}
+		void deinit() noexcept {
+			mReady = false;
+		}
+		auto write(const std::span<const std::byte> data) noexcept -> igros::igros_usize_t {
+			mWritten += data.size();
+			return mReady ? data.size() : 0;
+		}
+		[[nodiscard]]
+		auto written() const noexcept -> igros::igros_usize_t {
+			return mWritten;
+		}
+
+	private:
+		bool		     mReady {false};
+		igros::igros_usize_t mWritten {0};
+	};
+
+} // namespace
 
 // Initialized drivers count
 static auto initialized {0};
@@ -99,7 +103,7 @@ auto main() -> int {
 	// Operations go to driver with instance context, unsupported ones do nothing
 	enum class REQUEST : igros::igros_dword_t { PING = 7 };
 	static auto    received {std::string {}};
-	constexpr auto DEVICE {igros::drivers::driver_t {
+	constexpr auto DEVICE = igros::drivers::driver_t {
 		.name	 = "device",
 		.context = &instance,
 		.init	 = [](const context_t context) noexcept { return isInstance(context); },
@@ -117,10 +121,10 @@ auto main() -> int {
 		.ioctl = [](const context_t context, const igros::igros_dword_t request, const igros::igros_pointer_t arg) noexcept -> bool {
 			return isInstance(context) && (7 == request) && (nullptr != arg);
 		},
-	}};
+	};
 	IGROS_CHECK(igros::drivers::init(DEVICE));
 	auto buffer {std::array<std::byte, 2> {}};
-	IGROS_CHECK(1 == igros::drivers::read(DEVICE, buffer));
+	IGROS_CHECK(1 == igros::drivers::read(DEVICE, buffer)); // flawfinder: ignore (device read, bounded by span size)
 	IGROS_CHECK(std::byte {'r'} == buffer[0]);
 	IGROS_CHECK(5 == igros::drivers::write(DEVICE, "hello"));
 	IGROS_CHECK("hello" == received);
@@ -132,7 +136,7 @@ auto main() -> int {
 	constexpr auto NONE {igros::drivers::driver_t {.name = "none"}};
 	IGROS_CHECK(igros::drivers::init(NONE));
 	igros::drivers::deinit(NONE);
-	IGROS_CHECK(0 == igros::drivers::read(NONE, buffer));
+	IGROS_CHECK(0 == igros::drivers::read(NONE, buffer)); // flawfinder: ignore (device read, bounded by span size)
 	IGROS_CHECK(0 == igros::drivers::write(NONE, "hello"));
 	IGROS_CHECK(!igros::drivers::ioctl(NONE, REQUEST::PING, &arg));
 
