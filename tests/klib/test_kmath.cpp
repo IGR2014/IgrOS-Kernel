@@ -118,6 +118,14 @@ auto main() -> int {
 	const auto byZero {igros::klib::kdivmod(std::uint64_t {42}, std::uint64_t {0})};
 	IGROS_CHECK((0 == byZero.quotient) && (42 == byZero.remainder));
 #endif
+	// Software division by zero at run time (every architecture)
+	volatile auto zero {std::uint64_t {0}};
+	IGROS_CHECK((kudivmod64(42, zero) == igros::klib::divmod_t<std::uint64_t> {.quotient = 0, .remainder = 42}));
+
+	// Results differ in quotient or remainder only
+	const auto result {igros::klib::divmod_t<std::uint64_t> {.quotient = 1, .remainder = 2}};
+	IGROS_CHECK(!(result == igros::klib::divmod_t<std::uint64_t> {.quotient = 0, .remainder = 2}));
+	IGROS_CHECK(!(result == igros::klib::divmod_t<std::uint64_t> {.quotient = 1, .remainder = 0}));
 
 	return igros::test::result();
 }

@@ -159,6 +159,20 @@ static void testDeinit() {
 	igros::drivers::deinit(pit::DRIVER);
 	IGROS_CHECK(0xFF == hw::portValue[igros::x86::PIC_MASTER_DATA]);
 	IGROS_CHECK_HALTS(pitIRQ());
+	// Timer without frequency counts periods silently
+	auto idle {pit::timer_t {}};
+	hw::console.clear();
+	idle.interrupt();
+	IGROS_CHECK(hw::console.empty());
+	// Stopping another timer doesn't detach active one from interrupts
+	resetPIT();
+	IGROS_CHECK(pit::timer.init());
+	idle.deinit();
+	IGROS_CHECK(igros::drivers::init(pit::DRIVER));
+	hw::console.clear();
+	pitIRQ();
+	IGROS_CHECK(hw::console.empty());
+	igros::drivers::deinit(pit::DRIVER);
 }
 
 

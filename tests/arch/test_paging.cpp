@@ -296,6 +296,24 @@ static void testUser() {
 		IGROS_CHECK(0 != (entryAt(VIRT + paging::PAGE_SIZE, level) & USER));
 	}
 	IGROS_CHECK(0 == (entryAt(VIRT, 0) & USER));
+	// New page table for user page gets user access at once
+	constexpr auto FAR {std::uintptr_t {0x01000000}};
+	IGROS_CHECK(map(0x9000, FAR, paging::FLAGS::USER));
+	IGROS_CHECK(0 != (entryAt(FAR, 1) & USER));
+	IGROS_CHECK(0x9000 == translate(FAR));
+}
+
+
+// Page table outside direct map: entry can't be reached
+static void testTableNotMapped() {
+	hw::reset();
+	hw::cr3 = static_cast<std::uintptr_t>(newTable());
+	constexpr auto VIRT {std::uintptr_t {0x00C00000}};
+	IGROS_CHECK(map(0x7000, VIRT));
+	entryAt(VIRT, 1) = static_cast<paging::entry_t>(igros::mem::LOW_MEMORY_LIMIT) | static_cast<paging::entry_t>(paging::FLAGS::PRESENT);
+	IGROS_CHECK(!map(0x8000, VIRT));
+	IGROS_CHECK(paging::INVALID == translate(VIRT));
+	paging::unmap(static_cast<igros::mem::virt_t>(VIRT));
 }
 
 
@@ -332,6 +350,37 @@ static void testNoMemory() {
 }
 
 
+// Memory runs out while building kernel mapping, then for self-test scratch page
+static void testInitLowMemory() {
+	auto mappingFailed {false};
+	auto selfTestFailed {false};
+	auto succeeded {false};
+	// Free pages: from one (top table only) until all tables and scratch page fit
+	for (auto available {igros::igros_usize_t {1}}; !succeeded && (available < 64); ++available) {
+		auto pages {std::vector<igros::mem::phys_t> {}};
+		for (auto page {phys::alloc(igros::mem::LOW_MEMORY_LIMIT)}; 0 != page; page = phys::alloc(igros::mem::LOW_MEMORY_LIMIT)) {
+			pages.push_back(page);
+		}
+		for (auto index {igros::igros_usize_t {0}}; (index < available) && (index < pages.size()); ++index) {
+			phys::free(pages[index]);
+		}
+		hw::reset();
+		initPaging();
+		mappingFailed  = mappingFailed || hw::printed("Paging:\t\tFAILED (can't build kernel mapping)");
+		selfTestFailed = selfTestFailed || hw::printed("Paging:\t\tSELF-TEST FAILED");
+		succeeded      = hw::printed("Paging:\t\tOK (");
+		// Kernel tables aren't switched to on failure
+		IGROS_CHECK(succeeded || !hw::printed("Paging:\t\tFAILED") || (0 == hw::cr3));
+		// All low memory is free again (except kernel image)
+		phys::markFree(paging::PAGE_SIZE, igros::mem::LOW_MEMORY_LIMIT);
+		phys::markUsed(KERNEL_TEXT, KERNEL_END);
+	}
+	IGROS_CHECK(mappingFailed);
+	IGROS_CHECK(selfTestFailed);
+	IGROS_CHECK(succeeded);
+}
+
+
 // Page fault handler reports reason and halts
 static void testFaultHandler() {
 	auto regs {igros::x86::register_t {}};
@@ -363,8 +412,10 @@ auto main() -> int {
 	testMap();
 	testMapInvalid();
 	testUser();
+	testTableNotMapped();
 	testHuge();
 	testNoMemory();
+	testInitLowMemory();
 	testFaultHandler();
 	testInitDirectMap();
 	return igros::test::result();

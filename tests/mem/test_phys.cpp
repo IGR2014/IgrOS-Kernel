@@ -264,6 +264,14 @@ static void testMemoryFallback() {
 	IGROS_CHECK(0x200000 == phys::top());
 	// Every page of 1 .. 2 MB, but the one holding test info structure if it lies there
 	IGROS_CHECK((phys::freePages() <= 256) && (phys::freePages() >= 255));
+	// Pages above tracked memory are ignored
+	const auto pages {phys::freePages()};
+	phys::free(phys::MEMORY_LIMIT);
+	phys::free(phys::MEMORY_LIMIT + 0x1000);
+	IGROS_CHECK(pages == phys::freePages());
+	// No memory info at all: no free memory
+	phys::init(makeInfo(infoRaw, 0));
+	IGROS_CHECK(0 == phys::freePages());
 }
 
 
