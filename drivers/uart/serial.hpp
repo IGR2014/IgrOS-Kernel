@@ -153,7 +153,7 @@ namespace igros::arch {
 			/// @param buffer Output buffer
 			/// @return Number of read bytes
 			[[nodiscard]]
-			auto read(const std::span<std::byte> buffer) const noexcept -> igros_usize_t;
+			auto read(const std::span<std::byte> buffer) const noexcept -> igros_usize_t; // flawfinder: ignore (device read, bounded by span size)
 			/// @brief Write bytes (new line is sent as CR LF)
 			/// @param data Data
 			/// @return Number of written bytes

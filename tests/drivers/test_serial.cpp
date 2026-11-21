@@ -219,9 +219,9 @@ static void testDriver() {
 	IGROS_CHECK(5 == igros::drivers::write(serial::COM1, "ab\ncd"));
 	IGROS_CHECK("ab\r\ncd" == transmitted());
 	auto buffer {std::array<std::byte, 4> {}};
-	IGROS_CHECK(0 == igros::drivers::read(serial::COM1, buffer));
+	IGROS_CHECK(0 == igros::drivers::read(serial::COM1, buffer)); // flawfinder: ignore (device read, bounded by span size)
 	rxQueue = {'o', 'k'};
-	IGROS_CHECK(2 == igros::drivers::read(serial::COM1, buffer));
+	IGROS_CHECK(2 == igros::drivers::read(serial::COM1, buffer)); // flawfinder: ignore (device read, bounded by span size)
 	IGROS_CHECK((std::byte {'o'} == buffer[0]) && (std::byte {'k'} == buffer[1]));
 	// Instances: names, port contexts, no control requests
 	IGROS_CHECK((&serial::com1 == serial::COM1.context) && (&serial::com4 == serial::COM4.context));
@@ -230,7 +230,14 @@ static void testDriver() {
 	IGROS_CHECK(nullptr == serial::COM1.ioctl);
 	// Port object with own configuration: 9600 baud divisor 12, 7 data bits, even parity
 	resetUART();
-	auto slow {serial::uart_t {{SERIAL_PORT::COM1, BAUD_RATE::BAUD_9600, DATA_SIZE::CHAR_7, STOP_BITS::STOP_1, PARITY::EVEN}}};
+	constexpr auto SLOW = serial::config_t {
+		.port	  = SERIAL_PORT::COM1,
+		.baudRate = BAUD_RATE::BAUD_9600,
+		.dataSize = DATA_SIZE::CHAR_7,
+		.stopBits = STOP_BITS::STOP_1,
+		.parity	  = PARITY::EVEN,
+	};
+	auto slow {serial::uart_t {SLOW}};
 	IGROS_CHECK(slow.init());
 	IGROS_CHECK(0x0C == hw::writes(COM1_DATA).front());
 	IGROS_CHECK((std::vector<std::uint32_t> {0x80, 0x12}) == hw::writes(COM1_LCR));

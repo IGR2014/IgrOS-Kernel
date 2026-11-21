@@ -75,8 +75,8 @@ fi
 kill -- "-${PID}" 2>/dev/null
 wait "${PID}" 2>/dev/null
 
-if ! grep -qE "^Driver UART:.*OK" "${SERIAL}"; then
-	echo "FAILED: UART not initialized"
+if ! grep -qE "^Driver COM1:.*OK" "${SERIAL}"; then
+	echo "FAILED: UART (COM1) not initialized"
 	RESULT=1
 fi
 if grep -qE "EXCEPTION|Exception:|UNHANDLED" "${SERIAL}"; then

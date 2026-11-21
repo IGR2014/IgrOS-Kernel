@@ -159,12 +159,12 @@ static void testSetup() {
 static void testDriver() {
 	setCMOS(RTC_IS_TIME_24, 0x20, {0x26, 0x10, 0x19, 0x02, 0x09, 0x05, 0x07});
 	auto bytes {std::array<std::byte, sizeof(clockDateTime_t) + 1> {}};
-	IGROS_CHECK(sizeof(clockDateTime_t) == igros::drivers::read(rtc::DRIVER, bytes));
+	IGROS_CHECK(sizeof(clockDateTime_t) == igros::drivers::read(rtc::DRIVER, bytes)); // flawfinder: ignore (device read, bounded by span size)
 	auto raw {std::array<std::byte, sizeof(clockDateTime_t)> {}};
 	std::copy_n(bytes.begin(), raw.size(), raw.begin());
 	IGROS_CHECK(equals(std::bit_cast<clockDateTime_t>(raw), {2026, 10, 19, 2, 9, 5, 7}));
 	// Too small buffer: nothing read
-	IGROS_CHECK(0 == igros::drivers::read(rtc::DRIVER, std::span {bytes}.first(sizeof(clockDateTime_t) - 1)));
+	IGROS_CHECK(0 == igros::drivers::read(rtc::DRIVER, std::span {bytes}.first(sizeof(clockDateTime_t) - 1))); // flawfinder: ignore (device read, bounded by span size)
 	auto dateTime {clockDateTime_t {}};
 	IGROS_CHECK(igros::drivers::ioctl(rtc::DRIVER, rtc::IOCTL::GET_DATETIME, &dateTime));
 	IGROS_CHECK(equals(dateTime, {2026, 10, 19, 2, 9, 5, 7}));
