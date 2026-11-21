@@ -173,7 +173,9 @@ namespace igros::drivers {
 	/// @return Number of drivers that failed to initialize
 	template<igros_usize_t N>
 	auto init(const std::array<driver_t, N> &drivers) noexcept -> igros_usize_t {
-		return init(drivers, []([[maybe_unused]] const driver_t &driver) noexcept {});
+		return init(drivers, []([[maybe_unused]] const driver_t &driver) noexcept {
+			// No ready callback: drivers are only initialized
+		});
 	}
 
 	/// @brief Release drivers in reverse init order

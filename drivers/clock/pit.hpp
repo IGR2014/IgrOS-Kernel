@@ -49,7 +49,7 @@ namespace igros::arch {
 			[[nodiscard]]
 			auto init() noexcept -> bool;
 			/// @brief Stop timer interrupts
-			void deinit() noexcept;
+			void deinit() const noexcept;
 			/// @brief Timer control
 			/// @param request Request (IOCTL)
 			/// @param arg Request argument

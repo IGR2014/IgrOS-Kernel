@@ -194,7 +194,7 @@ namespace igros::arch {
 	// Setup RTC
 	[[nodiscard]]
 	// cppcheck-suppress functionStatic ; device method (driver interface)
-	auto rtc::cmos_t::init() noexcept -> bool { // NOLINT(readability-convert-member-functions-to-static): device method (driver interface)
+	auto rtc::cmos_t::init() const noexcept -> bool { // NOLINT(readability-convert-member-functions-to-static): device method (driver interface)
 		// Get current date/time
 		const auto dateTime {clockGetCurrentDateTime()};
 		// Print result
@@ -214,7 +214,7 @@ namespace igros::arch {
 	// Read current date/time
 	[[nodiscard]]
 	// NOLINTNEXTLINE(readability-convert-member-functions-to-static): device method (driver interface)
-	auto rtc::cmos_t::read(const std::span<std::byte> buffer) noexcept -> igros_usize_t { // flawfinder: ignore (device read, bounded by span size)
+	auto rtc::cmos_t::read(const std::span<std::byte> buffer) const noexcept -> igros_usize_t { // flawfinder: ignore (device read, bounded by span size)
 		// Whole date/time or nothing
 		constexpr auto SIZE {sizeof(clockDateTime_t)};
 		if (buffer.size() < SIZE) [[unlikely]] {
@@ -228,7 +228,7 @@ namespace igros::arch {
 	// RTC control
 	[[nodiscard]]
 	// cppcheck-suppress functionStatic ; device method (driver interface)
-	auto rtc::cmos_t::ioctl(const igros_dword_t request, const igros_pointer_t arg) noexcept -> bool { // NOLINT(readability-convert-member-functions-to-static): device method (driver interface)
+	auto rtc::cmos_t::ioctl(const igros_dword_t request, const igros_pointer_t arg) const noexcept -> bool { // NOLINT(readability-convert-member-functions-to-static): device method (driver interface)
 		// Every request has an argument
 		if (nullptr == arg) [[unlikely]] {
 			return false;

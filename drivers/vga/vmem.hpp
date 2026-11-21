@@ -127,7 +127,7 @@ namespace igros::arch {
 			/// @param message Text
 			void write(const std::string_view message) noexcept;
 			/// @brief Clear console with background color
-			void clear() noexcept;
+			void clear() const noexcept;
 
 			/// @brief Set text colors
 			/// @param background Background color
@@ -146,9 +146,9 @@ namespace igros::arch {
 			[[nodiscard]]
 			auto cursorGet() const noexcept -> vmemCursor;
 			/// @brief Disable cursor
-			void cursorDisable() noexcept;
+			void cursorDisable() const noexcept;
 			/// @brief Enable cursor
-			void cursorEnable() noexcept;
+			void cursorEnable() const noexcept;
 
 		private:
 

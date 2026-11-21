@@ -35,9 +35,9 @@ namespace igros::arch::keyboard {
 		/// @brief Setup keyboard (IRQ handler)
 		/// @return true if keyboard is set up
 		[[nodiscard]]
-		auto init() noexcept -> bool;
+		auto init() const noexcept -> bool;
 		/// @brief Stop keyboard interrupts
-		void deinit() noexcept;
+		void deinit() const noexcept;
 	};
 
 	/// @brief System keyboard

@@ -237,7 +237,7 @@ static void testDriver() {
 		.stopBits = STOP_BITS::STOP_1,
 		.parity	  = PARITY::EVEN,
 	};
-	auto slow {serial::uart_t {SLOW}};
+	const auto slow {serial::uart_t {SLOW}};
 	IGROS_CHECK(slow.init());
 	IGROS_CHECK(0x0C == hw::writes(COM1_DATA).front());
 	IGROS_CHECK((std::vector<std::uint32_t> {0x80, 0x12}) == hw::writes(COM1_LCR));

@@ -101,7 +101,7 @@ namespace igros::arch {
 
 	// Disable cursor
 	// cppcheck-suppress functionStatic ; console method (one console API)
-	void vga::console_t::cursorDisable() noexcept { // NOLINT(readability-convert-member-functions-to-static): console method (one console API)
+	void vga::console_t::cursorDisable() const noexcept { // NOLINT(readability-convert-member-functions-to-static): console method (one console API)
 		// Choose cursor start register
 		io::writePort8(VGA_CURSOR_CONTROL, VIDEO_MEM_CURSOR_START);
 		// Send control word to disable cursor
@@ -110,7 +110,7 @@ namespace igros::arch {
 
 	// Enable cursor
 	// cppcheck-suppress functionStatic ; console method (one console API)
-	void vga::console_t::cursorEnable() noexcept { // NOLINT(readability-convert-member-functions-to-static): console method (one console API)
+	void vga::console_t::cursorEnable() const noexcept { // NOLINT(readability-convert-member-functions-to-static): console method (one console API)
 		// Choose cursor start register
 		io::writePort8(VGA_CURSOR_CONTROL, VIDEO_MEM_CURSOR_START);
 		// Get current register value
@@ -198,8 +198,7 @@ namespace igros::arch {
 	}
 
 	// Clear console
-	// cppcheck-suppress functionConst ; changes device (hardware) state
-	void vga::console_t::clear() noexcept {
+	void vga::console_t::clear() const noexcept {
 		// Set whole screen with whitespace with current background
 		std::ranges::fill(vmemScreen(), blank());
 	}
