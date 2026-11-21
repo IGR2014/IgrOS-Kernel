@@ -113,6 +113,21 @@ static void testFlags() {
 	IGROS_CHECK(hw::printed("Memory map:\t\t[ Y ]"));
 	IGROS_CHECK(hw::printed("VBE:\t\t\t[ N ]"));
 	IGROS_CHECK(hw::printed("FB:\t\t\t[ Y ]"));
+	// Everything but A.OUT symbols
+	makeInfo(0x1FFFu & ~(1u << 4)).printFlags();
+	IGROS_CHECK(hw::printed("Boot device:\t\t[ Y ]"));
+	IGROS_CHECK(hw::printed("AOUT:\t\t\t[ N ]"));
+	IGROS_CHECK(hw::printed("ELF:\t\t\t[ Y ]"));
+	IGROS_CHECK(hw::printed("VBE:\t\t\t[ Y ]"));
+	IGROS_CHECK(hw::printed("Bootloader name:\t[ Y ]"));
+	// A.OUT symbols only
+	makeInfo(1u << 4).printFlags();
+	IGROS_CHECK(hw::printed("AOUT:\t\t\t[ Y ]"));
+	IGROS_CHECK(hw::printed("ELF:\t\t\t[ N ]"));
+	// Both symbol formats: neither is valid
+	makeInfo((1u << 4) | (1u << 5)).printFlags();
+	IGROS_CHECK(hw::printed("AOUT:\t\t\t[ N ]"));
+	IGROS_CHECK(hw::printed("ELF:\t\t\t[ N ]"));
 }
 
 
@@ -259,6 +274,14 @@ static void testNotMapped() {
 		++entries;
 	}
 	IGROS_CHECK(0 == entries);
+	info.printVBEInfo();
+	IGROS_CHECK(hw::printed("VBE info is not directly mapped..."));
+	// VBE config mapped, mode crosses direct map end
+	alignas(8) static std::uint8_t vbe[0x1000] {};
+	info.vbeControlInfo = address32(vbe);
+	info.vbeModeInfo    = address32(vbe + 0x800);
+	igros::mem::direct::setEnd(info.vbeModeInfo + 1);
+	hw::console.clear();
 	info.printVBEInfo();
 	IGROS_CHECK(hw::printed("VBE info is not directly mapped..."));
 	// Mapped again

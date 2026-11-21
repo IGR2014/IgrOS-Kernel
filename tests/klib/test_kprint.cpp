@@ -71,6 +71,8 @@ auto main() -> int {
 	checkFormat(8, "abcdefg", "abcdefghijk");
 	checkFormat(6, "     ", "%9d", 5);
 	checkFormat(5, "ab12", "ab%d", 123456);
+	checkFormat(3, "ab", "ab%c", 'Z');
+	checkFormat(3, "ab", "ab%%");
 	checkFormat(1, "", "anything %d", 1);
 
 	// Unterminated placeholder at format end

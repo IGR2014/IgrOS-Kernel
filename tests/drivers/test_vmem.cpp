@@ -214,12 +214,25 @@ static void testDriver() {
 }
 
 
+// Kernel console output goes to console object
+static void testKernelConsole() {
+	hw::reset();
+	IGROS_CHECK(vga::console.init());
+	vmemWrite('A');
+	vmemWrite("bc");
+	vmemWrite(std::string_view {"de!", 2});
+	IGROS_CHECK(row(0, "Abcde "));
+	IGROS_CHECK(5 == cursorWritten());
+}
+
+
 auto main() -> int {
 	testInit();
 	testWrite();
 	testScroll();
 	testCursor();
 	testDriver();
+	testKernelConsole();
 	return igros::test::result();
 }
 

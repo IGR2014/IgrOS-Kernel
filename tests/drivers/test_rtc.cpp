@@ -111,6 +111,24 @@ static void testRead() {
 }
 
 
+// Date/time comparison: every field counts
+static void testCompare() {
+	constexpr auto DATE {rtcDate_t {26, 10, 19}};
+	constexpr auto TIME {rtcTime_t {23, 45, 7}};
+	IGROS_CHECK(!(DATE == rtcDate_t {25, 10, 19}));
+	IGROS_CHECK(!(DATE == rtcDate_t {26, 11, 19}));
+	IGROS_CHECK(!(DATE == rtcDate_t {26, 10, 20}));
+	IGROS_CHECK(!(TIME == rtcTime_t {22, 45, 7}));
+	IGROS_CHECK(!(TIME == rtcTime_t {23, 46, 7}));
+	IGROS_CHECK(!(TIME == rtcTime_t {23, 45, 8}));
+	const auto dateTime {rtcDateTime_t {DATE, 2, TIME}};
+	IGROS_CHECK(dateTime == (rtcDateTime_t {DATE, 2, TIME}));
+	IGROS_CHECK(!(dateTime == rtcDateTime_t {{25, 10, 19}, 2, TIME}));
+	IGROS_CHECK(!(dateTime == rtcDateTime_t {DATE, 3, TIME}));
+	IGROS_CHECK(!(dateTime == rtcDateTime_t {DATE, 2, {22, 45, 7}}));
+}
+
+
 // BCD 24-hour clock with century register
 static void testBCD24() {
 	setCMOS(RTC_IS_TIME_24, 0x20, {0x26, 0x10, 0x19, 0x02, 0x23, 0x45, 0x07});
@@ -144,6 +162,11 @@ static void testStableRead() {
 	secondsTick = 0;
 	IGROS_CHECK(equals(clockGetCurrentDateTime(), {2026, 10, 19, 2, 10, 0, 31}));
 	IGROS_CHECK(0 == updating);
+	// Seconds tick between first and second read: read again until reads match
+	setCMOS(RTC_IS_TIME_24 | RTC_IS_BINARY, 20, {26, 10, 19, 2, 10, 0, 30});
+	secondsTick = 1;
+	IGROS_CHECK(equals(clockGetCurrentDateTime(), {2026, 10, 19, 2, 10, 0, 31}));
+	IGROS_CHECK(secondsTick < 0);
 }
 
 
@@ -178,6 +201,7 @@ static void testDriver() {
 auto main() -> int {
 	testBCD();
 	testRead();
+	testCompare();
 	testBCD24();
 	testBinary12();
 	testBCD12();

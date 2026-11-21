@@ -154,6 +154,13 @@ static void testWrite() {
 	IGROS_CHECK(!serialReadyWrite(SERIAL_PORT::COM1));
 	IGROS_CHECK(0 == serialWrite("busy"));
 	IGROS_CHECK(transmitted().empty());
+	// Transmitter gets busy after first byte: CR of new line isn't sent
+	resetUART();
+	hw::portReadHook = [](const std::uint16_t port) -> std::uint32_t {
+		return ((COM1_LSR == port) && hw::portValue.contains(COM1_DATA)) ? 0u : uart(port);
+	};
+	IGROS_CHECK(1 == serialWrite("a\nb"));
+	IGROS_CHECK("a" == transmitted());
 }
 
 
@@ -223,6 +230,24 @@ static void testDriver() {
 	rxQueue = {'o', 'k'};
 	IGROS_CHECK(2 == igros::drivers::read(serial::COM1, buffer)); // flawfinder: ignore (device read, bounded by span size)
 	IGROS_CHECK((std::byte {'o'} == buffer[0]) && (std::byte {'k'} == buffer[1]));
+	// More data than buffer: rest stays in receiver
+	rxQueue = {'1', '2', '3', '4', '5'};
+	IGROS_CHECK(buffer.size() == igros::drivers::read(serial::COM1, buffer)); // flawfinder: ignore (device read, bounded by span size)
+	IGROS_CHECK((std::deque<char> {'5'}) == rxQueue);
+	rxQueue.clear();
+	// Transmitter gets busy after first byte
+	resetUART();
+	hw::portReadHook = [](const std::uint16_t port) -> std::uint32_t {
+		return ((COM1_LSR == port) && hw::portValue.contains(COM1_DATA)) ? 0u : uart(port);
+	};
+	IGROS_CHECK(1 == igros::drivers::write(serial::COM1, "xyz"));
+	IGROS_CHECK("x" == transmitted());
+	// Stopping port that wasn't started only releases its line
+	resetUART();
+	maskAll();
+	igros::drivers::deinit(serial::COM2);
+	IGROS_CHECK(0xFF == hw::portValue[igros::x86::PIC_MASTER_DATA]);
+	resetUART();
 	// Instances: names, port contexts, no control requests
 	IGROS_CHECK((&serial::com1 == serial::COM1.context) && (&serial::com4 == serial::COM4.context));
 	IGROS_CHECK(SERIAL_PORT::COM3 == serial::com3.config().port);
@@ -285,6 +310,17 @@ static void testSharedLine() {
 	IGROS_CHECK(igros::drivers::init(serial::COM2));
 	IGROS_CHECK(0xF7 == hw::portValue[igros::x86::PIC_MASTER_DATA]);
 	igros::drivers::deinit(serial::COM2);
+	IGROS_CHECK(0xFF == hw::portValue[igros::x86::PIC_MASTER_DATA]);
+	// COM4 on IRQ 3 too
+	constexpr auto COM4 {std::uint16_t {0x2E8}};
+	fakePort(COM4, true);
+	IGROS_CHECK(igros::drivers::init(serial::COM4));
+	IGROS_CHECK(0x01 == hw::portValue[COM4 + 1]);
+	IGROS_CHECK(0xF7 == hw::portValue[igros::x86::PIC_MASTER_DATA]);
+	hw::console.clear();
+	uartIRQ(igros::x86::irq_t::UART2);
+	IGROS_CHECK(hw::printed("IRQ #3\t[COM4]"));
+	igros::drivers::deinit(serial::COM4);
 	IGROS_CHECK(0xFF == hw::portValue[igros::x86::PIC_MASTER_DATA]);
 }
 
